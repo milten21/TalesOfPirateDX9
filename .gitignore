@@ -1,153 +1,103 @@
-/Celestial Test
+# ── Editor / IDE / VS scratch ────────────────────────────────────────────────
+.vs/
+.idea/
 
-lib/
-bin/
-tmp/
-doc/
-etc/
-obj/
-Long_Struct_Release/
-Long_Struct_Debug/
-
-Release/
-Debug/
-
+*.suo
 *.ncb
-*.suo
-
-temp/
-objs/
-
-.vs/
-
-*.dat
-*.zip
-# User-specific files
-*.tlog
-*.suo
 *.user
 *.userosscache
 *.sln.docstates
-*.tlog
-*.lastbuildstate
-*,pch
-*.zip
-# User-specific files
-*.tlog
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-*.tlog
-*.lastbuildstate
-.vs/
+*.VC.db
+*.VC.opendb
 
-!Client/bin/
-Client/bin/*
 
-!Client/bin/texture/
-Client/bin/texture/*
-
-!Client/bin/texture/ui/
-Client/bin/texture/ui/*
-
-!Client/bin/texture/ui/new/
-
-!Client/bin/scripts/
-Client/bin/scripts/*
-
-!Client/bin/scripts/lua/
-Client/bin/scripts/lua/*
-
-!Client/bin/scripts/lua/forms/
-
-!sources/Common/CaLua/Lua/lib
-!sources/Common/IGameSDK/lib
-!sources/Common/Ipss/lib
-!sources/Common/SDL-1.2.7/lib
-!sources/Libraries/CaLua/Lua/lib/
-!sources/Libraries/DirectX/DX9/lib/
-!sources/Libraries/DirectX/lib/
-!sources/Libraries/Discord/lib/
-!sources/Libraries/IGameSDK/lib/
-!sources/Libraries/icu/lib/
-!sources/Libraries/ICUHelper/lib/
-!sources/Libraries/Cryptopp/Win32/Output/Release
-!sources/Libraries/Ipss/lib/
-!sources/Libraries/SDL-1.2.7/lib/
-!sources/Libraries/Ipss/bin/
-!sources/Libraries/LuaJIT/lib/
-!sources/Libraries/LuaJIT/luajit.exe
-!sources/Libraries/MaxSDK/lib/
-*.copied
-
-Libraries/Server/sdk/build/Release Client/microsoft/STL/std.compat.ixx.ifc.dt.d.json
-Libraries/Server/sdk/build/Release Client/microsoft/STL/std.compat.ixx.ifc.dt.module.json
+# ── Compiler intermediates ───────────────────────────────────────────────────
 *.obj
-Libraries/Server/sdk/build/Release Client/
-*.log
-ServerSide/GameServer/tmp.txt
-
-ServerSide/GameServer/PlayerData/Boss/*.txt
-ServerSide/GameServer/LOG/*.txt
-ServerSide/GameServer/LOG/GameServer00/*.txt
-ServerSide/GameServer/LOG/GameServer01/*.txt
-ServerSide/GameServer/LOG/GameServer02/*.txt
-ServerSide/GameServer/LOG/GameServer03/*.txt
-logfile/
-ServerSide/GameServer/LOG/
-*.recipe
 *.pch
-Client/build/ReleaseDX9/
 *.ilk
-ServerSide/GameServer/resource/**/*.bin
-ServerSide/GameServer/resource/*.bin
-ServerSide/GameServer/LOG/**/*.txt
+*.idb
+*.exp
+*.pdb
+*.tlog
+*.lastbuildstate
+*.recipe
+*.log
+*.res.bak
 
-
-
-
-
-
-!Client/bin/
-
-!Client/texture/
-
-!Client/texture/ui/
-
-!Client/texture/ui/new/
-
-!Client/scripts/
-
-!Client/scripts/lua/
+# Map data
 !Client/map/*.obj
-!Client/map/*.rbo
-!Client/scripts/lua/forms/
-Client/_TempData
+
+obj/
+objs/
+tmp/
+temp/
+
+# MSVC per-configuration intermediate dirs.
+Debug/
+Release/
+Long_Struct_Debug/
+Long_Struct_Release/
+
+# Per-project intermediate dirs (<project>/build/<Configuration>/)
+build/
+
+# Final binaries, by project
+sources/Client/bin/
+sources/Engine/lib/
+sources/Server/*/Bin/
+
+# cryptlib
+sources/Libraries/Cryptopp/Win32/Output/
+
+# Static libs produced by the in-tree library projects
+sources/Libraries/AudioSDL/lib/
+sources/Libraries/CaLua/lib/
+sources/Libraries/EncLib/lib/
+sources/Libraries/ICUHelper/lib/
+sources/Libraries/InfoNet/lib/
+sources/Libraries/Server/sdk/lib/
+sources/Libraries/Status/lib/
+sources/Libraries/Util/lib/
+sources/Libraries/common/lib/
+
+
+# ── Deployed binaries in the runtime trees ───────────────────────────────────
+Client/system/*.exe
+Client/system/*.pdb
+Client/system/MindPower3D_D8*.dll
+Client/system/x64/
+server/*/*.exe
+server/*/*.pdb
+
+server/*/icu*.dll
+server/*/lua51.dll
+server/*/BTI.DLL
+
+
+# ── Runtime-generated state ──────────────────────────────────────────────────
+# Client
+Client/log*/
+Client/_TempData/
 Client/calua_err.txt
 Client/lua_err.txt
 Client/ulog.txt
 Client/ver
 Client/ver.rec
 Client/VerInfo.rec
-ServerSide/GameServer/PlayerData/*/*.txt
-*.pdb
-ServerSide/GameServer/*_D.exe
-Client/system/x64/MindPower3D_D8D64.dll
-ServerSide/GameServer/GameServer_D64.exe
-ServerSide/GateServer/GateServer_D64.exe
-ServerSide/GroupServer/GroupServer_D64.exe
-ServerSide/AccountServer/AccountServer_D64.exe
-Client/system/x64/Game_D64.exe
-Client/system/*/Game*.exe
-Client/system/*/MindPower3D_D8R*.dll
-ServerSide/GameServer/GameServer*.exe
-ServerSide/GateServer/GateServer*.exe
-ServerSide/AccountServer/AccountServer*.exe
-ServerSide/GroupServer/GroupServer*.exe
-Client/log*/
-DatabasePath/GameDtopnet64.mdf
-DatabasePath/GameDtopnet64_log.ldf
-sources/Engine/lib/MindPower3D_D8R.exp
-sources/Engine/lib/MindPower3D_D8R.idb
-/server/GameServer/resource/*/*.bin
+
+# Server
+server/*/LOG/
+server/*/logfile/
+server/GameServer/tmp.txt
+server/GameServer/PlayerData/*/*.txt
+
+# Per-map resource blobs are generated from the map data
+server/GameServer/resource/*/*.bin
+
+# Database files
+DatabasePath/*.mdf
+DatabasePath/*.ldf
+
+# ── Misc ─────────────────────────────────────────────────────────────────────
+*.copied
+/Celestial Test
