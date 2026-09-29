@@ -42,6 +42,7 @@ private:
 	std::string m_strServerDB;
 	std::string m_strUserID;
 	std::string m_strUserPwd;
+	std::string m_strClientEncoding{ "WIN1252" };
 	CSQLDatabase* m_pDataBase;
 	StringMap m_mapUsers;
 };

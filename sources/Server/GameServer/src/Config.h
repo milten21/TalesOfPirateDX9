@@ -89,6 +89,7 @@ public:
 	BOOL	m_bTradeLogIsConfig;
 	// End
 	char	m_szDBName[32];            // kong@pkodev.net 09.22.2017
+	char	m_szDBClientEncoding[32];
 
 	long	m_lSocketAlive;            // Socket保持活动
 	int		m_nMaxPly;                 // 最大玩家数

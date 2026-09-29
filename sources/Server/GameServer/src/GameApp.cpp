@@ -225,14 +225,14 @@ void CDBLogMgr::Log(const char *type, const char *c1, const char *c2, const char
 		{
 			_nPoolUseLoc = 0;
 		}
-		sprintf(pData->szLog, "insert gamelog (action, c1, c2, c3, c4, content) \
+		sprintf(pData->szLog, "insert into gamelog (action, c1, c2, c3, c4, content) \
 			   values('%s', '%s', '%s', '%s', '%s', '%s')", type, c1, c2, c3, c4, p);
 		_LogList.push_back(pData);
 	}
 	else
 	{
 		char szLog[8192];	
-		sprintf(szLog, "insert gamelog (action, c1, c2, c3, c4, content) \
+		sprintf(szLog, "insert into gamelog (action, c1, c2, c3, c4, content) \
 			   values('%s', '%s', '%s', '%s', '%s', '%s')", type, c1, c2, c3, c4, p);
 		game_db.ExecLogSQL(szLog);
 	}

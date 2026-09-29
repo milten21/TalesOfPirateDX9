@@ -6,12 +6,63 @@ using namespace std;
 #define COLTRUNC_WARNG "Number of columns in display truncated to %u\n"
 #define NULLDATASTRING ""
 
+static int split_top(const char* param, string& columns)
+{
+	columns = param;
+	const char* p = param;
+	while (*p == ' ' || *p == '\t') ++p;
+	if ((p[0] != 't' && p[0] != 'T') || (p[1] != 'o' && p[1] != 'O') ||
+		(p[2] != 'p' && p[2] != 'P') || (p[3] != ' ' && p[3] != '\t'))
+		return -1;
+	p += 4;
+	while (*p == ' ' || *p == '\t') ++p;
+	if (*p < '0' || *p > '9') return -1;
+	int n = 0;
+	while (*p >= '0' && *p <= '9') { n = n * 10 + (*p - '0'); ++p; }
+	if (*p != ' ' && *p != '\t') return -1;
+	columns = p;
+	return n;
+}
+
+static void build_select(char* sql, size_t cap, const string& tbl, const char* param,
+						 const char* filter, const char* sep)
+{
+	string columns = "*";
+	int limit = -1;
+	if (param != NULL) limit = split_top(param, columns);
+
+	string s = "select " + columns;
+	if (!tbl.empty() || param == NULL) s += " from " + tbl;
+	if (filter != NULL) { s += sep; s += filter; }
+	if (limit >= 0)
+	{
+		size_t end = s.find_last_not_of(" \t\r\n;");
+		if (end != string::npos) s.erase(end + 1);
+		char buf[32];
+		sprintf(buf, " limit %d", limit);
+		s += buf;
+	}
+	strncpy(sql, s.c_str(), cap - 1);
+	sql[cap - 1] = 0;
+}
+
+static string diag_text(SQLHANDLE h, SQLSMALLINT t)
+{
+	SQLCHAR state[SQL_SQLSTATE_SIZE + 1] = {0};
+	SQLCHAR msg[SQL_MAX_MESSAGE_LENGTH + 1] = {0};
+	SQLINTEGER native = 0;
+	SQLSMALLINT len = 0;
+	if (SQLGetDiagRec(t, h, 1, state, &native, msg, SQL_MAX_MESSAGE_LENGTH, &len) != SQL_SUCCESS)
+		return "";
+	return string("[") + (char*)state + "] " + (char*)msg;
+}
+
 #define SQL_SUC(sr) (((sr == SQL_SUCCESS) || (sr == SQL_SUCCESS_WITH_INFO) || (sr == SQL_NO_DATA_FOUND)) ? true : false)
 #define DBFAIL(sr) ((sr != SQL_SUCCESS) && (sr != SQL_SUCCESS_WITH_INFO))
 
 const char g_cchLogUtilDb = 0;
 
-cfl_db::cfl_db() : _henv(SQL_NULL_HENV), _hdbc(SQL_NULL_HDBC), _rslist()
+cfl_db::cfl_db() : _henv(SQL_NULL_HENV), _hdbc(SQL_NULL_HDBC), _rslist(), _client_encoding("WIN1252"), _last_rowcount(-1)
 {
     _connected = false;
     _dump_errinfo = false;
@@ -87,6 +138,52 @@ bool cfl_db::handle_err(SQLHANDLE h, SQLSMALLINT t,
 	return false;
 }
 
+bool cfl_db::set_client_encoding(const char* encoding)
+{
+	if (encoding == NULL || *encoding == 0) return false;
+	for (const char* p = encoding; *p; ++p)
+	{
+		bool ok = (*p >= 'A' && *p <= 'Z') || (*p >= 'a' && *p <= 'z') ||
+				  (*p >= '0' && *p <= '9') || *p == '_' || *p == '-';
+		if (!ok) return false;
+	}
+	_client_encoding = encoding;
+	return true;
+}
+
+void cfl_db::record_rowcount(SQLHSTMT hstmt, SQLRETURN sqlret)
+{
+	SQLLEN n = 0;
+	if (sqlret == SQL_SUCCESS || sqlret == SQL_SUCCESS_WITH_INFO)
+	{
+		if (DBFAIL(SQLRowCount(hstmt, &n)) || n < 0) n = 0;
+	}
+	_last_rowcount = n;
+}
+
+bool cfl_db::_apply_client_encoding(string& errinfo)
+{
+	SQLHSTMT hstmt = SQL_NULL_HSTMT;
+	string sql = "SET client_encoding TO '" + _client_encoding + "'";
+
+	SQLRETURN sqlret = SQLAllocHandle(SQL_HANDLE_STMT, _hdbc, &hstmt);
+	if (DBFAIL(sqlret))
+	{
+		errinfo = "Unable to allocate a statement handle to set client_encoding\n";
+		return false;
+	}
+	sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql.c_str(), SQL_NTS);
+	if (DBFAIL(sqlret))
+	{
+		errinfo = "Unable to set client_encoding to " + _client_encoding + " " + diag_text(hstmt, SQL_HANDLE_STMT) + "\n";
+		LG2("util_db_error", "%s", errinfo.c_str());
+		SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+		return false;
+	}
+	SQLFreeHandle(SQL_HANDLE_STMT, hstmt);
+	return true;
+}
+
 bool cfl_db::_needreconn(char const* state)
 {
 	bool ret = false;
@@ -134,7 +231,7 @@ bool cfl_db::_reconnt()
 		LG2("util_db_error", "reconnect database...\n");
 	}
 
-	printf( "reconnect database success£¡\n" );
+	printf( "reconnect database successï¿½ï¿½\n" );
 	LG2("util_db_error", "reconnect database success!\n");
 	if (g_cchLogUtilDb == 1)
 		LG2("util_db", "reconnect database successfully\n");
@@ -150,7 +247,7 @@ bool cfl_db::_reconnt()
 		++ it;
 	}
 
-	printf( "reconnect database ok£¡\n" );
+	printf( "reconnect database okï¿½ï¿½\n" );
 	LG2("util_db_error", "reconnect database ok!\n");
 	return true;
 }
@@ -204,7 +301,9 @@ bool cfl_db::_connect(string& errinfo)
 		{
 			handle_err(_hdbc, SQL_HANDLE_DBC, sqlret);
 
-            errinfo = "Unable to connect database\n";
+			errinfo = "Unable to connect database (server=" + _server + " database=" + _database +
+					  " role=" + _userid + ") " + diag_text(_hdbc, SQL_HANDLE_DBC) + "\n";
+			LG2("util_db_error", "%s", errinfo.c_str());
 			SQLFreeHandle(SQL_HANDLE_DBC, _hdbc);
 			SQLFreeHandle(SQL_HANDLE_ENV, _henv);
 			ret = false;
@@ -230,18 +329,14 @@ bool cfl_db::_connect(string& errinfo)
         sqlret = SQLSetConnectAttr(_hdbc, SQL_ATTR_CONNECTION_TIMEOUT,
 								   (void *)10, 0);
 
-		if (DBFAIL(sqlret))
+		if (!_apply_client_encoding(errinfo))
 		{
-			handle_err(_hdbc, SQL_HANDLE_DBC, sqlret);
-
-            errinfo = "Unable set timeout to database\n";
+			SQLDisconnect(_hdbc);
 			SQLFreeHandle(SQL_HANDLE_DBC, _hdbc);
 			SQLFreeHandle(SQL_HANDLE_ENV, _henv);
 			ret = false;
 			break;
 		}
-
-		//exec_sql_direct(_openDatabase.c_str());
 
 		// Set connect flag...
 		_connected = true;
@@ -323,6 +418,15 @@ bool cfl_db::connect(const char* source, const char* userid, const char* passwd,
     return ret;
 }
 
+static string pg_server_attrs(const char* server)
+{
+	string s(server);
+	size_t colon = s.rfind(':');
+	if (colon != string::npos && colon + 1 < s.size() && s.find_first_not_of("0123456789", colon + 1) == string::npos)
+		return "SERVER=" + s.substr(0, colon) + ";PORT=" + s.substr(colon + 1);
+	return "SERVER=" + s;
+}
+
 bool cfl_db::connect(const char* servername, const char* database, const char* userid, const char* passwd,
                      string& err_info)
 {
@@ -332,16 +436,16 @@ bool cfl_db::connect(const char* servername, const char* database, const char* u
         return false;
     }
 
-	char conn_str[1024];    
-    sprintf(conn_str, "DRIVER={SQL Server};SERVER=%s;UID=%s;PWD=%s;DATABASE=%s",
-            servername, userid, passwd, database);
+	char conn_str[1024];
+    _snprintf(conn_str, sizeof conn_str, "DRIVER={PostgreSQL ANSI};%s;UID=%s;PWD=%s;DATABASE=%s",
+            pg_server_attrs(servername).c_str(), userid, passwd, database);
+	conn_str[sizeof conn_str - 1] = 0;
 
 	// Save connect string
 	_connstr = conn_str;
-
-	// Add by lark.li 20080902 begin
-	_openDatabase = string("use ") + string(database) + string(";");
-	// End
+	_server = servername;
+	_database = database;
+	_userid = userid;
 
 	return _connect(err_info);
 }
@@ -386,6 +490,7 @@ RECONNECT:
 		}
 
 		sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql, SQL_NTS);
+		record_rowcount(hstmt, sqlret);
 		switch (sqlret)
 		{
 		case SQL_SUCCESS_WITH_INFO:
@@ -521,37 +626,26 @@ void cfl_rs::notify_reconn(cfl_db* db)
 
 int cfl_rs::get_affected_rows()
 {
-	string	 l_buf[1];
-	int		 l_affected_rows	=0;
-	const char	*param		=" @@ROWCOUNT ";
-	string	 l_tbl_name =_tbl_name;
-	_tbl_name			="";
-	bool l_ret = _get_row(l_buf,1,param,0,&l_affected_rows);
-	_tbl_name			=l_tbl_name;
-	if(!l_ret)
-	{
-		return -1;	//SQL´íÎó
-	}else if(l_affected_rows !=1)
-	{
-		return -2;	//»ñÈ¡ÖµÐÐÊý´íÎó
-	}
-	return atoi(l_buf[0].c_str());
+	// The rows-affected count of the last statement on this connection,
+	// taken from ODBC (SQLRowCount) when that statement ran.
+	return _db->last_rowcount();
 }
+
 int cfl_rs::get_identity()
 {
 	string	 l_buf[1];
 	int		 l_affected_rows	=0;
-	const char	*param		=" ISNULL(@@IDENTITY,0) ";
+	const char	*param		=" coalesce(lastval(),0) ";
 	string	 l_tbl_name =_tbl_name;
 	_tbl_name			="";
 	bool l_ret = _get_row(l_buf,1,param,0,&l_affected_rows);
 	_tbl_name			=l_tbl_name;
 	if(!l_ret)
 	{
-		return -1;	//SQL´íÎó
+		return -1;
 	}else if(l_affected_rows !=1)
 	{
-		return -2;	//»ñÈ¡ÖµÐÐÊý´íÎó
+		return -2;
 	}
 	return atoi(l_buf[0].c_str());
 }
@@ -564,28 +658,7 @@ bool cfl_rs::_get_bin_field(char* field_text, int& len, char* param, char* filte
     int i = 0;
 
     try {
-        if (param == NULL) {
-            sprintf(sql, "select * from %s", _tbl_name.c_str());
-        } else {
-		    if (_tbl_name.length() !=0) {
-	            sprintf(sql, "select %s from %s", param, _tbl_name.c_str());
-		    } else {
-			    sprintf(sql, "select %s",param);
-		    }
-        }
-
-        if ((strstr(param, "@@ROWCOUNT") == NULL) &&
-            (strstr(param, "@@rowcount") == NULL) &&
-            (strstr(_tbl_name.c_str(), "(nolock)") == NULL) &&
-            (strstr(_tbl_name.c_str(), "(NOLOCK)") == NULL)) {
-            strcat(sql, " (nolock) ");
-        }
-
-        if (filter == NULL) {
-        } else {
-            strcat(sql, " where ");
-            strcat(sql, filter);
-        }
+        build_select(sql, sizeof sql, _tbl_name, param, filter, " where ");
     } catch (...) {
 		if (g_cchLogUtilDb == 1)
 	        LG2("util_db", "exception raised from _get_row exec\n");
@@ -597,7 +670,7 @@ bool cfl_rs::_get_bin_field(char* field_text, int& len, char* param, char* filte
 
 RECONNECT:
 
-    // Ö´ÐÐ²éÑ¯²Ù×÷
+    // Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
     SQLRETURN sqlret;
     SQLHSTMT hstmt = SQL_NULL_HSTMT;
     SQLSMALLINT col_num = 0;
@@ -623,6 +696,7 @@ RECONNECT:
             }
 
             sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql, SQL_NTS);
+            _db->record_rowcount(hstmt, sqlret);
             if (DBFAIL(sqlret))
             {
                 if( handle_err(hstmt, SQL_HANDLE_STMT, sqlret, sql, true) )
@@ -668,10 +742,10 @@ RECONNECT:
         } catch (...) {if (g_cchLogUtilDb == 1) LG2("util_db", "exception raised from _get_row fetch\n"); break;}
 
         try {
-            // ¿½±´Êý¾Ý
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (found)
             {
-                // È¡Êý¾Ý
+                // È¡ï¿½ï¿½ï¿½ï¿½
 				len = _buf_len[0];
                 if (len == SQL_NULL_DATA)
                 {
@@ -687,7 +761,7 @@ RECONNECT:
             }
             else
             {
-                // Ã»ÓÐÈ¡µ½Êý¾Ý
+                // Ã»ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (affect_rows != NULL)
                     *affect_rows = 0;
             }
@@ -719,28 +793,7 @@ bool cfl_rs::_get_row(string field_text[], int field_max_cnt, const char* param,
     int i = 0;
 
     try {
-        if (param == NULL) {
-            sprintf(sql, "select * from %s", _tbl_name.c_str());
-        } else {
-		    if (_tbl_name.length() !=0) {
-	            sprintf(sql, "select %s from %s", param, _tbl_name.c_str());
-		    } else {
-			    sprintf(sql, "select %s",param);
-		    }
-        }
-
-        if ((strstr(param, "@@ROWCOUNT") == NULL) &&
-            (strstr(param, "@@rowcount") == NULL) &&
-            (strstr(_tbl_name.c_str(), "(nolock)") == NULL) &&
-            (strstr(_tbl_name.c_str(), "(NOLOCK)") == NULL)) {
-            strcat(sql, " (nolock) ");
-        }
-
-        if (filter == NULL) {
-        } else {
-            strcat(sql, " where ");
-            strcat(sql, filter);
-        }
+        build_select(sql, sizeof sql, _tbl_name, param, filter, " where ");
     } catch (...) {
 		if (g_cchLogUtilDb == 1)
 	        LG2("util_db", "exception raised from _get_row exec\n");
@@ -752,7 +805,7 @@ bool cfl_rs::_get_row(string field_text[], int field_max_cnt, const char* param,
 
 RECONNECT:
 
-    // Ö´ÐÐ²éÑ¯²Ù×÷
+    // Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
     SQLRETURN sqlret;
     SQLHSTMT hstmt = SQL_NULL_HSTMT;
     SQLSMALLINT col_num = 0;
@@ -778,6 +831,7 @@ RECONNECT:
             }
 
             sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql, SQL_NTS);
+            _db->record_rowcount(hstmt, sqlret);
             if (DBFAIL(sqlret))
             {
                 if( handle_err(hstmt, SQL_HANDLE_STMT, sqlret, sql, true) )
@@ -828,10 +882,10 @@ RECONNECT:
         } catch (...) {if (g_cchLogUtilDb == 1) LG2("util_db", "exception raised from _get_row fetch\n"); break;}
 
         try {
-            // ¿½±´Êý¾Ý
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (found)
             {
-                // È¡Êý¾Ý
+                // È¡ï¿½ï¿½ï¿½ï¿½
                 for (i = 0; i < col_num; ++ i)
                 {
                     if (_buf_len[i] == SQL_NULL_DATA)
@@ -849,7 +903,7 @@ RECONNECT:
             }
             else
             {
-                // Ã»ÓÐÈ¡µ½Êý¾Ý
+                // Ã»ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (affect_rows != NULL)
                     *affect_rows = 0;
             }
@@ -880,29 +934,7 @@ bool cfl_rs::_get_row3(string field_text[], int field_max_cnt, const char* param
     int i = 0;
 
     try {
-        if (param == NULL)
-        {
-            sprintf(sql, "select * from %s", _tbl_name.c_str());
-        }
-        else
-        {
-            if(_tbl_name.length() !=0)
-            {
-                sprintf(sql, "select %s from %s", param, _tbl_name.c_str());
-            }else
-            {
-                sprintf(sql, "select %s",param);
-            }
-        }
-
-        if (filter == NULL)
-        {
-        }
-        else
-        {
-            strcat(sql, " where ");
-            strcat(sql, filter);
-        }
+        build_select(sql, sizeof sql, _tbl_name, param, filter, " where ");
     } catch (...) {if (g_cchLogUtilDb == 1) LG2("util_db", "exception raised from _get_row3 exec\n"); return false;}
 
 	if (g_cchLogUtilDb == 1)
@@ -910,7 +942,7 @@ bool cfl_rs::_get_row3(string field_text[], int field_max_cnt, const char* param
 
 RECONNECT:
 
-    // Ö´ÐÐ²éÑ¯²Ù×÷
+    // Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
     SQLRETURN sqlret;
     SQLHSTMT hstmt = SQL_NULL_HSTMT;
     SQLSMALLINT col_num = 0;
@@ -937,6 +969,7 @@ RECONNECT:
             }
 
             sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql, SQL_NTS);
+            _db->record_rowcount(hstmt, sqlret);
             if (DBFAIL(sqlret))
             {
                 if( handle_err(hstmt, SQL_HANDLE_STMT, sqlret, sql, true) )
@@ -987,10 +1020,10 @@ RECONNECT:
         } catch (...) {if (g_cchLogUtilDb == 1) LG2("util_db", "exception raised from _get_row3 fetch\n"); break;}
 
         try {
-            // ¿½±´Êý¾Ý
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (found)
             {
-                // È¡Êý¾Ý
+                // È¡ï¿½ï¿½ï¿½ï¿½
                 for (i = 0; i < col_num; ++ i)
                 {
                     if (_buf_len[i] == SQL_NULL_DATA)
@@ -1014,7 +1047,7 @@ RECONNECT:
             }
             else
             {
-                // Ã»ÓÐÈ¡µ½Êý¾Ý
+                // Ã»ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (affect_rows != NULL)
                     *affect_rows = 0;
             }
@@ -1046,29 +1079,7 @@ bool cfl_rs::_get_rowOderby(string field_text[], int field_max_cnt, const char* 
     int i = 0;
 
     try {
-        if (param == NULL)
-        {
-            sprintf(sql, "select * from %s", _tbl_name.c_str());
-        }
-        else
-        {
-            if(_tbl_name.length() !=0)
-            {
-                sprintf(sql, "select %s from %s", param, _tbl_name.c_str());
-            }else
-            {
-                sprintf(sql, "select %s",param);
-            }
-        }
-
-        if (filter == NULL)
-        {
-        }
-        else
-        {
-            strcat(sql, " ");
-            strcat(sql, filter);
-        }
+        build_select(sql, sizeof sql, _tbl_name, param, filter, " ");
     } catch (...) {if (g_cchLogUtilDb == 1) LG2("util_db", "exception raised from _get_row3 exec\n"); return false;}
 
 	if (g_cchLogUtilDb == 1)
@@ -1076,7 +1087,7 @@ bool cfl_rs::_get_rowOderby(string field_text[], int field_max_cnt, const char* 
 
 RECONNECT:
 
-    // Ö´ÐÐ²éÑ¯²Ù×÷
+    // Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
     SQLRETURN sqlret;
     SQLHSTMT hstmt = SQL_NULL_HSTMT;
     SQLSMALLINT col_num = 0;
@@ -1103,6 +1114,7 @@ RECONNECT:
             }
 
             sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql, SQL_NTS);
+            _db->record_rowcount(hstmt, sqlret);
             if (DBFAIL(sqlret))
             {
                 if( handle_err(hstmt, SQL_HANDLE_STMT, sqlret, sql, true) )
@@ -1153,10 +1165,10 @@ RECONNECT:
         } catch (...) {if (g_cchLogUtilDb == 1) LG2("util_db", "exception raised from _get_row3 fetch\n"); break;}
 
         try {
-            // ¿½±´Êý¾Ý
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (found)
             {
-                // È¡Êý¾Ý
+                // È¡ï¿½ï¿½ï¿½ï¿½
                 for (i = 0; i < col_num; ++ i)
                 {
                     if (_buf_len[i] == SQL_NULL_DATA)
@@ -1180,7 +1192,7 @@ RECONNECT:
             }
             else
             {
-                // Ã»ÓÐÈ¡µ½Êý¾Ý
+                // Ã»ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (affect_rows != NULL)
                     *affect_rows = 0;
             }
@@ -1229,6 +1241,7 @@ RECONNECT:
 		}
 
 		sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql, SQL_NTS);
+		_db->record_rowcount(hstmt, sqlret);
 		switch (sqlret)
 		{
 		case SQL_SUCCESS_WITH_INFO:
@@ -1301,6 +1314,7 @@ RECONNECT:
         }
 
         sqlret = SQLExecute(hstmt);
+        _db->record_rowcount(hstmt, sqlret);
         switch (sqlret)
         {
         case SQL_SUCCESS_WITH_INFO:
@@ -1381,6 +1395,7 @@ RECONNECT:
         }
 
         sqlret = SQLExecute(hstmt);
+        _db->record_rowcount(hstmt, sqlret);
         switch (sqlret)
         {
         case SQL_SUCCESS_WITH_INFO:
@@ -1426,7 +1441,7 @@ bool cfl_rs::getalldata(const char* sql, vector< vector< string > >& data, unsig
 {
 	bool ret;
 
-    // Ö´ÐÐ²éÑ¯²Ù×÷
+    // Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
     SQLRETURN sqlret;
     SQLHSTMT hstmt = SQL_NULL_HSTMT;
     SQLSMALLINT col_num = 0;
@@ -1451,6 +1466,7 @@ bool cfl_rs::getalldata(const char* sql, vector< vector< string > >& data, unsig
             }
 
             sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql, SQL_NTS);
+            _db->record_rowcount(hstmt, sqlret);
             if (sqlret != SQL_SUCCESS)
             {
                 handle_err(hstmt, SQL_HANDLE_STMT, sqlret, sql);
@@ -1511,7 +1527,7 @@ bool cfl_rs::get_page_data(char* tablename, char* param, int pagesize, int pagei
 {
 	bool ret;
 
-    // Ö´ÐÐ²éÑ¯²Ù×÷
+    // Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
     SQLRETURN sqlret;
     SQLHSTMT hstmt = SQL_NULL_HSTMT;
     SQLSMALLINT col_num = 0;
@@ -1647,7 +1663,7 @@ RECONNECT:
 	if (g_cchLogUtilDb == 1)
 	    LG2("util_db", "get() [SQL]: [%s]\n", sql);
 
-    // Ö´ÐÐ²éÑ¯²Ù×÷
+    // Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
     SQLRETURN sqlret;
     SQLHSTMT hstmt = SQL_NULL_HSTMT;
     SQLSMALLINT col_num = 0;
@@ -1674,6 +1690,7 @@ RECONNECT:
             }
 
             sqlret = SQLExecDirect(hstmt, (SQLCHAR *)sql, SQL_NTS);
+            _db->record_rowcount(hstmt, sqlret);
             if (DBFAIL(sqlret))
             {
                 if( handle_err(hstmt, SQL_HANDLE_STMT, sqlret, sql, true) )
@@ -1719,10 +1736,10 @@ RECONNECT:
         } catch (...) {if (g_cchLogUtilDb == 1) LG2("util_db", "exception raised from _get_row fetch\n"); break;}
 
         try {
-            // ¿½±´Êý¾Ý
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             if (found)
             {
-                // È¡Êý¾Ý
+                // È¡ï¿½ï¿½ï¿½ï¿½
                 memcpy((void *)pdata, _buf[0], len);
             }
             else
@@ -1859,7 +1876,7 @@ bool friend_tbl::get_friend_dat(friend_dat* farray, int& array_num, unsigned int
     char sql[SQL_MAXLEN];
 	sprintf(sql, query_friend_format, atorID, atorID, atorID, atorID);
 
-    // Ö´ÐÐ²éÑ¯²Ù×÷
+    // Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
     SQLRETURN sqlret;
     SQLHSTMT hstmt = SQL_NULL_HSTMT;
     SQLSMALLINT col_num = 0;
@@ -1961,7 +1978,7 @@ bool friend_tbl::get_friend_dat(friend_dat* farray, int& array_num, unsigned int
 	char sql[SQL_MAXLEN];
 	sprintf(sql, query_friend_format, atorID, atorID, atorID);
 
-	// Ö´ÐÐ²éÑ¯²Ù×÷
+	// Ö´ï¿½Ð²ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
 	SQLRETURN sqlret = exec_sql_direct(sql, false);
 	if (DBOK(sqlret))
 	{
@@ -2086,7 +2103,7 @@ bool friend_tbl::get_gm_dat(friend_dat* farray, int& array_num, bool* drop)
                 farray[i].motto = (char const*)_buf[4];
             }
 
-            array_num = i; // È¡³öµÄÐÐÊý
+            array_num = i; // È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
             SQLFreeStmt(hstmt, SQL_CLOSE);
             SQLFreeStmt(hstmt, SQL_RESET_PARAMS);

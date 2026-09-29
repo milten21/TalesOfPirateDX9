@@ -142,6 +142,20 @@ void InitDBSvrConnect(GroupServerApp &gpapp)
 	const std::string	l_passwd = gpapp.m_cfg["Database"]["Password"];
 	gpapp.m_cfg_db.enable_errinfo();
 
+	std::string l_encoding = "WIN1252";
+	try
+	{
+		l_encoding = gpapp.m_cfg["Database"]["ClientEncoding"];
+	}
+	catch(excp &)
+	{
+	}
+	if(!gpapp.m_cfg_db.set_client_encoding(l_encoding.c_str()))
+	{
+		LG("group_sql", "invalid ClientEncoding [%s]\n", l_encoding.c_str());
+		THROW_EXCP(excpDB,"Invalid ClientEncoding in [Database]");
+	}
+
 	LG("group_sql", "begin connect database, ip = [%s], db = [%s]\n", l_ip.c_str(), l_db.c_str());
 	if(!gpapp.m_cfg_db.connect(l_ip.c_str(),l_db.c_str(),l_login.c_str(),l_passwd.c_str(),l_errinfo))
 	{

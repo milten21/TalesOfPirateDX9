@@ -21,7 +21,7 @@ public:
     	cValidGateCnt = 0;
 	}
 
-    char  szGateIP[MAX_GROUP_GATE][16];
+    char  szGateIP[MAX_GROUP_GATE][32];
 	char  szRegion[16];
 	char  cValidGateCnt;
 };

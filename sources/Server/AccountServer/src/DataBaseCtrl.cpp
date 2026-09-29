@@ -9,6 +9,7 @@
 #include "inifile.h"
 #include "GlobalVariable.h"
 #include "AccountServer2.h"
+#include "AccountSql.h"
 #include "NetCommand.h"
 #include "NetRetCode.h"
 
@@ -42,11 +43,27 @@ bool CDataBaseCtrl::CreateObject()
 		m_strServerDB = is["db"];
 		m_strUserID = is["userid"];
 		m_strUserPwd = is["passwd"];
+		try
+		{
+			m_strClientEncoding = is["client_encoding"];
+		}
+		catch (dbc::excp&)
+		{
+			// optional setting, WIN1252 unless configured
+		}
 	}
 	catch (dbc::excp& e)
 	{
 		cout << e.what() << endl;
 		return false;
+	}
+	{
+		CSQLDatabase encodingCheck;
+		if (!encodingCheck.SetClientEncoding(m_strClientEncoding.c_str()))
+		{
+			cout << "Invalid client_encoding in [db]: " << m_strClientEncoding << endl;
+			return false;
+		}
 	}
 
 	printf("Connecting database [%s : %s]... ", m_strServerIP.c_str(), m_strServerDB.c_str());
@@ -65,10 +82,9 @@ bool CDataBaseCtrl::CreateObject()
 		//}
 		//else
 		{
-			//m_pDataBase->ExecuteSQL("update account_login set login_status=0, login_group='', enable_login_time=getdate()");
-			m_pDataBase->ExecuteSQL("select ban from account_login");    //
+			m_pDataBase->ExecuteSQL(account_sql::check_account_login());    //
 		}
-		m_pDataBase->ExecuteSQL("select log_id, user_id, user_name, login_time, logout_time, login_ip from user_log");
+		m_pDataBase->ExecuteSQL(account_sql::check_user_log());
 	}
 	catch (CSQLException* se)
 	{
@@ -87,10 +103,7 @@ bool CDataBaseCtrl::CreateObject()
 }
 
 bool CDataBaseCtrl::InsertUser(std::string username, std::string password, std::string email){
-	char buf[1024];
-	sprintf(buf, "insert into account_login(name,password,sid,total_live_time,email)  values('%s','%s',0,0,'%s');",
-		 username.c_str(), password.c_str(),email.c_str());
-	string strSQL = buf;
+	string strSQL = account_sql::insert_user(username.c_str(), password.c_str(), email.c_str());
 	if (!IsConnect()) Connect();
 
 	if (IsConnect())
@@ -117,9 +130,7 @@ bool CDataBaseCtrl::InsertUser(std::string username, std::string password, std::
 
 bool CDataBaseCtrl::UpdatePassword(string user, string pass)
 {
-	char buf[1024];
-	sprintf(buf, "update account_login set password= '%s' where name = '%s'", pass.c_str(), user.c_str());
-	string strSQL = buf;
+	string strSQL = account_sql::update_password(user.c_str(), pass.c_str());
 	if (!IsConnect()) Connect();
 
 	if (IsConnect())
@@ -170,12 +181,11 @@ bool CDataBaseCtrl::Connect()
 	}
 
 	//连接数据库
-	char buf[512] = {0};
-	sprintf(buf, "DRIVER={SQL Server};SERVER=%s;UID=%s;PWD=%s;DATABASE=%s", 
-		m_strServerIP.c_str(), m_strUserID.c_str(), m_strUserPwd.c_str(), m_strServerDB.c_str());
-
-	if (!m_pDataBase->Open(buf))
+	std::string err;
+	m_pDataBase->SetClientEncoding(m_strClientEncoding.c_str());
+	if (!m_pDataBase->OpenPostgres(m_strServerIP.c_str(), m_strServerDB.c_str(), m_strUserID.c_str(), m_strUserPwd.c_str(), err))
 	{
+		LG("DBExcp", "CDataBaseCtrl::Connect() %s\n", err.c_str());
 		SAFE_DELETE(m_pDataBase);
 		return false;
 	}
@@ -224,10 +234,7 @@ bool CDataBaseCtrl::UserLogin(int nUserID, string strUserName, string strIP)
         }
     }
 
-	char buf[1024];
-	sprintf(buf,"insert into user_log (user_id, user_name, login_time, login_ip) values (%d, '%s', getdate(), '%s')",
-			nUserID, strUserName.c_str(), strIP.c_str());
-	string strSQL=buf;
+	string strSQL=account_sql::user_log_login(nUserID, strUserName.c_str(), strIP.c_str());
 	if (!IsConnect()) Connect();
 
 	if (IsConnect())
@@ -255,9 +262,7 @@ bool CDataBaseCtrl::UserLogin(int nUserID, string strUserName, string strIP)
 
 bool CDataBaseCtrl::UserLogout(int nUserID)
 {
-	char buf[1024];
-	sprintf(buf,"update user_log set logout_time=getdate() where log_id=(select max(log_id) from user_log where user_id=%d)", nUserID);
-	string strSQL=buf;
+	string strSQL=account_sql::user_log_logout(nUserID);
 	if (!IsConnect()) Connect();
 
 	if (IsConnect())
@@ -291,9 +296,7 @@ bool CDataBaseCtrl::KickUser(std::string strUserName)
 	}
 	//LG("AccountServer", "CDataBaseCtrl::KickUser: UserName=[%s] \n", strUserName.c_str());
 
-	char buf[1024];
-	sprintf(buf,"select id, login_group, last_logout_time from account_login where name='%s'", strUserName.c_str());
-	string strSQL=buf;
+	string strSQL = account_sql::select_user_state(strUserName.c_str());
 	if (!IsConnect()) Connect();
 
 	std::string strUserLeave = "";
@@ -371,8 +374,7 @@ void CDataBaseCtrl::SetExpScale(std::string strUserName, long time)
 		return;
 	}
 
-    char strSQL[1024];
-	sprintf(strSQL,"select id, login_group, last_logout_time from account_login where name='%s'", strUserName.c_str());
+	string strSQL = account_sql::select_user_state(strUserName.c_str());
 	if (!IsConnect()) Connect();
 
 	std::string strUserLeave = "";
@@ -382,7 +384,7 @@ void CDataBaseCtrl::SetExpScale(std::string strUserName, long time)
 		try
 		{
 			CSQLRecordset rs(*m_pDataBase);
-			rs.SQLExecDirect(strSQL);
+			rs.SQLExecDirect(strSQL.c_str());
 			if (rs.SQLFetch())
 			{
 				int nUserID=rs.nSQLGetData(1);
@@ -498,9 +500,7 @@ bool CDataBaseCtrl::OperAccountBan(std::string strActName, int iban  )//Add by s
 		LG("AccountServer", "CDataBaseCtrl::OperAccountBan: parameter strActName is empty or null\n");
 		return false;
 	}
-	char buf[1024];
-	_snprintf_s(buf, sizeof(buf),_TRUNCATE, "update account_login set ban = %i where name = '%s'", iban, strActName.c_str() );
-	string strSQL=buf;
+	string strSQL = account_sql::set_ban(strActName.c_str(), iban);
 	if (!IsConnect()) Connect();
 	if (IsConnect())
 	{

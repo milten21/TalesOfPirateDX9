@@ -1053,9 +1053,8 @@ void CSQLBaseWhere::SetWhere( const char* columnName, bool isValidTime, int mont
     string cs;
     if ( ! isValidTime )
     {
-        cs = "isnull(";
-        cs += columnName;
-        cs += ")";
+        cs = columnName;
+        cs += " is null";
     }
     else
     {
@@ -1079,9 +1078,8 @@ void CSQLBaseWhere::SetWhere( const char* columnName, const char* a_value,
     string value = a_value;
     if ( value == "" || value == "NULL" || value == "null" )
     {
-        _where += "isnull(";
         _where += columnName;
-        _where += ")";
+        _where += " is null";
         return;
     }
 
@@ -1141,7 +1139,9 @@ _rc( SQL_SUCCESS ),
 _henv( 0 ),
 _hdbc( 0 ),
 _hstmt(0),
-_autoCommit( true )
+_autoCommit( true ),
+_clientEncoding( "WIN1252" ),
+_lastRows( 0 )
 {
     //[2003-09-06] remove connection code and move below
 }
@@ -1286,6 +1286,81 @@ bool CSQLDatabase::SQLConnect(char const* conn_instr)
     return _isOpen;
 }
 
+bool CSQLDatabase::SetClientEncoding( const char* encoding )
+{
+    if ( encoding == NULL || *encoding == 0 )
+        return false;
+    for ( const char* p = encoding; *p; ++p )
+    {
+        bool ok = ( *p >= 'A' && *p <= 'Z' ) || ( *p >= 'a' && *p <= 'z' ) ||
+                  ( *p >= '0' && *p <= '9' ) || *p == '_' || *p == '-';
+        if ( !ok )
+            return false;
+    }
+    _clientEncoding = encoding;
+    return true;
+}
+
+static string PgDiagText( SQLSMALLINT handleType, SQLHANDLE h )
+{
+    SQLCHAR state[SQL_SQLSTATE_SIZE + 1] = {0};
+    SQLCHAR msg[SQL_MAX_MESSAGE_LENGTH + 1] = {0};
+    SQLINTEGER native = 0;
+    SQLSMALLINT len = 0;
+    if ( SQLGetDiagRec( handleType, h, 1, state, &native, msg, SQL_MAX_MESSAGE_LENGTH, &len ) != SQL_SUCCESS )
+        return "";
+    return string( "[" ) + (char*)state + "] " + (char*)msg;
+}
+
+static string pg_server_attrs(const char* server)
+{
+	string s(server);
+	size_t colon = s.rfind(':');
+	if (colon != string::npos && colon + 1 < s.size() && s.find_first_not_of("0123456789", colon + 1) == string::npos)
+		return "SERVER=" + s.substr(0, colon) + ";PORT=" + s.substr(colon + 1);
+	return "SERVER=" + s;
+}
+
+bool CSQLDatabase::OpenPostgres( const char* server, const char* database, const char* user,
+                                 const char* password, std::string& err )
+{
+    char connStr[1024];
+    _snprintf( connStr, sizeof connStr, "DRIVER={PostgreSQL ANSI};%s;UID=%s;PWD=%s;DATABASE=%s",
+               pg_server_attrs( server ).c_str(), user, password, database );
+    connStr[sizeof connStr - 1] = 0;
+
+    string what = string( "server=" ) + server + " database=" + database + " role=" + user;
+
+    if ( ! Open( connStr ) )
+    {
+        err = "Unable to connect database (" + what + ") ";
+        if ( _hdbc )
+            err += PgDiagText( SQL_HANDLE_DBC, _hdbc );
+        else if ( _henv )
+            err += PgDiagText( SQL_HANDLE_ENV, _henv );
+        if ( _hdbc ) { SQLFreeHandle( SQL_HANDLE_DBC, _hdbc ); _hdbc = NULL; }
+        if ( _henv ) { SQLFreeHandle( SQL_HANDLE_ENV, _henv ); _henv = NULL; }
+        return false;
+    }
+
+    string sql = "SET client_encoding TO '" + _clientEncoding + "'";
+    SQLHSTMT hstmt = NULL;
+    SQLRETURN rc = SQLAllocHandle( SQL_HANDLE_STMT, _hdbc, &hstmt );
+    if ( rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO )
+        rc = SQLExecDirect( hstmt, (SQLCHAR*)sql.c_str(), SQL_NTS );
+    if ( ! ( rc == SQL_SUCCESS || rc == SQL_SUCCESS_WITH_INFO ) )
+    {
+        err = "Unable to set client_encoding to " + _clientEncoding + " (" + what + ") ";
+        if ( hstmt )
+            err += PgDiagText( SQL_HANDLE_STMT, hstmt );
+        if ( hstmt ) SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
+        Close();
+        return false;
+    }
+    SQLFreeHandle( SQL_HANDLE_STMT, hstmt );
+    return true;
+}
+
 bool CSQLDatabase::ExecuteSQL( const char* a_szStmt )
 {
     _rc = ::SQLAllocHandle( SQL_HANDLE_STMT, _hdbc, &_hstmt );
@@ -1297,8 +1372,13 @@ bool CSQLDatabase::ExecuteSQL( const char* a_szStmt )
     // returns: SQL_SUCCESS, SQL_SUCCESS_WITH_INFO, SQL_NEED_DATA, 
     // SQL_STILL_EXECUTING, SQL_ERROR, SQL_NO_DATA, or SQL_INVALID_HANDLE   
     _rc = ::SQLExecDirect( _hstmt,( unsigned char* )a_szStmt, SQL_NTS );
+    _lastRows = 0;
     if ( _rc == SQL_SUCCESS || _rc == SQL_SUCCESS_WITH_INFO )
     {
+        SQLLEN nRows = 0;
+        if ( SQL_SUCCEEDED( ::SQLRowCount( _hstmt, &nRows ) ) && nRows > 0 )
+            _lastRows = (int)nRows;
+
         // COMMIT the transaction
         if ( _autoCommit )
         {
@@ -1325,10 +1405,7 @@ bool CSQLDatabase::ExecuteSQL( const char* a_szStmt )
 
 int CSQLDatabase::GetAffectedRows()
 {
-	SQLLEN nRows = 0;
-
-	_rc = ::SQLRowCount(_hstmt, &nRows);
-	return nRows;
+	return _lastRows;
 }
 
 int CSQLDatabase::GetSQLInt( const char * a_szStmt, int a_nDefault )
