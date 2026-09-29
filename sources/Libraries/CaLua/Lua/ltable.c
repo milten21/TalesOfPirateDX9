@@ -193,7 +193,9 @@ static void computesizes  (int nums[], int ntotal, int *narray, int *nhash) {
   }
   lua_assert(na <= *narray && *narray <= ntotal);
   *nhash = ntotal - na;
-  *narray = (n == -1) ? 0 : twoto(n);
+  /* test `na' (0 exactly when n == -1), not `n == -1': MSVC 19.51 optimizer
+     drops that guard and shifts anyway, giving 1<<31 and a crash in resize */
+  *narray = (na == 0) ? 0 : twoto(n);
   lua_assert(na <= *narray && na >= *narray/2);
 }
 
