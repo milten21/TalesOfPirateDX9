@@ -23,6 +23,7 @@ void CGameConfig::SetDefault()
 	strcpy(m_szDBIP,  "192.168.1.233");
 	strcpy(m_szDBUsr,  "usr");
 	strcpy(m_szDBPass, "22222"); 
+	strcpy(m_szDBClientEncoding, "WIN1252");
 
 	// Add by lark.li 20080321 begin
 	memset(m_szTradeLogDBIP, 0, sizeof(m_szTradeLogDBIP));
@@ -209,6 +210,10 @@ bool CGameConfig::Load(char *pszFileName)
 		else if(strKey=="db_name")
 		{
 			strncpy_s( m_szDBName, sizeof(m_szDBName), strValue.c_str(), _TRUNCATE );
+		}
+		else if(strKey=="db_client_encoding")
+		{
+			strncpy_s( m_szDBClientEncoding, sizeof(m_szDBClientEncoding), strValue.c_str(), _TRUNCATE );
 		}
 		else if(strKey=="log_ai")
 		{

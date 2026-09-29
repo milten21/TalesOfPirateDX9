@@ -2,6 +2,7 @@
 #include "Character.h"
 #include "Player.h"
 #include "GameDB.h"
+#include "GameSql.h"
 #include "ChaAttrType.h"
 #include "SubMap.h"
 #include "Config.h"
@@ -19,9 +20,8 @@ BOOL CTableCha::VerifyName(const char* pszName)
 {
 	T_B
 	string buf[1];
-	char param[] = "atorNome";
-	char filter[80]; sprintf(filter, "atorNome='%s'", pszName);
-	bool ret = _get_row(buf, 1, param, filter);
+	game_sql::Select q = game_sql::character_name_exists(pszName);
+	bool ret = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (ret && r1 > 0)
 	{
@@ -34,10 +34,8 @@ BOOL CTableCha::VerifyName(const char* pszName)
 std::string CTableCha::GetName(int cha_id) 
 {
 	string buf[1];
-	const auto param = "atorNome";
-	char filter[80]; 
-	sprintf(filter, "atorID = %d", cha_id);
-	bool ret = _get_row(buf, 1, param, filter);
+	game_sql::Select q = game_sql::character_name_by_id(cha_id);
+	bool ret = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	return ret ? buf[0] : "";
 }
 
@@ -69,11 +67,7 @@ char g_szMisCount[ROLE_MAXSIZE_DBMISCOUNT];
 
 bool CTableMaster::Init(void)
 {
-	sprintf(g_sql, "select \
-				   cha_id1, cha_id2, finish, relation\
-				   from %s \
-				   (nolock) where 1=2", \
-				   _get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::master));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -115,9 +109,8 @@ unsigned long CTableMaster::GetMasterDBID(CPlayer *pPlayer)
 	}
 
 	int nIndex = 0;
-	char param[] = "cha_id2";
-	char filter[80]; sprintf(filter, "cha_id1=%d", pPlayer->GetDBChaId());
-	int r = _get_row(g_buf, g_cnCol, param, filter);
+	game_sql::Select q = game_sql::master_of(pPlayer->GetDBChaId());
+	int r = _get_row(g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -131,10 +124,8 @@ unsigned long CTableMaster::GetMasterDBID(CPlayer *pPlayer)
 
 bool CTableMaster::IsMasterRelation(int masterID, int prenticeID)
 {
-	char param[] = "count(*)";
-	char filter[80]; 
-	sprintf(filter, "(cha_id1=%d) and (cha_id2=%d)", prenticeID, masterID);
-	int r = _get_row(g_buf, g_cnCol, param, filter);
+	game_sql::Select q = game_sql::master_relation_count(prenticeID, masterID);
+	int r = _get_row(g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -147,14 +138,7 @@ bool CTableMaster::IsMasterRelation(int masterID, int prenticeID)
 
 bool CTableCha::Init(void)
 {
-	sprintf(g_sql, "select \
-				atorID, atorNome, motto, icon, version, pk_ctrl, endeMem, ato_id, guild_id, guild_stat, guild_permission, job, degree, exp, \
-				hp, sp, ap, tp, bomd, str, dex, agi, con, sta, luk, sail_lv, sail_exp, sail_left_exp, live_lv, live_exp, map, main_map, map_x, map_y, radius, \
-				angle, olhe, skillbag, shortcut, mission, misrecord, mistrigger, miscount, birth, login_cha, live_tp, bank, \
-				delflag, operdate, skill_state, kitbag, kitbag_tmp, kb_locked, credit, store_item \
-				from %s \
-				(nolock) where 1=2", \
-				_get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::character));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
 		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
@@ -186,9 +170,8 @@ bool CTableCha::ShowExpRank(CCharacter* pCha, int count)
 	bool ret = false;
 
 
-	const char *sql_syntax = "select top %d atorNome,job,degree from %s where delflag =0 ORDER BY CASE WHEN (exp < 0) THEN (exp+4294967296) ELSE exp END DESC";
 	char sql[SQL_MAXLEN];
-	sprintf(sql, sql_syntax, count, _get_table());
+	game_sql::copy_to(sql, game_sql::exp_rank(_get_table(), count));
 
 	SQLRETURN sqlret;
 	SQLHSTMT hstmt = SQL_NULL_HSTMT;
@@ -285,9 +268,8 @@ bool CTableCha::ReadAllData(CPlayer *pPlayer, DWORD atorID)
 	}
 
 	int nIndex = 0;
-	char param[] = "ato_id, guild_stat, guild_id, hp, sp, exp, radius, angle, atorNome, motto, icon, version, pk_ctrl, degree, job, bomd, ap, tp, str, dex, agi, con, sta, luk, sail_lv, sail_exp, sail_left_exp, live_lv, live_exp, live_tp, main_map, map_x, map_y, birth, olhe, skillbag, shortcut, mission, misrecord, mistrigger, miscount, login_cha, kitbag, kitbag_tmp, map_mask, skill_state, bank, kb_locked, credit, store_item, extend, guild_permission, chatColour, IMP";
-	char filter[80]; sprintf(filter, "atorID=%d", atorID);
-	int r = _get_row(g_buf, g_cnCol, param, filter);
+	game_sql::Select q = game_sql::character_load(atorID);
+	int r = _get_row(g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	//LG("enter_map", "�����ݿ�ɹ���_get_row.\n");
 	LG("enter_map", "Loading database succeed��_get_row.\n");
@@ -694,24 +676,52 @@ bool CTableCha::SaveAllData(CPlayer *pPlayer, char chSaveType)
 	bool bWithPos = false;
 	if (pCCtrlCha->GetSubMap())
 		bWithPos = pCCtrlCha->GetSubMap()->CanSavePos();
-	if (bWithPos)
-		sprintf(g_sql, "update %s set \
-					hp=%d, sp=%d, exp=%s, map='%s', main_map='%s', map_x=%d, map_y=%d, radius=%d, angle=%d, pk_ctrl=%d, degree=%d, job='%s', bomd=%d, ap=%d, tp=%d, str=%d, dex=%d, agi=%d, con=%d, sta=%d, luk=%d, olhe='%s', skillbag='%s', \
-					shortcut='%s', mission='%s', misrecord='%s', mistrigger='%s', miscount='%s', birth='%s', login_cha='%s', \
-					sail_lv=%d, sail_exp=%d, sail_left_exp=%d, live_lv=%d, live_exp=%d, live_tp=%d, kb_locked=%d, credit=%d, store_item=%d, skill_state='%s', extend ='%s', IMP = '%d' \
-					where atorID=%d", \
-					_get_table(), \
-					hp, sp, str_exp, map, main_map, map_x, map_y, radius, angle, pk_ctrl, degree, job, bomd, ap, tp, str, dex, agi, con, sta, luk, g_look, g_skillbag, g_shortcut, g_szMisInfo, g_szRecord, g_szTrigger, g_szMisCount, szBirthName, szLoginCha, sail_lv, sail_exp, sail_left_exp, live_lv, live_exp, live_tp, nLocked, dwCredit, dwStoreItemID, g_skillstate, g_extendAttr, chaIMP, \
-					atorID);
-	else
-		sprintf(g_sql, "update %s set \
-					hp=%d, sp=%d, exp=%s, radius=%d, pk_ctrl=%d, degree=%d, job='%s', bomd=%d, ap=%d, tp=%d, str=%d, dex=%d, agi=%d, con=%d, sta=%d, luk=%d, olhe='%s', skillbag='%s', \
-					shortcut='%s', mission='%s', misrecord='%s', mistrigger='%s', miscount='%s', birth='%s', login_cha='%s', \
-					sail_lv=%d, sail_exp=%d, sail_left_exp=%d, live_lv=%d, live_exp=%d, live_tp=%d, kb_locked=%d, credit=%d, store_item=%d, skill_state='%s', extend ='%s', IMP = '%d' \
-					where atorID=%d", \
-					_get_table(), \
-					hp, sp, str_exp, radius, pk_ctrl, degree, job, bomd, ap, tp, str, dex, agi, con, sta, luk, g_look, g_skillbag, g_shortcut, g_szMisInfo, g_szRecord, g_szTrigger, g_szMisCount, szBirthName, szLoginCha, sail_lv, sail_exp, sail_left_exp, live_lv, live_exp, live_tp, nLocked, dwCredit, dwStoreItemID, g_skillstate, g_extendAttr, chaIMP, \
-					atorID);
+	game_sql::CharacterSave save = {};
+	save.with_pos = bWithPos;
+	save.atorID = atorID;
+	save.hp = hp;
+	save.sp = sp;
+	save.exp = str_exp;
+	save.map = map;
+	save.main_map = main_map;
+	save.map_x = map_x;
+	save.map_y = map_y;
+	save.radius = radius;
+	save.angle = angle;
+	save.pk_ctrl = pk_ctrl;
+	save.degree = degree;
+	save.job = job;
+	save.bomd = bomd;
+	save.ap = ap;
+	save.tp = tp;
+	save.str = str;
+	save.dex = dex;
+	save.agi = agi;
+	save.con = con;
+	save.sta = sta;
+	save.luk = luk;
+	save.olhe = g_look;
+	save.skillbag = g_skillbag;
+	save.shortcut = g_shortcut;
+	save.mission = g_szMisInfo;
+	save.misrecord = g_szRecord;
+	save.mistrigger = g_szTrigger;
+	save.miscount = g_szMisCount;
+	save.birth = szBirthName;
+	save.login_cha = szLoginCha;
+	save.sail_lv = sail_lv;
+	save.sail_exp = sail_exp;
+	save.sail_left_exp = sail_left_exp;
+	save.live_lv = live_lv;
+	save.live_exp = live_exp;
+	save.live_tp = live_tp;
+	save.kb_locked = nLocked;
+	save.credit = dwCredit;
+	save.store_item = dwStoreItemID;
+	save.skill_state = g_skillstate;
+	save.extend = g_extendAttr;
+	save.imp = chaIMP;
+	game_sql::copy_to(g_sql, game_sql::save_character(_get_table(), save));
 	//LG("enter_map", "��֯SQL���ɹ�.\n");
 	//dwOldTick = dwNowTick;
 	//dwNowTick = GetTickCount();
@@ -775,12 +785,7 @@ bool CTableCha::SavePos(CPlayer *pPlayer)
 	if (!pCha || !pCCtrlCha) return false;
 	DWORD atorID = pPlayer->GetDBChaId();
 
-	sprintf(g_sql, "update %s set \
-				map='%s', main_map='%s', map_x=%d, map_y=%d, angle=%d \
-				where atorID=%d", \
-				_get_table(), \
-				pCCtrlCha->GetBirthMap(), pCha->GetBirthMap(), pCha->GetPos().x, pCha->GetPos().y, pCha->GetAngle(), \
-				atorID);
+	game_sql::copy_to(g_sql, game_sql::save_position(_get_table(), pCCtrlCha->GetBirthMap(), pCha->GetBirthMap(), pCha->GetPos().x, pCha->GetPos().y, pCha->GetAngle(), atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -821,12 +826,7 @@ bool CTableCha::SaveMoney(CPlayer *pPlayer)
 	if (!pCha) return false;
 	DWORD atorID = pPlayer->GetDBChaId();
 
-	sprintf(g_sql, "update %s set \
-				bomd=%d \
-				where atorID=%d", \
-				_get_table(), \
-				(int)pCha->getAttr(ATTR_GD), \
-				atorID);
+	game_sql::copy_to(g_sql, game_sql::save_money(_get_table(), (int)pCha->getAttr(ATTR_GD), atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -866,12 +866,7 @@ bool CTableCha::SaveKBagDBID(CPlayer *pPlayer)
 	if (!pCha) return false;
 	DWORD atorID = pPlayer->GetDBChaId();
 
-	sprintf(g_sql, "update %s set \
-				kitbag=%d \
-				where atorID=%d", \
-				_get_table(), \
-				pCha->GetKitbagRecDBID(), \
-				atorID);
+	game_sql::copy_to(g_sql, game_sql::save_kitbag_id(_get_table(), pCha->GetKitbagRecDBID(), atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -911,12 +906,7 @@ bool CTableCha::SaveKBagTmpDBID(CPlayer *pPlayer)
 	if (!pCha) return false;
 	DWORD atorID = pPlayer->GetDBChaId();
 
-	sprintf(g_sql, "update %s set \
-				kitbag_tmp=%d \
-				where atorID=%d", \
-				_get_table(), \
-				pCha->GetKitbagTmpRecDBID(), \
-				atorID);
+	game_sql::copy_to(g_sql, game_sql::save_kitbag_tmp_id(_get_table(), pCha->GetKitbagTmpRecDBID(), atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -957,12 +947,7 @@ bool CTableCha::SaveKBState(CPlayer *pPlayer)
 	DWORD atorID = pPlayer->GetDBChaId();
 
     int iLocked = pCha->m_CKitbag.GetPwdLockState();
-	sprintf(g_sql, "update %s set \
-				kb_locked=%d \
-				where atorID=%d", \
-				_get_table(), \
-				iLocked, \
-				atorID);
+	game_sql::copy_to(g_sql, game_sql::save_kitbag_lock(_get_table(), iLocked, atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -1002,12 +987,7 @@ BOOL CTableCha::SaveStoreItemID(DWORD atorID, long lStoreItemID)
 		return false;
 	}
 
-	sprintf(g_sql, "update %s set \
-				   store_item=%d \
-				   where atorID=%d", \
-				   _get_table(), \
-				   lStoreItemID, \
-				   atorID);
+	game_sql::copy_to(g_sql, game_sql::save_store_item(_get_table(), lStoreItemID, atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -1041,12 +1021,7 @@ BOOL CTableCha::AddMoney(DWORD atorID, long money)
 		return false;
 	}
 
-	sprintf(g_sql, "update %s set \
-				   bomd=bomd+%d \
-				   where atorID=%d", \
-				   _get_table(), \
-				   money, \
-				   atorID);
+	game_sql::copy_to(g_sql, game_sql::add_money(_get_table(), money, atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -1080,12 +1055,7 @@ BOOL CTableCha::AddCreditByDBID(DWORD atorID, long lCredit)
 		return false;
 	}
 
-	sprintf(g_sql, "update %s set \
-				   credit=credit+%d \
-				   where atorID=%d", \
-				   _get_table(), \
-				   lCredit, \
-				   atorID);
+	game_sql::copy_to(g_sql, game_sql::add_credit(_get_table(), lCredit, atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -1123,9 +1093,8 @@ BOOL CTableCha::IsChaOnline(DWORD atorID, BOOL &bOnline)
 
 	long lMemAddr = 0;
 
-	const char *sql_syntax = "select endeMem from %s where atorID=%d";
 	char sql[SQL_MAXLEN];
-	sprintf(sql, sql_syntax, _get_table(), atorID);
+	game_sql::copy_to(sql, game_sql::character_address(_get_table(), atorID));
 
 	// ִ�в�ѯ����
 	SQLRETURN sqlret;
@@ -1207,9 +1176,8 @@ Long CTableCha::GetChaAddr(DWORD atorID)
 		return false;
 
 	long lMemAddr = 0;
-	const char *sql_syntax = "select endeMem from %s where atorID=%d";
 	char sql[SQL_MAXLEN];
-	sprintf(sql, sql_syntax, _get_table(), atorID);
+	game_sql::copy_to(sql, game_sql::character_address(_get_table(), atorID));
 
 	SQLRETURN sqlret;
 	SQLHSTMT hstmt = SQL_NULL_HSTMT;
@@ -1272,12 +1240,7 @@ bool CTableCha::SaveMMaskDBID(CPlayer *pPlayer)
 	if(!pPlayer || !pPlayer->IsValid()) return false;
 	DWORD atorID = pPlayer->GetDBChaId();
 
-	sprintf(g_sql, "update %s set \
-				map_mask=%d \
-				where atorID=%d", \
-				_get_table(), \
-				pPlayer->GetMapMaskDBID(), \
-				atorID);
+	game_sql::copy_to(g_sql, game_sql::save_map_mask_id(_get_table(), pPlayer->GetMapMaskDBID(), atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -1320,12 +1283,7 @@ bool CTableCha::SaveBankDBID(CPlayer *pPlayer)
 	if (!pPlayer->BankDBIDData2String(szIDBuf, csIDBufLen))
 		return false;
 
-	sprintf(g_sql, "update %s set \
-				bank=%s \
-				where atorID=%d", \
-				_get_table(), \
-				szIDBuf, \
-				atorID);
+	game_sql::copy_to(g_sql, game_sql::save_bank_ids(_get_table(), szIDBuf, atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -1361,12 +1319,7 @@ bool CTableCha::SaveBankDBID(CPlayer *pPlayer)
 
 bool CTableCha::SaveTableVer(DWORD atorID)
 {
-	sprintf(g_sql, "update %s set \
-				version=%d \
-				where atorID=%d", \
-				_get_table(), \
-				defCHA_TABLE_NEW_VER, \
-				atorID);
+	game_sql::copy_to(g_sql, game_sql::save_table_version(_get_table(), defCHA_TABLE_NEW_VER, atorID));
 
 	short sExec =  exec_sql_direct(g_sql);
 
@@ -1410,8 +1363,7 @@ BOOL CTableCha::SaveMissionData(CPlayer *pPlayer, DWORD atorID)
 
 	}
 
-	sprintf( g_sql, "update %s set mission='%s', misrecord='%s', mistrigger='%s' \
-		where atorID=%d", _get_table(), g_szMisInfo, g_szRecord, g_szTrigger, atorID );
+	game_sql::copy_to(g_sql, game_sql::save_missions(_get_table(), g_szMisInfo, g_szRecord, g_szTrigger, atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -1433,7 +1385,7 @@ T_E}
 // Add by lark.li 20080521 begin
 bool CTableLotterySetting::Init(void)
 {
-	sprintf(g_sql, "select section from %s (nolock) where 1=2", _get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::lottery));
 
 	short sExec =  exec_sql_direct(g_sql);
 	if (!DBOK(sExec))
@@ -1452,11 +1404,9 @@ bool CTableLotterySetting::GetCurrentIssue(int &issue)
 {
 	issue = -1;
 	string buf[1]; 
-	char param[] = "issue";
-	char filter[80]; 
-	sprintf(filter, "state  =%d", enumCURRENT);
+	game_sql::Select q = game_sql::lottery_current_issue(enumCURRENT);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -1469,10 +1419,8 @@ bool CTableLotterySetting::GetCurrentIssue(int &issue)
 
 bool CTableLotterySetting::AddIssue(int issue)
 {
-	//insert into %s (section, issue, state, createdate, updatetime) values (%d, %d, %d, getdate(), getdate())
 
-	sprintf( g_sql, "insert into %s (section, issue, state, createdate, updatetime) values (%d, %d, %d, getdate(), getdate())",
-		_get_table(), 1, issue, enumCURRENT);
+	game_sql::copy_to(g_sql, game_sql::lottery_add_issue(_get_table(), 1, issue, enumCURRENT));
 
 	short sExec = exec_sql_direct( g_sql );
 	if( DBOK(sExec) )
@@ -1485,7 +1433,7 @@ bool CTableLotterySetting::AddIssue(int issue)
 
 bool CTableLotterySetting::DisuseIssue(int issue, int state)
 {
-	sprintf( g_sql, "update %s set state = %d, updatetime = getdate() where issue = %d", _get_table(), state, issue );
+	game_sql::copy_to(g_sql, game_sql::lottery_set_state(_get_table(), state, issue));
 
 	short sExec = exec_sql_direct( g_sql );
 
@@ -1504,7 +1452,7 @@ bool CTableLotterySetting::DisuseIssue(int issue, int state)
 
 bool CTableLotterySetting::SetWinItemNo(int issue, const char* itemno)
 {
-	sprintf( g_sql, "update %s set itemno = '%s', updatetime = getdate() where issue = %d", _get_table(), itemno, issue );
+	game_sql::copy_to(g_sql, game_sql::lottery_set_win_item_no(_get_table(), itemno, issue));
 
 	short sExec = exec_sql_direct( g_sql );
 
@@ -1524,11 +1472,9 @@ bool CTableLotterySetting::SetWinItemNo(int issue, const char* itemno)
 bool CTableLotterySetting::GetWinItemNo(int issue, string& itemno)
 {
 	string buf[1]; 
-	char param[] = "itemno";
-	char filter[80]; 
-	sprintf(filter, "state  =%d and issue = %d", enumCURRENT, issue);
+	game_sql::Select q = game_sql::lottery_win_item_no(enumCURRENT, issue);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -1541,7 +1487,7 @@ bool CTableLotterySetting::GetWinItemNo(int issue, string& itemno)
 
 bool CTableTicket::Init(void)
 {
-	sprintf(g_sql, "select itemno from %s (nolock) where 1=2", _get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::ticket));
 
 	short sExec =  exec_sql_direct(g_sql);
 	if (!DBOK(sExec))
@@ -1594,8 +1540,7 @@ bool CTableTicket::AddTicket(int atorID, int issue, char itemno[6][2])
 
 bool CTableTicket::AddTicket(int atorID, int issue, char itemno1, char itemno2, char itemno3, char itemno4, char itemno5, char itemno6, int real)
 {
-	sprintf( g_sql, "insert into %s (atorID, issue, itemno, real, buydate) values (%d, '%d', '%c%c%c%c%c%c', %d, getdate())",
-		_get_table(), atorID, issue, itemno1, itemno2, itemno3, itemno4, itemno5, itemno6, real);
+	game_sql::copy_to(g_sql, game_sql::ticket_add(_get_table(), atorID, issue, itemno1, itemno2, itemno3, itemno4, itemno5, itemno6, real));
 
 	short sExec = exec_sql_direct( g_sql );
 	if( DBOK(sExec) )
@@ -1609,11 +1554,9 @@ bool CTableTicket::AddTicket(int atorID, int issue, char itemno1, char itemno2, 
 bool CTableTicket::IsExist(int issue, char* itemno)
 {
 	string buf[1]; 
-	char param[] = "count(*)";
-	char filter[50]; 
-	sprintf(filter, " issue = %d and itemno  ='%s'", issue, itemno);
+	game_sql::Select q = game_sql::ticket_exists(issue, itemno);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -1637,17 +1580,7 @@ bool CTableTicket::CalWinTicket(int issue, int max, string& itemno)
 	{
 		char sql[256];
 
-		sprintf(sql, "SELECT top 10 * FROM\
-						(\
-						SELECT     itemno, COUNT(*) AS num\
-						FROM         Ticket\
-						WHERE     (issue = %d) AND real = 0\
-						GROUP BY itemno\
-						) \
-						AS A\
-						WHERE num <= %d\
-						ORDER BY num",
-						issue, max);
+		game_sql::copy_to(sql, game_sql::ticket_least_bought(issue, max));
 
 		vector< vector< string > > data;
 
@@ -1684,7 +1617,7 @@ bool CTableTicket::CalWinTicket(int issue, int max, string& itemno)
 
 bool CTableWinTicket::Init(void)
 {
-	sprintf(g_sql, "select issue from %s (nolock) where 1=2", _get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::winticket));
 
 	short sExec =  exec_sql_direct(g_sql);
 	if (!DBOK(sExec))
@@ -1706,8 +1639,7 @@ bool CTableWinTicket::GetTicket(int issue)
 
 bool CTableWinTicket::AddTicket(int issue, char* itemno, int grade)
 {
-	sprintf( g_sql, "insert into %s (issue, itemno, grade, createdate) values (%d, '%s', %d, getdate())",
-		_get_table(), issue, itemno, grade);
+	game_sql::copy_to(g_sql, game_sql::win_ticket_add(_get_table(), issue, itemno, grade));
 
 	short sExec = exec_sql_direct( g_sql );
 	if( DBOK(sExec) )
@@ -1720,7 +1652,7 @@ bool CTableWinTicket::AddTicket(int issue, char* itemno, int grade)
 
 bool CTableWinTicket::Exchange(int issue, char* itemno)
 {
-	sprintf( g_sql, "update %s set num = num + 1 where issue = %d and itemno = '%s'", _get_table(), issue, itemno );
+	game_sql::copy_to(g_sql, game_sql::win_ticket_exchange(_get_table(), issue, itemno));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -1752,7 +1684,7 @@ bool CTableWinTicket::Exchange(int issue, char* itemno)
 
 bool CTableAmphitheaterSetting::Init(void)
 {
-	sprintf(g_sql, "select season from %s (nolock) where 1=2", _get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::amphitheater_setting));
 
 	short sExec =  exec_sql_direct(g_sql);
 	if (!DBOK(sExec))
@@ -1773,11 +1705,9 @@ bool CTableAmphitheaterSetting::GetCurrentSeason(int& season, int& round)
 	season = -1;
 	round = -1;
 	string buf[2]; 
-	char param[] = "season, [round]";
-	char filter[80]; 
-	sprintf(filter, "state  =%d", AmphitheaterSetting::enumCURRENT);
+	game_sql::Select q = game_sql::amphitheater_current_season(AmphitheaterSetting::enumCURRENT);
 
-	int r = _get_row(buf, 2, param, filter);
+	int r = _get_row(buf, 2, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -1792,10 +1722,8 @@ bool CTableAmphitheaterSetting::GetCurrentSeason(int& season, int& round)
 // ׷��һ������
 bool CTableAmphitheaterSetting::AddSeason(int season)
 {
-	//insert into AmphitheaterSetting (section, season, [round], state, createdate, updatetime) values (1, 1, 1, 0, getdate(), getdate())
 
-	sprintf( g_sql, "insert into %s (section, season, [round], state, createdate, updatetime,winner) values (%d, %d, %d, %d, getdate(), getdate(),%s)",
-		_get_table(), 1, season, 1, AmphitheaterSetting::enumCURRENT,NULL);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_add_season(_get_table(), 1, season, 1, AmphitheaterSetting::enumCURRENT));
 	short sExec = exec_sql_direct( g_sql );
 	if( DBOK(sExec) )
 	{
@@ -1808,7 +1736,7 @@ bool CTableAmphitheaterSetting::AddSeason(int season)
 // ��������״̬
 bool CTableAmphitheaterSetting::DisuseSeason(int season, int state,const char* winner)
 {
-	sprintf( g_sql, "update %s set state = %d, updatetime = getdate(),winner = %s where season = %d", _get_table(), state, winner, season );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_close_season(_get_table(), state, winner, season));
 
 	short sExec = exec_sql_direct( g_sql );
 
@@ -1828,7 +1756,7 @@ bool CTableAmphitheaterSetting::DisuseSeason(int season, int state,const char* w
 // �����ִ�
 bool CTableAmphitheaterSetting::UpdateRound(int season, int round)
 {
-	sprintf( g_sql, "update %s set [round] = %d, updatetime = getdate() where season = %d", _get_table(), round, season );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_set_round(_get_table(), round, season));
 
 	short sExec = exec_sql_direct( g_sql );
 
@@ -1847,7 +1775,7 @@ bool CTableAmphitheaterSetting::UpdateRound(int season, int round)
 
 bool CTableAmphitheaterTeam::Init(void)
 {
-	sprintf(g_sql, "select id from %s (nolock) where 1=2", _get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::amphitheater_team));
 
 	short sExec =  exec_sql_direct(g_sql);
 	if (!DBOK(sExec))
@@ -1867,11 +1795,9 @@ bool CTableAmphitheaterTeam::GetTeamCount(int& count)
 {
 	count = -1;
 	string buf[1]; 
-	char param[] = "count(*)";
-	char filter[80]; 
-	sprintf(filter, "state > %d", AmphitheaterTeam::enumNotUse );
+	game_sql::Select q = game_sql::amphitheater_team_count(AmphitheaterTeam::enumNotUse);
 
-	int r = _get_row(buf, 2, param, filter);
+	int r = _get_row(buf, 2, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -1887,11 +1813,9 @@ bool CTableAmphitheaterTeam::GetNoUseTeamID(int &teamID)
 	// ȡ�ÿհ׶���ID
 	teamID = 0;
 	string buf[1]; 
-	char param[] = "top(1) id";
-	char filter[80]; 
-	sprintf(filter, "state = %d", AmphitheaterTeam::enumNotUse );
+	game_sql::Select q = game_sql::amphitheater_free_team(AmphitheaterTeam::enumNotUse);
 
-	int r = _get_row(buf, 2, param, filter);
+	int r = _get_row(buf, 2, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if ( DBOK(r) && r1 > 0)
 	{
@@ -1915,7 +1839,7 @@ bool CTableAmphitheaterTeam::TeamSignUP(int &teamID, int captain, int member1, i
 	char member[50];
 	sprintf(member,"%d,%d", member1, member2);
 
-	sprintf( g_sql, "update %s set captain = %d, member = '%s', state = %d, updatetime = getdate() where id = %d", _get_table(), captain, member, AmphitheaterTeam::enumUse, teamID );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_sign_up(_get_table(), captain, member, AmphitheaterTeam::enumUse, teamID));
 
 	short sExec = exec_sql_direct( g_sql );
 
@@ -1935,7 +1859,7 @@ bool CTableAmphitheaterTeam::TeamSignUP(int &teamID, int captain, int member1, i
 // ����ȡ��
 bool CTableAmphitheaterTeam::TeamCancel(int teamID)
 {
-	sprintf( g_sql, "update %s set captain = null, member = null, matchno = 0, state = %d, updatetime = getdate() where id = %d", _get_table(), AmphitheaterTeam::enumNotUse, teamID );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_cancel(_get_table(), AmphitheaterTeam::enumNotUse, teamID));
 
 	short sExec = exec_sql_direct( g_sql );
 
@@ -1963,12 +1887,10 @@ bool CTableAmphitheaterTeam::TeamUpdate(int teamID, int matchNo, int state, int 
 bool CTableAmphitheaterTeam::IsValidAmphitheaterTeam(int teamID, int captainID, int member1, int member2)
 {
 	string buf[1]; 
-	char param[] = "count(*)";
-	char filter[80]; 
 	int HasValid = 0;
-	sprintf(filter, "id = %d and captain = %d and (member = '%d,%d' or member = '%d,%d')", teamID, captainID, member1, member2, member2, member1);
+	game_sql::Select q = game_sql::amphitheater_valid_team(teamID, captainID, member1, member2);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if ( DBOK(r) && r1 > 0)
 	{
@@ -1986,13 +1908,11 @@ bool CTableAmphitheaterTeam::IsValidAmphitheaterTeam(int teamID, int captainID, 
 bool CTableAmphitheaterTeam::IsLogin(int pActorID)
 {
 	string buf[1];
-	char param[] = "count(*)";
-	char filter[80];
 	int PActorIDNum = 0;
 
-	sprintf(filter, "captain = %d or member like '%d,%' or member like '%,%d'", pActorID,pActorID,pActorID);
+	game_sql::Select q = game_sql::amphitheater_registered(pActorID);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	short sExec =  exec_sql_direct(g_sql);
 	if ( DBOK(r) && r1 > 0)
@@ -2010,12 +1930,10 @@ bool CTableAmphitheaterTeam::IsLogin(int pActorID)
 bool CTableAmphitheaterTeam::IsMapFull(int MapID,int & PActorIDNum)
 {
 	string buf[1];
-	char param[] = "count(*)";
-	char filter[80];
 	
-	sprintf(filter, "map = %d ",MapID);
+	game_sql::Select q = game_sql::amphitheater_map_teams(MapID);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 
 	if ( DBOK(r) && r1 > 0)
@@ -2031,7 +1949,7 @@ bool CTableAmphitheaterTeam::IsMapFull(int MapID,int & PActorIDNum)
 //���µ�ͼmapflag
 bool CTableAmphitheaterTeam::UpdateMapNum(int Teamid,int Mapid,int MapFlag)
 {
-	sprintf( g_sql, "update %s set mapflag = %d where id = %d and map = %d", _get_table(),MapFlag, Teamid, Mapid );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_set_map_flag(_get_table(), MapFlag, Teamid, Mapid));
 
 	short sExec = exec_sql_direct( g_sql );
 
@@ -2051,12 +1969,10 @@ bool CTableAmphitheaterTeam::UpdateMapNum(int Teamid,int Mapid,int MapFlag)
 bool CTableAmphitheaterTeam::GetMapFlag(int Teamid,int & Mapflag)
 {
 	string buf[1];
-	char param[] = "mapflag";
-	char filter[80];
 	
-	sprintf(filter, "id = %d ",Teamid);
+	game_sql::Select q = game_sql::amphitheater_map_flag(Teamid);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 
 	if ( DBOK(r) && r1 > 0)
@@ -2074,13 +1990,11 @@ bool CTableAmphitheaterTeam::GetMapFlag(int Teamid,int & Mapflag)
 bool CTableAmphitheaterTeam::SetMaxBallotTeamRelive(void)
 {
 	string buf[1];
-	char param[] = "count(*)";
-	char filter[80];
 	int state = 0;
 	int OddOrEven = 0;
 
-	sprintf(filter, "state = %d",AmphitheaterTeam::enumPromotion);
-	int r = _get_row(buf, 1, param, filter);
+	game_sql::Select q = game_sql::amphitheater_state_count(AmphitheaterTeam::enumPromotion);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	if ( DBOK(r))
 	{
 		state = Str2Int(buf[0]);
@@ -2089,10 +2003,10 @@ bool CTableAmphitheaterTeam::SetMaxBallotTeamRelive(void)
 		else
 			OddOrEven = 1;
 	}
-	sprintf( g_sql, "update %s set state = %d ,relivenum = 0 where id in (select top %d id from %s where state = %d  order by relivenum desc)", _get_table(),AmphitheaterTeam::enumPromotion,OddOrEven,_get_table(),AmphitheaterTeam::enumRelive);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_promote_top(_get_table(), AmphitheaterTeam::enumPromotion, OddOrEven, AmphitheaterTeam::enumRelive));
 	short sExec1 = exec_sql_direct( g_sql );
 
-	sprintf( g_sql, "update %s set state = %d ,relivenum = 0 where state = %d or state = %d", _get_table(),AmphitheaterTeam::enumOut,AmphitheaterTeam::enumRelive,AmphitheaterTeam::enumUse );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_eliminate(_get_table(), AmphitheaterTeam::enumOut, AmphitheaterTeam::enumRelive, AmphitheaterTeam::enumUse));
 	short sExec2 = exec_sql_direct( g_sql );
 
 	if (!DBOK(sExec1)||!DBOK(sExec2))
@@ -2105,9 +2019,9 @@ bool CTableAmphitheaterTeam::SetMaxBallotTeamRelive(void)
 //���ñ��������״̬
 bool CTableAmphitheaterTeam::SetMatchResult(int Teamid1,int Teamid2,int Id1state,int Id2state)
 {
-	sprintf( g_sql, "update %s set state = %d where id = %d", _get_table(),Id1state,Teamid1);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_set_state(_get_table(), Id1state, Teamid1));
 	short sExec1 = exec_sql_direct( g_sql );
-	sprintf( g_sql, "update %s set state = %d where id = %d", _get_table(),Id2state,Teamid2);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_set_state(_get_table(), Id2state, Teamid2));
 	short sExec2 = exec_sql_direct( g_sql );
 
 	if (!DBOK(sExec1)||!DBOK(sExec2))
@@ -2124,7 +2038,7 @@ bool CTableAmphitheaterTeam::SetMatchResult(int Teamid1,int Teamid2,int Id1state
 bool CTableAmphitheaterTeam::GetCaptainByMapId(int Mapid,string &Captainid1,string &Captainid2)
 {
 	string NoCaptain = "";
-	sprintf(g_sql,"select captain from %s where map = %d", _get_table(),Mapid);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_map_captains(_get_table(), Mapid));
 	vector< vector< string > > data;
 
 	getalldata(g_sql, data);
@@ -2152,7 +2066,7 @@ bool CTableAmphitheaterTeam::GetCaptainByMapId(int Mapid,string &Captainid1,stri
 //����map�ֶ�
 bool CTableAmphitheaterTeam::UpdateMap(int Mapid)
 {
-	sprintf( g_sql, "update %s set map = null where map = %d  ", _get_table(),Mapid );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_clear_map(_get_table(), Mapid));
 	short sExec = exec_sql_direct( g_sql );
 	
 	if (!DBOK(sExec))
@@ -2170,14 +2084,14 @@ bool CTableAmphitheaterTeam::GetPromotionAndReliveTeam(vector< vector< string > 
 {
 	// select A.id, A.captain, A.relivenum, B.atorNome from AmphitheaterTeam A,  character B where B.atorID = A.captain
 	//sprintf(g_sql,"select A.id, A.captain, B.atorNome, A.winnum from AmphitheaterTeam A,  character B where B.atorID = A.captain and a.state = %d  order by A.winnum DESC", AmphitheaterTeam::enumPromotion );
-	sprintf(g_sql,"select B.atorNome,A.id,A.winnum from AmphitheaterTeam A, character B where B.atorID = A.captain and a.state = %d  order by A.winnum DESC", AmphitheaterTeam::enumPromotion );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_promoted_teams(AmphitheaterTeam::enumPromotion));
 
 
 	if(!getalldata(g_sql, dataPromotion))
 		return false;
 
 	//sprintf(g_sql,"select A.id, A.captain, B.atorNome, A.relivenum from AmphitheaterTeam A,  character B where B.atorID = A.captain and A.state = %d  order by A.relivenum DESC", AmphitheaterTeam::enumRelive );
-	sprintf(g_sql,"select B.atorNome, A.relivenum ,A.id from AmphitheaterTeam A,  character B where B.atorID = A.captain and A.state = %d  order by A.relivenum DESC", AmphitheaterTeam::enumRelive );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_relive_teams(AmphitheaterTeam::enumRelive));
 
 	if(!getalldata(g_sql, dataRelive))
 		return false;
@@ -2189,17 +2103,15 @@ bool CTableAmphitheaterTeam::GetPromotionAndReliveTeam(vector< vector< string > 
 bool CTableAmphitheaterTeam::UpdatReliveNum( int ReID )
 {
 	string buf[1];
-	char param[] = "relivenum";
-	char filter[80];
 	int relivenumber = 0;
-	sprintf(filter, "id = %d ",ReID);
+	game_sql::Select q = game_sql::amphitheater_relive_number(ReID);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if ( DBOK(r) && r1 > 0)
 	{
 		relivenumber = Str2Int(buf[0]) + 1;
-		sprintf( g_sql, "update %s set relivenum = %d where id = %d ", _get_table(),relivenumber ,ReID );
+		game_sql::copy_to(g_sql, game_sql::amphitheater_set_relive_number(_get_table(), relivenumber, ReID));
 		short sExec =  exec_sql_direct(g_sql);
 		if(!DBOK(sExec))
 			return false;
@@ -2211,7 +2123,7 @@ bool CTableAmphitheaterTeam::UpdatReliveNum( int ReID )
 //����һ��û�μӱ����Ķ�Ϊ����
 bool CTableAmphitheaterTeam::UpdateAbsentTeamRelive()
 {
-	sprintf( g_sql, "update %s set state = %d where state = %d ", _get_table(),AmphitheaterTeam::enumRelive,AmphitheaterTeam::enumUse );
+	game_sql::copy_to(g_sql, game_sql::amphitheater_use_to_relive(_get_table(), AmphitheaterTeam::enumRelive, AmphitheaterTeam::enumUse));
 	short sExec = exec_sql_direct( g_sql );
 	
 	if (!DBOK(sExec))
@@ -2227,7 +2139,7 @@ bool CTableAmphitheaterTeam::UpdateAbsentTeamRelive()
 //���¶�������ͼ���map�ֶ�
 bool CTableAmphitheaterTeam::UpdateMapAfterEnter(int CaptainID,int MapID)
 {
-	sprintf( g_sql, "update %s set map = %d where captain = %d ", _get_table(),MapID,CaptainID);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_set_captain_map(_get_table(), MapID, CaptainID));
 	short sExec = exec_sql_direct( g_sql );
 	if (!DBOK(sExec))
 	{
@@ -2244,7 +2156,7 @@ bool CTableAmphitheaterTeam::UpdateMapAfterEnter(int CaptainID,int MapID)
 //����winnum��ֵ��ʤ����1
 bool CTableAmphitheaterTeam::UpdateWinnum( int teamid )
 {
-	sprintf( g_sql, "update %s set winnum = winnum+1 where id = %d ", _get_table(),teamid);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_add_win(_get_table(), teamid));
 	short sExec = exec_sql_direct( g_sql );
 	if (!DBOK(sExec))
 	{
@@ -2261,11 +2173,9 @@ bool CTableAmphitheaterTeam::GetUniqueMaxWinnum( int &teamid )
 {
 	//select id from AmphitheaterTeam where winnum in (select  max(winnum) from AmphitheaterTeam)
 	string buf[1];
-	char param[] = "id";
-	char filter[80];
 	
-	sprintf(filter, "winnum in (select  max(winnum) from AmphitheaterTeam)");
-	int r = _get_row(buf, 1, param, filter);
+	game_sql::Select q = game_sql::amphitheater_top_winner();
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if ( DBOK(r) && r1 > 0)
 	{
@@ -2282,7 +2192,7 @@ bool CTableAmphitheaterTeam::GetUniqueMaxWinnum( int &teamid )
 
 bool CTableAmphitheaterTeam::SetMatchnoState( int teamid )
 {
-	sprintf( g_sql, "update %s set matchno = 1 where id = %d ", _get_table(),teamid);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_set_matchno(_get_table(), teamid));
 	short sExec = exec_sql_direct( g_sql );
 	if (!DBOK(sExec))
 	{
@@ -2297,7 +2207,7 @@ bool CTableAmphitheaterTeam::SetMatchnoState( int teamid )
 
 bool CTableAmphitheaterTeam::UpdateState()
 {
-	sprintf( g_sql, "update %s set state = %d where state= %d ", _get_table(),AmphitheaterTeam::enumUse,AmphitheaterTeam::enumPromotion);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_promotion_to_use(_get_table(), AmphitheaterTeam::enumUse, AmphitheaterTeam::enumPromotion));
 	short sExec = exec_sql_direct( g_sql );
 	if (!DBOK(sExec))
 	{
@@ -2313,11 +2223,9 @@ bool CTableAmphitheaterTeam::UpdateState()
 bool CTableAmphitheaterTeam::CloseReliveByState(int &statenum )
 {
 	string buf[1];
-	char param[] = "count(*)";
-	char filter[80];
 	
-	sprintf(filter, "state = %d ",AmphitheaterTeam::enumUse);
-	int r = _get_row(buf, 1, param, filter);
+	game_sql::Select q = game_sql::amphitheater_state_count(AmphitheaterTeam::enumUse);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if ( DBOK(r) && r1 > 0)
 	{
@@ -2330,7 +2238,7 @@ bool CTableAmphitheaterTeam::CloseReliveByState(int &statenum )
 
 bool CTableAmphitheaterTeam::CleanMapFlag(int teamid1,int teamid2)
 {
-	sprintf( g_sql, "update %s set mapflag = null where id= %d or id = %d", _get_table(),teamid1,teamid2);
+	game_sql::copy_to(g_sql, game_sql::amphitheater_clear_map_flags(_get_table(), teamid1, teamid2));
 	short sExec = exec_sql_direct( g_sql );
 	if (!DBOK(sExec))
 	{
@@ -2347,11 +2255,9 @@ bool CTableAmphitheaterTeam::CleanMapFlag(int teamid1,int teamid2)
 bool CTableAmphitheaterTeam::GetStateByTeamid( int teamid, int &state )
 {
 	string buf[1];
-	char param[] = "state";
-	char filter[80];
 	
-	sprintf(filter, "id = %d ",teamid);
-	int r = _get_row(buf, 1, param, filter);
+	game_sql::Select q = game_sql::amphitheater_team_state(teamid);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if ( DBOK(r) && r1 > 0)
 	{
@@ -2364,7 +2270,7 @@ bool CTableAmphitheaterTeam::GetStateByTeamid( int teamid, int &state )
 //personinfo ��ʼ��
 bool CTablePersoninfo::Init( void )
 {
-	sprintf(g_sql, "select atorID from %s (nolock) where 1=2", _get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::personinfo));
 
 	short sExec =  exec_sql_direct(g_sql);
 	if (!DBOK(sExec))
@@ -2383,12 +2289,10 @@ bool CTablePersoninfo::Init( void )
 bool CTablePersoninfo::GetPersonBirthday( int chaid, int &birthday )
 {
 	string buf[1];
-	char param[] = "birthday";
-	char filter[80];
 	
-	sprintf(filter, "atorID = %d ",chaid);
+	game_sql::Select q = game_sql::person_birthday(chaid);
 
-	int r = _get_row(buf, 1, param, filter);
+	int r = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if ( DBOK(r) && r1 > 0)
 	{
@@ -2405,11 +2309,7 @@ bool CTablePersoninfo::GetPersonBirthday( int chaid, int &birthday )
 
 bool CTableResource::Init(void)
 {
-	sprintf(g_sql, "select \
-				id, atorID, type_id, content \
-				from %s \
-				(nolock) where 1=2", \
-				_get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::resource));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
 		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
@@ -2438,9 +2338,7 @@ bool CTableResource::Init(void)
 
 bool CTableResource::Create(long &lDBID, long lChaId, long lTypeId)
 {
-	sprintf( g_sql, "insert %s (atorID, type_id) \
-					values(%d, %d) ",	_get_table(), 
-					lChaId, lTypeId);
+	game_sql::copy_to(g_sql, game_sql::resource_create(_get_table(), lChaId, lTypeId));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -2458,12 +2356,10 @@ bool CTableResource::Create(long &lDBID, long lChaId, long lTypeId)
 	short sExec = exec_sql_direct( g_sql );
 	if( DBOK(sExec) )
 	{
-		string buf[1]; 
-		char param[] = "@@identity";
-		char filter[80]; 
-		sprintf(filter, "1=1");
-		bool ret = _get_row(buf, 1, param, filter);
-		lDBID = atol( buf[0].c_str() );
+		int lastID = get_identity();
+		if (lastID <= 0)
+			return false;
+		lDBID = lastID;
 		return true;
 	}
 
@@ -2487,9 +2383,8 @@ bool CTableResource::ReadKitbagData(CCharacter *pCha)
 	}
 
 	int nIndex = 0;
-	char param[] = "atorID, type_id, content";
-	char filter[80]; sprintf(filter, "id=%d", pCha->GetKitbagRecDBID());
-	int r = _get_row3(g_buf, g_cnCol, param, filter);
+	game_sql::Select q = game_sql::resource_by_id(pCha->GetKitbagRecDBID());
+	int r = _get_row3(g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -2535,12 +2430,7 @@ bool CTableResource::SaveKitbagData(CCharacter *pCha)
 	}
 	//LG("enter_map", "ת���������ݳɹ�\n");
 
-	sprintf(g_sql, "update %s set \
-				   content='%s' \
-				   where id=%d", \
-				   _get_table(), \
-				   g_kitbag, \
-				   pCha->GetKitbagRecDBID());
+	game_sql::copy_to(g_sql, game_sql::resource_save_content(_get_table(), g_kitbag, pCha->GetKitbagRecDBID()));
 
 	//LG("enter_map", "��֯SQL���ɹ�\n");
 	if (strlen(g_sql) >= SQL_MAXLEN)
@@ -2593,9 +2483,8 @@ bool CTableResource::ReadKitbagTmpData(CCharacter *pCha)
 	}
 
 	int nIndex = 0;
-	char param[] = "atorID, type_id, content";
-	char filter[80]; sprintf(filter, "id=%d", pCha->GetKitbagTmpRecDBID());
-	int r = _get_row3(g_buf, g_cnCol, param, filter);
+	game_sql::Select q = game_sql::resource_by_id(pCha->GetKitbagTmpRecDBID());
+	int r = _get_row3(g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -2637,9 +2526,8 @@ bool CTableResource::ReadKitbagTmpData(long lRecDBID, string& strData)
 
 	BOOL ret = false;
 
-	const char *sql_syntax = "select content from %s where id=%d";
 	char sql[SQL_MAXLEN];
-	sprintf(sql, sql_syntax, _get_table(), lRecDBID);
+	game_sql::copy_to(sql, game_sql::resource_content(_get_table(), lRecDBID));
 
 	// ִ�в�ѯ����
 	SQLRETURN sqlret;
@@ -2713,12 +2601,7 @@ bool CTableResource::SaveKitbagTmpData(long lRecDBID, const string& strData)
 		return false;
 	}
 	
-	sprintf(g_sql, "update %s set \
-				   content='%s' \
-				   where id=%d", \
-				   _get_table(), \
-				   strData.c_str(), \
-				   lRecDBID);
+	game_sql::copy_to(g_sql, game_sql::resource_save_content(_get_table(), strData.c_str(), lRecDBID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -2765,12 +2648,7 @@ bool CTableResource::SaveKitbagTmpData(CCharacter *pCha)
 		return false;
 	}
 
-	sprintf(g_sql, "update %s set \
-				   content='%s' \
-				   where id=%d", \
-				   _get_table(), \
-				   g_kitbagTmp, \
-				   pCha->GetKitbagTmpRecDBID());
+	game_sql::copy_to(g_sql, game_sql::resource_save_content(_get_table(), g_kitbagTmp, pCha->GetKitbagTmpRecDBID()));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -2835,15 +2713,13 @@ bool CTableResource::ReadBankData(CPlayer *pCPly, char chBankNO)
 	}
 
 	int nIndex = 0;
-	char param[] = "atorID, type_id, content";
-	char filter[80];
 	int r;
 	int	r1;
 	for (char i = chStart; i <= chEnd; i++)
 	{
 		nIndex = 0;
-		sprintf(filter, "id=%d", pCPly->GetBankDBID(i));
-		r = _get_row3(g_buf, g_cnCol, param, filter);
+		game_sql::Select q = game_sql::resource_by_id(pCPly->GetBankDBID(i));
+		r = _get_row3(g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str());
 		r1 = get_affected_rows();
 		if (DBOK(r) && r1 > 0)
 		{
@@ -2911,12 +2787,7 @@ bool CTableResource::SaveBankData(CPlayer *pCPly, char chBankNO)
 		}
 		//LG("enter_map", "ת���������ݳɹ�\n");
 
-		sprintf(g_sql, "update %s set \
-					content='%s' \
-					where id=%d", \
-					_get_table(), \
-					g_kitbag, \
-					pCPly->GetBankDBID(i));
+		game_sql::copy_to(g_sql, game_sql::resource_save_content(_get_table(), g_kitbag, pCPly->GetBankDBID(i)));
 
 		//LG("enter_map", "��֯SQL���ɹ�\n");
 		if (strlen(g_sql) >= SQL_MAXLEN)
@@ -2954,11 +2825,7 @@ bool CTableResource::SaveBankData(CPlayer *pCPly, char chBankNO)
 
 bool CTableMapMask::Init(void)
 {
-	sprintf(g_sql, "select \
-				id, atorID, content1, content2, content3, content4, content5 \
-				from %s \
-				(nolock) where 1=2", \
-				_get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::map_mask));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
 		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
@@ -3015,9 +2882,7 @@ bool CTableMapMask::GetColNameByMapName(const char *szMapName, char *szColName, 
 
 bool CTableMapMask::Create(long &lDBID, long lChaId)
 {
-	sprintf( g_sql, "insert %s (atorID) \
-					values(%d) ",	_get_table(), 
-					lChaId);
+	game_sql::copy_to(g_sql, game_sql::map_mask_create(_get_table(), lChaId));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -3035,12 +2900,10 @@ bool CTableMapMask::Create(long &lDBID, long lChaId)
 	short sExec = exec_sql_direct( g_sql );
 	if( DBOK(sExec) )
 	{
-		string buf[1]; 
-		char param[] = "@@identity";
-		char filter[80]; 
-		sprintf(filter, "1=1");
-		bool ret = _get_row(buf, 1, param, filter);
-		lDBID = atol( buf[0].c_str() );
+		int lastID = get_identity();
+		if (lastID <= 0)
+			return false;
+		lDBID = lastID;
 		return true;
 	}
 
@@ -3072,10 +2935,9 @@ bool CTableMapMask::ReadData(CPlayer *pCPly)
 	}
 
 	int nIndex = 0;
-	char param[80];
-	sprintf(param, "atorID, %s", szMaskColName);
-	char filter[80]; sprintf(filter, "id=%d", pCPly->GetMapMaskDBID());
-	int r = _get_row3(g_buf, g_cnCol, param, filter);
+
+	game_sql::Select q = game_sql::map_mask_by_id(szMaskColName, pCPly->GetMapMaskDBID());
+	int r = _get_row3(g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -3115,13 +2977,7 @@ bool CTableMapMask::SaveData(CPlayer *pCPly, BOOL bDirect)
 
 	//LG("enter_map", "��ʼ������ͼ����!\n");
 	LG("enter_map", "start save big map data!\n");
-	sprintf(g_sql, "update %s set \
-				   %s='%s' \
-				   where id=%d", \
-				   _get_table(), \
-				   szMaskColName, \
-				   pCPly->GetMapMaskBase64(), \
-				   pCPly->GetMapMaskDBID());
+	game_sql::copy_to(g_sql, game_sql::map_mask_save(_get_table(), szMaskColName, pCPly->GetMapMaskBase64(), pCPly->GetMapMaskDBID()));
 
 	//LG("enter_map", "��֯���ͼ���ݳɹ�!\n");
 	LG("enter_map", "organize big map data succeed!\n");
@@ -3216,11 +3072,7 @@ void CTableMapMask::HandleSaveList()
 
 bool CTableAct::Init(void)
 {
-	sprintf(g_sql, "select \
-				ato_id, ato_nome, jmes, ator_ids, last_ip, disc_reason, last_leave \
-				from %s \
-				(nolock) where 1=2", \
-				_get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::account));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
 		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
@@ -3252,9 +3104,8 @@ bool CTableAct::ReadAllData(CPlayer *pPlayer, DWORD ato_id)
 	if(!pPlayer) return false;
 
 	string buf[3]; 
-    char param[] = "jmes, ato_nome, IMP";
-    char filter[80]; sprintf(filter, "ato_id=%d", ato_id);
-    int r = _get_row(buf, 3, param, filter);
+    game_sql::Select q = game_sql::account_gm_level(ato_id);
+    int r = _get_row(buf, 3, q.columns.c_str(), q.filter.c_str());
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
     {
@@ -3270,7 +3121,7 @@ T_E}
 bool CTableAct::SaveIMP(CPlayer *pPlayer){T_B
 	int IMP = pPlayer->GetMainCha()->GetIMP();
 	int actID = pPlayer->GetMainCha()->GetID();
-	sprintf(g_sql, "Update %s set IMP = %d where atorID = %d;", "character",IMP,actID);
+	game_sql::copy_to(g_sql, game_sql::save_imp(IMP, actID));
 	short l_sqlret = exec_sql_direct(g_sql);
 	if (!DBOK(l_sqlret) || get_affected_rows() == 0){
 		return false;
@@ -3283,7 +3134,7 @@ bool CTableAct::SaveGmLv(CPlayer *pPlayer)
 
 	int gmLv = pPlayer->GetGMLev();
 	int actID = pPlayer->GetDBActId();
-	sprintf(g_sql, "Update %s set jmes = %d where ato_id = %d;", _get_table(), gmLv, actID);
+	game_sql::copy_to(g_sql, game_sql::save_gm_level(_get_table(), gmLv, actID));
 	short l_sqlret = exec_sql_direct(g_sql);
 	if (!DBOK(l_sqlret) || get_affected_rows() == 0){
 		return false;
@@ -3293,13 +3144,7 @@ T_E}
 
 bool CTableBoat::Init(void)
 {
-	sprintf(g_sql, "select \
-				boat_id, boat_berth, boat_name, boat_boatid, boat_header, boat_body, boat_engine, boat_cannon, boat_equipment, \
-				boat_bag, boat_diecount, boat_isdead, boat_ownerid, boat_createtime, boat_isdeleted, cur_endure, mx_endure, cur_supply, mx_supply, skill_state, \
-				map, map_x, map_y, angle, degree, exp \
-				from %s \
-				(nolock) where 1=2", \
-				_get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::boat));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
 		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
@@ -3334,12 +3179,19 @@ BOOL CTableBoat::Create( DWORD& dwBoatID, const BOAT_DATA& Data )
 	SYSTEMTIME SysTime;
 	GetLocalTime( &SysTime );
 	sprintf( szTime, "%d-%d-%d %d:%d:%d", SysTime.wYear, SysTime.wMonth, SysTime.wDay, SysTime.wHour, SysTime.wMinute, SysTime.wSecond );
-	sprintf( g_sql, "insert %s (boat_name, boat_berth, boat_boatid, boat_header, boat_body, \
-					boat_engine, boat_cannon, boat_equipment, boat_bag, boat_diecount, \
-					boat_isdead, boat_ownerid, boat_createtime, boat_isdeleted) \
-					values( '%s', %d, %d, %d, %d, %d, %d, %d, '%s', %d, %d, %d, '%s', %d ) ",	_get_table(), 
-					Data.szName, Data.sBerth, Data.sBoat, Data.sHeader, Data.sBody, 
-					Data.sEngine, Data.sCannon, Data.sEquipment, strKitbag.c_str(), 0, 0, Data.dwOwnerID, szTime, 0 );
+	game_sql::BoatCreate create = {};
+	create.name = Data.szName;
+	create.berth = Data.sBerth;
+	create.boat = Data.sBoat;
+	create.header = Data.sHeader;
+	create.body = Data.sBody;
+	create.engine = Data.sEngine;
+	create.cannon = Data.sCannon;
+	create.equipment = Data.sEquipment;
+	create.bag = strKitbag.c_str();
+	create.owner = Data.dwOwnerID;
+	create.created = szTime;
+	game_sql::copy_to(g_sql, game_sql::boat_create(_get_table(), create));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -3357,12 +3209,10 @@ BOOL CTableBoat::Create( DWORD& dwBoatID, const BOAT_DATA& Data )
 	short sExec = exec_sql_direct( g_sql );
 	if( DBOK(sExec) )
 	{
-		string buf[1]; 
-		char param[] = "@@identity";
-		char filter[80]; 
-		sprintf(filter, "1=1");
-		bool ret = _get_row(buf, 1, param, filter);
-		dwBoatID = atol( buf[0].c_str() );
+		int lastID = get_identity();
+		if (lastID <= 0)
+			return FALSE;
+		dwBoatID = lastID;
 		return TRUE;
 	}
 
@@ -3375,14 +3225,8 @@ BOOL CTableBoat::GetBoat( CCharacter& Boat )
 	BOAT_DATA Data;
 	memset( &Data, 0, sizeof(BOAT_DATA) );
 	int nIndex = 0;
-	char param[] = "boat_name, boat_boatid, boat_berth, boat_header, boat_body, \
-					boat_engine, boat_cannon, boat_equipment, boat_diecount, boat_isdead, \
-					boat_ownerid, boat_isdeleted, \
-					cur_endure, mx_endure, cur_supply, mx_supply, skill_state, \
-					map, map_x, map_y, angle, degree, exp";
-	char filter[80]; 
-	sprintf(filter, "boat_id=%d", dwBoatID );
-	int r = _get_row3( g_buf, g_cnCol, param, filter );
+	game_sql::Select q = game_sql::boat_by_id(dwBoatID);
+	int r = _get_row3( g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str() );
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -3490,8 +3334,7 @@ T_E}
 
 BOOL CTableBoat::SaveBoatTempData( DWORD dwBoatID, DWORD dwOwnerID, BYTE byIsDeleted )
 {
-	sprintf( g_sql, "update %s set boat_ownerid=%d, boat_isdeleted=%d\
-					where boat_id=%d", _get_table(), dwOwnerID, byIsDeleted, dwBoatID );
+	game_sql::copy_to(g_sql, game_sql::boat_set_owner(_get_table(), dwOwnerID, byIsDeleted, dwBoatID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -3512,8 +3355,7 @@ BOOL CTableBoat::SaveBoatTempData( DWORD dwBoatID, DWORD dwOwnerID, BYTE byIsDel
 
 BOOL CTableBoat::SaveBoatDelTag( DWORD dwBoatID, BYTE byIsDeleted )
 {
-	sprintf( g_sql, "update %s set boat_isdeleted=%d\
-					where boat_id=%d", _get_table(), byIsDeleted, dwBoatID );
+	game_sql::copy_to(g_sql, game_sql::boat_set_deleted(_get_table(), byIsDeleted, dwBoatID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -3539,8 +3381,7 @@ BOOL CTableBoat::SaveBoatTempData( CCharacter& Boat, BYTE byIsDeleted )
 	BYTE byIsDead = (BYTE)Boat.getAttr( ATTR_BOAT_ISDEAD );
 	DWORD dwOwnerID = Boat.GetPlayer()->GetDBChaId();
 
-	sprintf( g_sql, "update %s set boat_diecount=%d, boat_isdead=%d , boat_ownerid=%d, boat_isdeleted=%d\
-					where boat_id=%d", _get_table(), sDieCount, byIsDead, dwOwnerID, byIsDeleted, dwBoatID );
+	game_sql::copy_to(g_sql, game_sql::boat_set_death(_get_table(), sDieCount, byIsDead, dwOwnerID, byIsDeleted, dwBoatID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -3582,42 +3423,24 @@ BOOL CTableBoat::SaveBoat( CCharacter& Boat, char chSaveType )
 	bool bWithPos = false;
 	if (Boat.GetPlyCtrlCha()->GetSubMap())
 		bWithPos = Boat.GetPlyCtrlCha()->GetSubMap()->CanSavePos();
-	if (bWithPos)
-		sprintf( g_sql, "update %s set boat_berth=%d, boat_ownerid=%d, cur_endure=%d, mx_endure=%d, cur_supply=%d, mx_supply=%d, skill_state='%s', \
-						map='%s', map_x=%d, map_y=%d, angle=%d, degree=%d, exp=%d, boat_bag='%s' \
-						where boat_id=%d",
-			_get_table(),
-			sBerthID,
-			( Boat.GetPlayer() ) ? Boat.GetPlayer()->GetDBChaId() : 0,
-			(long)Boat.getAttr(ATTR_HP),
-			(long)Boat.getAttr(ATTR_BMXHP),
-			(long)Boat.getAttr(ATTR_SP),
-			(long)Boat.getAttr(ATTR_BMXSP),
-			g_skillstate,
-			Boat.GetBirthMap(),
-			Boat.GetPos().x,
-			Boat.GetPos().y,
-			Boat.GetAngle(),
-			(long)Boat.getAttr(ATTR_LV),
-			(long)Boat.getAttr(ATTR_CEXP),
-			g_kitbag,
-			dwBoatID );
-	else
-		sprintf( g_sql, "update %s set boat_berth=%d, boat_ownerid=%d, cur_endure=%d, mx_endure=%d, cur_supply=%d, mx_supply=%d, skill_state='%s', \
-						degree=%d, exp=%d, boat_bag='%s' \
-						where boat_id=%d",
-			_get_table(),
-			sBerthID,
-			( Boat.GetPlayer() ) ? Boat.GetPlayer()->GetDBChaId() : 0,
-			(long)Boat.getAttr(ATTR_HP),
-			(long)Boat.getAttr(ATTR_BMXHP),
-			(long)Boat.getAttr(ATTR_SP),
-			(long)Boat.getAttr(ATTR_BMXSP),
-			g_skillstate,
-			(long)Boat.getAttr(ATTR_LV),
-			(long)Boat.getAttr(ATTR_CEXP),
-			g_kitbag,
-			dwBoatID );
+	game_sql::BoatSave save = {};
+	save.with_pos = bWithPos;
+	save.id = dwBoatID;
+	save.berth = sBerthID;
+	save.owner = ( Boat.GetPlayer() ) ? Boat.GetPlayer()->GetDBChaId() : 0;
+	save.cur_endure = (long)Boat.getAttr(ATTR_HP);
+	save.mx_endure = (long)Boat.getAttr(ATTR_BMXHP);
+	save.cur_supply = (long)Boat.getAttr(ATTR_SP);
+	save.mx_supply = (long)Boat.getAttr(ATTR_BMXSP);
+	save.skill_state = g_skillstate;
+	save.map = Boat.GetBirthMap();
+	save.map_x = Boat.GetPos().x;
+	save.map_y = Boat.GetPos().y;
+	save.angle = Boat.GetAngle();
+	save.degree = (long)Boat.getAttr(ATTR_LV);
+	save.exp = (long)Boat.getAttr(ATTR_CEXP);
+	save.bag = g_kitbag;
+	game_sql::copy_to(g_sql, game_sql::boat_save(_get_table(), save));
 	//LG("enter_map", "��֯SQL���ɹ�.\n");
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
@@ -3685,9 +3508,7 @@ bool CTableBoat::SaveCabin(CCharacter& Boat, char chSaveType)
 	g_kitbag[0] = '\0';
 	KitbagData2String( &Boat.m_CKitbag, g_kitbag, defKITBAG_DATA_STRING_LEN );
 
-	sprintf( g_sql, "update %s set boat_bag='%s' where boat_id=%d", _get_table(),
-		g_kitbag,
-		dwBoatID );
+	game_sql::copy_to(g_sql, game_sql::boat_save_cabin(_get_table(), g_kitbag, dwBoatID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
@@ -3741,10 +3562,8 @@ bool CTableBoat::ReadCabin(CCharacter& Boat) // ��ȡ����
 {
 	DWORD dwBoatID = (DWORD)Boat.getAttr( ATTR_BOAT_DBID );
 	int nIndex = 0;
-	char param[] = "boat_bag";
-	char filter[80]; 
-	sprintf(filter, "boat_id=%d", dwBoatID );
-	int r = _get_row3( g_buf, g_cnCol, param, filter );
+	game_sql::Select q = game_sql::boat_cabin(dwBoatID);
+	int r = _get_row3( g_buf, g_cnCol, q.columns.c_str(), q.filter.c_str() );
 	int	r1 = get_affected_rows();
 	if (DBOK(r) && r1 > 0)
 	{
@@ -3771,6 +3590,13 @@ BOOL CGameDB::Init()
 	m_bInitOK = FALSE;
 
     _connect.enable_errinfo();
+
+	if(!_connect.set_client_encoding(g_Config.m_szDBClientEncoding))
+	{
+		LG("gamedb", "invalid db_client_encoding [%s]\n", g_Config.m_szDBClientEncoding);
+		MessageBox(NULL, "Invalid db_client_encoding in [Database]", "Database Connection Error" , MB_ICONERROR | MB_OK);
+		return FALSE;
+	}
 
 	printf("Connecting database [%s : %s]... ", g_Config.m_szDBIP, g_Config.m_szDBName);
 
@@ -4133,7 +3959,7 @@ void CGameDB::Log(const char *type, const char *c1, const char *c2, const char *
 
 	char szSQL[8192];
 
-	sprintf(szSQL, "insert gamelog (action, c1, c2, c3, c4, content) \
+	sprintf(szSQL, "insert into gamelog (action, c1, c2, c3, c4, content) \
 				   values('%s', '%s', '%s', '%s', '%s', '%s')", type, c1, c2, c3, c4, p);
 	
 	//if(bAddToList)
@@ -4180,12 +4006,7 @@ void CGameDB::Log2(int nType, CCharacter *pCha1, CCharacter *pCha2, const char *
 //===============CTableGuild Begin===========================================
 bool CTableGuild::Init(void)
 {
-	sprintf(g_sql, "select \
-				guild_id, guild_name, motto, passwd, leader_id, exp, member_total,\
-				try_total, disband_date \
-				from %s \
-				(nolock) where 1=2", \
-				_get_table());
+	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::guild));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
 		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
@@ -4221,9 +4042,8 @@ long CTableGuild::Create(CCharacter* pCha, char *guildname, cChar *passwd)
 	while(true)
 	{
 		//��ȡ�չ����ID
-		const char *param = "isnull(min(guild_id),0)";
-		char filter[80]; sprintf(filter, "guild_id >0 and leader_id =0");
-		bool ret = _get_row(buf, 1, param, filter);
+		game_sql::Select q = game_sql::guild_free_slot();
+		bool ret = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str());
 		if (!ret)	
 		{
 			pCha->SystemNotice(RES_STRING(GM_GAMEDB_CPP_00027));
@@ -4239,10 +4059,7 @@ long CTableGuild::Create(CCharacter* pCha, char *guildname, cChar *passwd)
 
 		
 
-			sprintf(sql,	"update %s set leader_id =%d ,passwd ='%s', guild_name ='%s', exp =0,\
-										member_total =1,try_total =0\
-								where leader_id =0 and guild_id =%d",
-				_get_table(), pCha->GetID(), passwd, guildname, l_ret_guild_id);
+			game_sql::copy_to(sql, game_sql::guild_found(_get_table(), pCha->GetID(), passwd, guildname, l_ret_guild_id));
 			SQLRETURN l_sqlret =exec_sql_direct(sql);
 			if(!DBOK(l_sqlret))	//�������������ظ�
 			{
@@ -4258,8 +4075,7 @@ long CTableGuild::Create(CCharacter* pCha, char *guildname, cChar *passwd)
 
 		break;
 	}
-	sprintf(sql,"update character set guild_id =%d,guild_stat =0,guild_permission =%d \
-								where atorID =%d", l_ret_guild_id, emGldPermMax, pCha->GetID());
+	game_sql::copy_to(sql, game_sql::set_character_guild(l_ret_guild_id, emGldPermMax, pCha->GetID()));
 	exec_sql_direct(sql);
 
 	WPACKET l_wpk	=GETWPACKET();
@@ -4276,19 +4092,13 @@ T_E}
 bool CTableGuild::ListAll(CCharacter* pCha ,char disband_days)
 {
 	
-	const char *sql_syntax =0;
 	if(!pCha || disband_days<1)
 	{
 		return false;
 	}
-	else{
-		sql_syntax =
-			"select gld.guild_id, gld.guild_name, gld.motto, gld.leader_id, cha.atorNome leader_name, gld.exp, gld.member_total "
-			"from guild As gld, character As cha where gld.leader_id =cha.atorID";
-	}
 	bool ret = false;
 	char sql[SQL_MAXLEN];
-	sprintf(sql, sql_syntax, disband_days);
+	game_sql::copy_to(sql, game_sql::guild_list_all());
 
 	// ִ�в�ѯ����
 	SQLRETURN sqlret;
@@ -4396,10 +4206,8 @@ void CTableGuild::TryFor(CCharacter* pCha, uLong guildid)
 	}
 
 	string buf[3];
-	char filter[80];
-	const char	*	param	="guild_id";
-	sprintf(filter,"leader_id >0 and guild_id =%d",guildid);
-	int l_ret =_get_row(buf,3,param,filter);
+	game_sql::Select q = game_sql::guild_open_for_applications(guildid);
+	int l_ret =_get_row(buf,3,q.columns.c_str(),q.filter.c_str());
 	if(!DBOK(l_ret))
 	{
 		//pCha->SystemNotice("������빫��ʧ��.");
@@ -4413,11 +4221,9 @@ void CTableGuild::TryFor(CCharacter* pCha, uLong guildid)
 		pCha->SystemNotice(RES_STRING(GM_GAMEDB_CPP_00035));
 		return;
 	}
-	param	="c.guild_id, c.guild_stat, g.guild_name";
 	string	l_tbl_name =_tbl_name;
-	_tbl_name	="character c,guild g";
-	sprintf(filter, "c.guild_id =g.guild_id and c.atorID =%d and g.guild_id <>%d",pCha->GetID(), guildid);
-	l_ret = _get_row(buf, 3, param, filter);
+	game_sql::Select q2 = game_sql::guild_applicant_guild(pCha->GetID(), guildid); _tbl_name = q2.table;
+	l_ret = _get_row(buf, 3, q2.columns.c_str(), q2.filter.c_str());
 	_tbl_name	=l_tbl_name;
 	if(!DBOK(l_ret) || get_affected_rows() !=1)
 	{
@@ -4430,10 +4236,9 @@ void CTableGuild::TryFor(CCharacter* pCha, uLong guildid)
 
 	// ��ѯ�����빫����Ϣ
 	string bufnew[1];
-	param	="guild_name";
-	sprintf(filter, "guild_id =%d",guildid);
+	game_sql::Select q3 = game_sql::guild_by_id(game_sql::columns::guild_name, guildid);
 	int	 l_retrow =0;
-	l_ret = _get_row(bufnew, 1, param, filter, &l_retrow);
+	l_ret = _get_row(bufnew, 1, q3.columns.c_str(), q3.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 	}else
@@ -4491,10 +4296,7 @@ void CTableGuild::TryForConfirm(CCharacter* pCha, uLong guildid)
 		return;
 	}
 
-	sprintf(sql,	"update character set guild_id =%d ,guild_stat =1,guild_permission =0\
-						where atorID =%d and\
-								%d in (select guild_id from guild where leader_id >0 and guild_id =%d and try_total <%d and member_total <%d)",
-								guildid, pCha->GetID(), guildid, guildid, emMaxTryMemberNum, emMaxMemberNum);
+	game_sql::copy_to(sql, game_sql::guild_apply(guildid, pCha->GetID(), emMaxTryMemberNum, emMaxMemberNum));
 	SQLRETURN l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -4504,7 +4306,7 @@ void CTableGuild::TryForConfirm(CCharacter* pCha, uLong guildid)
 		return;
 	}
 
-	sprintf(sql,	"update guild set try_total =try_total +1 where guild_id =%d",guildid);
+	game_sql::copy_to(sql, game_sql::guild_add_applicant(guildid));
 	l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -4517,8 +4319,7 @@ void CTableGuild::TryForConfirm(CCharacter* pCha, uLong guildid)
 	// �ж��Ƿ��ǿͻ��˸������빫��
 	if( dwOldGuildID && pCha->GetPlayer()->m_GuildState.IsTrue(emGuildReplaceOldTry) )
 	{
-		sprintf(sql,"update guild set try_total =try_total -1 where guild_id =%d and try_total > 0"
-			,dwOldGuildID);
+		game_sql::copy_to(sql, game_sql::guild_drop_applicant(dwOldGuildID));
 		SQLRETURN l_sqlret = exec_sql_direct(sql);
 		if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 		{
@@ -4549,11 +4350,9 @@ void CTableGuild::TryForConfirm(CCharacter* pCha, uLong guildid)
 
 bool CTableGuild::GetGuildBank(uLong guildid, CKitbag * bag){
 	string buf[3];
-	char filter[80];
-	const char*param = "bank";
-	sprintf(filter, "guild_id =%d", guildid);
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_bank, guildid);
 	int	 l_retrow = 0;
-	bool l_ret = _get_row(buf, 1, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if (l_retrow == 1)
 	{
 		if (buf[0].length() == 0){
@@ -4569,11 +4368,9 @@ bool CTableGuild::GetGuildBank(uLong guildid, CKitbag * bag){
 
 int CTableGuild::GetGuildLeaderID(uLong guildid){
 	string buf[3];
-	char filter[80];
-	const char*param = "leader_id";
-	sprintf(filter, "guild_id =%d", guildid);
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_leader, guildid);
 	int	 l_retrow = 0;
-	bool l_ret = _get_row(buf, 1, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if (l_retrow == 1)
 	{
 		return atoi(buf[0].c_str());
@@ -4585,7 +4382,7 @@ bool CTableGuild::UpdateGuildBank(uLong guildid, CKitbag * bag){
 	char sql[SQL_MAXLEN];
 	char bagStr[defKITBAG_DATA_STRING_LEN];
 	if (KitbagData2String(bag, bagStr, defKITBAG_DATA_STRING_LEN)){
-		sprintf(sql, "update guild set bank = '%s' where guild_id =%d", bagStr, guildid);
+		game_sql::copy_to(sql, game_sql::guild_save_bank(bagStr, guildid));
 		SQLRETURN l_sqlret = exec_sql_direct(sql);
 		if (!DBOK(l_sqlret) || get_affected_rows() == 0){
 			//this->rollback(); // dont think we need to rollback??
@@ -4598,7 +4395,7 @@ bool CTableGuild::UpdateGuildBank(uLong guildid, CKitbag * bag){
 
 bool CTableGuild::UpdateGuildBankGold(int guildID, int money){
 	char sql[SQL_MAXLEN];
-	sprintf(sql, "update guild set gold = gold + %d where guild_id =%d", money, guildID);
+	game_sql::copy_to(sql, game_sql::guild_add_gold(money, guildID));
 	SQLRETURN l_sqlret = exec_sql_direct(sql);
 	if (!DBOK(l_sqlret) || get_affected_rows() == 0){
 		return false;
@@ -4608,11 +4405,9 @@ bool CTableGuild::UpdateGuildBankGold(int guildID, int money){
 
 unsigned long long CTableGuild::GetGuildBankGold(uLong guildid){
 	string buf[1];
-	char filter[80];
-	const char*param = "gold";
-	sprintf(filter, "guild_id =%d", guildid);
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_gold, guildid);
 	int	 l_retrow = 0;
-	bool l_ret = _get_row(buf, 1, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if (l_retrow == 1){
 		return stoll(buf[0]);
 	}
@@ -4624,11 +4419,9 @@ std::vector<CTableGuild::BankLog> CTableGuild::GetGuildLog(uLong guildid) {
 	string logList[1024]; //Max number of strings (1 log = 5 strings)
 	std::vector<CTableGuild::BankLog> logs;
 
-	char filter[SQL_MAXLEN];
-	const char* param = "banklog";
-	sprintf(filter, "guild_id =%d", guildid);
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_bank_log, guildid);
 	int	 l_retrow = 0;
-	bool l_ret = _get_row(buf, 1, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if (l_retrow == 1) {
 
 		int n = Util_ResolveTextLine(buf[0].c_str(), logList,1024, '-', ';');
@@ -4669,7 +4462,7 @@ bool CTableGuild::SetGuildLog(std::vector<BankLog> log, uLong guild_id) {
 		strcat(data, buf);
 	}
 
-	sprintf(sql, "update guild set banklog = '%s' where guild_id =%d", data, guild_id);
+	game_sql::copy_to(sql, game_sql::guild_save_bank_log(data, guild_id));
 	SQLRETURN l_sqlret = exec_sql_direct(sql);
 	if (!DBOK(l_sqlret) || get_affected_rows() == 0) {
 		return false;
@@ -4690,12 +4483,10 @@ bool CTableGuild::SetGuildLog(std::vector<BankLog> log, uLong guild_id) {
 bool CTableGuild::GetGuildInfo(CCharacter* pCha, uLong guildid )
 {
 	string buf[4];
-	char filter[80];
 
-	const char*param	="guild_name, motto";
-	sprintf(filter, "guild_id =%d",guildid);
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_name_motto, guildid);
 	int	 l_retrow =0;
-	bool l_ret = _get_row(buf, 2, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 2, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		pCha->SetGuildName( buf[0].c_str() );
@@ -4717,20 +4508,12 @@ bool CTableGuild::ListTryPlayer(CCharacter* pCha, char disband_days)
 	}
 
 	string buf[10];
-	char filter[80];
-
-	const char *sql_syntax = "g.guild_id, g.guild_name,g.motto, c.atorNome, g.member_total,g.exp, g.level";
-
-	char param[500];
-	//sprintf(param , sql_syntax , disband_days);
-	sprintf(param, sql_syntax);
-
 	string	l_tbl_name =_tbl_name;
-	_tbl_name	="character c,guild g";
-	sprintf(filter, "g.leader_id =c.atorID and g.guild_id =%d",pCha->GetGuildID());
+	game_sql::Select q = game_sql::guild_leader_summary(pCha->GetGuildID());
+	_tbl_name = q.table;
 	int	 l_retrow =0;
 
-	bool l_ret = _get_row(buf, 10, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 10, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	_tbl_name	=l_tbl_name;
 	if(!l_ret || !l_retrow || this->get_affected_rows() !=1)
 	{
@@ -4749,13 +4532,8 @@ bool CTableGuild::ListTryPlayer(CCharacter* pCha, char disband_days)
 	WRITE_LONG(l_wpk, 0); //8
 	WRITE_LONG(l_wpk, atol(buf[6].c_str())); //level 9
 
-	sql_syntax =
-		"select c.atorID,c.atorNome,c.job,c.degree\
-			from character c\
-			where (c.guild_stat =1 and c.guild_id =%d and c.delflag =0)\
-		";
 	char sql[SQL_MAXLEN];
-	sprintf(sql, sql_syntax, pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_applicants(pCha->GetGuildID()));
 
 	// ִ�в�ѯ����
 	SQLRETURN sqlret;
@@ -4838,14 +4616,11 @@ bool CTableGuild::Approve(CCharacter* pCha, uLong chaid)
 	}
 
 	string buf[3];
-	char filter[80];
 	
-	const char*param	="c.atorID";
 	string	l_tbl_name =_tbl_name;
-	_tbl_name	="character c";
-	sprintf(filter, "c.atorID =%d and c.guild_id =%d and c.guild_permission & %d =%d", pCha->GetID(), pCha->GetGuildID(), emGldPermRecruit, emGldPermRecruit);
+	game_sql::Select q = game_sql::character_can(pCha->GetID(), pCha->GetGuildID(), emGldPermRecruit); _tbl_name = q.table;
 	int retrow =0;
-	bool l_ret = _get_row(buf, 3, param, filter, &retrow);
+	bool l_ret = _get_row(buf, 3, q.columns.c_str(), q.filter.c_str(), &retrow);
 	_tbl_name	=l_tbl_name;
 	if(!l_ret)
 	{
@@ -4869,11 +4644,7 @@ bool CTableGuild::Approve(CCharacter* pCha, uLong chaid)
 	}
 
 	char sql[SQL_MAXLEN];
-	sprintf(sql,"update guild\
-					set try_total =try_total -1,\
-						member_total =member_total +1\
-						where guild_id =%d and member_total <%d and try_total > 0"
-					,pCha->GetGuildID(),g_Config.m_sGuildNum);
+	game_sql::copy_to(sql, game_sql::guild_accept_applicant_count(pCha->GetGuildID(), g_Config.m_sGuildNum));
 	SQLRETURN l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -4883,9 +4654,7 @@ bool CTableGuild::Approve(CCharacter* pCha, uLong chaid)
 		return false;
 	}
 
-	sprintf(sql,	"update character set guild_stat =0,guild_permission =%d\
-						where atorID =%d and guild_id =%d and guild_stat =1 and delflag =0",
-						emGldPermDefault,chaid, pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_accept_applicant(emGldPermDefault, chaid, pCha->GetGuildID()));
 	l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -4933,14 +4702,11 @@ bool CTableGuild::Reject(CCharacter* pCha, uLong chaid)
 	}
 	//printf_s("Reject %lu", chaid);
 	string buf[3];
-	char filter[80];
 
-	const char* param = "c.atorID";
 	string	l_tbl_name = _tbl_name;
-	_tbl_name = "character c";
-	sprintf(filter, "c.atorID =%d and c.guild_id =%d and c.guild_permission & %d =%d", pCha->GetID(), pCha->GetGuildID(), emGldPermRecruit, emGldPermRecruit);
+	game_sql::Select q = game_sql::character_can(pCha->GetID(), pCha->GetGuildID(), emGldPermRecruit); _tbl_name = q.table;
 	int retrow = 0;
-	bool l_ret = _get_row(buf, 3, param, filter, &retrow);
+	bool l_ret = _get_row(buf, 3, q.columns.c_str(), q.filter.c_str(), &retrow);
 	_tbl_name = l_tbl_name;
 	if (!l_ret)
 	{
@@ -4964,9 +4730,7 @@ bool CTableGuild::Reject(CCharacter* pCha, uLong chaid)
 	}
 
 	char sql[SQL_MAXLEN];
-	sprintf(sql, "update character set guild_id =0 ,guild_stat =0,guild_permission =0\
-						where atorID =%d and guild_id =%d and guild_stat =1",
-		chaid, pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_reject_applicant(chaid, pCha->GetGuildID()));
 	SQLRETURN l_sqlret = exec_sql_direct(sql);
 	if (!DBOK(l_sqlret) || get_affected_rows() == 0)
 	{
@@ -4977,8 +4741,7 @@ bool CTableGuild::Reject(CCharacter* pCha, uLong chaid)
 		return false;
 	}
 
-	sprintf(sql, "update guild set try_total =try_total -1 where guild_id =%d and try_total > 0"
-		, pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_drop_applicant(pCha->GetGuildID()));
 	l_sqlret = exec_sql_direct(sql);
 	if (!DBOK(l_sqlret) || get_affected_rows() == 0)
 	{
@@ -5011,14 +4774,11 @@ bool CTableGuild::Kick(CCharacter* pCha, uLong chaid)
 	}
 
 	string buf[3];
-	char filter[80];
 
-	const char*param	="c.atorID";
 	string	l_tbl_name =_tbl_name;
-	_tbl_name	="character c";
-	sprintf(filter, "c.atorID =%d and c.guild_id =%d and c.guild_permission & %d =%d", pCha->GetID(), pCha->GetGuildID(), emGldPermKick, emGldPermKick);
+	game_sql::Select q = game_sql::character_can(pCha->GetID(), pCha->GetGuildID(), emGldPermKick); _tbl_name = q.table;
 	int retrow =0;
-	bool l_ret = _get_row(buf, 3, param, filter, &retrow);
+	bool l_ret = _get_row(buf, 3, q.columns.c_str(), q.filter.c_str(), &retrow);
 	_tbl_name	=l_tbl_name;
 	if(!l_ret)
 	{
@@ -5050,10 +4810,7 @@ bool CTableGuild::Kick(CCharacter* pCha, uLong chaid)
 	}
 
 	char sql[SQL_MAXLEN];
-	sprintf(sql,	"update character set guild_id =0 ,guild_stat =0,guild_permission =0\
-						where atorID =%d and guild_id =%d and guild_stat =0 and\
-								atorID not in(select leader_id from guild where guild_id =%d)",
-				chaid, pCha->GetGuildID(), pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_remove_member(chaid, pCha->GetGuildID()));
 	SQLRETURN l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -5063,7 +4820,7 @@ bool CTableGuild::Kick(CCharacter* pCha, uLong chaid)
 		return false;
 	}
 
-	sprintf(sql,	"update guild set member_total =member_total -1 where guild_id =%d",pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_drop_member(pCha->GetGuildID()));
 	l_sqlret = exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -5114,10 +4871,7 @@ bool CTableGuild::Leave(CCharacter* pCha)
 	}
 
 	char sql[SQL_MAXLEN];
-	sprintf(sql,	"update character set guild_id =0 ,guild_stat =0,guild_permission =0\
-						where atorID =%d and guild_id =%d and guild_stat =0 and\
-								atorID not in(select leader_id from guild where guild_id =%d)",
-				pCha->GetID(), pCha->GetGuildID(), pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_remove_member(pCha->GetID(), pCha->GetGuildID()));
 	SQLRETURN l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -5127,7 +4881,7 @@ bool CTableGuild::Leave(CCharacter* pCha)
 		return false;
 	}
 
-	sprintf(sql,	"update guild set member_total =member_total -1 where guild_id =%d",pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_drop_member(pCha->GetGuildID()));
 	l_sqlret = exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -5174,11 +4928,9 @@ bool CTableGuild::Disband(CCharacter* pCha,cChar *passwd)
 	}
 
 	string buf[6];
-	char filter[80];
-	const char*param	="challlevel";
-	sprintf(filter, "guild_id =%d", pCha->GetValidGuildID());
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_challenge_id, pCha->GetValidGuildID());
 	int	 l_retrow =0;
-	bool l_ret = _get_row(buf, 6, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 6, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		if( atoi(buf[0].c_str()) > 0 )
@@ -5190,8 +4942,8 @@ bool CTableGuild::Disband(CCharacter* pCha,cChar *passwd)
 		else
 		{
 			l_retrow = 0;
-			sprintf(filter, "challid =%d", pCha->GetValidGuildID());
-			bool l_ret = _get_row(buf, 6, param, filter, &l_retrow);
+			game_sql::Select q2 = game_sql::guild_by_challenger(game_sql::columns::guild_challenge_id, pCha->GetValidGuildID());
+			bool l_ret = _get_row(buf, 6, q2.columns.c_str(), q2.filter.c_str(), &l_retrow);
 			if( !l_ret )
 			{
 				//pCha->SystemNotice( "��ȡ��Ĺ�����ս��Ϣʧ��!" );
@@ -5222,9 +4974,7 @@ bool CTableGuild::Disband(CCharacter* pCha,cChar *passwd)
 	}
 
 	char sql[SQL_MAXLEN];
-	sprintf(sql,	"update guild set level = 0, gold = 0,bank = '', motto ='',passwd ='',leader_id =0, exp =0,member_total =0,try_total =0 \
-						where guild_id =%d and passwd ='%s' ",
-						pCha->GetGuildID(), passwd);
+	game_sql::copy_to(sql, game_sql::guild_clear(pCha->GetGuildID(), passwd));
 
 	SQLRETURN l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
@@ -5235,9 +4985,7 @@ bool CTableGuild::Disband(CCharacter* pCha,cChar *passwd)
 		return false;
 	}
 
-	sprintf(sql,	"update character set guild_id =0 ,guild_stat =0,guild_permission =0\
-						where guild_id =%d",
-				pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_release_members(pCha->GetGuildID()));
 	l_sqlret = exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -5276,9 +5024,7 @@ bool CTableGuild::Motto(CCharacter* pCha,cChar *motto)
 	}
 
 	char sql[SQL_MAXLEN];
-	sprintf(sql,	"update guild set motto ='%s'\
-						where guild_id =%d",
-				motto,pCha->GetGuildID());
+	game_sql::copy_to(sql, game_sql::guild_set_motto(motto, pCha->GetGuildID()));
 	SQLRETURN l_sqlret =exec_sql_direct(sql);
 	if(!DBOK(l_sqlret))
 	{
@@ -5315,12 +5061,10 @@ bool CTableGuild::Motto(CCharacter* pCha,cChar *motto)
 
 bool CTableGuild::GetGuildName(long lGuildID, std::string& strGuildName)
 {
-	char filter[80];
 
-	const char*param	="guild_name";
-	sprintf(filter, "guild_id =%d",lGuildID);
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_name, lGuildID);
 	int	 l_retrow =0;
-	return _get_row(&strGuildName, 1, param, filter, &l_retrow);
+	return _get_row(&strGuildName, 1, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 }
 
 bool CTableGuild::Leizhu( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
@@ -5338,13 +5082,11 @@ bool CTableGuild::Leizhu( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 	}
 
 	string buf[6];
-	char filter[80];
-	const char*param1	="guild_id, guild_name, challid, challmoney, leader_id, challstart";
 	if( pCha->GetValidGuildID() > 0 )
 	{
-		sprintf(filter, "guild_id =%d", pCha->GetValidGuildID());
+		game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_challenge_full, pCha->GetValidGuildID());
 		int	 l_retrow =0;
-		bool l_ret = _get_row(buf, 6, param1, filter, &l_retrow);
+		bool l_ret = _get_row(buf, 6, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 		if(l_retrow ==1)
 		{
 			if( pCha->GetID() == atoi(buf[4].c_str()) )
@@ -5363,8 +5105,8 @@ bool CTableGuild::Leizhu( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 			return false;
 		}
 
-		sprintf(filter, "challid =%d", pCha->GetValidGuildID());
-		l_ret = _get_row(buf, 6, param1, filter, &l_retrow);
+		game_sql::Select q2 = game_sql::guild_by_challenger(game_sql::columns::guild_challenge_full, pCha->GetValidGuildID());
+		l_ret = _get_row(buf, 6, q2.columns.c_str(), q2.filter.c_str(), &l_retrow);
 		if(l_retrow >=1)
 		{
 			//pCha->SystemNotice( "��ÿ��ֻ����սһ�����ᣬ���Ѿ��ǹ��ᡶ%s������ս��^_^!", buf[1].c_str() );
@@ -5391,10 +5133,9 @@ bool CTableGuild::Leizhu( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 	DWORD dwGuildID = 0;
 	DWORD dwChallID = 0;
 	DWORD dwChallMoney = 0;
-	const char*param	="guild_id, guild_name, challid, challmoney";
-	sprintf(filter, "challlevel =%d",byLevel);
+	game_sql::Select q3 = game_sql::guild_by_challenge_level(game_sql::columns::guild_challenge_pair, byLevel);
 	int	 l_retrow =0;
-	bool l_ret = _get_row(buf, 4, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 4, q3.columns.c_str(), q3.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		//pCha->SystemNotice( "���ᡶ%s���Ѿ���������%d������!", buf[1].c_str(), byLevel );
@@ -5403,9 +5144,8 @@ bool CTableGuild::Leizhu( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 	}
 	else
 	{
-		const char*param1	="challlevel";
-		sprintf(filter, "guild_id =%d",pCha->GetValidGuildID());
-		bool l_ret = _get_row(buf, 4, param1, filter, &l_retrow);
+		game_sql::Select q4 = game_sql::guild_by_id(game_sql::columns::guild_challenge_id, pCha->GetValidGuildID());
+		bool l_ret = _get_row(buf, 4, q4.columns.c_str(), q4.filter.c_str(), &l_retrow);
 		if(l_retrow ==1)
 		{
 			if( atoi(buf[0].c_str()) > 0 )
@@ -5424,8 +5164,7 @@ bool CTableGuild::Leizhu( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 			return false;
 		}
 
-		sprintf(sql,	"update guild set challid = 0, challstart = 0, challmoney = 0, challlevel = %d where guild_id =%d",
-			byLevel, pCha->GetValidGuildID() );
+		game_sql::copy_to(sql, game_sql::guild_set_challenge(byLevel, pCha->GetValidGuildID()));
 		SQLRETURN l_sqlret =exec_sql_direct(sql);
 		if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 		{
@@ -5468,13 +5207,11 @@ bool CTableGuild::Challenge( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 	}
 
 	string buf[6];
-	char filter[80];
-	const char*param1	="guild_id, guild_name, challid, challmoney, leader_id, challstart";
 	if( pCha->GetValidGuildID() > 0 )
 	{
-		sprintf(filter, "guild_id =%d", pCha->GetValidGuildID());
+		game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_challenge_full, pCha->GetValidGuildID());
 		int	 l_retrow =0;
-		bool l_ret = _get_row(buf, 6, param1, filter, &l_retrow);
+		bool l_ret = _get_row(buf, 6, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 		if(l_retrow ==1)
 		{
 			if( pCha->GetID() == atoi(buf[4].c_str()) )
@@ -5493,8 +5230,8 @@ bool CTableGuild::Challenge( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 			return false;
 		}
 
-		sprintf(filter, "challid =%d", pCha->GetValidGuildID());
-		l_ret = _get_row(buf, 6, param1, filter, &l_retrow);
+		game_sql::Select q2 = game_sql::guild_by_challenger(game_sql::columns::guild_challenge_full, pCha->GetValidGuildID());
+		l_ret = _get_row(buf, 6, q2.columns.c_str(), q2.filter.c_str(), &l_retrow);
 		if(l_retrow >=1)
 		{
 			//pCha->SystemNotice( "��ÿ��ֻ����սһ�����ᣬ���Ѿ��ǹ��ᡶ%s������ս��^_^!", buf[1].c_str() );
@@ -5521,10 +5258,9 @@ bool CTableGuild::Challenge( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 	DWORD dwGuildID = 0;
 	DWORD dwChallID = 0;
 	DWORD dwChallMoney = 0;
-	const char*param	="guild_id, guild_name, challid, challmoney";
-	sprintf(filter, "challlevel =%d",byLevel);
+	game_sql::Select q3 = game_sql::guild_by_challenge_level(game_sql::columns::guild_challenge_pair, byLevel);
 	int	 l_retrow =0;
-	bool l_ret = _get_row(buf, 4, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 4, q3.columns.c_str(), q3.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		dwGuildID = atoi(buf[0].c_str());
@@ -5541,8 +5277,7 @@ bool CTableGuild::Challenge( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 			return false;
 		}
 
-		sprintf(sql,	"update guild set challid = 0, challstart = 0, challmoney = 0, challlevel = %d where guild_id =%d",
-			byLevel, pCha->GetValidGuildID() );
+		game_sql::copy_to(sql, game_sql::guild_set_challenge(byLevel, pCha->GetValidGuildID()));
 		SQLRETURN l_sqlret =exec_sql_direct(sql);
 		if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 		{
@@ -5570,9 +5305,8 @@ bool CTableGuild::Challenge( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 	}
 
 	BYTE byLvData = 0;
-	const char*param2	="challlevel";
-	sprintf(filter, "guild_id =%d", pCha->GetValidGuildID() );
-	l_ret = _get_row(buf, 4, param2, filter, &l_retrow);
+	game_sql::Select q4 = game_sql::guild_by_id(game_sql::columns::guild_challenge_id, pCha->GetValidGuildID());
+	l_ret = _get_row(buf, 4, q4.columns.c_str(), q4.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		byLvData = (BYTE)atoi(buf[0].c_str());
@@ -5624,9 +5358,7 @@ bool CTableGuild::Challenge( CCharacter* pCha, BYTE byLevel, DWORD dwMoney )
 	}
 
 	// �����µ���ս����	
-	sprintf(sql,	"update guild set challid =%d,challmoney =%d where guild_id =%d \
-					and challmoney < %d and challstart = 0",
-				pCha->GetGuildID(), dwMoney, dwGuildID, dwMoney );
+	game_sql::copy_to(sql, game_sql::guild_bid(pCha->GetGuildID(), dwMoney, dwGuildID, dwMoney));
 	SQLRETURN l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -5667,7 +5399,6 @@ void CTableGuild::ListChallenge( CCharacter* pCha )
 {
 	string buf1[6];
 	string buf2[6];
-	char filter[80];
 
 	DWORD dwGuildID = 0;
 	DWORD dwChallID = 0;
@@ -5678,12 +5409,11 @@ void CTableGuild::ListChallenge( CCharacter* pCha )
 	WPacket l_wpk	=GETWPACKET();
 	WRITE_CMD(l_wpk,CMD_MC_GUILD_LISTCHALL);
 
-	const char*param	="guild_id, guild_name, challid, challmoney, leader_id, challstart";
 	if( pCha->GetValidGuildID() > 0 )
 	{
-		sprintf(filter, "guild_id =%d", pCha->GetValidGuildID());
+		game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_challenge_full, pCha->GetValidGuildID());
 		int	 l_retrow =0;
-		bool l_ret = _get_row(buf1, 6, param, filter, &l_retrow);
+		bool l_ret = _get_row(buf1, 6, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 		if(l_retrow ==1)
 		{
 			if( pCha->GetID() == atoi(buf1[4].c_str()) )
@@ -5710,9 +5440,9 @@ void CTableGuild::ListChallenge( CCharacter* pCha )
 
 	for( int i = 1; i <= 3; ++i )
 	{
-		sprintf(filter, "challlevel =%d", i);
+		game_sql::Select q2 = game_sql::guild_by_challenge_level(game_sql::columns::guild_challenge_full, i);
 		int	 l_retrow =0;
-		bool l_ret = _get_row(buf1, 6, param, filter, &l_retrow);
+		bool l_ret = _get_row(buf1, 6, q2.columns.c_str(), q2.filter.c_str(), &l_retrow);
 		if(l_retrow ==1)
 		{			
 			dwGuildID = atoi(buf1[0].c_str());
@@ -5722,8 +5452,8 @@ void CTableGuild::ListChallenge( CCharacter* pCha )
 			
 			if( dwChallID != 0 )
 			{
-				sprintf(filter, "guild_id =%d", dwChallID);
-				bool l_ret = _get_row(buf2, 6, param, filter, &l_retrow);
+				game_sql::Select q3 = game_sql::guild_by_id(game_sql::columns::guild_challenge_full, dwChallID);
+				bool l_ret = _get_row(buf2, 6, q3.columns.c_str(), q3.filter.c_str(), &l_retrow);
 				if(l_retrow ==1)
 				{
 					WRITE_CHAR( l_wpk, i );
@@ -5762,12 +5492,10 @@ bool CTableGuild::HasGuildLevel( CCharacter* pChar, BYTE byLevel )
 	}
 
 	string buf[1];
-	char filter[80];
 	BYTE byData = 0;
-	const char*param	="challlevel";
-	sprintf(filter, "guild_id =%d",pChar->GetValidGuildID());
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_challenge_id, pChar->GetValidGuildID());
 	int	 l_retrow =0;
-	bool l_ret = _get_row(buf, 1, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 1, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		byData = (BYTE)atoi(buf[0].c_str());
@@ -5779,18 +5507,16 @@ bool CTableGuild::HasGuildLevel( CCharacter* pChar, BYTE byLevel )
 bool CTableGuild::HasCall( BYTE byLevel )
 {
 	string buf[5];
-	char filter[80];
 
 	char  szGuild[64];
 	memset( szGuild, 0, 64 );
 	DWORD dwGuildID = 0;
 	DWORD dwChallID = 0;
 	DWORD dwChallMoney = 0;
-	const char*param	="guild_id, guild_name, challid, challmoney, challstart";
-	sprintf(filter, "challlevel =%d",byLevel);
+	game_sql::Select q = game_sql::guild_by_challenge_level(game_sql::columns::guild_challenge_call, byLevel);
 	int	 l_retrow =0;
 	BYTE byStart = 0;
-	bool l_ret = _get_row(buf, 5, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 5, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		dwGuildID = atoi(buf[0].c_str());
@@ -5808,17 +5534,15 @@ bool CTableGuild::StartChall( BYTE byLevel )
 	//LG( "��ս����", "���������%d��ս����ʼ����...\n", byLevel ); 
 	LG( "challenge consortia", "range level %d challenge start treat with....\n", byLevel ); 
 	string buf[4];
-	char filter[80];
 
 	char  szGuild[64];
 	memset( szGuild, 0, 64 );
 	DWORD dwGuildID = 0;
 	DWORD dwChallID = 0;
 	DWORD dwChallMoney = 0;
-	const char*param	="guild_id, guild_name, challid, challmoney";
-	sprintf(filter, "challlevel =%d",byLevel);
+	game_sql::Select q = game_sql::guild_by_challenge_level(game_sql::columns::guild_challenge_pair, byLevel);
 	int	 l_retrow =0;
-	bool l_ret = _get_row(buf, 4, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 4, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		dwGuildID = atoi(buf[0].c_str());
@@ -5837,8 +5561,7 @@ bool CTableGuild::StartChall( BYTE byLevel )
 
 	// �����µ���ս����
 	char sql[SQL_MAXLEN];
-	sprintf(sql,	"update guild set challstart = 1 where guild_id =%d and challstart = 0",
-				dwGuildID );
+	game_sql::copy_to(sql, game_sql::guild_start_challenge(dwGuildID));
 	SQLRETURN l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -5857,7 +5580,6 @@ void CTableGuild::EndChall( DWORD dwGuild1, DWORD dwGuild2, BOOL bChall )
 	//LG( "��ս����", "����������ս����ʼ��������GUILD1 = %d, GUILD2 = %d...\n", dwGuild1, dwGuild2 ); 
 	LG( "challenge consortia", "arranger level consortia game start operator finish GUILD1 = %d, GUILD2 = %d...\n", dwGuild1, dwGuild2 ); 
 	string buf[5];
-	char filter[80];
 
 	char  szGuild[64];
 	memset( szGuild, 0, 64 );
@@ -5866,10 +5588,9 @@ void CTableGuild::EndChall( DWORD dwGuild1, DWORD dwGuild2, BOOL bChall )
 	DWORD dwChallMoney = 0;
 	BYTE  byLevel = 0;
 	BYTE  byStart = 0;
-	const char*param	="challstart, guild_name, challid, challmoney, challlevel";
-	sprintf(filter, "guild_id =%d",dwGuild1);
+	game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_challenge_end, dwGuild1);
 	int	 l_retrow =0;
-	bool l_ret = _get_row(buf, 5, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 5, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		byStart = (BYTE)atoi(buf[0].c_str());
@@ -5886,8 +5607,8 @@ void CTableGuild::EndChall( DWORD dwGuild1, DWORD dwGuild2, BOOL bChall )
 		}
 	}
 
-	sprintf(filter, "guild_id =%d",dwGuild2);
-	l_ret = _get_row(buf, 5, param, filter, &l_retrow);
+	game_sql::Select q2 = game_sql::guild_by_id(game_sql::columns::guild_challenge_end, dwGuild2);
+	l_ret = _get_row(buf, 5, q2.columns.c_str(), q2.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		byStart = (BYTE)atoi(buf[0].c_str());
@@ -5936,13 +5657,11 @@ bool CTableGuild::ChallWin( BOOL bUpdate, BYTE byLevel, DWORD dwWinGuildID, DWOR
 	else
 	{
 		string buf[5];
-		char filter[80];
 
 		BYTE  byLvData = 0;
-		const char*param	="challlevel";
-		sprintf(filter, "guild_id =%d",dwWinGuildID);
+		game_sql::Select q = game_sql::guild_by_id(game_sql::columns::guild_challenge_id, dwWinGuildID);
 		int	 l_retrow =0;
-		bool l_ret = _get_row(buf, 5, param, filter, &l_retrow);
+		bool l_ret = _get_row(buf, 5, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 		if(l_retrow ==1)
 		{
 			byLvData = (BYTE)atoi(buf[0].c_str());
@@ -5964,8 +5683,7 @@ bool CTableGuild::ChallWin( BOOL bUpdate, BYTE byLevel, DWORD dwWinGuildID, DWOR
 				byLvData = byTemp;
 			}
 
-			sprintf(sql,	"update guild set challid = 0, challstart = 0, challmoney = 0, challlevel = %d where guild_id =%d",
-				byLvData, dwFailerGuildID );
+			game_sql::copy_to(sql, game_sql::guild_set_challenge(byLvData, dwFailerGuildID));
 			l_sqlret =exec_sql_direct(sql);
 			if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 			{
@@ -5977,8 +5695,7 @@ bool CTableGuild::ChallWin( BOOL bUpdate, BYTE byLevel, DWORD dwWinGuildID, DWOR
 		}
 		else
 		{
-			sprintf(sql,	"update guild set challid = 0, challstart = 0, challmoney = 0, challlevel = 0 where guild_id =%d",
-				dwFailerGuildID );
+			game_sql::copy_to(sql, game_sql::guild_set_challenge(0, dwFailerGuildID));
 			l_sqlret =exec_sql_direct(sql);
 			if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 			{
@@ -5990,8 +5707,7 @@ bool CTableGuild::ChallWin( BOOL bUpdate, BYTE byLevel, DWORD dwWinGuildID, DWOR
 		}
 	}
 
-	sprintf(sql,	"update guild set challid = 0, challstart = 0, challmoney = 0, challlevel = %d where guild_id =%d",
-				byLevel, dwWinGuildID  );
+	game_sql::copy_to(sql, game_sql::guild_set_challenge(byLevel, dwWinGuildID));
 	l_sqlret =exec_sql_direct(sql);
 	if( !DBOK( l_sqlret ) || get_affected_rows() == 0 )
 	{
@@ -6053,15 +5769,13 @@ void CTableGuild::ChallMoney( BYTE byLevel, BOOL bChall, DWORD dwGuildID, DWORD 
 bool CTableGuild::GetChallInfo( BYTE byLevel, DWORD& dwGuildID1, DWORD& dwGuildID2, DWORD& dwMoney )
 {
 	string buf[3];
-	char filter[80];
 
 	DWORD dwGuildID = 0;
 	DWORD dwChallID = 0;
 	DWORD dwChallMoney = 0;
-	const char*param	="guild_id, challid, challmoney";
-	sprintf(filter, "challlevel =%d",byLevel);
+	game_sql::Select q = game_sql::guild_by_challenge_level(game_sql::columns::guild_challenge_info, byLevel);
 	int	 l_retrow =0;
-	bool l_ret = _get_row(buf, 3, param, filter, &l_retrow);
+	bool l_ret = _get_row(buf, 3, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if( l_retrow == 1 )
 	{
 		dwGuildID1 = atoi(buf[0].c_str());
@@ -6075,8 +5789,7 @@ bool CTableGuild::GetChallInfo( BYTE byLevel, DWORD& dwGuildID1, DWORD& dwGuildI
 
 bool CTableCha::SetGuildPermission(int atorID, unsigned long permission, int guild_id)
 {
-	_snprintf_s(g_sql, sizeof(g_sql), _TRUNCATE, "update %s set guild_permission='%d' where atorID=%d and guild_id = %d",
-																_get_table(), permission, atorID,guild_id);
+	game_sql::copy_to(g_sql, game_sql::set_guild_permission(_get_table(), permission, atorID, guild_id));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 		return false;
@@ -6093,10 +5806,7 @@ bool CTableCha::SetGuildPermission(int atorID, unsigned long permission, int gui
 
 bool CTableCha::SetChaAddr(DWORD atorID, Long addr)
 {
-	_snprintf_s(g_sql, sizeof(g_sql), _TRUNCATE, "update %s set \
-		endeMem='%d'\
-		where atorID=%d", \
-		_get_table(), -1, atorID);
+	game_sql::copy_to(g_sql, game_sql::reset_character_address(_get_table(), atorID));
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 		return false;
@@ -6117,16 +5827,12 @@ bool CTableCha::SetChaAddr(DWORD atorID, Long addr)
 
 bool	CTableItem::LockItem(	SItemGrid*	sig,	int	iChaId	)
 {
-	char param[80];
-	sprintf(param, "TOP 1 id");
-
-	char filter[80]; 
-	sprintf(filter, "ORDER BY id DESC");
+	game_sql::Select q = game_sql::last_property_id();
 
 	std::string buf[1];
 
 	int			r1 = 0;
-	int			r = _get_rowOderby(buf, 1, param, filter, &r1);
+	int			r = _get_rowOderby(buf, 1, q.columns.c_str(), q.filter.c_str(), &r1);
 	DWORD		dwDropertyID;
 
 	if (DBOK(r) && r1 > 0)
@@ -6145,12 +5851,7 @@ bool	CTableItem::LockItem(	SItemGrid*	sig,	int	iChaId	)
 			
 		if(	SItemGrid2String(	s,	lnCheckSum,	sig,	0	)	)
 		{
-			sprintf( g_sql, "insert into property (	id,	atorID,	context,	sum,	time	) values (	%d,	%d, '%s', %d,	getdate())",
-				dwDropertyID,
-				iChaId, 
-				s.c_str(),
-				lnCheckSum
-				);
+			game_sql::copy_to(g_sql, game_sql::property_lock(dwDropertyID, iChaId, s.c_str(), lnCheckSum));
 				short sExec = exec_sql_direct( g_sql );
 				return	DBOK(sExec);
 		};
@@ -6162,7 +5863,7 @@ bool CTableItem::UnlockItem( SItemGrid* sig, int iChaId )
 {
 	if(sig)
 	{
-		_snprintf_s(g_sql,sizeof(g_sql),_TRUNCATE, "delete from property where id =%d and atorID =%d",sig->dwDBID, iChaId );
+		game_sql::copy_to(g_sql, game_sql::property_unlock(sig->dwDBID, iChaId));
 
 		short sExec = exec_sql_direct( g_sql );
 		sig->dwDBID = 0;

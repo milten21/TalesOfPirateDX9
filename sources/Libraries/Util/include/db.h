@@ -35,6 +35,13 @@ public:
 	bool connect(const char* servername, const char* database, const char* userid, const char* passwd,
 		std::string& err_info);
     SQLHDBC get_dbc() const;
+
+    bool set_client_encoding(const char* encoding);
+    const char* get_client_encoding() const;
+
+    void record_rowcount(SQLHSTMT hstmt, SQLRETURN sqlret);
+    int last_rowcount() const;
+
 	void add(cfl_rs* rs);
 	void disconn();
 
@@ -49,6 +56,7 @@ protected:
 
 	bool _needreconn(char const* state);
 	bool _reconnt();
+	bool _apply_client_encoding(std::string& errinfo);
 
 private:
     bool connect(const char* source, const char* userid, const char* passwd, std::string& err_info);
@@ -62,7 +70,11 @@ private:
 
 	std::vector<cfl_rs *> _rslist;
 
-	std::string _openDatabase;
+	std::string _server;
+	std::string _database;
+	std::string _userid;
+	std::string _client_encoding;
+	SQLLEN _last_rowcount;
 };
 
 inline void cfl_db::enable_errinfo(bool enable /* = true */)
@@ -76,6 +88,14 @@ inline bool cfl_db::is_errinfo_enable() const
 inline SQLHDBC cfl_db::get_dbc() const
 {
 	return _hdbc;
+}
+inline const char* cfl_db::get_client_encoding() const
+{
+	return _client_encoding.c_str();
+}
+inline int cfl_db::last_rowcount() const
+{
+	return (int)_last_rowcount;
 }
 
 
@@ -93,7 +113,7 @@ protected:
 
 public:
 
-	// ¼òµ¥½Ó¿Ú
+	// ï¿½òµ¥½Ó¿ï¿½
     SQLRETURN exec_sql_direct(char const* sql, unsigned short timeout = 50);
 
     SQLRETURN exec_sql(char const* sql, char const* pdata, int len, unsigned short timeout = 50);
@@ -108,15 +128,15 @@ public:
 	bool _get_bin_field(char* field_text, int& len, char* param, char* filter, int* affect_rows = NULL);
 	// End
 
-	//@TableName	nvarchar(50),		-- ±íÃû
-	//@ReturnFields	nvarchar(200) = '*',	-- ÐèÒª·µ»ØµÄÁÐ 
-	//@PageSize	int = 10,		-- Ã¿Ò³¼ÇÂ¼Êý
-	//@PageIndex	int = 1,		-- µ±Ç°Ò³Âë
-	//@Where		nvarchar(200) = '',	-- ²éÑ¯Ìõ¼þ
-	//@Orderfld	nvarchar(200),		-- ÅÅÐò×Ö¶ÎÃû ×îºÃÎªÎ¨Ò»Ö÷¼ü
-	//@OrderType	int = 1,		-- ÅÅÐòÀàÐÍ 1:½µÐò ÆäËüÎªÉýÐò
-	//@TotalPage  int out,--×ÜÒ³Êý
-	//@TotalRecord int out --×Ü¼ÇÂ¼Êý
+	//@TableName	nvarchar(50),		-- ï¿½ï¿½ï¿½ï¿½
+	//@ReturnFields	nvarchar(200) = '*',	-- ï¿½ï¿½Òªï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ 
+	//@PageSize	int = 10,		-- Ã¿Ò³ï¿½ï¿½Â¼ï¿½ï¿½
+	//@PageIndex	int = 1,		-- ï¿½ï¿½Ç°Ò³ï¿½ï¿½
+	//@Where		nvarchar(200) = '',	-- ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
+	//@Orderfld	nvarchar(200),		-- ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÎªÎ¨Ò»ï¿½ï¿½ï¿½ï¿½
+	//@OrderType	int = 1,		-- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1:ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
+	//@TotalPage  int out,--ï¿½ï¿½Ò³ï¿½ï¿½
+	//@TotalRecord int out --ï¿½Ü¼ï¿½Â¼ï¿½ï¿½
 	// Add by lark.li 20080809 begin
 	bool	get_page_data(char* tablename, char* param, int pagesize, int pageindex, char* filter, char* sort, int sorttype, int& totalpage, int& totalrecord, std::vector< std::vector< std::string > > &data, unsigned short timeout = 50);
 	// End
@@ -134,12 +154,12 @@ public:
 	bool	getalldata(const char* sql, std::vector< std::vector< std::string > > &data, unsigned short timeout = 50);
 	// End
 
-	// ¸ß¼¶½Ó¿Ú
+	// ï¿½ß¼ï¿½ï¿½Ó¿ï¿½
 	bool begin_tran();
 	bool commit_tran();
 	bool rollback();
 
-	// ÆäËû½Ó¿Ú
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½
 	int get_affected_rows();
 	int get_identity();
     char const* const get_table() const;

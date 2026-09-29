@@ -5,6 +5,7 @@
 #include "Guild.h"
 #include "GroupServerApp.h"
 #include "GameCommon.h"
+#include "GroupSql.h"
 
 using namespace std;
 
@@ -35,61 +36,16 @@ SQLRETURN Exec_sql_direct(const char *pszSQL, cfl_rs *pTable)
 //==========TBLSystem===============================
 bool TBLAccounts::IsReady()
 {
-	char sql[SQL_MAXLEN];
-	strcpy(sql,"drop trigger [TR_D_Character_Friends]");
-	SQLRETURN l_ret =Exec_sql_direct(sql, this);
-	if(!DBOK(l_ret))
+	group_sql::Select q = group_sql::character_triggers();
+	std::string l_tblname = _tbl_name;
+	_tbl_name = q.table;
+	int l_retrow	=0;
+	bool l_ok = _get_row(m_buf, 1, q.columns.c_str(), q.filter.c_str(), &l_retrow);
+	_tbl_name = l_tblname;
+	if(!l_ok || l_retrow !=1 || atoi(m_buf[0].c_str()) !=2)
 	{
 		LogLine l_line(g_LogDB);
-		//l_line<<newln<<"SQL语句:"<<sql<<"执行失败！";
-		l_line<<newln<<"SQL:"<<sql<<" execute failed !";
-	}
-	strcpy(sql,"drop trigger [TR_I_Character]");
-	l_ret =Exec_sql_direct(sql, this);
-	if(!DBOK(l_ret))
-	{
-		LogLine l_line(g_LogDB);
-		//l_line<<newln<<"SQL语句:"<<sql<<"执行失败！";
-		l_line<<newln<<"SQL:"<<sql<<" execute failed !";
-	}
-	strcpy(sql,"CREATE TRIGGER TR_D_Character_Friends ON character \n\
-				FOR DELETE \n\
-				AS\n\
-				BEGIN\n\
-					declare @@stat tinyint\n\
-					declare @@gid  int\n\
-					select @@stat =guild_stat,@@gid =guild_id from deleted\n\
-					DELETE friends where friends.cha_id1 IN(select atorID from deleted)\n\
-					if(@@gid >0)\n\
-					BEGIN\n\
-						update guild set try_total =try_total -(case when @@stat>0 then 1 else 0 end),\n\
-								member_total =member_total -(case when @@stat >0 then 0 else 1 end)\n\
-							where guild_id >0 and guild_id =@@gid\n\
-					END\n\
-				END\n\
-		");
-	l_ret =Exec_sql_direct(sql, this);
-	if(!DBOK(l_ret))
-	{
-		LogLine l_line(g_LogDB);
-		//l_line<<newln<<"SQL语句:"<<sql<<"执行失败！";
-		l_line<<newln<<"SQL:"<<sql<<" execute failed !";
-		return false;
-	}
-	strcpy(sql,"CREATE TRIGGER TR_I_Character ON character\n\
-				FOR INSERT\n\
-				AS\n\
-				BEGIN\n\
-					declare @l_icon smallint\n\
-					select @l_icon =convert(smallint,SUBSTRING(inserted.olhe,5,1)) from inserted\n\
-					update character set icon =@l_icon where atorID in (select atorID from inserted)\n\
-				END\n\
-		");
-	l_ret =Exec_sql_direct(sql, this);
-	if(!DBOK(l_ret))
-	{
-		LogLine l_line(g_LogDB);
-		l_line<<newln<<"SQL:"<<sql<<" execute failed !";
+		l_line<<newln<<"SQL: character triggers missing, run the GameDB schema script !";
 		return false;
 	}
 	return true;
@@ -131,17 +87,14 @@ void TBLAccounts::AddStatLog(long login,long play,long wgplay)
 {
     char sql[SQL_MAXLEN];
 
-    // account_save 表的 id 字段是主键
-    sprintf(sql, "insert stat_log (login_num , play_num, wgplay_num) values (%d, %d, %d)", login , play, wgplay);
+    strcpy(sql, group_sql::add_stat_log(login, play, wgplay).c_str());
     Exec_sql_direct(sql, this);
 }
 bool TBLAccounts::SetDiscInfo(int actid,const char *cli_ip,const char *reason)
 {
 	char sql[SQL_MAXLEN];
 
-	// account_save 表的 id 字段是主键
-	sprintf(sql, "update %s set last_ip='%s',disc_reason ='%s',last_leave =getdate() where ato_id =%d",
-			_get_table(), cli_ip, reason, actid);
+	strcpy(sql, group_sql::set_disc_info(actid, cli_ip, reason).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return  (DBOK(l_ret))?true:false;
 }
@@ -151,12 +104,9 @@ bool TBLAccounts::InsertRow(int ato_id,const char *ato_nome,const char *ator_ids
 
 	DWORD dwActID = 0;
 	std::string buf[1];
-	char param[80];
-	sprintf(param, "TOP 1 ato_id");
-	char filter[80]; 
-	sprintf(filter, "ORDER BY ato_id DESC");
+	group_sql::Select q = group_sql::last_account_id();
 	int r1 = 0;
-	int r = _get_rowOderby(buf, 1, param, filter, &r1);
+	int r = _get_rowOderby(buf, 1, q.columns.c_str(), q.filter.c_str(), &r1);
 	if (DBOK(r) && r1 > 0)
 	{
 		dwActID = atol( buf[0].c_str() ) + 1;
@@ -166,9 +116,7 @@ bool TBLAccounts::InsertRow(int ato_id,const char *ato_nome,const char *ator_ids
 		dwActID = 1;
 	}
 
-    // account_save 表的 id 字段是主键
-    sprintf(sql, "insert %s (ato_id, ato_nome, ator_ids) values (%d, '%s', '%s')",
-            _get_table(), dwActID, ato_nome, ator_ids);
+    strcpy(sql, group_sql::insert_account(dwActID, ato_nome, ator_ids).c_str());
     SQLRETURN l_ret =Exec_sql_direct(sql, this);
     return (DBOK(l_ret))?true:false;
 
@@ -177,9 +125,7 @@ bool TBLAccounts::UpdateRow(int ato_id,const char *ator_ids)
 {
 	char sql[SQL_MAXLEN];
 
-	// account_save 表的 id 字段是主键
-	sprintf(sql, "update %s set ator_ids='%s' where ato_id=%d",
-			_get_table(), ator_ids, ato_id);
+	strcpy(sql, group_sql::update_account_characters(ato_id, ator_ids).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -187,9 +133,7 @@ bool TBLAccounts::UpdatePassword( int ato_id, const char szPassword[] )
 {
 	char sql[SQL_MAXLEN];
 
-	// account_save 表的 id 字段是主键
-	sprintf(sql, "update %s set password='%s' where ato_id=%d",
-			_get_table(), szPassword, ato_id);
+	strcpy(sql, group_sql::update_account_password(ato_id, szPassword).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -197,10 +141,8 @@ bool TBLAccounts::UpdatePassword( int ato_id, const char szPassword[] )
 int TBLAccounts::FetchRowByActName(const char szAccount[])
 {
 	int l_retrow	=0;
-	const char* param = "ato_id,jmes,ator_ids,password,last_ip,disc_reason,convert(varchar(20),last_leave,120)";
-	char filter[200];
-	sprintf(filter, "ato_nome='%s'", szAccount);
-	if(_get_row(m_buf, 7, param, filter,&l_retrow))
+	group_sql::Select q = group_sql::account_by_name(szAccount);
+	if(_get_row(m_buf, 7, q.columns.c_str(), q.filter.c_str(),&l_retrow))
 	{
 		if(l_retrow ==1 && get_affected_rows() ==1)
 		{
@@ -218,10 +160,8 @@ int TBLAccounts::FetchRowByActName(const char szAccount[])
 int TBLAccounts::FetchRowByActID(int ato_id)
 {
 	int l_retrow	=0;
-	const char* param = "ato_nome,jmes,ator_ids,password,last_ip,disc_reason,convert(varchar(20),last_leave,120)";
-	char filter[200];
-	sprintf(filter, "ato_id=%d", ato_id);
-	if(_get_row(m_buf, 7, param, filter,&l_retrow))
+	group_sql::Select q = group_sql::account_by_id(ato_id);
+	if(_get_row(m_buf, 7, q.columns.c_str(), q.filter.c_str(),&l_retrow))
 	{
 		if(l_retrow ==1 && get_affected_rows() ==1)
 		{
@@ -241,8 +181,7 @@ bool TBLCharacters::ZeroAddr()
 {
 	char sql[SQL_MAXLEN];
 
-	// account_save 表的 id 字段是主键
-	sprintf(sql, "update %s set endeMem =0 where endeMem != 0",_get_table());
+	strcpy(sql, group_sql::zero_addr().c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -270,8 +209,7 @@ bool TBLCharacters::SetAddr(long atorID,long addr)
 {
 	char sql[SQL_MAXLEN];
 
-	// account_save 表的 id 字段是主键
-	sprintf(sql, "update %s set endeMem =%d where atorID =%d",_get_table(),addr,atorID);
+	strcpy(sql, group_sql::set_addr(atorID, addr).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -279,9 +217,7 @@ bool TBLCharacters::InsertRow(const char *atorNome,int ato_id,const char *birth,
 {
 	char sql[SQL_MAXLEN];
 
-	// account_save 表的 id 字段是主键
-	sprintf(sql, "insert %s (atorNome, ato_id, birth,map,olhe) values ('%s', %d, '%s','%s', '%s')",
-			_get_table(), atorNome, ato_id, birth, map,olhe);
+	strcpy(sql, group_sql::insert_character(atorNome, ato_id, birth, map, olhe).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -289,8 +225,7 @@ bool TBLCharacters::UpdateInfo(unsigned long atorID,unsigned short icon,const ch
 {
 	char sql[SQL_MAXLEN];
 
-	// account_save 表的 id 字段是主键
-	sprintf(sql, "update %s set icon =%d,motto ='%s' where atorID =%d",_get_table(),icon,motto,atorID);
+	strcpy(sql, group_sql::update_character_info(atorID, icon, motto).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -298,10 +233,8 @@ bool TBLCharacters::UpdateInfo(unsigned long atorID,unsigned short icon,const ch
 int TBLCharacters::FetchRowByChaName(const char *atorNome)
 {
 	int l_retrow	=0;
-	const char* param = "atorID,motto,icon";
-	char filter[200];
-	sprintf(filter, "atorNome='%s'", atorNome);
-	if(_get_row(m_buf, 3, param, filter,&l_retrow))
+	group_sql::Select q = group_sql::character_by_name(atorNome);
+	if(_get_row(m_buf, 3, q.columns.c_str(), q.filter.c_str(),&l_retrow))
 	{
 		if(l_retrow ==1 && get_affected_rows() ==1)
 		{
@@ -318,10 +251,8 @@ int TBLCharacters::FetchRowByChaName(const char *atorNome)
 bool TBLCharacters::FetchAccidByChaName(const char *atorNome, int& cha_accid )
 {
 	int l_retrow	=0;
-	const char* param = "ato_id";
-	char filter[200];
-	sprintf(filter, "atorNome='%s'", atorNome);
-	if(_get_row(m_buf, 1, param, filter,&l_retrow))
+	group_sql::Select q = group_sql::account_id_by_character_name(atorNome);
+	if(_get_row(m_buf, 1, q.columns.c_str(), q.filter.c_str(),&l_retrow))
 	{
 		if(l_retrow ==1 && get_affected_rows() ==1)
 		{
@@ -332,13 +263,13 @@ bool TBLCharacters::FetchAccidByChaName(const char *atorNome, int& cha_accid )
 			return false;
 		}
 	}
-	return false;	
+	return false;
 }
 
 bool TBLCharacters::StartEstopTime( int atorID )
 {
 	char sql[SQL_MAXLEN];
-	sprintf(sql, "update %s set estop = getdate() where atorID =%d",_get_table(), atorID);
+	strcpy(sql, group_sql::start_estop(atorID).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -346,7 +277,7 @@ bool TBLCharacters::StartEstopTime( int atorID )
 bool TBLCharacters::EndEstopTime( int atorID )
 {
 	char sql[SQL_MAXLEN];
-	sprintf(sql, "update %s set estoptime = estoptime - datediff(minute, estop, getdate()) where atorID =%d",_get_table(), atorID);
+	strcpy(sql, group_sql::end_estop(atorID).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -354,10 +285,8 @@ bool TBLCharacters::EndEstopTime( int atorID )
 bool TBLCharacters::IsEstop(int atorID)
 {
 	int l_retrow	=0;
-	const char* param = "estop";
-	char filter[200];
-	sprintf(filter, "atorID = %d and dateadd(minute, estoptime, estop) > getdate()", atorID);
-	if(_get_row(m_buf, 1, param, filter,&l_retrow))
+	group_sql::Select q = group_sql::active_estop(atorID);
+	if(_get_row(m_buf, 1, q.columns.c_str(), q.filter.c_str(),&l_retrow))
 	{
 		if(l_retrow ==1 && get_affected_rows() ==1)
 		{
@@ -373,7 +302,7 @@ bool TBLCharacters::IsEstop(int atorID)
 bool TBLCharacters::Estop( const char *atorNome, uLong lTimes )
 {
 	char sql[SQL_MAXLEN];
-	sprintf(sql, "update %s set estop = getdate(), estoptime = %d where atorNome ='%s'",_get_table(), lTimes, atorNome);
+	strcpy(sql, group_sql::estop(atorNome, lTimes).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -381,7 +310,7 @@ bool TBLCharacters::Estop( const char *atorNome, uLong lTimes )
 bool TBLCharacters::AddMoney( int atorID, DWORD dwMoney )
 {
 	char sql[SQL_MAXLEN];
-	sprintf(sql, "update %s set bomd = bomd + %d where atorID ='%d'",_get_table(), dwMoney, atorID);
+	strcpy(sql, group_sql::add_money(atorID, dwMoney).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -389,7 +318,7 @@ bool TBLCharacters::AddMoney( int atorID, DWORD dwMoney )
 bool TBLCharacters::DelEstop( const char *atorNome )
 {
 	char sql[SQL_MAXLEN];
-	sprintf(sql, "update %s set estoptime = %d where atorNome ='%s'",_get_table(), 0, atorNome);
+	strcpy(sql, group_sql::del_estop(atorNome).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -397,14 +326,12 @@ bool TBLCharacters::DelEstop( const char *atorNome )
 int TBLCharacters::FetchChaIDByCharName(cChar* atorNome)
 {
 	int l_retrow = 0;
-	string param = string("c.atorID");
-	char filter[200];
-	sprintf(filter, "c.atorNome='%s'", atorNome);
+	group_sql::Select q = group_sql::character_id_by_name(atorNome);
 	std::string	l_tblname = _tbl_name;
-	_tbl_name = "character c";
+	_tbl_name = q.table;
 	bool l_bret = false;
 	try{
-		if (_get_row(m_buf, CHA_MAXCOL, const_cast<char*>(param.c_str()), filter, &l_retrow)){
+		if (_get_row(m_buf, CHA_MAXCOL, q.columns.c_str(), q.filter.c_str(), &l_retrow)){
 			return atoi(m_buf[0].c_str());
 		}
 	}
@@ -418,14 +345,12 @@ int TBLCharacters::FetchChaIDByCharName(cChar* atorNome)
 int TBLCharacters::FetchActIDByCharName(cChar* atorNome)
 {
 	int l_retrow = 0;
-	string param = string("c.ato_id");
-	char filter[200];
-	sprintf(filter, "c.atorNome='%s'", atorNome);
+	group_sql::Select q = group_sql::account_id_by_name(atorNome);
 	std::string	l_tblname = _tbl_name;
-	_tbl_name = "character c";
+	_tbl_name = q.table;
 	bool l_bret = false;
 	try{
-		if (_get_row(m_buf, CHA_MAXCOL, const_cast<char*>(param.c_str()), filter, &l_retrow)){
+		if (_get_row(m_buf, CHA_MAXCOL, q.columns.c_str(), q.filter.c_str(), &l_retrow)){
 			return atoi(m_buf[0].c_str());
 		}
 	}
@@ -446,19 +371,12 @@ int TBLCharacters::FetchRowByChaID(int atorID)
 				  c.job,c.degree,c.map,c.map_x,c.map_y,c.look,c.str,c.dex,c.agi,c.con,c.sta,c.luk\
 				  ";
 */
-	string param = string("c.atorNome,c.motto,c.icon,\
-				  case when c.guild_stat =0 then c.guild_id else 0 end,\
-				  case when c.guild_stat <>0 or c.guild_id =0 then '")
-				  +	string(RES_STRING(GP_DBCONNECT_CPP_00001)) +
-				  string("' else g.guild_name end,\
-				  c.job,c.degree,c.map,c.map_x,c.map_y,c.olhe,c.str,c.dex,c.agi,c.con,c.sta,c.luk,c.guild_permission,c.chatColour");
-	char filter[200];
-	sprintf(filter, "c.guild_id =g.guild_id and c.atorID=%d", atorID);
+	group_sql::Select q = group_sql::character_by_id(atorID, RES_STRING(GP_DBCONNECT_CPP_00001));
 	std::string	l_tblname	=_tbl_name;
-	_tbl_name	="character c,guild g";
+	_tbl_name	=q.table;
 	bool l_bret =false;
 	try{
-		l_bret	=_get_row(m_buf, CHA_MAXCOL, const_cast<char*>(param.c_str()), filter,&l_retrow);
+		l_bret	=_get_row(m_buf, CHA_MAXCOL, q.columns.c_str(), q.filter.c_str(),&l_retrow);
 	}catch(...)
 	{
 		//LG("group_sql", "TBLCharacters::FetchRowByChaID执行SQL, 发生异常!,atorID =%d\n", atorID);
@@ -486,13 +404,11 @@ bool TBLCharacters::BackupRow(int atorID)
 	//	select * from character where atorID =11
 
 	string buf[3];
-	char filter[80];
-	const char*param	="guild_id, guild_stat";
-	sprintf(filter, "atorID =%d",atorID);
+	group_sql::Select q = group_sql::character_guild(atorID);
 	int	 l_retrow =0;
 	DWORD dwGuildID;
 	BYTE  byType;
-	bool bret = _get_row(buf, 2, param, filter, &l_retrow);
+	bool bret = _get_row(buf, 2, q.columns.c_str(), q.filter.c_str(), &l_retrow);
 	if(l_retrow ==1)
 	{
 		dwGuildID = atoi(buf[0].c_str());
@@ -503,7 +419,7 @@ bool TBLCharacters::BackupRow(int atorID)
 			if( byType == emGldMembStatNormal )
 			{
 				// 已经是会员
-				sprintf(sql,"update guild set member_total =member_total -1 where guild_id =%d and member_total > 0", dwGuildID );
+				strcpy(sql, group_sql::guild_leave_member(dwGuildID).c_str());
 				SQLRETURN l_sqlret = Exec_sql_direct(sql, this);
 				if( !DBOK(l_sqlret) )
 				{
@@ -528,7 +444,7 @@ bool TBLCharacters::BackupRow(int atorID)
 			else
 			{
 				// 正在申请
-				sprintf(sql,"update guild set try_total =try_total -1 where guild_id =%d and try_total > 0", dwGuildID);
+				strcpy(sql, group_sql::guild_leave_applicant(dwGuildID).c_str());
 				SQLRETURN l_sqlret = Exec_sql_direct(sql, this);
 				if( !DBOK(l_sqlret) )
 				{
@@ -560,7 +476,7 @@ bool TBLCharacters::BackupRow(int atorID)
 
 
 	//sprintf(sql, "delete from %s where atorID=%d",_get_table(), atorID);
-	sprintf(sql, "update %s set delflag =1,deldate =getdate() where atorID=%d",_get_table(), atorID);   //  删除时间独立
+	strcpy(sql, group_sql::mark_character_deleted(atorID).c_str());   //  删除时间独立
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -569,12 +485,9 @@ bool TBLCharacters::BackupRow(int atorID)
 int TBLFriends::GetFriendsCount(long cha_id1,long cha_id2)
 {
 	int l_retrow	=0;
-	char filter[200];
+	group_sql::Select q = group_sql::friends_count(cha_id1, cha_id2);
 
-	const char* param1 = "count(*) num";
-	sprintf(filter, "(cha_id1=%d AND cha_id2 =%d)OR(cha_id1=%d AND cha_id2 =%d)", cha_id1,cha_id2,cha_id2,cha_id1);
-
-	if(_get_row(m_buf, FRD_MAXCOL, param1, filter,&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
+	if(_get_row(m_buf, FRD_MAXCOL, q.columns.c_str(), q.filter.c_str(),&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
 	{
 		return atoi(m_buf[0].c_str());
 	}else
@@ -586,20 +499,10 @@ int TBLFriends::GetFriendsCount(long cha_id1,long cha_id2)
 int TBLFriends::GetGroupCount(long cha_id1)
 {
 	int l_retrow	=0;
-	char filter[200];
-	char buffer[255];
-	memset(buffer, 0, sizeof(buffer));
+	group_sql::Select q = group_sql::friend_group_count(cha_id1);
+	_tbl_name = q.table;
 
-	const char* param1 = "count(*) num";
-	sprintf(filter, "1=1");
-	_tbl_name	="(select distinct friends.relation relation from friends\
-						where friends.cha_id1 =%d and friends.cha_id2 = -1) cc";
-
-	sprintf(buffer, _tbl_name.c_str(), cha_id1);
-
-	_tbl_name = buffer;
-
-	if(_get_row(m_buf, FRD_MAXCOL, param1, filter,&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
+	if(_get_row(m_buf, FRD_MAXCOL, q.columns.c_str(), q.filter.c_str(),&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
 	{
 		_tbl_name ="friends";
 		return atoi(m_buf[0].c_str());
@@ -612,12 +515,9 @@ int TBLFriends::GetGroupCount(long cha_id1)
 unsigned long TBLFriends::GetFriendAddr(long cha_id1,long cha_id2)
 {
 	int l_retrow	=0;
-	char filter[200];
-
-	const char* param = "character.endeMem addr";
-	sprintf(filter, "(friends.cha_id1=%d AND friends.cha_id2 =%d)", cha_id1,cha_id2);
-	_tbl_name	="character (nolock) INNER JOIN friends ON character.atorID = friends.cha_id2";
-	if(_get_row(m_buf, FRD_MAXCOL, param, filter,&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
+	group_sql::Select q = group_sql::friend_addr(cha_id1, cha_id2);
+	_tbl_name	=q.table;
+	if(_get_row(m_buf, FRD_MAXCOL, q.columns.c_str(), q.filter.c_str(),&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
 	{
 		_tbl_name ="friends";
 		return atoi(m_buf[0].c_str());
@@ -632,8 +532,7 @@ bool TBLFriends::UpdateGroup(long cha_id1, long cha_id2, const char *newgroup)
 {
 	char sql[SQL_MAXLEN];
 
-	sprintf(sql,  "update %s set relation ='%s' where cha_id1=%d AND cha_id2 =%d",
-			_get_table(),newgroup,cha_id1,cha_id2);
+	strcpy(sql, group_sql::move_friend_to_group(cha_id1, cha_id2, newgroup).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -642,8 +541,7 @@ bool TBLFriends::UpdateGroup(long cha_id1,const char *oldgroup,const char *newgr
 {
 	char sql[SQL_MAXLEN];
 
-	sprintf(sql, "update %s set relation ='%s' where cha_id1=%d AND relation = '%s'",
-			_get_table(),newgroup,cha_id1,oldgroup);
+	strcpy(sql, group_sql::rename_friend_group(cha_id1, oldgroup, newgroup).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -652,14 +550,12 @@ bool TBLFriends::AddFriend(long cha_id1,long cha_id2)
 {
 	char sql[SQL_MAXLEN];
 
-	sprintf(sql, "insert %s (cha_id1,cha_id2,relation) values(%d,%d,'%s')",
-			_get_table(),cha_id1,cha_id2,gc_standard_group);
+	strcpy(sql, group_sql::add_friend(cha_id1, cha_id2, gc_standard_group).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 
 	if(DBOK(l_ret) && get_affected_rows() ==1)
 	{
-		sprintf(sql, "insert %s (cha_id1,cha_id2,relation) values(%d,%d,'%s')",
-				_get_table(),cha_id2,cha_id1,gc_standard_group);
+		strcpy(sql, group_sql::add_friend(cha_id2, cha_id1, gc_standard_group).c_str());
 		SQLRETURN l_ret =Exec_sql_direct(sql, this);
 		return (DBOK(l_ret))?true:false;
 	}
@@ -669,8 +565,7 @@ bool TBLFriends::DelFriend(long cha_id1,long cha_id2)
 {
 	char sql[SQL_MAXLEN];
 
-	sprintf(sql, "delete %s where (cha_id1=%d AND cha_id2 =%d)OR(cha_id1=%d AND cha_id2 =%d)",
-			_get_table(),cha_id1,cha_id2,cha_id2,cha_id1);
+	strcpy(sql, group_sql::del_friend(cha_id1, cha_id2).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -679,11 +574,8 @@ bool TBLFriends::DelFriend(long cha_id1,long cha_id2)
 int TBLMaster::GetMasterCount(long atorID)
 {
 	int l_retrow	=0;
-	char filter[200];
-
-	const char* param1 = "count(*) num";
-	sprintf(filter, "(cha_id1=%d)", atorID);
-	if(_get_row(m_buf, MASTER_MAXCOL, param1, filter,&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
+	group_sql::Select q = group_sql::master_count(atorID);
+	if(_get_row(m_buf, MASTER_MAXCOL, q.columns.c_str(), q.filter.c_str(),&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
 	{
 		return atoi(m_buf[0].c_str());
 	}else
@@ -695,11 +587,8 @@ int TBLMaster::GetMasterCount(long atorID)
 int TBLMaster::GetPrenticeCount(long atorID)
 {
 	int l_retrow	=0;
-	char filter[200];
-
-	const char* param1 = "count(*) num";
-	sprintf(filter, "(cha_id2=%d AND finish=0)", atorID);
-	if(_get_row(m_buf, MASTER_MAXCOL, param1, filter,&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
+	group_sql::Select q = group_sql::prentice_count(atorID);
+	if(_get_row(m_buf, MASTER_MAXCOL, q.columns.c_str(), q.filter.c_str(),&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
 	{
 		return atoi(m_buf[0].c_str());
 	}else
@@ -711,11 +600,8 @@ int TBLMaster::GetPrenticeCount(long atorID)
 int TBLMaster::HasMaster(long cha_id1,long cha_id2)
 {
 	int l_retrow	=0;
-	char filter[200];
-
-	const char* param1 = "count(*) num";
-	sprintf(filter, "(cha_id1=%d AND cha_id2=%d)", cha_id1, cha_id2);
-	if(_get_row(m_buf, MASTER_MAXCOL, param1, filter,&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
+	group_sql::Select q = group_sql::has_master(cha_id1, cha_id2);
+	if(_get_row(m_buf, MASTER_MAXCOL, q.columns.c_str(), q.filter.c_str(),&l_retrow) && l_retrow ==1 && get_affected_rows() ==1)
 	{
 		return atoi(m_buf[0].c_str());
 	}else
@@ -728,8 +614,7 @@ bool TBLMaster::AddMaster(long cha_id1,long cha_id2)
 {
 	char sql[SQL_MAXLEN];
 
-	sprintf(sql, "insert %s (cha_id1,cha_id2,finish) values(%d,%d,%d)",
-		_get_table(),cha_id1,cha_id2,0);
+	strcpy(sql, group_sql::add_master(cha_id1, cha_id2).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -738,8 +623,7 @@ bool TBLMaster::DelMaster(long cha_id1,long cha_id2)
 {
 	char sql[SQL_MAXLEN];
 
-	sprintf(sql, "delete %s where (cha_id1=%d AND cha_id2 =%d)",
-		_get_table(),cha_id1,cha_id2);
+	strcpy(sql, group_sql::del_master(cha_id1, cha_id2).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
@@ -748,20 +632,16 @@ bool TBLMaster::FinishMaster(long atorID)
 {
 	char sql[SQL_MAXLEN];
 
-	sprintf(sql, "update %s set finish=1 where cha_id1=%d",
-		_get_table(),atorID);
+	strcpy(sql, group_sql::finish_master(atorID).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 	return (DBOK(l_ret))?true:false;
 }
 
 bool TBLMaster::InitMasterRelation(map<uLong, uLong> &mapMasterRelation)
 {
-	static char const query_master_format[SQL_MAXLEN] =
-		"select cha_id1 cha_id1,cha_id2 cha_id2 from %s";
-
 	bool ret = false;
 	char sql[SQL_MAXLEN];
-	sprintf(sql, query_master_format,_get_table());
+	strcpy(sql, group_sql::master_relations().c_str());
 
 	// 执行查询操作
 	SQLRETURN sqlret;
@@ -837,23 +717,11 @@ bool TBLMaster::GetMasterData(master_dat* farray, int& array_num, unsigned int a
 	const auto array_size{ array_num };
 	array_num = 0;
 
-	constexpr const char query_master_format[] =
-		"select '' relation,count(*) addr,0 atorID,'' atorNome,0 icon,'' motto from ( \
-		select distinct master.relation relation from character INNER JOIN \
-		master ON character.atorID = master.cha_id2 where master.cha_id1 = %d \
-		) cc union select master.relation relation,count(character.endeMem) addr,0 \
-		atorID,'' atorNome,1 icon,'' motto from character INNER JOIN master ON \
-		character.atorID = master.cha_id2 where master.cha_id1 = %d group by relation \
-		union select master.relation relation,character.endeMem addr,character.atorID \
-		atorID,character.atorNome atorNome,character.icon icon,character.motto motto \
-		from character INNER JOIN master ON character.atorID = master.cha_id2 \
-		where master.cha_id1 = %d order by relation,atorID,icon";
-
 	if (!farray || array_size <= 0 || atorID == 0) return false;
 
 	bool ret = false;
 	char sql[SQL_MAXLEN];
-	sprintf(sql, query_master_format, atorID,atorID, atorID);
+	strcpy(sql, group_sql::master_data(atorID).c_str());
 
 	// 执行查询操作
 	SQLRETURN sqlret;
@@ -938,18 +806,6 @@ bool TBLMaster::GetPrenticeData(master_dat* farray, int& array_num, unsigned int
 	const auto array_size{ array_num };
 	array_num = 0;
 
-	constexpr const char query_prentice_format[] =
-		"select '' relation,count(*) addr,0 atorID,'' atorNome,0 icon,'' motto from ( \
-		select distinct master.relation relation from character INNER JOIN \
-		master ON character.atorID = master.cha_id1 where master.cha_id2 = %d \
-		) cc union select master.relation relation,count(character.endeMem) addr,0 \
-		atorID,'' atorNome,1 icon,'' motto from character INNER JOIN master ON \
-		character.atorID = master.cha_id1 where master.cha_id2 = %d group by relation \
-		union select master.relation relation,character.endeMem addr,character.atorID \
-		atorID,character.atorNome atorNome,character.icon icon,character.motto motto \
-		from character INNER JOIN master ON character.atorID = master.cha_id1 \
-		where master.cha_id2 = %d order by relation,atorID,icon";
-
 	if (!farray || array_size <= 0 || atorID == 0)
 	{
 		return false;
@@ -957,7 +813,7 @@ bool TBLMaster::GetPrenticeData(master_dat* farray, int& array_num, unsigned int
 
 	bool ret = false;
 	char sql[SQL_MAXLEN];
-	sprintf(sql, query_prentice_format, atorID, atorID, atorID);
+	strcpy(sql, group_sql::prentice_data(atorID).c_str());
 
 	// 执行查询操作
 	SQLRETURN sqlret;
@@ -1041,8 +897,8 @@ bool TBLMaster::GetPrenticeData(master_dat* farray, int& array_num, unsigned int
 bool TBLGuilds::IsReady()
 {
 	int l_retrow	=0;
-	const char* param = "count(*)";
-	if(_get_row(m_buf, 1, param, 0,&l_retrow))
+	group_sql::Select q = group_sql::guild_count();
+	if(_get_row(m_buf, 1, q.columns.c_str(), 0,&l_retrow))
 	{
 		if (l_retrow == 1 &&
 			get_affected_rows() == 1 &&
@@ -1057,10 +913,8 @@ bool TBLGuilds::IsReady()
 int TBLGuilds::FetchRowByName(const char *guild_name)
 {
 	int l_retrow	=0;
-	const char* param = "guild_id";
-	char filter[200];
-	sprintf(filter, "guild_name='%s'", guild_name);
-	if(_get_row(m_buf, 1, param, filter,&l_retrow))
+	group_sql::Select q = group_sql::guild_by_name(guild_name);
+	if(_get_row(m_buf, 1, q.columns.c_str(), q.filter.c_str(),&l_retrow))
 	{
 		if(l_retrow ==1 && get_affected_rows() ==1)
 		{
@@ -1077,8 +931,7 @@ int TBLGuilds::FetchRowByName(const char *guild_name)
 bool TBLGuilds::Disband(uLong gldid)
 {
 	char sql[SQL_MAXLEN];
-	sprintf(sql,	"update guild set motto ='',passwd ='',leader_id =0, money =0,exp =0,member_total =0,try_total =0\
-						where guild_id =%d",gldid);
+	strcpy(sql, group_sql::disband_guild(gldid).c_str());
 	SQLRETURN l_sqlret =Exec_sql_direct(sql, this);
 	if(!DBOK(l_sqlret))
 	{
@@ -1096,9 +949,7 @@ bool TBLGuilds::Disband(uLong gldid)
 			return false;	//普通SQL错误
 		}
 	}
-	sprintf(sql,	"update character set guild_id =0 ,guild_stat =0,guild_permission =0\
-						where guild_id =%d",
-				gldid);
+	strcpy(sql, group_sql::release_guild_members(gldid).c_str());
 	l_sqlret =Exec_sql_direct(sql, this);
 	if(!DBOK(l_sqlret))
 	{
@@ -1112,31 +963,14 @@ bool TBLGuilds::Disband(uLong gldid)
 }
 bool TBLGuilds::InitAllGuilds(char disband_days)
 {
-	string sql_syntax ="";
 	if(disband_days<1)
 	{
 		return false;
-	}else
-	{
-		/*
-		sql_syntax =
-			"	select g.guild_id, g.guild_name, g.motto, g.leader_id,g.type,g.stat,\
-						g.money, g.exp, g.member_total, g.try_total,g.disband_date,\
-						case when g.stat>0 then DATEDIFF(mi,g.disband_date,GETDATE()) else 0 end  解散考察累计分钟,\
-						case when g.stat>0 then %d*24*60 -DATEDIFF(mi,g.disband_date,GETDATE()) else 0 end 解散考察剩余分钟\
-					from guild As g\
-					where (g.guild_id >0)\
-			";
-		*/	
-		sql_syntax =
-			string("	select g.guild_id, g.guild_name, g.motto, g.leader_id,\
-						g.exp, g.member_total, g.try_total,g.disband_date")
-						+ string(",g.level from guild As g where (g.guild_id >0) ");
 	}
 
 	bool l_ret = false;
 	char sql[SQL_MAXLEN];
-	sprintf(sql, sql_syntax.c_str(), disband_days);
+	strcpy(sql, group_sql::all_guilds().c_str());
 
 	// 执行查询操作
 	SQLRETURN sqlret;
@@ -1237,14 +1071,8 @@ bool TBLGuilds::InitGuildMember(Player *ply,uLong chaid,uLong gldid,int mode)
 		g_gpsvr->SendToClient(ply,l_toSelf);
 	}else
 	{
-		const char *sql_syntax =0;
 		char sql[SQL_MAXLEN];
-		sql_syntax =
-			"	select c.endeMem,c.atorID, c.atorNome, c.motto, c.job, c.degree, c.icon, c.guild_permission\
-					from character As c\
-					where (c.guild_stat =0) and (c.guild_id =%d) and (c.delflag = 0)\
-			";
-		sprintf(sql, sql_syntax, gldid);
+		strcpy(sql, group_sql::guild_members(gldid).c_str());
 		// 执行查询操作
 		SQLRETURN sqlret;
 		SQLHSTMT hstmt	= SQL_NULL_HSTMT;
@@ -1410,7 +1238,7 @@ bool TBLGuilds::InitGuildMember(Player *ply,uLong chaid,uLong gldid,int mode)
 
 bool TBLParam::InitParam(void)
 {
-	string strSQL = "select param1,param2,param3,param4,param5,param6,param7,param8,param9,param10 from param where id = 1";
+	string strSQL = group_sql::load_order_params();
 //	string strSQL = "select param1 from param where id = 1";
 
 	SQLRETURN sqlret;
@@ -1488,7 +1316,7 @@ bool TBLParam::InitParam(void)
 		SQLBindCol(hstmt, 3, SQL_C_ULONG, &nlev, 0, &buf_len[2]);
 		for(int n = 0;n<MAXORDERNUM;n++)
 		{
-			sprintf(buff,"select atorNome,job,degree from character where atorID = %d ",m_nOrder[n].nid);
+			strcpy(buff, group_sql::order_character(m_nOrder[n].nid).c_str());
 
 			sqlret = SQLExecDirect(hstmt,(SQLCHAR *)buff,SQL_NTS);
 			if (sqlret != SQL_SUCCESS)
@@ -1545,8 +1373,15 @@ bool TBLParam::InitParam(void)
 
 bool TBLParam::SaveParam(void)
 {
-	char buff[255];
-	sprintf(buff,"update %s set param1 = %d,param2 = %d,param3 = %d,param4 = %d,param5 = %d,param6 = %d,param7 = %d,param8 = %d,param9 = %d,param10 = %d where id = 1",_get_table(),m_nOrder[0].nid,m_nOrder[1].nid,m_nOrder[2].nid,m_nOrder[3].nid,m_nOrder[4].nid,m_nOrder[0].nfightpoint,m_nOrder[1].nfightpoint,m_nOrder[2].nfightpoint,m_nOrder[3].nfightpoint,m_nOrder[4].nfightpoint);
+	long ids[MAXORDERNUM];
+	long points[MAXORDERNUM];
+	for(int i = 0;i < MAXORDERNUM;i++)
+	{
+		ids[i] = m_nOrder[i].nid;
+		points[i] = m_nOrder[i].nfightpoint;
+	}
+	char buff[512];
+	strcpy(buff, group_sql::save_order_params(ids, points).c_str());
 	SQLRETURN sqlret;
 	sqlret = _db->exec_sql_direct(buff);
 	if(sqlret != SQL_SUCCESS)
@@ -1559,8 +1394,8 @@ bool TBLParam::SaveParam(void)
 bool TBLParam::IsReady()
 {
 	int l_retrow	=0;
-	const char* param = "count(*)";
-	if(_get_row(m_buf, 1, param, 0,&l_retrow))
+	group_sql::Select q = group_sql::param_count();
+	if(_get_row(m_buf, 1, q.columns.c_str(), 0,&l_retrow))
 	{
 		if(l_retrow ==1 && get_affected_rows() ==1 && atoi(m_buf[0].c_str()) >=199)
 		{

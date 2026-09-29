@@ -1,6 +1,7 @@
 #include "Util.h"
 #include "GameAppNet.h"
 #include "Player.h"
+#include "GameSql.h"
 
 #define defCHA_TABLE_VER		110
 #define defCHA_TABLE_NEW_VER	111
@@ -1282,13 +1283,7 @@ public:
 		time[19] = 0;
         sprintf(time, "%04i/%02i/%02i %02i:%02i:%02i", ttm->tm_year + 1900, ttm->tm_mon + 1, ttm->tm_mday, ttm->tm_hour, ttm->tm_min, ttm->tm_sec);
 		
-		char format[] = "insert into Trade_Log(ExecuteTime,GameServer,[Action],[From],[To],Memo) values ('%s','%s','%s','%s','%s','%s')";
-		
-		char sql[1024];
-		memset(sql, 0, sizeof(sql));
-		sprintf(sql, format, time, gameServerName, action, pszChaFrom, pszChaTo, pszTrade);
-		
-		ExecLogSQL(sql);
+		ExecLogSQL(game_sql::insert_trade_log(time, gameServerName, action, pszChaFrom, pszChaTo, pszTrade).c_str());
 	}
 	// End
 

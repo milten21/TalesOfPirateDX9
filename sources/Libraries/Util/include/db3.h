@@ -229,6 +229,10 @@ public:
     bool SQLConnect(char const* conn_str);
     bool Open(char const* conn_str);
 
+    bool SetClientEncoding(const char* encoding);
+    const char* GetClientEncoding() const { return _clientEncoding.c_str(); }
+    bool OpenPostgres(const char* server, const char* database, const char* user, const char* password, std::string& err);
+
     bool Close();
     bool ExecuteSQL( const char* a_szStmt );
 	int GetAffectedRows();
@@ -260,6 +264,8 @@ private:
     std::string   _sResult; // for GetSQL... functions
     bool     _autoCommit;
     std::string   _dbmsName;  // reset at each open
+    std::string   _clientEncoding;
+    int      _lastRows;
 };
 
 class CSQLDelete : public CSQLBaseWhere 

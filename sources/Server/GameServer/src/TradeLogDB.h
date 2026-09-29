@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include <time.h>
+#include "GameSql.h"
 
 
 // Log专用表
@@ -15,17 +16,13 @@ public:
 
 	void ExecLogSQL(char* time, const char* gameServerName, const char* action, const char *pszChaFrom, const char *pszChaTo, const char *pszTrade)
 	{
-		constexpr char format[] = "insert into Trade_Log(ExecuteTime,GameServer,[Action],[From],[To],Memo) values ('%s','%s','%s','%s','%s','%s')";
+		std::string sql = game_sql::insert_trade_log(time, gameServerName, action, pszChaFrom, pszChaTo, pszTrade);
 		
-		char sql[1024];
-		memset(sql, 0, sizeof(sql));
-		sprintf(sql, format, time, gameServerName, action, pszChaFrom, pszChaTo, pszTrade);
-		
-		SQLRETURN l_sqlret  =  this->exec_sql_direct(sql);
+		SQLRETURN l_sqlret  =  this->exec_sql_direct(sql.c_str());
 		if(!DBOK(l_sqlret))
 		{
 			//LG("gamelog", "添加log记录失败, sql = [%s]!\n", sql);
-			LG("gamelog", "add log note failed, sql = [%s]!\n", sql);
+			LG("gamelog", "add log note failed, sql = [%s]!\n", sql.c_str());
 		}
 	}
 };

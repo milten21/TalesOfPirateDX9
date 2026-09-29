@@ -17,6 +17,12 @@ BOOL CTradeLogDB::Init()
 
 		_connect.enable_errinfo();
 
+		if(!_connect.set_client_encoding(g_Config.m_szDBClientEncoding))
+		{
+			LG("trade log db", "invalid db_client_encoding [%s]", g_Config.m_szDBClientEncoding);
+			return FALSE;
+		}
+
 		printf("Connectting database [%s : %s]......\n", g_Config.m_szTradeLogDBIP, g_Config.m_szTradeLogDBName);
 
 

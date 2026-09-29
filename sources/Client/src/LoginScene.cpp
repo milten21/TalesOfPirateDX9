@@ -1249,7 +1249,15 @@ void CLoginScene::_Connect()
 	}
 	else
 	{
-		CS_Connect(pszSelectGateIP, 1973, g_Config.m_nConnectTimeOut );
+		std::string strGateHost(pszSelectGateIP);
+		dbc::uShort usGatePort = 1973;
+		size_t nPortPos = strGateHost.rfind(':');
+		if (nPortPos != std::string::npos)
+		{
+			usGatePort = (dbc::uShort)atoi(strGateHost.c_str() + nPortPos + 1);
+			strGateHost.resize(nPortPos);
+		}
+		CS_Connect(strGateHost.c_str(), usGatePort, g_Config.m_nConnectTimeOut );
 	}
 //#endif
 

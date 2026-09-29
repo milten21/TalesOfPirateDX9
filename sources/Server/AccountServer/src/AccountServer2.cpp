@@ -6,6 +6,7 @@
 #include <string_view>
 
 #include "AccountServer2.h"
+#include "AccountSql.h"
 #include "gamecommon.h"
 #include "inifile.h"
 #include "util.h"
@@ -679,14 +680,14 @@ bool AuthThread::Connect()
     }
 
     // Á¬½Ódatabase
-    char conn_str[512] = {0};
-    char const* conn_fmt = "DRIVER={SQL Server};SERVER=%s;UID=%s;PWD=%s;DATABASE=%s";
-    sprintf(conn_str, conn_fmt, m_strSrvip.c_str(), m_strUserId.c_str(),
-            m_strUserPwd.c_str(), m_strSrvdb.c_str());
-    ret = m_pAuth->Open(conn_str);
+    std::string err;
+    m_pAuth->SetClientEncoding(m_strClientEncoding.c_str());
+    ret = m_pAuth->OpenPostgres(m_strSrvip.c_str(), m_strSrvdb.c_str(), m_strUserId.c_str(),
+                                m_strUserPwd.c_str(), err);
     if (ret) {
         m_pAuth->SetAutoCommit(true);
     } else {
+        LG("AuthDBExcp", "AuthThread::Connect() %s\n", err.c_str());
         delete m_pAuth;
         m_pAuth = NULL;
     }
@@ -724,6 +725,17 @@ void AuthThread::LoadConfig()
 		m_strSrvdb = is["db"];
 		m_strUserId = is["userid"];
 		m_strUserPwd = is["passwd"];
+		try {
+			m_strClientEncoding = is["client_encoding"];
+		} catch (excp&) {
+			// optional setting, WIN1252 unless configured
+		}
+		CSQLDatabase encodingCheck;
+		if (!encodingCheck.SetClientEncoding(m_strClientEncoding.c_str())) {
+			cout << "Invalid client_encoding in [db]: " << m_strClientEncoding << endl;
+			getchar();
+			ExitProcess(-1);
+		}
     } catch (excp& e) {
         cout << e.what() << endl;
         getchar();
@@ -799,9 +811,7 @@ void AuthThread::QueryAccount(RPacket rpkt)
 	CSQLRecordset rs(*m_pAuth);
 
 	// ×éÖ¯SQL²éÑ¯Óï¾ä
-	sprintf(szSql, "select id, password, sid, login_status, login_group, ban, datediff(s, enable_login_time, getdate()) as protect_time from account_login where name='%s'",
-		m_AcctInfo.strName.c_str());
-	rs << szSql; //account_login±íÖÐname×Ö¶ÎÒ»¶¨Òª×öÎ¨Ò»Ô¼Êø
+	rs << account_sql::select_login(m_AcctInfo.strName.c_str()); //account_login±íÖÐname×Ö¶ÎÒ»¶¨Òª×öÎ¨Ò»Ô¼Êø
 
 	// Ö´ÐÐ²éÑ¯
 	rs.SQLExecDirect();
@@ -949,9 +959,7 @@ WPacket AuthThread::AccountLogin(DataSocket* datasock)
 
 	if (m_AcctInfo.nStatus == ACCOUNT_OFFLINE)
 	{
-		sprintf(lpszSQL, "update account_login set login_status=%d, login_group='%s', enable_login_time=getdate(), last_login_time=getdate(), last_login_mac='%s', last_login_ip='%s' where id=%d",
-			ACCOUNT_ONLINE, pFromGroupServer->GetName(), m_AcctInfo.strMAC.c_str(), m_AcctInfo.strIP.c_str(), m_AcctInfo.nId);
-		if (m_pAuth->ExecuteSQL(lpszSQL))
+		if (m_pAuth->ExecuteSQL(account_sql::login_to_online(ACCOUNT_ONLINE, pFromGroupServer->GetName(), m_AcctInfo.strMAC.c_str(), m_AcctInfo.strIP.c_str(), m_AcctInfo.nId)))
 		{
 			SetRunLabel(18);
 			wpkt.WriteShort(ERR_SUCCESS);
@@ -974,9 +982,7 @@ WPacket AuthThread::AccountLogin(DataSocket* datasock)
 	else if (m_AcctInfo.nStatus == ACCOUNT_ONLINE)
 	{
 		//µÇÂ½Ç°×´Ì¬ÊÇÒÑÔÚÏß(ÖØ¸´µÇÂ½)
-		sprintf(lpszSQL, "update account_login set login_status=%d, login_group='%s', last_login_time=getdate(), last_login_mac='%s', last_login_ip='%s' where id=%d",
-			ACCOUNT_SAVING, pFromGroupServer->GetName(), m_AcctInfo.strMAC.c_str(), m_AcctInfo.strIP.c_str(), m_AcctInfo.nId);
-		if (m_pAuth->ExecuteSQL(lpszSQL))
+		if (m_pAuth->ExecuteSQL(account_sql::login_to_saving(ACCOUNT_SAVING, pFromGroupServer->GetName(), m_AcctInfo.strMAC.c_str(), m_AcctInfo.strIP.c_str(), m_AcctInfo.nId)))
 		{
 #ifdef _RELOGIN_MODE_
 			if (pFromGroupServer->IsSame(m_AcctInfo.strGroup))
@@ -1029,9 +1035,7 @@ WPacket AuthThread::AccountLogin(DataSocket* datasock)
 		}
 		else
 		{
-			sprintf(lpszSQL, "update account_login set login_status=%d, login_group='%s', enable_login_time=getdate(), last_login_time=getdate(), last_login_mac='%s', last_login_ip='%s' where id=%d",
-				ACCOUNT_ONLINE, pFromGroupServer->GetName(), m_AcctInfo.strMAC.c_str(), m_AcctInfo.strIP.c_str(), m_AcctInfo.nId);
-			if (m_pAuth->ExecuteSQL(lpszSQL)) {
+			if (m_pAuth->ExecuteSQL(account_sql::login_to_online(ACCOUNT_ONLINE, pFromGroupServer->GetName(), m_AcctInfo.strMAC.c_str(), m_AcctInfo.strIP.c_str(), m_AcctInfo.nId))) {
 				SetRunLabel(23);
 				wpkt.WriteShort(ERR_SUCCESS);
 				wpkt.WriteLong(m_AcctInfo.nId);
@@ -1121,64 +1125,13 @@ WPacket AuthThread::AccountLogin(DataSocket* datasock)
 
 				// ����¼�߼��ж�
 				char szSql[2048] = { 0 };
-				char szFmt[2048] = "update l set l.login_status=case l.login_status when %d then %d \
-								   when %d then %d when %d then %d end, l.enable_login_time=case l.login_status when %d then \
-								   dateadd(second, %d, getdate()) when %d then dateadd(second, %d, getdate()) when %d then \
-								   dateadd(second, %d, getdate()) end, l.sid=case l.login_status when %d then %d when %d then %d \
-								   when %d then %d end, l.login_group=case l.login_status when %d then '%s' when %d then l.login_group \
-								   when %d then '%s' end from account_login l where l.id=%d and (l.login_status=%d or (l.login_status=%d \
-								   and l.enable_login_time<=getdate()) or (l.login_status=%d and l.enable_login_time<=getdate()))";
-				sprintf(szSql, szFmt,
-					ACCOUNT_OFFLINE, ACCOUNT_ONLINE, // ���߱�����
-					ACCOUNT_ONLINE, ACCOUNT_SAVING, // ���߱����
-					//ACCOUNT_SAVING, ACCOUNT_ONLINE, // ���̱�����    2006-2-24 arcol_test
-					ACCOUNT_SAVING, ACCOUNT_SAVING, // ���̱����    2006-2-24 arcol_test �滻
+				strcpy(szSql, account_sql::login_transition(ACCOUNT_OFFLINE, ACCOUNT_ONLINE, ACCOUNT_SAVING,
+					RELOGIN_TIME, SAVING_TIME, INVALID_SID, nSid, pGs->GetName(), m_AcctInfo.nId).c_str());
 
-					ACCOUNT_OFFLINE, RELOGIN_TIME,
-					ACCOUNT_ONLINE, SAVING_TIME,
-					//ACCOUNT_SAVING, RELOGIN_TIME,    2006-2-24 arcol_test
-					ACCOUNT_SAVING, SAVING_TIME,	// 2006-2-24 arcol_test �滻
-
-					ACCOUNT_OFFLINE, nSid,
-					ACCOUNT_ONLINE, INVALID_SID,
-					ACCOUNT_SAVING, nSid,
-
-					ACCOUNT_OFFLINE, pGs->GetName(),
-					ACCOUNT_ONLINE,
-					ACCOUNT_SAVING, pGs->GetName(),
-
-					m_AcctInfo.nId,
-
-					ACCOUNT_OFFLINE,
-					ACCOUNT_ONLINE,
-					ACCOUNT_SAVING);
-
-				/*-------���Ͼ�Arcol����Ϊ��������
-				update l set l.login_status=case l.login_status
-										when ACCOUNT_OFFLINE then ACCOUNT_ONLINE
-										when ACCOUNT_ONLINE then ACCOUNT_SAVING
-										when ACCOUNT_SAVING then ACCOUNT_ONLINE end,
-							 l.enable_login_time=case l.login_status
-										when ACCOUNT_OFFLINE then dateadd(second, RELOGIN_TIME, getdate())
-										when ACCOUNT_ONLINE then dateadd(second, SAVING_TIME, getdate())
-										when ACCOUNT_SAVING then dateadd(second, RELOGIN_TIME, getdate()) end,
-							 l.sid=case l.login_status
-										when ACCOUNT_OFFLINE then nSid
-										when ACCOUNT_ONLINE then INVALID_SID
-										when ACCOUNT_SAVING then nSid end,
-							 l.login_group=case l.login_status
-										when ACCOUNT_OFFLINE then 'pGs->GetName()'
-										when ACCOUNT_ONLINE then l.login_group
-										when ACCOUNT_SAVING then 'pGs->GetName()' end from account_login l
-				where l.id=m_AcctInfo.nId
-				and
-				(l.login_status=ACCOUNT_OFFLINE or
-				(l.login_status=ACCOUNT_ONLINE and l.enable_login_time<=getdate()) or
-				(l.login_status=ACCOUNT_SAVING and l.enable_login_time<=getdate())
-				)";
-				*/
 				SetRunLabel(16);
 				m_pAuth->ExecuteSQL(szSql);
+
+				int nLinesChanged = m_pAuth->GetAffectedRows();
 				SetRunLabel(17);
 
 				// �õ��µ��˺�״̬
@@ -1188,13 +1141,11 @@ WPacket AuthThread::AccountLogin(DataSocket* datasock)
 
 				{
 					CSQLRecordset rs(*m_pAuth);
-					sprintf(szSql, "select @@rowcount, login_status, login_group from account_login where id=%d",
-						m_AcctInfo.nId);
-					rs.SQLExecDirect(szSql);
+					rs.SQLExecDirect(account_sql::select_status(m_AcctInfo.nId));
 					if (rs.SQLFetch())
 					{
 						int n = 1;
-						nLinesAffected = rs.nSQLGetData(n++);
+						nLinesAffected = nLinesChanged;
 						m_AcctInfo.nStatus = rs.nSQLGetData(n++);
 						m_AcctInfo.strGroup = rs.SQLGetData(n++);
 					}
@@ -1211,8 +1162,7 @@ WPacket AuthThread::AccountLogin(DataSocket* datasock)
 					if (m_AcctInfo.nStatus == ACCOUNT_ONLINE)
 					{
 						// �ʺųɹ���¼
-						sprintf(szSql, "update account_login set last_login_time=getdate(), last_login_mac = '%s' where id=%d",
-							m_AcctInfo.strMAC.c_str(), m_AcctInfo.nId);
+						strcpy(szSql, account_sql::touch_login(m_AcctInfo.strMAC.c_str(), m_AcctInfo.nId).c_str());
 						m_pAuth->ExecuteSQL(szSql);
 
 						wpkt.WriteShort(ERR_SUCCESS);
@@ -1226,8 +1176,7 @@ WPacket AuthThread::AccountLogin(DataSocket* datasock)
 					else if (m_AcctInfo.nStatus == ACCOUNT_SAVING)
 					{
 						// �ʺ��ظ���¼
-						sprintf(szSql, "update account_login set last_logout_time=getdate(), total_live_time=total_live_time+datediff(second, last_login_time, getdate()) where id=%d",
-							m_AcctInfo.nId);
+						strcpy(szSql, account_sql::close_session(m_AcctInfo.nId).c_str());
 						m_pAuth->ExecuteSQL(szSql);
 
 						//if (pGs->IsSame(m_AcctInfo.strGroup))					//Arcol 06-2-14 ����֮ǰ�汾��BUG������ʹ�õ��ж��Ѿ���Ч����Ҫ��ǰ���ж�
@@ -1245,8 +1194,7 @@ WPacket AuthThread::AccountLogin(DataSocket* datasock)
 						}
 
 						/*��ģʽ*/
-						sprintf(szSql, "update account_login set last_login_time=getdate(), last_login_mac = '%s' where id=%d",
-							m_AcctInfo.strMAC.c_str(), m_AcctInfo.nId);
+						strcpy(szSql, account_sql::touch_login(m_AcctInfo.strMAC.c_str(), m_AcctInfo.nId).c_str());
 						m_pAuth->ExecuteSQL(szSql);
 
 						wpkt.WriteShort(ERR_SUCCESS);
@@ -1300,20 +1248,10 @@ void AuthThread::AccountLogout(RPacket rpkt)
 	int nId = rpkt.ReadLong();
 	int nSid = rpkt.ReadLong();
 
-	CSQLUpdate s("account_login");
-	sprintf(szSql, "(id=%d and sid=%d and login_status=%d)", nId, nSid, ACCOUNT_ONLINE);    //2006-2-24 arcol
-	s.SetWhere(szSql);
-	s.SetColumn("login_status", ACCOUNT_SAVING);
-	s.SetColumn("sid", INVALID_SID);
-	sprintf(szSql, "enable_login_time=dateadd(second, %d, getdate())", SAVING_TIME);
-	s.SetColumn(szSql);
-	sprintf(szSql, "last_logout_time=getdate()");
-	s.SetColumn(szSql);
-	sprintf(szSql, "total_live_time=total_live_time+datediff(second, last_login_time, getdate())");
-	s.SetColumn(szSql);
+	std::string strSql = account_sql::logout_to_saving(nId, nSid, ACCOUNT_ONLINE, ACCOUNT_SAVING, INVALID_SID, SAVING_TIME);
 
 	SetRunLabel(21);
-	m_pAuth->ExecuteSQL(s.GetStatement());
+	m_pAuth->ExecuteSQL(strSql);
 	SetRunLabel(0);
 }
 #endif
@@ -1323,8 +1261,7 @@ void AuthThread::AccountLogout(RPacket rpkt)
 	SetRunLabel(99);
 	char lpszSQL[2048] = { 0 };
 	int nID = rpkt.ReadLong();
-	//sprintf(lpszSQL, "update account_login set login_status=%d, login_group='', enable_login_time=getdate(), last_logout_time=getdate() where id=%d", ACCOUNT_OFFLINE, nID);
-	sprintf(lpszSQL, "update account_login set login_status=%d, login_group='', enable_login_time=getdate(), last_logout_time=getdate(), total_live_time=total_live_time+datediff(second, last_login_time, getdate()) where id=%d", ACCOUNT_OFFLINE, nID);  //  ��������ʱ�� by jampe
+	strcpy(lpszSQL, account_sql::logout(ACCOUNT_OFFLINE, nID).c_str());  //  ��������ʱ�� by jampe
 	if (m_pAuth->ExecuteSQL(lpszSQL))
 	{
 		SetRunLabel(0);
@@ -1392,11 +1329,11 @@ void AuthThread::LogoutGroup(DataSocket* datasock, RPacket rpkt)
 			//s.SetColumn("login_status", ACCOUNT_SAVING);	//2006-2-24 Arcol_test
 			s.SetColumn("login_status", ACCOUNT_OFFLINE);	//2006-2-24 Arcol_test
 			s.SetColumn("sid", INVALID_SID);
-			sprintf(szSql, "enable_login_time=dateadd(second, %d, getdate())", SAVING_TIME);
+			sprintf(szSql, "enable_login_time=now() + interval '%d seconds'", SAVING_TIME);
 			s.SetColumn(szSql);
-			sprintf(szSql, "last_logout_time=getdate()");
+			sprintf(szSql, "last_logout_time=now()");
 			s.SetColumn(szSql);
-			sprintf(szSql, "total_live_time=total_live_time+datediff(second, last_login_time, getdate())");
+			sprintf(szSql, "total_live_time=total_live_time+%s", account_sql::seconds_since("last_login_time").c_str());
 			s.SetColumn(szSql);
 
 			SetRunLabel(25);
@@ -1444,14 +1381,10 @@ void AuthThread::ResetAccount()
 
 	if (m_nIndex == 0) {
 		// Ö»ÓÐµÚÒ»¸öÏß³Ì±»ÔÊÐíÐÞ¸Ä
-		CSQLUpdate s("account_login");
-		s.SetColumn("login_status", ACCOUNT_OFFLINE);
-		s.SetColumn("sid", INVALID_SID);
-		s.SetColumn("enable_login_time=getdate()");
-		s.SetColumn("login_group", "");
+		std::string strSql = account_sql::reset_all(ACCOUNT_OFFLINE, INVALID_SID);
 
 		try {
-            m_pAuth->ExecuteSQL(s.GetStatement());
+            m_pAuth->ExecuteSQL(strSql);
 	        //LG("As2", "AuthThread#%dÁ¬½ÓAuthÊý¾Ý¿â³É¹¦\n", m_nIndex);
 	        LG("As2", RES_STRING(AS_ACCOUNTSERVER2_CPP_00005), m_nIndex);
 		} catch (CSQLException* pEx) {
