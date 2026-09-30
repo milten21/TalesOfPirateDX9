@@ -85,7 +85,7 @@ vs config file
 
 The four servers (AccountServer, GroupServer, GateServer, GameServer), their shared libraries, Crypto++ and LuaJIT build from one CMake project. The client keeps its own solution, `sources/talesofpirates.sln`.
 
-Requirements: Visual Studio 2026 with the C++ workload and ATL/MFC, and CMake 4.2 or newer (the copy bundled with Visual Studio is fine).
+Requirements: Visual Studio 2026 with the C++ workload and ATL/MFC, CMake 4.2 or newer (the copy bundled with Visual Studio is fine), and a [vcpkg](https://github.com/microsoft/vcpkg) checkout whose path contains no spaces, pointed to by the `VCPKG_ROOT` environment variable. vcpkg builds ICU from `vcpkg.json` on the first configure; the preset installs it under `%VCPKG_ROOT%/installed-tales-servers`.
 
 ```
 cmake --preset windows-x86
@@ -93,4 +93,20 @@ cmake --build --preset windows-x86-debug
 cmake --build --preset windows-x86-release
 ```
 
-The preset generates `build/windows-x86/TalesOfPirateServers.slnx` for Visual Studio, with GameServer as the startup project and `server/<Name>` as its debugging working directory. Executables land in `sources/Server/<Name>/Bin` (`<Name>.exe` for Release, `<Name>_D.exe` for Debug), next to a copy of the ICU and billing runtime DLLs, so `sources/symlinks.bat` keeps working.
+The preset generates `build/windows-x86/TalesOfPirateServers.slnx` for Visual Studio, with GameServer as the startup project and `server/<Name>` as its debugging working directory. Executables land in `sources/Server/<Name>/Bin` (`<Name>.exe` for Release, `<Name>_D.exe` for Debug) (ICU is linked statically, so there are no runtime DLLs to copy), so `sources/symlinks.bat` keeps working.
+
+### Server localization
+
+Each server loads its messages from a compiled ICU resource bundle named in its `.loc` file:
+
+```
+[locale]
+locale = en_US
+codepage = windows-1252
+```
+
+`codepage` is the single-byte encoding the server's messages are converted to, so output bytes are the same on every platform. The English servers use `windows-1252`; AccountServer uses `windows-1251` for its Russian bundle.
+
+The bundle sources are the `<locale>.txt` files next to each `.loc` file, in `server/<Name>/`. The CMake target `LocaleBundles` (part of the normal build) regenerates the committed `<locale>.res` files from them with vcpkg's `genrb`. To change a message, edit the `.txt` file and rebuild. `ctest -C Debug` in `build/windows-x86` checks that every server's messages, including formatted ones, still produce the recorded bytes in `tests/ICUHelper/golden/`.
+
+To recover a text source from a compiled bundle, build the `DumpBundle` target and run `DumpBundle <directory-with-trailing-slash> <locale> <output.txt>`. Do not use `derb` for this: it drops trailing characters from strings that contain escaped characters.

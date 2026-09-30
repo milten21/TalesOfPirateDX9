@@ -10,8 +10,7 @@ tales_add_server(AccountServer
         ${TALES_LIBRARIES_DIR}/Util/include
         ${TALES_LIBRARIES_DIR}/Server/sdk/include
         ${TALES_LIBRARIES_DIR}/ICUHelper/inc
-        ${TALES_LIBRARIES_DIR}/icu/include
         ${TALES_LIBRARIES_DIR}/Cryptopp
     DEFINITIONS NOAUTHDLL
     LIBRARIES
-        LIBDBC util ICUHelper icu::dt icu::uc icu::in Ws2_32 winmm)
+        LIBDBC util ICUHelper Ws2_32 winmm)

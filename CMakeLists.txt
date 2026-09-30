@@ -1,5 +1,15 @@
 cmake_minimum_required(VERSION 3.25)
 
+set(VCPKG_TARGET_TRIPLET x86-windows-static CACHE STRING "")
+set(VCPKG_HOST_TRIPLET x64-windows CACHE STRING "")
+set(VCPKG_APPLOCAL_DEPS OFF CACHE BOOL "")
+if(NOT CMAKE_TOOLCHAIN_FILE)
+    if(NOT DEFINED ENV{VCPKG_ROOT})
+        message(FATAL_ERROR "Set VCPKG_ROOT to a vcpkg checkout (git clone https://github.com/microsoft/vcpkg); it supplies ICU through vcpkg.json")
+    endif()
+    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake)
+endif()
+
 project(TalesOfPirateServers LANGUAGES C CXX)
 
 if(NOT MSVC)
@@ -27,14 +37,22 @@ add_compile_options(/W0 "$<$<OR:$<COMPILE_LANGUAGE:C>,$<COMPILE_LANGUAGE:CXX>>:/
 
 set(TALES_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/sources)
 set(TALES_LIBRARIES_DIR ${TALES_SOURCES_DIR}/Libraries)
-set(TALES_RUNTIME_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party/runtime/server)
 set(TALES_SERVER_RUN_DIR ${CMAKE_CURRENT_SOURCE_DIR}/server)
 
 include(cmake/TalesServer.cmake)
+include(cmake/LocaleBundles.cmake)
+
+find_package(ICU REQUIRED COMPONENTS uc i18n data)
+find_program(ICU_GENRB_EXECUTABLE genrb
+    PATHS
+        ${VCPKG_INSTALLED_DIR}/${VCPKG_HOST_TRIPLET}/tools/icu/bin
+        ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/tools/icu/bin
+    REQUIRED)
+
+enable_testing()
 
 add_subdirectory(sources/Libraries/Cryptopp)
 add_subdirectory(sources/Libraries/LuaJIT)
-add_subdirectory(sources/Libraries/icu)
 add_subdirectory(sources/Libraries/Server/sdk)
 add_subdirectory(sources/Libraries/Util)
 add_subdirectory(sources/Libraries/common)
@@ -46,5 +64,15 @@ add_subdirectory(sources/Server/AccountServer)
 add_subdirectory(sources/Server/GroupServer)
 add_subdirectory(sources/Server/GateServer)
 add_subdirectory(sources/Server/GameServer)
+
+tales_add_locale_bundle(AccountServer en_US)
+tales_add_locale_bundle(AccountServer ru_RU)
+tales_add_locale_bundle(GameServer en_US)
+tales_add_locale_bundle(GateServer en_US)
+tales_add_locale_bundle(GroupServer en_US)
+tales_finish_locale_bundles()
+
+add_subdirectory(tools/DumpBundle)
+add_subdirectory(tests/ICUHelper)
 
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT GameServer)

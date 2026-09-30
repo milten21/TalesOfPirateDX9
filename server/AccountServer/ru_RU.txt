@@ -1,8 +1,3 @@
-// -*- Coding: UTF-8; -*-
-//
-// This file was dumped by derb(8) from .\.
-// derb(8) by Vladimir Weinstein and Yves Arrouye
-
 ru_RU{
     AS_ACCOUNTSERVER2_CPP_00001 { "connected" }
     AS_ACCOUNTSERVER2_CPP_00002 { "unable to connect to database, reconnecting in 5 seconds! \n" }

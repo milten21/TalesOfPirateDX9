@@ -7,7 +7,10 @@
       "displayName": "Windows x86 (Visual Studio 2026)",
       "generator": "Visual Studio 18 2026",
       "architecture": { "value": "Win32", "strategy": "set" },
-      "binaryDir": "${sourceDir}/build/windows-x86"
+      "binaryDir": "${sourceDir}/build/windows-x86",
+      "cacheVariables": {
+        "VCPKG_INSTALLED_DIR": "$env{VCPKG_ROOT}/installed-tales-servers"
+      }
     }
   ],
   "buildPresets": [

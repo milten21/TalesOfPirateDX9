@@ -6,6 +6,8 @@
 	
 //#include "pi_Alloc.h"
 
+#include <cstdio>
+#include <cstring>
 #include <map>
 #include <memory>
 // Use to compare the contents of two pointers
@@ -34,7 +36,7 @@ typedef std::map <const char*, std::unique_ptr<char[]>, charValueLess> StringMap
 class CFormatParameter
 {
 private:
-	Formattable* m_MsgArgs;
+	icu::Formattable* m_MsgArgs;
 	int paraNum;
 private:
 	CFormatParameter(){}
@@ -42,13 +44,13 @@ public:
 	CFormatParameter(int paraNum);
 	~CFormatParameter();
 
-	Formattable* GetMsgArgs(){ return m_MsgArgs;} 
+	icu::Formattable* GetMsgArgs(){ return m_MsgArgs;} 
 	int GetParaNum() { return paraNum; }
 	void setDouble(int index, double d);
 	void  setLong(int index, int32_t l);
 	void  setInt64(int index, int64_t ll) ;
 	void  setDate(int index, UDate d) ;
-	void  setString(int index, const UnicodeString &stringToCopy);
+	void  setString(int index, const icu::UnicodeString &stringToCopy);
 };
 
 class CResourceBundleManage
@@ -63,7 +65,7 @@ private:
 	std::unique_ptr<char[]> m_ResLocale{};
 
 	StringMap mapRes;
-	ResourceBundle* m_pResourceBundle;
+	icu::ResourceBundle* m_pResourceBundle;
 	UConverter *m_pConverter;
 	int m_MaxSize;
 
@@ -76,12 +78,13 @@ private:
 	bool Init();
 
 public:
+	const StringMap& GetResStrings() const { return mapRes; }
 	int GetSize(void);			// 取得资源个数
 	
 	void Release(void);
 
 	const char* LoadResString(const char* key);
-	UnicodeString LoadUResString(const char* key);
+	icu::UnicodeString LoadUResString(const char* key);
 
 	int Format(const char* key, CFormatParameter& parameter, char buffer[]);
 };

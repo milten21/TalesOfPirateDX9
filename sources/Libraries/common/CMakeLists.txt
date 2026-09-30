@@ -13,7 +13,7 @@ tales_add_library(Common
         ${TALES_LIBRARIES_DIR}/Util/include
         ${TALES_LIBRARIES_DIR}/EncLib/include
         ${TALES_LIBRARIES_DIR}/ICUHelper/inc
-        ${TALES_LIBRARIES_DIR}/icu/include
         ${TALES_LIBRARIES_DIR}/Cryptopp
     DEFINITIONS WINDOWS_IGNORE_PACKING_MISMATCH)
 target_link_libraries(Common PUBLIC cryptlib)
+target_link_libraries(Common PUBLIC ICU::uc ICU::i18n)

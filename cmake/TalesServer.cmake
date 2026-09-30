@@ -39,7 +39,4 @@ function(tales_add_server name)
         PDB_OUTPUT_DIRECTORY_DEBUG ${bin_dir}
         PDB_OUTPUT_DIRECTORY_RELEASE ${bin_dir}
         VS_DEBUGGER_WORKING_DIRECTORY ${TALES_SERVER_RUN_DIR}/${name})
-    add_custom_command(TARGET ${name} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${name}> $<TARGET_FILE_DIR:${name}>
-        COMMAND_EXPAND_LISTS)
 endfunction()

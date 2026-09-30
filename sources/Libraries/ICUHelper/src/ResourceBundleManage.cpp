@@ -1,5 +1,7 @@
 #include "resourcebundlemanage.h"
 
+#include "IniFile.h"
+
 #include "windows.h"
 #include <cstdio>
 #include <cstdlib>
@@ -27,8 +29,7 @@ private:
 
 CFormatParameter::CFormatParameter(int paraNum)
 {
-	UErrorCode status = U_ZERO_ERROR;
-	m_MsgArgs = new Formattable[paraNum];
+	m_MsgArgs = new icu::Formattable[paraNum];
 	this->paraNum = paraNum;
 }
 
@@ -61,13 +62,13 @@ void CFormatParameter::setDate(int index, UDate d)
 	m_MsgArgs[index].setDate(d);
 }
 
-void CFormatParameter::setString(int index, const UnicodeString &stringToCopy)
+void CFormatParameter::setString(int index, const icu::UnicodeString &stringToCopy)
 {
 	m_MsgArgs[index].setString(stringToCopy);
 }
 
 CResourceBundleManage::CResourceBundleManage(const char* configFileName)
-:  m_pResourceBundle(NULL), m_pConverter(NULL), m_MaxSize(0), m_LogFile(NULL), m_LogFlag(0)
+:  m_pResourceBundle(NULL), m_pConverter(NULL), m_MaxSize(0), m_LogFlag(0), m_LogFile(NULL)
 {
     char szPath[MAX_PATH]; 
     
@@ -77,57 +78,43 @@ CResourceBundleManage::CResourceBundleManage(const char* configFileName)
     }
 	// 取得入口程序的路径
 	const char* ret = strrchr(szPath, '\\');
-	long dirLength = (long)(ret - szPath);
+	const std::string exeDir(szPath, ret - szPath);
 
-	size_t length = strlen(configFileName);
-	//char* fileName = new char[dirLength + length + 2 ];
-	auto fileName = std::make_unique<char[]>(dirLength + length + 2);
-	memcpy(fileName.get(), szPath, dirLength);
-	fileName[dirLength] = '/';
-	memcpy(fileName.get() + dirLength + 1, configFileName, length);
-	fileName[dirLength + length + 1] = 0;
+	CIniFile ini;
+	ini.Load(exeDir + "/" + configFileName);
 
-	UErrorCode status;
-	Locale::setDefault(Locale::getEnglish(),status);
+	UErrorCode status = U_ZERO_ERROR;
+	icu::Locale::setDefault(icu::Locale::getEnglish(),status);
 
 	const char* lpAppName = "locale";
-	const char* lpLocaleKeyName = "locale";
-	const char* lpPathKeyName = "path";
-	const char* lpDefaultLocale = "en_US";
-	//char* lpDefaultPath = new char[dirLength + 1];
-	auto lpDefaultPath = std::make_unique<char[]>(dirLength + 1);
-	memcpy(lpDefaultPath.get(), szPath, dirLength);
-	lpDefaultPath[dirLength] = 0;
 
-	char lpReturnedLocaleString[BUFFER_SIZE];
-	char lpReturnedPathString[BUFFER_SIZE];
+	const std::string locale = ini.GetString(lpAppName, "locale", "en_US");
+	m_ResLocale = std::make_unique<char[]>(locale.size() + 1);
+	memcpy(m_ResLocale.get(), locale.c_str(), locale.size() + 1);
 
-	length = GetPrivateProfileStringA(lpAppName,lpLocaleKeyName,lpDefaultLocale,lpReturnedLocaleString,sizeof(lpReturnedLocaleString),fileName.get());
+	std::string resDir = ini.GetString(lpAppName, "path", exeDir);
+	if(!resDir.empty() && resDir.back() != '/' && resDir.back() != '\\')
+		resDir += '/';
+	m_ResDir = std::make_unique<char[]>(resDir.size() + 1);
+	memcpy(m_ResDir.get(), resDir.c_str(), resDir.size() + 1);
 
-	m_ResLocale = std::make_unique<char[]>(length + 1);
-	memcpy(m_ResLocale.get(), lpReturnedLocaleString, length);
-	m_ResLocale[length] = 0;
+	const std::string codepage = ini.GetString(lpAppName, "codepage", "");
 
-	length = GetPrivateProfileStringA(lpAppName,lpPathKeyName,lpDefaultPath.get(),lpReturnedPathString,sizeof(lpReturnedPathString),fileName.get());
-
-	
-	m_ResDir = make_unique<char[]>(length + 1);
-	memcpy(m_ResDir.get(), lpReturnedPathString, length);
-	m_ResDir[length] = 0;
-
-	m_LogFlag = GetPrivateProfileInt(lpAppName, "log", 0 ,fileName.get());
+	m_LogFlag = ini.GetInt(lpAppName, "log", 0);
 
 	if(m_LogFlag)
 	{
-		string logFileName = string(m_ResDir.get()) + "/res.log";
+		string logFileName = string(m_ResDir.get()) + "res.log";
 		
 		m_LogFile = fopen(logFileName.c_str(), "w+");
 	}
 
 	status = U_ZERO_ERROR;
-	m_pConverter = ucnv_open(NULL, &status); //ucnv_open("cp936", &status); // windows-936-2000
+	if(!codepage.empty())
+		ucnv_setDefaultName(codepage.c_str());
+	m_pConverter = ucnv_open(codepage.empty() ? NULL : codepage.c_str(), &status);
 	
-	if(status == U_ZERO_ERROR)
+	if(U_SUCCESS(status))
 	{
 
 	}
@@ -139,12 +126,16 @@ CResourceBundleManage::CResourceBundleManage(const char* configFileName)
 			fprintf(stderr, "ICU converter: the requested file cannot be found\n");
 		else
 			fprintf(stderr, "ICU converter: error %d\n", static_cast<int>(status));
+		if(!codepage.empty())
+			fprintf(stderr, "ICU converter: codepage \"%s\" from %s is not available\n", codepage.c_str(), configFileName);
 		exit(EXIT_FAILURE);
 	}
 
 	m_MaxSize = ucnv_getMaxCharSize(m_pConverter);
 
-	m_pResourceBundle = new ResourceBundle(m_ResDir.get(),m_ResLocale.get(), status);
+	m_pResourceBundle = new icu::ResourceBundle(m_ResDir.get(),m_ResLocale.get(), status);
+	if(U_FAILURE(status))
+		fprintf(stderr, "ICU resource bundle: cannot open \"%s\" for locale \"%s\" (error %d)\n", m_ResDir.get(), m_ResLocale.get(), static_cast<int>(status));
 
 	Init();
 }
@@ -167,9 +158,6 @@ UErrorCode CResourceBundleManage::ToCodePageString(UConverter *conv, UChar* sour
 
   len = ucnv_fromUChars(conv, target, destCapacity, source, -1, &status);
 
-  if(U_SUCCESS(status) == FALSE)
-	  return status;
-
   return status;
 }
 
@@ -190,16 +178,16 @@ bool CResourceBundleManage::Init()
 
 	status = U_ZERO_ERROR;
 
-	if(U_SUCCESS(status) == TRUE)
+	if(U_SUCCESS(status))
 	{
 		m_pResourceBundle->resetIterator();
 		
         while(m_pResourceBundle->hasNext()) {
-            ResourceBundle bundle = m_pResourceBundle->getNext(status);
+            icu::ResourceBundle bundle = m_pResourceBundle->getNext(status);
 
 			const char * key = bundle.getKey();
 
-			UnicodeString value = bundle.getString(status);
+			icu::UnicodeString value = bundle.getString(status);
 
 			len = 0;
 			maxSize = m_MaxSize * ( 1 + value.length());
@@ -268,7 +256,7 @@ const char* CResourceBundleManage::LoadResString(const char* key)
 	return ret;
 }
  
-UnicodeString CResourceBundleManage::LoadUResString(const char* key)
+icu::UnicodeString CResourceBundleManage::LoadUResString(const char* key)
 {
 	UErrorCode status = U_ZERO_ERROR;
 	return m_pResourceBundle->getStringEx(key, status);
@@ -278,16 +266,19 @@ UnicodeString CResourceBundleManage::LoadUResString(const char* key)
 int CResourceBundleManage::Format(const char* key, CFormatParameter& parameter, char buffer[])
 {
     UErrorCode status = U_ZERO_ERROR;
-    UnicodeString str;
-    FieldPosition pos;
+    icu::UnicodeString str;
+    icu::FieldPosition pos;
 
-	UnicodeString format = LoadUResString(key);
+	icu::UnicodeString format = LoadUResString(key);
 
 	// Create a message format
-    MessageFormat msg(format, status);
+#if U_ICU_VERSION_MAJOR_NUM >= 50
+    icu::MessageFormat msg(icu::UnicodeString(), status);
+    msg.applyPattern(format, UMSGPAT_APOS_DOUBLE_REQUIRED, NULL, status);
+#else
+    icu::MessageFormat msg(format, status);
+#endif
     msg.format(parameter.GetMsgArgs(), parameter.GetParaNum(), str, pos, status);
-
-	int aaa = m_MaxSize;
 
 	int len = 0;
 	int maxSize = m_MaxSize * ( 1 + str.length());

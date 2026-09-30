@@ -15,7 +15,6 @@ tales_add_server(GroupServer
         ${TALES_LIBRARIES_DIR}/Common/include
         ${TALES_LIBRARIES_DIR}/LuaJIT/src
         ${TALES_LIBRARIES_DIR}/ICUHelper/inc
-        ${TALES_LIBRARIES_DIR}/icu/include
         ${TALES_LIBRARIES_DIR}/Cryptopp
     LIBRARIES
-        luajit LIBDBC util Common ICUHelper icu::dt icu::uc icu::in Ws2_32 winmm)
+        luajit LIBDBC util Common ICUHelper Ws2_32 winmm)

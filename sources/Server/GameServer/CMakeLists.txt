@@ -21,9 +21,8 @@ tales_add_server(GameServer
         ${TALES_LIBRARIES_DIR}/Util/include
         ${TALES_LIBRARIES_DIR}/LuaJIT/src
         ${TALES_LIBRARIES_DIR}/ICUHelper/inc
-        ${TALES_LIBRARIES_DIR}/icu/include
         ${TALES_LIBRARIES_DIR}/InfoNet/include
         ${TALES_LIBRARIES_DIR}/Cryptopp
     DEFINITIONS __INFO_NET__ WINDOWS_IGNORE_PACKING_MISMATCH
     LIBRARIES
-        luajit LIBDBC util Common ICUHelper InfoNet icu::uc icu::in Ws2_32 winmm Psapi)
+        luajit LIBDBC util Common ICUHelper InfoNet Ws2_32 winmm Psapi)

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "tales-of-pirates-servers",
+  "version": "1.0.0",
+  "dependencies": [
+    "icu"
+  ],
+  "builtin-baseline": "a42757564758c60651ebc616d9b000b7b91249ef"
+}

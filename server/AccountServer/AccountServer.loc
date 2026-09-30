@@ -1,2 +1,3 @@
 [locale]
 locale = ru_RU
+codepage = windows-1251

@@ -69,7 +69,6 @@ Client/system/x64/
 server/*/*.exe
 server/*/*.pdb
 
-server/*/icu*.dll
 server/*/lua51.dll
 server/*/BTI.DLL
 
