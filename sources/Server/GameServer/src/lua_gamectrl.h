@@ -1623,24 +1623,6 @@ inline void lua_FrameMove()
  	luaL_dostring(g_pLuaState, "RunTimer()");
 T_E}
 
-// 移动对话框地图观察点
-inline int lua_view(lua_State *L)
-{T_B
-	// 参数合法性判别
-    BOOL bValid = (lua_gettop(L)==2 && lua_isnumber(L, 1) && lua_isnumber(L, 2));
-	if(!bValid) 
-    {
-        PARAM_ERROR
-        return 0;
-    }
-	
-	extern long g_lViewAtMapX;
-	extern long g_lViewAtMapY;
-	g_lViewAtMapX = (long)lua_tonumber(L, 1);
-	g_lViewAtMapY = (long)lua_tonumber(L, 2);
-	return 0;
-T_E}
-
 inline void lua_AIRun(CCharacter *pCha, DWORD dwResumeExecTime)
 {T_B
 	
@@ -1715,7 +1697,7 @@ T_E}
 inline int lua_Msg(lua_State *L)
 {T_B
     const char *pszContent = lua_tostring(L, 1);
-    MessageBox(NULL, pszContent, "msg", 0);
+    LG("lua_msg", "%s\n", pszContent ? pszContent : "");
     return 0;
 T_E}
 

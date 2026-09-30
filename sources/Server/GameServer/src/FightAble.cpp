@@ -633,7 +633,7 @@ void CFightAble::NotiSkillSrcToEyeshot(Short sExecTime)
 			{
 				if (sTempChangeNum >= sAttrChangeNum)
 					//MessageBox(0, "属性变化个数的两个统计值不吻合", "错误", MB_OK);
-					MessageBox(0, RES_STRING(GM_FIGHTALBE_CPP_00001), RES_STRING(GM_FIGHTALBE_CPP_00002), MB_OK);
+					LG("error", "%s\n", RES_STRING(GM_FIGHTALBE_CPP_00001));
 				WRITE_CHAR(pk, i);
 				if(i == ATTR_NLEXP ||i == ATTR_CLEXP||i == ATTR_CEXP)
 					WRITE_LONG(pk, m_CChaAttr.GetAttr(i));
@@ -745,7 +745,7 @@ void CFightAble::NotiSkillSrcToSelf(Short sExecTime)
 			{
 				if (sTempChangeNum >= sAttrChangeNum)
 					//MessageBox(0, "属性变化个数的两个统计值不吻合", "错误", MB_OK);
-					MessageBox(0, RES_STRING(GM_FIGHTALBE_CPP_00001), RES_STRING(GM_FIGHTALBE_CPP_00002), MB_OK);
+					LG("error", "%s\n", RES_STRING(GM_FIGHTALBE_CPP_00001));
 				WRITE_CHAR(pk, i);
 				if (i==ATTR_NLEXP ||i==ATTR_CLEXP||i ==ATTR_CEXP)
 				{
@@ -770,7 +770,7 @@ void CFightAble::NotiSkillSrcToSelf(Short sExecTime)
 			{
 				if (sTempChangeNum >= uchStateChangeNum)
 					//MessageBox(0, "属性变化个数的两个统计值不吻合", "错误", MB_OK);
-					MessageBox(0, RES_STRING(GM_FIGHTALBE_CPP_00001), RES_STRING(GM_FIGHTALBE_CPP_00002), MB_OK);
+					LG("error", "%s\n", RES_STRING(GM_FIGHTALBE_CPP_00001));
 				WRITE_CHAR(pk, pSStateUnit->GetStateID());
 				WRITE_CHAR(pk, pSStateUnit->GetStateLv());
 				sTempChangeNum++;

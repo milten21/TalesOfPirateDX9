@@ -5,7 +5,7 @@
 
 #include "GameAppNet.h"
 #include "GameApp.h"
-#include "SystemDialog.h"
+#include "GameConsole.h"
 #include "Config.h"
 #include "GameDB.h"
 
@@ -29,17 +29,6 @@ void AppExit(void);
 pi_LeakReporter pi_leakReporter("gamememleak.log");
 CResourceBundleManage g_ResourceBundleManage("GameServer.loc"); //Add by lark.li 20080304
 
-#include <signal.h>
-
-void sigintHandler(int sig_num)
-{
-	signal(SIGINT, sigintHandler);
-	C_PRINT("Notify Logout to GameServer...\n");
-	g_pGameApp->m_CTimerReset.Begin(1000);
-	g_pGameApp->m_ulLeftSec = 3;
-	fflush(stdout);
-}
-
 int main(int argc, char* argv[])
 {
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -48,6 +37,8 @@ int main(int argc, char* argv[])
 	C_PRINT("Loading %s\n", szConfigFileN);
 
 	DisableCloseButton();
+	LG_EnableMsgBox(false);
+	EnableMsgBox(false);
 
 	SEHTranslator translator;
 
@@ -60,7 +51,7 @@ int main(int argc, char* argv[])
 	if (!g_Config.Load(szConfigFileN))
 	{
 		LG("init", "config init...Fail!\n");
-		return FALSE;		
+		return -1;
 	}
 	if (!g_Command.Load("cmd.cfg"))
 	{
@@ -72,33 +63,14 @@ int main(int argc, char* argv[])
 #endif
 
 	atexit(AppExit);
-	if(!GameServer_Begin()) 
+	InstallStopHandlers();
+	if(!GameServer_Begin())
 	{
-		return 0;
+		C_PRINT("GameServer startup failed\n");
+		return -1;
 	}
-	signal(SIGINT, sigintHandler);
 
-	MSG msg;
-	while(!g_bGameEnd)
-	{
-		if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) )
-		{
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-			if(msg.message==WM_QUIT)
-			{
-				if (!g_bGameEnd)
-					g_pGameApp->SaveAllPlayer();
-				g_bGameEnd = TRUE;
-				break;
-			}
-		}
-		else
-		{
-			SystemReport(GetTickCount());
-			Sleep(50);
-		}
-	}
+	RunConsole();
 	GameServer_End();
 	LG("init", "game map server succeed to exit\n"); 
 	T_FINAL
@@ -166,11 +138,6 @@ LG("init", "game map server [%s] startup...\n", g_Config.m_szName);
 	LG("init", "Game Thread ID = %d\n", dwThreadID);
 	//
 
-	//LG("init",  "开始创建Win32 控制对话框\n");
-	LG("init",  "start create Win32 control dialog box\n");
-	HINSTANCE hInst = GetModuleHandle(0);
-	CreateMainDialog(hInst, NULL);
-
 	//Log("重启", "GameServer重启", g_Config.m_szMapList[0], "", "", "");
 	Log("restart", "GameServer restart", g_Config.m_szMapList[0], "", "", "");
 	
@@ -182,15 +149,8 @@ void GameServer_End()
 {T_B
 	//LG("init", "开始结束游戏地图服务器\n");
 	LG("init", "start to exit game map server\n");
+	WaitForSingleObject(hGameT, INFINITE);
 	CloseHandle(hGameT);
-
-	HWND hConsole = GetConsoleWindow();
-	if(hConsole)
-	{
-		SendMessage(hConsole, WM_CLOSE, 0, 0);
-	}
-	
-	Sleep(400);
 
 	SAFE_DELETE(g_pGameApp);
 

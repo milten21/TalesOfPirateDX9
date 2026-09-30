@@ -8,7 +8,7 @@
 #include "stdafx.h"
 #include "GameApp.h"
 #include "GameAppNet.h"
-#include "SystemDialog.h"
+#include "GameConsole.h"
 #include "lua_gamectrl.h"
 #include "GameDB.h"
 
@@ -155,11 +155,8 @@ DWORD WINAPI g_GameLogicProcess(LPVOID lpParameter)
 		DWORD	dwInterval = 50; // 毫秒
 
 		//lua_FrameMove();
-		if(g_pGameApp->m_bExecLuaCmd) 
-		{
-			luaL_dofile(g_pLuaState, "tmp.txt");
-			g_pGameApp->m_bExecLuaCmd = FALSE;
-		}
+		ExecuteConsoleLua();
+		HandleStopRequest();
 
 		/*GetLocalTime( &st );
 		sprintf( szTemp, "%d-%d-%d-%d", st.wYear, st.wMonth, st.wDay, st.wHour );
@@ -187,7 +184,10 @@ DWORD WINAPI g_GameLogicProcess(LPVOID lpParameter)
 		g_StoreSystem.Run(dwCurTick, 10000, 10000);
 		dwCurTick = GetTickCount();
 		dwRunTick += dwCurTick - dwLastTick;
-		    
+
+		g_pGameApp->HandleLogList();
+		UpdateStatus(dwCurTick);
+
 		g_pGameApp->m_dwRunStep = 104;
 
 		T_EXIT
@@ -304,7 +304,6 @@ CGameApp::CGameApp()
  _dwTempRunCnt(0),
  m_dwRunCnt(0),
  m_dwFPS(0),
- m_bExecLuaCmd(0),
  m_dwChaCnt(0),
  m_dwPlayerCnt(0),
  m_dwRunStep(0),

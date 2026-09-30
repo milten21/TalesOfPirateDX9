@@ -8,12 +8,12 @@ tales_add_server(GameServer
         src/CharStall.cpp src/CharTrade.cpp src/Config.cpp src/Entity.cpp src/EntityAlloc.cpp
         src/EntityScript.cpp src/EntitySpawn.cpp src/EventCalculate.cpp src/EventEntity.cpp
         src/EventHandler.cpp src/EyeshotCell.cpp src/FightAble.cpp src/FindPath.cpp src/GameApp.cpp
-        src/GameAppNet.cpp src/GameDB.cpp src/GameServerApp.cpp src/GameSMain.cpp src/gmsvr.cpp src/Guild.cpp
+        src/GameAppNet.cpp src/GameConsole.cpp src/GameDB.cpp src/GameServerApp.cpp src/GameSMain.cpp src/gmsvr.cpp src/Guild.cpp
         src/HarmRec.cpp src/Item.cpp src/lua_gamectrl.cpp src/MapEntry.cpp src/MapRes.cpp src/MapTrigger.cpp
         src/Mission.cpp src/MoveAble.cpp src/NPC.cpp src/NpcScript.cpp src/Parser.cpp src/PicSet.cpp
         src/Picture.cpp src/Player.cpp src/Script.cpp src/StackWalker.cpp src/StateCell.cpp src/stdafx.cpp
-        src/SubMap.cpp src/SystemDialog.cpp src/TradeLogDB.cpp src/Weather.cpp src/WorldEudemon.cpp
-        src/xString.cpp Proj/GameServer.rc
+        src/SubMap.cpp src/TradeLogDB.cpp src/Weather.cpp src/WorldEudemon.cpp
+        src/xString.cpp
     INCLUDES
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${TALES_LIBRARIES_DIR}/Server/sdk/include

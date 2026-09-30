@@ -247,8 +247,7 @@ public:
 	DWORD	m_dwPlayerCnt;
 	DWORD	m_dwActiveMgrUnit;
 	dbc::InterLockedLong   m_dwRunStep;	// 性能监控
-	
-	BOOL	m_bExecLuaCmd;
+
 	std::string	m_strMapNameList;
 
 	dbc::PreAllocHeap<CPassengerMgr>		m_CabinHeap;

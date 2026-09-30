@@ -3473,7 +3473,7 @@ inline int lua_SetMapEntryTime(lua_State *pLS)
 		if (n != 5)
 		{
 			//MessageBox(0, szTime, "设置地图入口控制时间，其格式错误", MB_OK);
-			MessageBox(0, szTime, RES_STRING(GM_EXPAND_H_00111), MB_OK);
+			LG("luamis_error", "SetMapEntryTime: %s [%s]\n", RES_STRING(GM_EXPAND_H_00111), szTime);
 			bSuccess = false;
 			goto End;
 		}
@@ -3492,7 +3492,7 @@ inline int lua_SetMapEntryTime(lua_State *pLS)
 		if (n != 3)
 		{
 			//MessageBox(0, szTime, "设置地图入口控制时间，其格式错误", MB_OK);
-			MessageBox(0, szTime, RES_STRING(GM_EXPAND_H_00111), MB_OK);
+			LG("luamis_error", "SetMapEntryTime: %s [%s]\n", RES_STRING(GM_EXPAND_H_00111), szTime);
 			bSuccess = false;
 			goto End;
 		}
@@ -3504,7 +3504,7 @@ inline int lua_SetMapEntryTime(lua_State *pLS)
 		if (n != 3)
 		{
 			//MessageBox(0, szTime, "设置地图入口控制时间，其格式错误", MB_OK);
-			MessageBox(0, szTime, RES_STRING(GM_EXPAND_H_00111), MB_OK);
+			LG("luamis_error", "SetMapEntryTime: %s [%s]\n", RES_STRING(GM_EXPAND_H_00111), szTime);
 			bSuccess = false;
 			goto End;
 		}
@@ -3516,7 +3516,7 @@ inline int lua_SetMapEntryTime(lua_State *pLS)
 		if (n != 3)
 		{
 			//MessageBox(0, szTime, "设置地图入口控制时间，其格式错误", MB_OK);
-			MessageBox(0, szTime, RES_STRING(GM_EXPAND_H_00111), MB_OK);
+			LG("luamis_error", "SetMapEntryTime: %s [%s]\n", RES_STRING(GM_EXPAND_H_00111), szTime);
 			bSuccess = false;
 			goto End;
 		}

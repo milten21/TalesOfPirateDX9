@@ -7,15 +7,10 @@ BOOL CRawDataSet::_LoadRawDataInfo_Bin(const char* pszFileName)
 	const unsigned char cluTableIV[] =	{ 0x43, 0x2a, 0x46, 0x29, 0x4a, 0x40, 0x4e, 0x63, 0x52, 0x66, 0x55, 0x6a, 0x58, 0x6e, 0x32, 0x72 };
 
 	FILE* fp = fopen(pszFileName, "rb");
-	char szMsg[MAX_PATH] = { 0 };
 
 	if (fp == NULL)
 	{
 		LG2("error", "Load Raw Data Info Bin File [%s] Failed!\n", pszFileName);
-		//sprintf(szMsg, "打开表格文件失败：%s\n程序即将退出!\n", pszFileName);
-		//MessageBox(NULL, szMsg, "错误", MB_OK | MB_ICONERROR);
-		sprintf(szMsg, "Open table file failed:%s\nProgram will exit!\n", pszFileName);
-		MessageBox(NULL, szMsg, "Error", MB_OK | MB_ICONERROR);
 		return FALSE;
 	}
 

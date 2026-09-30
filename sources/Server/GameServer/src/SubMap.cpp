@@ -1074,7 +1074,7 @@ void SubMap::BeginSearchInRange(Long *plRangeBParam, Long *plRangeEParam, bool b
 				if (m_sRangeMgrUnitNum >= defRANGE_MGRUNIU_NUM)
 				{
 					//MessageBox(NULL, "区域搜索的范围超过设定值", "错误", MB_OK);
-					MessageBox(NULL, RES_STRING(GM_SUBMAP_CPP_00004), RES_STRING(GM_SUBMAP_CPP_00005), MB_OK);
+					LG("error", "%s\n", RES_STRING(GM_SUBMAP_CPP_00004));
 					return;
 				}
 			}

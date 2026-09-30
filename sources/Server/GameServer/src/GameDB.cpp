@@ -88,7 +88,7 @@ bool CTableMaster::Init(void)
 		//MessageBox(0, "���ݿ�(master)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "master");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -158,7 +158,7 @@ bool CTableCha::Init(void)
 		//MessageBox(0, "���ݿ�(character)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "character");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -1393,7 +1393,7 @@ bool CTableLotterySetting::Init(void)
 		//MessageBox(0, "���ݿ�(LotterySetting)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "LotterySetting");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -1495,7 +1495,7 @@ bool CTableTicket::Init(void)
 		//MessageBox(0, "���ݿ�(Ticket)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "Ticket");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -1625,7 +1625,7 @@ bool CTableWinTicket::Init(void)
 		//MessageBox(0, "���ݿ�(WinTicket)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "WinTicket");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -1692,7 +1692,7 @@ bool CTableAmphitheaterSetting::Init(void)
 		//MessageBox(0, "���ݿ�(AmphitheaterSetting)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "AmphitheaterSetting");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -1783,7 +1783,7 @@ bool CTableAmphitheaterTeam::Init(void)
 		//MessageBox(0, "���ݿ�(AmphitheaterTeam)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "AmphitheaterTeam");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -2278,7 +2278,7 @@ bool CTablePersoninfo::Init( void )
 		//MessageBox(0, "���ݿ�(AmphitheaterSetting)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "personinfo");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -2329,7 +2329,7 @@ bool CTableResource::Init(void)
 		//MessageBox(0, "���ݿ�(resource)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "resource");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -2845,7 +2845,7 @@ bool CTableMapMask::Init(void)
 		//MessageBox(0, "���ݿ�(map_mask)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "map_mask");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -3092,7 +3092,7 @@ bool CTableAct::Init(void)
 		//MessageBox(0, "���ݿ�(account)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "account");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -3164,7 +3164,7 @@ bool CTableBoat::Init(void)
 		//MessageBox(0, "���ݿ�(boat)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "boat");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 
@@ -3594,7 +3594,7 @@ BOOL CGameDB::Init()
 	if(!_connect.set_client_encoding(g_Config.m_szDBClientEncoding))
 	{
 		LG("gamedb", "invalid db_client_encoding [%s]\n", g_Config.m_szDBClientEncoding);
-		MessageBox(NULL, "Invalid db_client_encoding in [Database]", "Database Connection Error" , MB_ICONERROR | MB_OK);
+		C_PRINT("Invalid db_client_encoding [%s] in [Database]\n", g_Config.m_szDBClientEncoding);
 		return FALSE;
 	}
 
@@ -3605,10 +3605,8 @@ BOOL CGameDB::Init()
 	bool r = _connect.connect(g_Config.m_szDBIP, g_Config.m_szDBName, g_Config.m_szDBUsr, g_Config.m_szDBPass, err_info);
     if(!r)
     {
-		char msg[256];
-		_snprintf_s(msg, _countof(msg), _TRUNCATE, "Database [%s] Connection Failed!", g_Config.m_szDBName);
-		MessageBox(NULL, msg, "Database Connection Error" , MB_ICONERROR | MB_OK);
-		LG("gamedb", "msgDatabase [%s] Connect Failed!, ERROR REPORT[%d]", g_Config.m_szDBName, err_info.c_str() );
+		C_PRINT("failed!\n");
+		LG("gamedb", "Database [%s] Connect Failed!, ERROR REPORT[%s]\n", g_Config.m_szDBName, err_info.c_str() );
         return FALSE;
     }
 	C_PRINT("sucess!\n");
@@ -4026,7 +4024,7 @@ bool CTableGuild::Init(void)
 		//MessageBox(0, "���ݿ�(guild)��ʼ����������", "����", MB_OK);
 		char buffer[255];
 		sprintf(buffer, RES_STRING(GM_GAMEDB_CPP_00001), "guild");
-		MessageBox(0,buffer, RES_STRING(GM_GAMEDB_CPP_00002), MB_OK);
+		LG("gamedb", "%s\n", buffer);
 		return false;
 	}
 

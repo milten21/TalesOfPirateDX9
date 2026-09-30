@@ -104,7 +104,7 @@ void CheckMapFileVersion(const char *pszMapName)
     strOld+=".old";
     CopyFile(pszMapName, strOld.c_str(), FALSE);
     //MessageBox(NULL, "地图格式转化完成, 原地图名添加.old已备份!", strOld.c_str(), 0);
-	MessageBox(NULL, "Map format convert ok, ole file backed OK(.old)!", strOld.c_str(), 0);
+	printf("Map format convert ok, old file backed up as %s\n", strOld.c_str());
     CopyFile("map/temp.map", pszMapName, FALSE);
 }
 

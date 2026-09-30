@@ -28,6 +28,8 @@
 
 #include "Stacktrace.h"
 
+#include <cstdio>
+#include <cstdlib>
 #include <sstream>
 
 using namespace std;
@@ -355,8 +357,8 @@ private:
 
 		if ( mLib == NULL )
 		{
-			MessageBox(0, ("failed to load " + libname).c_str(), "Error", MB_OK);
-			exit(0);
+			fprintf(stderr, "failed to load %s\n", libname.c_str());
+			exit(EXIT_FAILURE);
 		}
 
 		Cleanup = (SymCleanupFn) GetProcAddress( mLib, "SymCleanup" );
@@ -376,10 +378,10 @@ private:
 			GetOptions == NULL || GetSymbolFromAddr == NULL || Initialize == NULL || SetOptions == NULL ||
 			MyStackWalk == NULL || LoadModule == NULL /*|| pSLM == NULL*/ )
 		{
-			MessageBox(0, ("not all required functions found in " + libname).c_str(), "Error", MB_OK);
+			fprintf(stderr, "not all required functions found in %s\n", libname.c_str());
 			FreeLibrary( mLib );
 			mLib = 0;
-			exit(0);
+			exit(EXIT_FAILURE);
 		}
 	}
 

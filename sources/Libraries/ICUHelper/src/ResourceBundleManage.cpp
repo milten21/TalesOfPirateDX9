@@ -1,6 +1,8 @@
 #include "resourcebundlemanage.h"
 
 #include "windows.h"
+#include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <memory>
 
@@ -129,12 +131,16 @@ CResourceBundleManage::CResourceBundleManage(const char* configFileName)
 	{
 
 	}
-	else if(status == U_MEMORY_ALLOCATION_ERROR)
-		::MessageBox(NULL,"Memory allocation error",NULL,0);
-	else if(status == U_FILE_ACCESS_ERROR)
-		::MessageBox(NULL,"The requested file cannot be found",NULL,0);
 	else
-		::MessageBox(NULL,"Other error!",NULL,0);
+	{
+		if(status == U_MEMORY_ALLOCATION_ERROR)
+			fprintf(stderr, "ICU converter: memory allocation error\n");
+		else if(status == U_FILE_ACCESS_ERROR)
+			fprintf(stderr, "ICU converter: the requested file cannot be found\n");
+		else
+			fprintf(stderr, "ICU converter: error %d\n", static_cast<int>(status));
+		exit(EXIT_FAILURE);
+	}
 
 	m_MaxSize = ucnv_getMaxCharSize(m_pConverter);
 

@@ -258,7 +258,6 @@ void RegisterLuaAI(lua_State *L)
 {T_B
 	
 	// 通用
-	REGFN(view);
 	REGFN(EXLG);
 	REGFN(PRINT);
 	REGFN(GetResPath);

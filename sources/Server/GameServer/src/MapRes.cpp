@@ -78,7 +78,7 @@ bool CMapRes::Init()
 		//sprintf( szData, "SubMap::LoadNpc:获取地图《%s》ID失败!", m_strMapName.c_str() );
 		sprintf( szData, RES_STRING(GM_MAPRES_CPP_00001), m_strMapName.c_str() );
 		//MessageBox( NULL, szData, "错误", IDOK );
-		MessageBox( NULL, szData, RES_STRING(GM_MAPRES_CPP_00002), IDOK );
+		LG("initmap", "%s\n", szData);
 		return false;
 	}
 	else
