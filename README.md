@@ -80,3 +80,17 @@ While the core DX9 upgrade is functional, it originated from a separate developm
 -   Modular design for easy code migration (copy/paste friendly)
 vs config file 
 **[Here](https://drive.google.com/file/d/1GR8GdSNe-UocUNpkvChoHBaqZJaTcuuS/view)**
+
+### Building the servers
+
+The four servers (AccountServer, GroupServer, GateServer, GameServer), their shared libraries, Crypto++ and LuaJIT build from one CMake project. The client keeps its own solution, `sources/talesofpirates.sln`.
+
+Requirements: Visual Studio 2026 with the C++ workload and ATL/MFC, and CMake 4.2 or newer (the copy bundled with Visual Studio is fine).
+
+```
+cmake --preset windows-x86
+cmake --build --preset windows-x86-debug
+cmake --build --preset windows-x86-release
+```
+
+The preset generates `build/windows-x86/TalesOfPirateServers.slnx` for Visual Studio, with GameServer as the startup project and `server/<Name>` as its debugging working directory. Executables land in `sources/Server/<Name>/Bin` (`<Name>.exe` for Release, `<Name>_D.exe` for Debug), next to a copy of the ICU and billing runtime DLLs, so `sources/symlinks.bat` keeps working.

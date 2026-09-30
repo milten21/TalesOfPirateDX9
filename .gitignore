@@ -101,3 +101,5 @@ DatabasePath/*.ldf
 # ── Misc ─────────────────────────────────────────────────────────────────────
 *.copied
 /Celestial Test
+
+CMakeUserPresets.json
