@@ -4,11 +4,10 @@
 #define _GLOBALVARIABLE_H_
 
 
-//#include "BillThread.h"
 
 #include "tlsindex.h"
-#include "BillService.h"
 #include "databasectrl.h"
+#include "MainQueue.h"
 
 #include "i18n.h"							//Add by lark.li 20080307
 
@@ -21,25 +20,9 @@
 
 extern std::string g_strCfgFile;
 
-extern CBillService		g_BillService;
 extern dbc::TLSIndex	g_TlsIndex;
 extern CDataBaseCtrl	g_MainDBHandle;
-extern HWND				g_hMainWnd;
-extern DWORD			g_MainThreadID;
-//extern BillThread g_BillThread;
-
-#define WM_USER_LOG		WM_USER+100
-#define WM_USER_LOG_MAP	WM_USER+101
-
-
-struct sUserLog
-{
-	bool bLogin;		//true:login  false:logout
-	int nUserID;
-	std::string strUserName;
-	std::string strPassport;
-	std::string strLoginIP;
-};
+extern MainQueue		g_MainQueue;
 
 
 extern HANDLE hConsole;

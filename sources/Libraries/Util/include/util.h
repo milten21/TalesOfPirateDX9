@@ -20,7 +20,6 @@
 #include "./db3.h"
 #include "./algo.h"
 #include "./fifo.h"
-#include "./bill.h"
 
 #ifdef LG_PRINTF
 #define printf myprintf

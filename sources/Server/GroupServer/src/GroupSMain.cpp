@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "GroupServerApp.h"
+#include "ConsoleInput.h"
 
 HANDLE hConsole = NULL;
 
@@ -34,20 +35,21 @@ int _tmain(int argc, _TCHAR* argv[])
 		l_comm->DestroyPool();
 		l_proc->DestroyPool();
 		TcpCommApp::WSACleanup();
-		Sleep(10*1000);
 		return -1;
 	}
+	ConsoleInput console([] { return g_exit != 0; });
+	std::string str;
 	while(!g_exit)
 	{
-		std::string str;
-		str.reserve(256);
-
         std::cout<<RES_STRING(GP_MAIN_CPP_00001);
-		std::cin >> str;
-		if(str =="exit" ||g_exit)
+		if(!console.ReadLine(str) || str =="exit")
 		{
 			std::cout<<RES_STRING(GP_MAIN_CPP_00002)<<std::endl;
 			break;
+		}
+		else if(str.empty())
+		{
+			continue;
 		}
 		else if(str =="logbak")
 		{

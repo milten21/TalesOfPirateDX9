@@ -1,5 +1,6 @@
 #include <iostream>
 #include <signal.h>
+#include "ConsoleInput.h"
 #include "timer.h"
 #include "gateserver.h"
 #include "udpmanage.h"
@@ -71,10 +72,10 @@ private:
 
 void __cdecl ctrlc_dispatch(int sig)
 {
-	if (sig == SIGINT)
+	if (sig == SIGINT || sig == SIGTERM)
 	{
 		g_exit	=1;
-		signal(SIGINT, ctrlc_dispatch);
+		signal(sig, ctrlc_dispatch);
 	}
 }
 
@@ -105,6 +106,7 @@ GateServer::GateServer(char const* fname)
 		m_clproc->AddTask(&g_timermgr);
 		g_timermgr.AddTimer(new DisableCloseButton(200));
 		signal(SIGINT, ctrlc_dispatch);
+		signal(SIGTERM, ctrlc_dispatch);
 	}catch (...)
 	{
 		if(gp_conn)
@@ -153,15 +155,14 @@ void GateServer::RunLoop()
 	dbc::BandwidthStat	l_band;
 	dbc::LLong	recvpkps_max=0,recvbandps_max=0,sendpkps_max=0,sendbandps_max=0;
 
-	dbc::dstring l_str;
-	l_str.SetSize(256);
+	dbc::ConsoleInput l_console([] { return g_exit != 0; });
+	std::string l_str;
 	while(!g_exit)
 	{
 		//std::cout<<"����������(exit��Ctrl+C�˳�):\n";
 		std::cout<< RES_STRING(GS_GATESERVER_CPP_00001); //Modify by lark.li 20070130
-		std::cin.getline(l_str.GetBuffer(),256);
 
-		if(l_str =="exit" || g_exit)
+		if(!l_console.ReadLine(l_str) || l_str =="exit")
 		{
 			//std::cout<<"��ʼ�˳�..."<<std::endl;
 			std::cout<< RES_STRING(GS_GATESERVER_CPP_00002)<<std::endl;

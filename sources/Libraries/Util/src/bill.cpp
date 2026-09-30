@@ -9,9 +9,7 @@
 //#import <msxml2.dll> raw_interfaces_only
 
 #include "PAI.h"
-#include "BTI.h"
 #pragma comment(lib, "pai.lib")
-#pragma comment(lib, "bti.lib")
 #pragma comment(lib, "comsupp.lib")
 
 

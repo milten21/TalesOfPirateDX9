@@ -225,15 +225,6 @@ bool CDataBaseCtrl::UserLogin(int nUserID, string strUserName, string strIP)
 	//LG("AccountServer", "CDataBaseCtrl::UserLogin: UserName=[%s] \n", strUserName.c_str());
 	if (!strIP.c_str()) strIP="";
 
-    if(g_BillService.IsEnablePassport())
-    {
-        LG("AccountServer", "CDataBaseCtrl::UserLogin UID: %s, UIP: %s\n", strUserName.c_str(), strIP.c_str());
-        if(!g_BillService.BeginBilling(strUserName, strIP))
-        {
-            return false;
-        }
-    }
-
 	string strSQL=account_sql::user_log_login(nUserID, strUserName.c_str(), strIP.c_str());
 	if (!IsConnect()) Connect();
 
@@ -287,162 +278,6 @@ bool CDataBaseCtrl::UserLogout(int nUserID)
 	return false;
 }
 
-bool CDataBaseCtrl::KickUser(std::string strUserName)
-{
-	if (!strUserName.c_str() || strUserName=="")
-	{
-		LG("AccountServer", "CDataBaseCtrl::KickUser: parameter strUserName is empty or null\n");
-		return false;
-	}
-	//LG("AccountServer", "CDataBaseCtrl::KickUser: UserName=[%s] \n", strUserName.c_str());
-
-	string strSQL = account_sql::select_user_state(strUserName.c_str());
-	if (!IsConnect()) Connect();
-
-	std::string strUserLeave = "";
-	std::string strGroupServerName = "";
-	if (IsConnect())
-	{
-		try
-		{
-			CSQLRecordset rs(*m_pDataBase);
-			rs.SQLExecDirect(strSQL.c_str());
-			if (rs.SQLFetch())
-			{
-				int nUserID=rs.nSQLGetData(1);
-				strGroupServerName = rs.SQLGetData(2);
-				strUserLeave = rs.SQLGetData(3);
-				if (strGroupServerName != "")
-				{
-					if (g_As2)
-					{
-						GroupServer2* pGs = g_As2->FindGroup(strGroupServerName.c_str());
-						if (pGs != NULL)
-						{
-							WPacket wpkt = pGs->GetWPacket();
-							wpkt.WriteCmd(CMD_AP_KICKUSER);
-							wpkt.WriteShort(ERR_AP_NOBILL);
-							wpkt.WriteLong(nUserID);
-							pGs->SendData(wpkt);
-							return true;
-						}
-						else
-						{
-							LG("AccountServer", "CDataBaseCtrl::KickUser pGs=NULL, groupname = %s error!UserName=%s\r\n", strGroupServerName.c_str(), strUserName.c_str());
-						}
-					}
-					else
-					{
-						LG("AccountServer", "CDataBaseCtrl::KickUser a_As2 error!UserName=%s\r\n", strUserName.c_str());
-					}
-				}
-				else
-				{
-					LG("AccountServer", "CDataBaseCtrl::KickUser groupname error!UserName=%s\r\n", strUserName.c_str());
-				}
-			}
-			else
-			{
-				LG("AccountServer", "CDataBaseCtrl::KickUser db error!UserName=%s\r\n", strUserName.c_str());
-			}
-		}
-		catch (CSQLException* se)
-		{
-			LG("DBExcp", "SQL Exception in CDataBaseCtrl::KickUser: %s \n", se->m_strError.c_str());
-		}
-		catch (...)
-		{
-			LG("DBExcp", "Unknown exception raised from CDataBaseCtrl::KickUser\n");
-		}
-	}
-	else
-	{
-		LG("DBExcp", "Unknown exception raised from CDataBaseCtrl::KickUser Valid connect db, Username=%s\n", strUserName.c_str());
-	}
-
-	LG("AccountServer", "CDataBaseCtrl::KickUser: Kick user failed! Username=%s, group_name = %s, last_leave = %s \n", strUserName.c_str(), strGroupServerName.c_str(), strUserLeave.c_str() );
-
-	Disconnect();
-	return false;
-}
-
-void CDataBaseCtrl::SetExpScale(std::string strUserName, long time)
-{
-    if (!strUserName.c_str() || strUserName=="")
-	{
-		LG("AccountServer", "CDataBaseCtrl::SetExpScale: parameter strUserName is empty or null\n");
-		return;
-	}
-
-	string strSQL = account_sql::select_user_state(strUserName.c_str());
-	if (!IsConnect()) Connect();
-
-	std::string strUserLeave = "";
-	std::string strGroupServerName = "";
-	if (IsConnect())
-	{
-		try
-		{
-			CSQLRecordset rs(*m_pDataBase);
-			rs.SQLExecDirect(strSQL.c_str());
-			if (rs.SQLFetch())
-			{
-				int nUserID=rs.nSQLGetData(1);
-				strGroupServerName = rs.SQLGetData(2);
-				strUserLeave = rs.SQLGetData(3);
-				if (strGroupServerName != "")
-				{
-					if (g_As2)
-					{
-						GroupServer2* pGs = g_As2->FindGroup(strGroupServerName.c_str());
-						if (pGs != NULL)
-						{
-							WPacket wpkt = pGs->GetWPacket();
-							wpkt.WriteCmd(CMD_AP_EXPSCALE);
-							wpkt.WriteLong(nUserID);
-                            wpkt.WriteLong(time);
-							pGs->SendData(wpkt);
-							return;
-						}
-						else
-						{
-							LG("AccountServer", "CDataBaseCtrl::SetExpScale pGs=NULL, groupname = %s error!UserName=%s\r\n", strGroupServerName.c_str(), strUserName.c_str());
-						}
-					}
-					else
-					{
-						LG("AccountServer", "CDataBaseCtrl::SetExpScale a_As2 error!UserName=%s\r\n", strUserName.c_str());
-					}
-				}
-				else
-				{
-					LG("AccountServer", "CDataBaseCtrl::SetExpScale groupname error!UserName=%s\r\n", strUserName.c_str());
-				}
-			}
-			else
-			{
-				LG("AccountServer", "CDataBaseCtrl::SetExpScale db error!UserName=%s\r\n", strUserName.c_str());
-			}
-		}
-		catch (CSQLException* se)
-		{
-			LG("DBExcp", "SQL Exception in CDataBaseCtrl::SetExpScale: %s \n", se->m_strError.c_str());
-		}
-		catch (...)
-		{
-			LG("DBExcp", "Unknown exception raised from CDataBaseCtrl::SetExpScale\n");
-		}
-	}
-	else
-	{
-		LG("DBExcp", "Unknown exception raised from CDataBaseCtrl::SetExpScale Valid connect db, Username=%s\n", strUserName.c_str());
-	}
-
-	LG("AccountServer", "CDataBaseCtrl::SetExpScale: Set user Exp Scale failed! Username=%s, group_name = %s, last_leave = %s \n", strUserName.c_str(), strGroupServerName.c_str(), strUserLeave.c_str() );
-
-	Disconnect();
-}
-
 bool CDataBaseCtrl::UserLoginMap(std::string strUserName, std::string strPassport)
 {
 	if (!strUserName.c_str() || strUserName=="")
@@ -451,7 +286,6 @@ bool CDataBaseCtrl::UserLoginMap(std::string strUserName, std::string strPasspor
 		return false;
 	}
 	//LG("AccountServer", "CDataBaseCtrl::UserLoginMap: UserName=[%s] login map\n", strUserName.c_str());
-	if (g_BillService.BeginBilling(strUserName, strPassport) == false) return false;
 
 	CDataBaseCtrl::sPlayerData sData;
 	sData.ctLoginTime = CTime::GetCurrentTime();
@@ -467,7 +301,6 @@ bool CDataBaseCtrl::UserLogoutMap(std::string strUserName)
 		return false;
 	}
 	//LG("AccountServer", "CDataBaseCtrl::UserLogoutMap: UserName=[%s] login map\n", strUserName.c_str());
-	g_BillService.EndBilling(strUserName);
 
 	StringMap::const_iterator iter=m_mapUsers.find(strUserName.c_str());
 	if (iter==m_mapUsers.end())

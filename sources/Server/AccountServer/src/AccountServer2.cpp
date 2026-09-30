@@ -122,22 +122,17 @@ void AccountServer2::OnProcessData(DataSocket* datasock, RPacket& rpkt)
     case CMD_PA_USER_BILLBGN:
 		{
 			IncreaseMembers();
-			sUserLog *pUserLog = new sUserLog;
-			pUserLog->bLogin=true;
-			pUserLog->strUserName=rpkt.ReadString();
-			pUserLog->strPassport=rpkt.ReadString();
-			if (!PostMessage(g_hMainWnd, WM_USER_LOG_MAP, 0, (LPARAM)pUserLog))
-			{
-				LG("AccountServer", "AccountServer2::OnProcessData, CMD_PA_USER_BILLBGN: PostMessage WM_USER_LOG_MAP failed!\n");
-				delete pUserLog;
-			}
+			sUserLog userLog{};
+			userLog.bLogin=true;
+			userLog.strUserName=rpkt.ReadString();
+			userLog.strPassport=rpkt.ReadString();
+			g_MainQueue.Post({MainMessageType::UserLogMap, std::move(userLog)});
 			
 			
 			//g_Auth.AddPK(datasock, rpkt);
 
 			//LG("MemberCount", "Member Login! Now Count=%d\n", GetMembersCount());
 			//printf("Member Login! Now Count=%d\r\n", GetMembersCount());
-			//g_BillThread.AddPK(datasock, rpkt);
 			break;
 		}
 
@@ -145,21 +140,16 @@ void AccountServer2::OnProcessData(DataSocket* datasock, RPacket& rpkt)
     case CMD_PA_USER_BILLEND:
 		{
 			DecreaseMembers();
-			sUserLog *pUserLog = new sUserLog;
-			pUserLog->bLogin=false;
-			pUserLog->strUserName=rpkt.ReadString();
-			if (!PostMessage(g_hMainWnd, WM_USER_LOG_MAP, 0, (LPARAM)pUserLog))
-			{
-				LG("AccountServer", "AccountServer2::OnProcessData, CMD_PA_USER_BILLEND: PostMessage WM_USER_LOG_MAP failed!\n");
-				delete pUserLog;
-			}
+			sUserLog userLog{};
+			userLog.bLogin=false;
+			userLog.strUserName=rpkt.ReadString();
+			g_MainQueue.Post({MainMessageType::UserLogMap, std::move(userLog)});
 
 
 			//g_Auth.AddPK(datasock, rpkt);
 
 			//LG("MemberCount", "Member Logout! Now Count=%d\n", GetMembersCount());
 			//printf("Member Logout! Now Count=%d\r\n", GetMembersCount());
-			//g_BillThread.AddPK(datasock, rpkt);
 			break;
 		}
 
@@ -171,8 +161,6 @@ void AccountServer2::OnProcessData(DataSocket* datasock, RPacket& rpkt)
 
 			//printf("CMD_PA_GROUP_BILLEND_AND_LOGOUT! Now Count=%d\r\n", GetMembersCount());
 			//LG("MemberCount", "CMD_PA_GROUP_BILLEND_AND_LOGOUT! Now Count=%d\n", GetMembersCount());
-			//g_Bill.AddPK(datasock, rpkt);
-			//g_BillThread.AddPK(datasock, rpkt);
 			break;
 		}
 	case CMD_PA_GMBANACCOUNT:
@@ -377,22 +365,13 @@ GroupServer2* AccountServer2::FindGroup(char const* szGroup)
 
     return pGs;
 }
-void AccountServer2::DisplayGroup()
+void AccountServer2::LogGroups(char const* szLogName)
 {
-extern void ClearGroupList();
-extern BOOL AddGroupToList(char const* strName, char const* strAddr, char const* strStatus);
-    
-    GroupServer2* pGs = m_GsList;
-    ClearGroupList();
-    m_GsListLock.lock();
-    try {
-        while (pGs != NULL) {
-            //AddGroupToList(pGs->GetName(), pGs->GetAddr(), "ÒÑÁ¬½Ó");
-			AddGroupToList(pGs->GetName(), pGs->GetAddr(), RES_STRING(AS_ACCOUNTSERVER2_CPP_00001));
-            pGs = pGs->m_next;
-        }
-    } catch (...) {}
-    m_GsListLock.unlock();
+    auto const lock = std::lock_guard{m_GsListLock};
+    LG(szLogName, "GroupServers connected: %d\n", m_GsNumber);
+    for (GroupServer2* pGs = m_GsList; pGs != NULL; pGs = pGs->m_next) {
+        LG(szLogName, "GroupServer [%s] %s connected\n", pGs->GetName(), pGs->GetAddr());
+    }
 }
 bool AccountServer2::AddGroup(GroupServer2* pGs)
 {
@@ -466,24 +445,6 @@ void AuthQueue::ProcessData(DataSocket* datasock, RPacket& rpkt)
 				pThis->AccountLogout(rpkt);
 			}
 			break;
-
-			case CMD_PA_USER_BILLBGN:
-				{
-					pThis->BeginBilling(rpkt);
-				}
-				break;
-
-			case CMD_PA_USER_BILLEND:
-				{
-					pThis->EndBilling(rpkt);
-				}
-				break;
-
-			case CMD_PA_GROUP_BILLEND_AND_LOGOUT:
-				{
-					pThis->ResetBilling();
-				}
-				break;
 
             default:
                 LG("AuthProcessData", "Unknown usCmd=[%d], Skipped...\n", usCmd);
@@ -733,13 +694,11 @@ void AuthThread::LoadConfig()
 		CSQLDatabase encodingCheck;
 		if (!encodingCheck.SetClientEncoding(m_strClientEncoding.c_str())) {
 			cout << "Invalid client_encoding in [db]: " << m_strClientEncoding << endl;
-			getchar();
-			ExitProcess(-1);
+			std::exit(-1);
 		}
     } catch (excp& e) {
         cout << e.what() << endl;
-        getchar();
-        ExitProcess(-1);
+        std::exit(-1);
     }
     //  TOM±íÃûÒÑÐÞ¸Ä
 	//if (g_TomService.IsEnable())
@@ -750,28 +709,20 @@ void AuthThread::LoadConfig()
 
 void AuthThread::LogUserLogin(int nUserID, string strUserName, string strIP)
 {
-	sUserLog *pUserLog = new sUserLog;
-	pUserLog->bLogin=true;
-	pUserLog->nUserID=nUserID;
-	pUserLog->strUserName=strUserName;
-	pUserLog->strLoginIP=strIP;
-	if (!PostMessage(g_hMainWnd, WM_USER_LOG, 0, (LPARAM)pUserLog))
-	{
-		LG("AccountServer", "AuthThread::LogUserLogin: PostMessage WM_USER_LOG failed!\n");
-		delete pUserLog;
-	}
+	sUserLog userLog{};
+	userLog.bLogin=true;
+	userLog.nUserID=nUserID;
+	userLog.strUserName=strUserName;
+	userLog.strLoginIP=strIP;
+	g_MainQueue.Post({MainMessageType::UserLog, std::move(userLog)});
 }
 
 void AuthThread::LogUserLogout(int nUserID)
 {
-	sUserLog* pUserLog = new sUserLog;
-	pUserLog->bLogin = false;
-	pUserLog->nUserID = nUserID;
-	if (!PostMessage(g_hMainWnd, WM_USER_LOG, 0, (LPARAM)pUserLog))
-	{
-		LG("AccountServer", "AuthThread::LogUserLogout: PostMessage WM_USER_LOG failed!\n");
-		delete pUserLog;
-	}
+	sUserLog userLog{};
+	userLog.bLogin = false;
+	userLog.nUserID = nUserID;
+	g_MainQueue.Post({MainMessageType::UserLog, std::move(userLog)});
 }
 
 void AuthThread::QueryAccount(RPacket rpkt)
@@ -1269,21 +1220,6 @@ void AuthThread::AccountLogout(RPacket rpkt)
 	LogUserLogout(nID);
 }
 
-void AuthThread::BeginBilling(RPacket& rpkt)
-{
-	//g_BillService.PlayerLogin(rpkt);
-}
-
-void AuthThread::EndBilling(RPacket& rpkt)
-{
-	//g_BillService.PlayerLogout(rpkt);
-}
-
-void AuthThread::ResetBilling()
-{
-	//g_BillService.AllPlayerReset();
-}
-
 void AuthThread::LogoutGroup(DataSocket* datasock, RPacket rpkt)
 {
 	/*
@@ -1309,8 +1245,6 @@ void AuthThread::LogoutGroup(DataSocket* datasock, RPacket rpkt)
 				WPacket wpkt = datasock->GetWPacket();
 				wpkt.WriteCmd(CMD_PA_USER_BILLEND);
 				wpkt.WriteString(strName.c_str());
-				//g_Bill.AddPK(datasock, (RPacket)wpkt);
-				//g_BillThread.AddPK(datasock, (RPacket)wpkt);
 
 			}
 		} catch (CSQLException* se) {

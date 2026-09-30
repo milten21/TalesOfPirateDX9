@@ -5,7 +5,6 @@
 #include "packetqueue.h"
 #include "tlsindex.h"
 #include "util.h"
-#include "bti.h"
 
 #include "MyThread.h"
 
@@ -37,7 +36,7 @@ public:
     virtual ~AccountServer2();
 
     GroupServer2* FindGroup(char const* szGroup);
-    void DisplayGroup();
+    void LogGroups(char const* szLogName);
 
 	void IncreaseMembers(long nCount=1);
 	void DecreaseMembers(long nCount=1);
@@ -129,10 +128,6 @@ public:
 
     WPacket	AccountLogin(DataSocket* datasock);
     void	AccountLogout(RPacket rpkt);
-
-	void	BeginBilling(RPacket& rpkt);
-	void	EndBilling(RPacket& rpkt);
-	void	ResetBilling();
 
 
 	void LogoutGroup(DataSocket* datasock, RPacket rpkt);

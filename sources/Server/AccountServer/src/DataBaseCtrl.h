@@ -2,6 +2,9 @@
 
 #include "atltime.h"
 
+#include <map>
+#include <string>
+
 class CSQLDatabase;
 
 //此类只允许主线程调用
@@ -12,9 +15,6 @@ public:
 	~CDataBaseCtrl(void);
 	bool CreateObject();
 	void ReleaseObject();
-	bool KickUser(std::string strUserName);
-
-    void SetExpScale(std::string strUserName, long time);
 
 	bool InsertUser(std::string username, std::string password, std::string email);
 	bool UpdatePassword(std::string username, std::string password);
