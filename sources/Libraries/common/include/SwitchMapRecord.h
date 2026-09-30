@@ -22,13 +22,13 @@ class CSwitchMapRecord : public CRawDataInfo
 public:
 	//CSwitchMapRecord();
 
-	long	lID;							// ±àºÅ
-	long	lEntityID;						// ±»°ó¶¨µÄÊµÌåID
-	long	lEventID;						// ÊÂ¼ş±àºÅ
-	Point	SEntityPos;						// ÊµÌåµÄÎ»ÖÃ£¨ÀåÃ×£©
-	short	sAngle;							// ÊµÌåµÄ·½Ïò
-	_TCHAR	szTarMapName[defMAP_NAME_LEN];	// Ä¿±êµØÍ¼Ãû
-	Point	STarPos;						// Ä¿±êµØÍ¼µÄÎ»ÖÃ£¨ÀåÃ×£©
+	long	lID;							// ç¼–å·
+	long	lEntityID;						// è¢«ç»‘å®šçš„å®ä½“ID
+	long	lEventID;						// äº‹ä»¶ç¼–å·
+	Point	SEntityPos;						// å®ä½“çš„ä½ç½®ï¼ˆå˜ç±³ï¼‰
+	short	sAngle;							// å®ä½“çš„æ–¹å‘
+	_TCHAR	szTarMapName[defMAP_NAME_LEN];	// ç›®æ ‡åœ°å›¾å
+	Point	STarPos;						// ç›®æ ‡åœ°å›¾çš„ä½ç½®ï¼ˆå˜ç±³ï¼‰
 };
 
 class CSwitchMapRecordSet : public CRawDataSet
@@ -46,7 +46,7 @@ public:
 
 protected:
 
-	static CSwitchMapRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CSwitchMapRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

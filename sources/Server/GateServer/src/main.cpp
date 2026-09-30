@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 	{
 		std::string filename;
 		GetLGDir(filename);
-		filename += "\\exception.txt";
+		filename += "/exception.txt";
 
 		std::ofstream ofs(filename, std::ios::app);
 		if (ofs.is_open())

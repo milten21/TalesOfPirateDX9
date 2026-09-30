@@ -8,8 +8,8 @@
 //=================================================================
 #pragma once
 
-#ifndef	USING_TAO		//Ê¹ÓÃWin32»ù±¾Platform SDK
-#include <winsock2.h>		//È·±£µ÷ÓÃĞÂµÄWinSock2.2°æ±¾
+#ifndef	USING_TAO		//ä½¿ç”¨Win32åŸºæœ¬Platform SDK
+#include <winsock2.h>		//ç¡®ä¿è°ƒç”¨æ–°çš„WinSock2.2ç‰ˆæœ¬
 #include <windows.h>
 #else
 #include "TAOSpecial.h"
@@ -53,15 +53,15 @@ class TcpCommApp
 public:
 	static	int		WSAStartup();
 	static	void	WSACleanup();
-//Íâ²¿µ÷ÓÃ
-	virtual	bool	OnConnect(DataSocket *datasock){return true;}	//·µ»ØÖµ:true-ÔÊĞíÁ¬½Ó,false-²»ÔÊĞíÁ¬½Ó
-	virtual	void	OnConnected(DataSocket *datasock){}			//·µ»ØÖµ:true-ÔÊĞíÁ¬½Ó,false-²»ÔÊĞíÁ¬½Ó
-	virtual	void	OnDisconnect(DataSocket *datasock,int reason){}//reasonÖµ:0-±¾µØ³ÌĞòÕı³£ÍË³ö;-1-Socket´íÎó;-3-ÍøÂç±»¶Ô·½¹Ø±Õ;-5-°ü³¤¶È³¬¹ıÏŞÖÆ;-7-×èÈûÌ«ÑÏÖØÁË;-9-KeepAliveÊ§°Ü
+//å¤–éƒ¨è°ƒç”¨
+	virtual	bool	OnConnect(DataSocket *datasock){return true;}	//è¿”å›å€¼:true-å…è®¸è¿æ¥,false-ä¸å…è®¸è¿æ¥
+	virtual	void	OnConnected(DataSocket *datasock){}			//è¿”å›å€¼:true-å…è®¸è¿æ¥,false-ä¸å…è®¸è¿æ¥
+	virtual	void	OnDisconnect(DataSocket *datasock,int reason){}//reasonå€¼:0-æœ¬åœ°ç¨‹åºæ­£å¸¸é€€å‡º;-1-Socketé”™è¯¯;-3-ç½‘ç»œè¢«å¯¹æ–¹å…³é—­;-5-åŒ…é•¿åº¦è¶…è¿‡é™åˆ¶;-7-é˜»å¡å¤ªä¸¥é‡äº†;-9-KeepAliveå¤±è´¥
 	virtual	void	OnProcessData(DataSocket *datasock,RPacket &recvbuf)=0;
 	virtual	void	OnSendAll(DataSocket *datasock){}
-	virtual	bool	OnSendBlock(DataSocket *datasock){return false;}//·µ»ØÖµ:true-ÔÊĞí¼ÌĞøµÈ´ı,false-¶Ï¿ªÕâ¸öÁ¬½Ó
-	virtual bool	OnEncrypt(DataSocket* datasock, char* ciphertext, uLong ciphertext_len, cChar* text, uLong& len);			//¼ÓÃÜ
-	virtual bool	OnDecrypt(DataSocket* datasock, char* ciphertext, uLong& len) { return false; }	//½âÃÜ
+	virtual	bool	OnSendBlock(DataSocket *datasock){return false;}//è¿”å›å€¼:true-å…è®¸ç»§ç»­ç­‰å¾…,false-æ–­å¼€è¿™ä¸ªè¿æ¥
+	virtual bool	OnEncrypt(DataSocket* datasock, char* ciphertext, uLong ciphertext_len, cChar* text, uLong& len);			//åŠ å¯†
+	virtual bool	OnDecrypt(DataSocket* datasock, char* ciphertext, uLong& len) { return false; }	//è§£å¯†
 	virtual void	TaskDispatcher(Task *)=0;
 
 	long			SendData(DataSocket *datasock,WPacket sendbuf);
@@ -77,7 +77,7 @@ public:
 	uLong			GetRecvTime(DataSocket *datasock)const{if(datasock){return datasock->m_recvtime;}else{return uLong(long(-1));}}
 	std::string			GetDisconnectErrText(int reason) const;
 
-//const³ÉÔ±
+//constæˆå‘˜
 	cLong					__maxsndque;
 	cuLong					__len_offset,__pkt_maxlen;
 	cuChar					__len_size{};
@@ -116,7 +116,7 @@ class TcpClientApp:public TcpCommApp
 {
 	friend class TcpServerApp;
 public:
-	TcpClientApp(RPCMGR *rpc,ThreadPool *processor,ThreadPool *communicator,bool mode =true);//mode =false Ç¿ÖÆ¡°Êı¾İ°ü¡±²»½øÈë´¦ÀíÏß³Ì³Ø
+	TcpClientApp(RPCMGR *rpc,ThreadPool *processor,ThreadPool *communicator,bool mode =true);//mode =false å¼ºåˆ¶â€œæ•°æ®åŒ…â€ä¸è¿›å…¥å¤„ç†çº¿ç¨‹æ± 
 	~TcpClientApp(){};
 	DataSocket *	Connect(cChar *hostname,uShort port,SOCKET *sock_out =0);
 private:
@@ -126,9 +126,9 @@ private:
 class TcpServerApp:public TcpClientApp
 {
 public:
-	TcpServerApp(RPCMGR *rpc,ThreadPool *processor,ThreadPool *communicator,bool mode =true);//mode =false Ç¿ÖÆ¡°Êı¾İ¡±°ü²»½øÈë´¦ÀíÏß³Ì³Ø
+	TcpServerApp(RPCMGR *rpc,ThreadPool *processor,ThreadPool *communicator,bool mode =true);//mode =false å¼ºåˆ¶â€œæ•°æ®â€åŒ…ä¸è¿›å…¥å¤„ç†çº¿ç¨‹æ± 
 	~TcpServerApp();
-	int				OpenListenSocket(uShort port,cChar *cp);	//·µ»ØÖµ0£º³É¹¦£»1£ºÊ§°Ü
+	int				OpenListenSocket(uShort port,cChar *cp);	//è¿”å›å€¼0ï¼šæˆåŠŸï¼›1ï¼šå¤±è´¥
 	void			CloseListenSocket();
 	const SOCKET	GetListenSocket()const	{return __socket;}
 	cChar	*		GetListenIP()const		{return __localaddr;}
@@ -141,8 +141,8 @@ private:
 
 	bool	volatile	__acceptflag;
 	SOCKET	volatile	__socket;
-	uShort				__port;							//·şÎñÆ÷ÕìÌı¶Ë¿Ú(Ö÷»ú×Ö½ÚË³Ğò)
-	char				__localaddr[16];				//·şÎñÆ÷ÕìÌıµØÖ·(IP)
+	uShort				__port;							//æœåŠ¡å™¨ä¾¦å¬ç«¯å£(ä¸»æœºå­—èŠ‚é¡ºåº)
+	char				__localaddr[16];				//æœåŠ¡å™¨ä¾¦å¬åœ°å€(IP)
 };
 
 #pragma pack(pop)

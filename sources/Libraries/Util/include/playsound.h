@@ -11,29 +11,29 @@
 #ifndef _PLAYSOUND_H_
 #define _PLAYSOUND_H_
 
-// ÒôÀÖÏµÍ³³õÊ¼»¯£¬ÔÚÓ¦ÓÃ³ÌĞòÈë¿Úµãµ÷ÓÃ
+// éŸ³ä¹ç³»ç»Ÿåˆå§‹åŒ–ï¼Œåœ¨åº”ç”¨ç¨‹åºå…¥å£ç‚¹è°ƒç”¨
 bool mus_mgr_init(bool enable, DWORD_PTR dwValue = 0);
-// ÒôÀÖÏµÍ³Reset£¬ÔÚÇĞ»»³¡¾°Ê±µ÷ÓÃ
-void mus_mgr_reset(int op = 0); // opÎª-1Çå³ıËùÓĞÒôÀÖ, 0Çå³ı³ı±³¾°ÒôÀÖÍâµÄËùÓĞÒôÀÖ
-// ÒôÀÖÏµÍ³ÍË³ö£¬ÔÚÓ¦ÓÃ³ÌĞòÍË³öµãµ÷ÓÃ
+// éŸ³ä¹ç³»ç»ŸResetï¼Œåœ¨åˆ‡æ¢åœºæ™¯æ—¶è°ƒç”¨
+void mus_mgr_reset(int op = 0); // opä¸º-1æ¸…é™¤æ‰€æœ‰éŸ³ä¹, 0æ¸…é™¤é™¤èƒŒæ™¯éŸ³ä¹å¤–çš„æ‰€æœ‰éŸ³ä¹
+// éŸ³ä¹ç³»ç»Ÿé€€å‡ºï¼Œåœ¨åº”ç”¨ç¨‹åºé€€å‡ºç‚¹è°ƒç”¨
 void mus_mgr_exit();
 
 
-// ²¥·Å»·¾³ÒôĞ§
-bool env_snd_is_full(); // »·¾³ÒôĞ§Í¨µÀÊıÊÇ·ñÒÑ¾­È«±»Õ¼ÓÃ
-int env_snd_add(char const* fname); // ·µ»Ø-1±íÊ¾»·¾³ÒôĞ§Í¨µÀÒÑÂú
-bool env_snd_vol(int id, int vol); // vol >= 0£¬¸ºÊı·µ»Øfalse£¬³¬¹ı128°´128¼ÆËã
+// æ’­æ”¾ç¯å¢ƒéŸ³æ•ˆ
+bool env_snd_is_full(); // ç¯å¢ƒéŸ³æ•ˆé€šé“æ•°æ˜¯å¦å·²ç»å…¨è¢«å ç”¨
+int env_snd_add(char const* fname); // è¿”å›-1è¡¨ç¤ºç¯å¢ƒéŸ³æ•ˆé€šé“å·²æ»¡
+bool env_snd_vol(int id, int vol); // vol >= 0ï¼Œè´Ÿæ•°è¿”å›falseï¼Œè¶…è¿‡128æŒ‰128è®¡ç®—
 bool env_snd_play(int id);
 inline bool env_snd_del(int id) {return env_snd_vol(id, 0);}
 
-// ²¥·ÅÆÕÍ¨ÒôĞ§
-void cmn_snd_set_cache(int n = 20); // nÊÇ»º³åWAVEÎÄ¼şµÄ×î´ó¸öÊı
-bool cmn_snd_play(char const* fname, int vol = 128); // vol >= 0£¬¸ºÊı·µ»Øfalse£¬³¬¹ı128°´128¼ÆËã
+// æ’­æ”¾æ™®é€šéŸ³æ•ˆ
+void cmn_snd_set_cache(int n = 20); // næ˜¯ç¼“å†²WAVEæ–‡ä»¶çš„æœ€å¤§ä¸ªæ•°
+bool cmn_snd_play(char const* fname, int vol = 128); // vol >= 0ï¼Œè´Ÿæ•°è¿”å›falseï¼Œè¶…è¿‡128æŒ‰128è®¡ç®—
 
-// Ê¹ÄÜÒôĞ§
+// ä½¿èƒ½éŸ³æ•ˆ
 void snd_enable(bool enable = true);
 
-// ²¥·Å±³¾°ÒôÀÖ
+// æ’­æ”¾èƒŒæ™¯éŸ³ä¹
 void bkg_snd_set_notify(HWND hwnd, UINT msg_id);
 bool bkg_snd_play(char const* fname, bool loop = false);
 void bkg_snd_vol(int vol);
@@ -42,18 +42,18 @@ void bkg_snd_stop();
 
 //////////////////////////////////////////////////////////////////////////
 //
-// ÒÔÏÂµÄÀÏ½Ó¿ÚÈ«²¿ÓÃĞÂ½Ó¿ÚÊµÏÖ£¬ÕâĞ©½Ó¿Ú»áÖğ²½·ÏÆú by claude Fan at 2004-10-20
+// ä»¥ä¸‹çš„è€æ¥å£å…¨éƒ¨ç”¨æ–°æ¥å£å®ç°ï¼Œè¿™äº›æ¥å£ä¼šé€æ­¥åºŸå¼ƒ by claude Fan at 2004-10-20
 //
 //////////////////////////////////////////////////////////////////////////
 
-// ²Ù×÷±³¾°ÒôÀÖ
+// æ“ä½œèƒŒæ™¯éŸ³ä¹
 inline void SetBkMusicNotify(HWND hWnd, UINT uMsgId)
     {bkg_snd_set_notify(hWnd, uMsgId);}
 inline int PlayBkMusic(char const* filename, bool loop = false)
     {return int(bkg_snd_play(filename, loop));}
 inline int StopBkMusic() {bkg_snd_stop(); return 0;}
 
-// ²¥·ÅÒôĞ§
+// æ’­æ”¾éŸ³æ•ˆ
 inline void SetWaveQueueLen(int n = 20) {cmn_snd_set_cache(n);}
 inline int PlayMusic(char const* filename, int reserved = 0)
     {return int(cmn_snd_play(filename));}

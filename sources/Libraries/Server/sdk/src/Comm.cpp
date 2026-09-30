@@ -37,7 +37,7 @@ void SetCommAppDebug( bool bDebug )
 {
 	g_bCommAppDebug = bDebug;
 }
-//…œ≤„”¶”√÷ÿ∂®“Â:
+//‰∏äÂ±ÇÂ∫îÁî®ÈáçÂÆö‰πâ:
 //static uLong	NetBuffer[]	={400,300,200,100,50,40,30,0};
 
 //=====DispatchThread==============================================================================

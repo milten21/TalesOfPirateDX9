@@ -2,7 +2,7 @@
 //LanguageNames=(English=0x1:MSG00001)
 //LanguageNames=(British=0x809:MSG00809)
 //LanguageNames=(French=0x40c:MSG0040c)
-//分类定义
+//鍒嗙被瀹氫箟
 #define CAT_STARTING 1
 //
 //  Values are 32 bit values layed out as follows:
@@ -45,7 +45,7 @@
 //
 // MessageText:
 //
-//  服务启动
+//  鏈嶅姟鍚姩
 //
 
 
@@ -55,7 +55,7 @@
 //
 // MessageText:
 //
-//  服务运行
+//  鏈嶅姟杩愯
 //
 
 
@@ -65,11 +65,11 @@
 //
 // MessageText:
 //
-//  服务停止
+//  鏈嶅姟鍋滄
 //
 
 
-//事件定义
+//浜嬩欢瀹氫箟
 //
 // MessageId: EVT_SUCCESS
 //

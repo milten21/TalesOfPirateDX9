@@ -1,7 +1,7 @@
 
 /* * * * * * * * * * * * * * * * * * * *
 *
-*      ĞÅÏ¢·şÎñÍøÂçÏûÏ¢½âÎö
+*      ä¿¡æ¯æœåŠ¡ç½‘ç»œæ¶ˆæ¯è§£æ
 *                  by Jampe
 *
 * * * * * * * * * * * * * * * * * * * */
@@ -14,241 +14,241 @@
 #include <time.h>
 
 
-#define     INFO_DEFAULT                0       //  ĞÅÏ¢·µ»ØÄ¬ÈÏ
-#define     INFO_SUCCESS                1       //  ĞÅÏ¢·µ»Ø³É¹¦
-#define     INFO_FAILED                 2       //  ĞÅÏ¢·µ»ØÊ§°Ü
+#define     INFO_DEFAULT                0       //  ä¿¡æ¯è¿”å›é»˜è®¤
+#define     INFO_SUCCESS                1       //  ä¿¡æ¯è¿”å›æˆåŠŸ
+#define     INFO_FAILED                 2       //  ä¿¡æ¯è¿”å›å¤±è´¥
 
-#define     INFO_LOGIN                  1000    //  µÇÂ½ÇëÇó
-#define     INFO_REQUEST_ACCOUNT        1010    //  »ñÈ¡ÕÊºÅĞÅÏ¢
-#define     INFO_EXCEPTION_SERVICE      1900    //  ¾Ü¾ø·şÎñ
-#define     INFO_REQUEST_STORE          2001    //  »ñÈ¡ÉÌ³ÇÁĞ±í
-#define     INFO_REQUEST_AFFICHE        2002    //  »ñÈ¡¹«¸æÁĞ±í
-#define     INFO_STORE_BUY              2011    //  ¹ºÂòµÀ¾ß
-#define     INFO_EXCHANGE_MONEY         2012    //  ¶Ò»»´ú±Ò
-#define     INFO_REGISTER_VIP           2013    //  ¹ºÂòVIP
-#define     INFO_REQUEST_HISTORY        2021    //  »ñÈ¡½»Ò×¼ÇÂ¼
-#define     INFO_SND_GM_MAIL            4500    //  ·¢ËÍGMÓÊ¼ş
-#define     INFO_RCV_GM_MAIL            4501    //  ÊÕÈ¡GM»Ø¸´
-
-
-#define     INFO_MAN_DEFAULT            INFO_DEFAULT    //  ¹ÜÀíÄ¬ÈÏÖµ
-#define     INFO_MAN_SUCCESS            10              //  ¹ÜÀíÏûÏ¢·µ»Ø³É¹¦
-#define     INFO_MAN_FAILED             11              //  ¹ÜÀíÏûÏ¢·µ»ØÊ§°Ü
-
-#define     INFO_MAN_ADD                0               //  ¹ÜÀíÌí¼Ó
-#define     INFO_MAN_MODIFY             1               //  ¹ÜÀíĞŞ¸Ä
-#define     INFO_MAN_DEL                2               //  ¹ÜÀíÉ¾³ı
-
-#define     INFO_MAN_ITEM               6000            //  ÉÌÆ·¹ÜÀí
-#define     INFO_MAN_CLASS              6001            //  ·ÖÀà¹ÜÀí
-#define     INFO_MAN_AFFICHE            6002            //  ¹«¸æ¹ÜÀí
-#define     INFO_MAN_ALL_ITEM           6003            //  ¹ÜÀíËùÓĞÎ´ÉÏ¼ÜµÄÉÌÆ·
-#define     INFO_GET_GM_MAIL            6500            //  ÊÕÈ¡GMÓÊ¼ş
-#define     INFO_RPY_GM_MAIL            6501            //  »Ø¸´GMÓÊ¼ş
-#define     INFO_MAIL_QUEUE             6502            //  ÓÊ¼şÁĞ±íÊı
-
-#define     INFO_MAN_VIP                7000            //  VIP¹ÜÀí
-#define     INFO_MAN_RATE               7001            //  ĞŞ¸Ä»ãÂÊ
+#define     INFO_LOGIN                  1000    //  ç™»é™†è¯·æ±‚
+#define     INFO_REQUEST_ACCOUNT        1010    //  è·å–å¸å·ä¿¡æ¯
+#define     INFO_EXCEPTION_SERVICE      1900    //  æ‹’ç»æœåŠ¡
+#define     INFO_REQUEST_STORE          2001    //  è·å–å•†åŸåˆ—è¡¨
+#define     INFO_REQUEST_AFFICHE        2002    //  è·å–å…¬å‘Šåˆ—è¡¨
+#define     INFO_STORE_BUY              2011    //  è´­ä¹°é“å…·
+#define     INFO_EXCHANGE_MONEY         2012    //  å…‘æ¢ä»£å¸
+#define     INFO_REGISTER_VIP           2013    //  è´­ä¹°VIP
+#define     INFO_REQUEST_HISTORY        2021    //  è·å–äº¤æ˜“è®°å½•
+#define     INFO_SND_GM_MAIL            4500    //  å‘é€GMé‚®ä»¶
+#define     INFO_RCV_GM_MAIL            4501    //  æ”¶å–GMå›å¤
 
 
+#define     INFO_MAN_DEFAULT            INFO_DEFAULT    //  ç®¡ç†é»˜è®¤å€¼
+#define     INFO_MAN_SUCCESS            10              //  ç®¡ç†æ¶ˆæ¯è¿”å›æˆåŠŸ
+#define     INFO_MAN_FAILED             11              //  ç®¡ç†æ¶ˆæ¯è¿”å›å¤±è´¥
 
-#define     INFO_TYPE_HISTORY           0               //  ½»Ò×¼ÇÂ¼
-#define     INFO_TYPE_EXCHANGE          1               //  ¶Ò»»¼ÇÂ¼
-#define     INFO_TYPE_VIP               2               //  VIP¹ºÂò¼ÇÂ¼
+#define     INFO_MAN_ADD                0               //  ç®¡ç†æ·»åŠ 
+#define     INFO_MAN_MODIFY             1               //  ç®¡ç†ä¿®æ”¹
+#define     INFO_MAN_DEL                2               //  ç®¡ç†åˆ é™¤
 
-#define     INFO_CHECK_LIVE             0               //  ¼ì²âÔÚÏß
+#define     INFO_MAN_ITEM               6000            //  å•†å“ç®¡ç†
+#define     INFO_MAN_CLASS              6001            //  åˆ†ç±»ç®¡ç†
+#define     INFO_MAN_AFFICHE            6002            //  å…¬å‘Šç®¡ç†
+#define     INFO_MAN_ALL_ITEM           6003            //  ç®¡ç†æ‰€æœ‰æœªä¸Šæ¶çš„å•†å“
+#define     INFO_GET_GM_MAIL            6500            //  æ”¶å–GMé‚®ä»¶
+#define     INFO_RPY_GM_MAIL            6501            //  å›å¤GMé‚®ä»¶
+#define     INFO_MAIL_QUEUE             6502            //  é‚®ä»¶åˆ—è¡¨æ•°
+
+#define     INFO_MAN_VIP                7000            //  VIPç®¡ç†
+#define     INFO_MAN_RATE               7001            //  ä¿®æ”¹æ±‡ç‡
+
+
+
+#define     INFO_TYPE_HISTORY           0               //  äº¤æ˜“è®°å½•
+#define     INFO_TYPE_EXCHANGE          1               //  å…‘æ¢è®°å½•
+#define     INFO_TYPE_VIP               2               //  VIPè´­ä¹°è®°å½•
+
+#define     INFO_CHECK_LIVE             0               //  æ£€æµ‹åœ¨çº¿
 
 typedef unsigned char       _byte;
 
 
-//  ÕÊ»§ĞÅÏ¢
+//  å¸æˆ·ä¿¡æ¯
 typedef struct _RoleInfo_
 {
-    long        actID;          //	ÕÊºÅ±àºÅ
-    char        actName[21];    //	ÕÊºÅÃû³Æ
-    long        chaID;          //	½ÇÉ«±àºÅ
-    char        chaName[17];    //	½ÇÉ«Ãû³Æ
-    long        moBean;         //	Ä¦¶¹ÊıÁ¿
-    long        rplMoney;       //	´ú±ÒÊıÁ¿
-    long        vip;            //  VIPÖÖÀà(20-50)£¬0Îª·Çvip
+    long        actID;          //	å¸å·ç¼–å·
+    char        actName[21];    //	å¸å·åç§°
+    long        chaID;          //	è§’è‰²ç¼–å·
+    char        chaName[17];    //	è§’è‰²åç§°
+    long        moBean;         //	æ‘©è±†æ•°é‡
+    long        rplMoney;       //	ä»£å¸æ•°é‡
+    long        vip;            //  VIPç§ç±»(20-50)ï¼Œ0ä¸ºévip
 }RoleInfo, *pRoleInfo;
 
 
 
-//  ½»Ò×¼ÇÂ¼
+//  äº¤æ˜“è®°å½•
 typedef struct _HistoryInfo_
 {
-    time_t      tradeTime;      //	½»Ò×Ê±¼ä
-    long        comID;          //	ÉÌÆ·±àºÅ
-    char        comName[21];    //	ÉÌÆ·Ãû³Æ
-    int         tradeResult;    //  ½á¹û        0 ³É¹¦£¬1 ´íÎóµÄÉÌÆ·¼Û¸ñ, 2 Óà¶î²»×ã, 3 ¿Û·ÑÊ§°Ü
-    long        tradeMoney;     //	½»Ò×½ğ¶î
+    time_t      tradeTime;      //	äº¤æ˜“æ—¶é—´
+    long        comID;          //	å•†å“ç¼–å·
+    char        comName[21];    //	å•†å“åç§°
+    int         tradeResult;    //  ç»“æœ        0 æˆåŠŸï¼Œ1 é”™è¯¯çš„å•†å“ä»·æ ¼, 2 ä½™é¢ä¸è¶³, 3 æ‰£è´¹å¤±è´¥
+    long        tradeMoney;     //	äº¤æ˜“é‡‘é¢
 }HistoryInfo, *pHistoryInfo;
 
 
 
-//  ¹«¸æĞÅÏ¢
+//  å…¬å‘Šä¿¡æ¯
 typedef struct _AfficheInfo_
 {
-    long        affiID;         //	¹«¸æ±àºÅ
-    char        affiTitle[64];  //	¹«¸æ±êÌâ
-    char        comID[33];      //	Á¬½ÓÉÌÆ·±àºÅ
-    time_t      affiTime;       //  ·¢²¼Ê±¼ä
+    long        affiID;         //	å…¬å‘Šç¼–å·
+    char        affiTitle[64];  //	å…¬å‘Šæ ‡é¢˜
+    char        comID[33];      //	è¿æ¥å•†å“ç¼–å·
+    time_t      affiTime;       //  å‘å¸ƒæ—¶é—´
 }AfficheInfo, *pAfficheInfo;
 
 
 
-//  ·ÖÀàĞÅÏ¢
+//  åˆ†ç±»ä¿¡æ¯
 typedef struct _ClassInfo_
 {
-    short        clsID;        //	·ÖÀà±àºÅ
-    char         clsName[17];   //	·ÖÀàÃû³Æ
-    short        parentID;      //	¸¸·ÖÀà±àºÅ
+    short        clsID;        //	åˆ†ç±»ç¼–å·
+    char         clsName[17];   //	åˆ†ç±»åç§°
+    short        parentID;      //	çˆ¶åˆ†ç±»ç¼–å·
 }ClassInfo, *pClassInfo;
 
 
 
-//  µÀ¾ßĞÅÏ¢
+//  é“å…·ä¿¡æ¯
 typedef struct _ItemInfo_
 {
-    short       itemID;         //	µÀ¾ß±àºÅ
-    _byte       itemNum;        //	µÀ¾ß¸öÊı
-    _byte       itemFlute;      //	°¼²ÛÊı
-    short       itemAttrID[5];  //	Îå¸öÊôĞÔ±àºÅ
-    short       itemAttrVal[5]; //	Îå¸öÊôĞÔÖµ
+    short       itemID;         //	é“å…·ç¼–å·
+    _byte       itemNum;        //	é“å…·ä¸ªæ•°
+    _byte       itemFlute;      //	å‡¹æ§½æ•°
+    short       itemAttrID[5];  //	äº”ä¸ªå±æ€§ç¼–å·
+    short       itemAttrVal[5]; //	äº”ä¸ªå±æ€§å€¼
 }ItemInfo, *pItemInfo;
 
 
 
-//  ÉÌÆ·ĞÅÏ¢
+//  å•†å“ä¿¡æ¯
 typedef struct _StoreInfo_
 {
-    long        comID;          //	ÉÌÆ·±àºÅ
-    char        comName[21];    //	ÉÌÆ·Ãû³Æ
-    long        comClass;       //	ÉÌÆ··ÖÀà
-    time_t      comTime;        //	ÉÌÆ·ÉÏ¼ÜÊ±¼ä
-    long        comPrice;       //	¼Û¸ñ
-    char        comRemark[129]; //	ÉÌÆ·±¸×¢
-    int         comNumber;      //  ÉÌÆ·Ê£Óà¸öÊı¡£-1²»ÏŞÖÆ£¬0ÏÂ¼Ü
-    time_t      comExpire;      //  ÉÌÆ·µ½ÆÚÊ±¼ä¡£
-    _byte       itemNum;        //  µÀ¾ß¸öÊı
-    _byte       isHot;          //  ÊÇ·ñÈÈÂô
-    time_t      beginTime;      //  ÉÏ¼ÜÊ±¼ä
+    long        comID;          //	å•†å“ç¼–å·
+    char        comName[21];    //	å•†å“åç§°
+    long        comClass;       //	å•†å“åˆ†ç±»
+    time_t      comTime;        //	å•†å“ä¸Šæ¶æ—¶é—´
+    long        comPrice;       //	ä»·æ ¼
+    char        comRemark[129]; //	å•†å“å¤‡æ³¨
+    int         comNumber;      //  å•†å“å‰©ä½™ä¸ªæ•°ã€‚-1ä¸é™åˆ¶ï¼Œ0ä¸‹æ¶
+    time_t      comExpire;      //  å•†å“åˆ°æœŸæ—¶é—´ã€‚
+    _byte       itemNum;        //  é“å…·ä¸ªæ•°
+    _byte       isHot;          //  æ˜¯å¦çƒ­å–
+    time_t      beginTime;      //  ä¸Šæ¶æ—¶é—´
 }StoreInfo, *pStoreInfo;
 
 
 
-//  ÉÌÆ·½á¹¹
+//  å•†å“ç»“æ„
 typedef struct _StoreStruct_
 {
-    StoreInfo   store_head;     //  ÉÌÆ·ĞÅÏ¢Í·
-    pItemInfo   item_body;      //  µÀ¾ßĞÅÏ¢Ìå
+    StoreInfo   store_head;     //  å•†å“ä¿¡æ¯å¤´
+    pItemInfo   item_body;      //  é“å…·ä¿¡æ¯ä½“
 }StoreStruct, *pStoreStruct;
 
 
 
-//  µÇÂ½ĞÅÏ¢
+//  ç™»é™†ä¿¡æ¯
 typedef struct _LoginInfo_
 {
-    _byte       id;             //  ·şÎñÆ÷±àºÅ
-    char        ip[16];         //  µÇÂ½IP
-    char        pwd[33];        //  ÑéÖ¤Âë
-    _byte       ban;            //  ÊÇ·ñºÚÃûµ¥
+    _byte       id;             //  æœåŠ¡å™¨ç¼–å·
+    char        ip[16];         //  ç™»é™†IP
+    char        pwd[33];        //  éªŒè¯ç 
+    _byte       ban;            //  æ˜¯å¦é»‘åå•
 }LoginInfo, *pLoginInfo;
 
 
-//  VIPĞÅÏ¢
+//  VIPä¿¡æ¯
 typedef struct _VIPInfo_
 {
-    int         vipID;          //  VIP±àºÅ(ÀàĞÍ£¬·¶Î§ÔÚ20-50Ö®¼ä)
-    int         vipPrice;       //  VIP¼Û¸ñ
+    int         vipID;          //  VIPç¼–å·(ç±»å‹ï¼ŒèŒƒå›´åœ¨20-50ä¹‹é—´)
+    int         vipPrice;       //  VIPä»·æ ¼
 }VIPInfo, *pVIPInfo;
 
 
-//  MailĞÅÏ¢
+//  Mailä¿¡æ¯
 typedef struct _MailInfo_
 {
-    long id;                    //  ÓÊ¼ş±àºÅ
-    char title[33];				//	ÓÊ¼ş±êÌâ
-    char description[513];		//	ÓÊ¼şÕıÎÄ
-    long actID;				    //	·¢ËÍÕßÕÊºÅID
-    char actName[64];			//	·¢ËÍÕßÕÊºÅÃû³Æ
-    long chaID;				    //	·¢ËÍÕß½ÇÉ«ID
-    char chaName[64];			//	·¢ËÍÕß½ÇÉ«Ãû³Æ
-    time_t sendTime;			//	·¢ËÍÊ±¼ä
+    long id;                    //  é‚®ä»¶ç¼–å·
+    char title[33];				//	é‚®ä»¶æ ‡é¢˜
+    char description[513];		//	é‚®ä»¶æ­£æ–‡
+    long actID;				    //	å‘é€è€…å¸å·ID
+    char actName[64];			//	å‘é€è€…å¸å·åç§°
+    long chaID;				    //	å‘é€è€…è§’è‰²ID
+    char chaName[64];			//	å‘é€è€…è§’è‰²åç§°
+    time_t sendTime;			//	å‘é€æ—¶é—´
 }MailInfo, *pMailInfo;
 
 
-//  ÏûÏ¢Í·
+//  æ¶ˆæ¯å¤´
 typedef struct _NetMessageHead_
 {
-    unsigned char msgChk[4];    //  ÓĞĞ§ÍøÂçÏûÏ¢±êÊ¶ÂëÎª 0x4A, 0x4D, 0x50, 0x53
-    long msgID;                 //  ÏûÏ¢±àºÅ
-    long subID;                 //  ÏûÏ¢×Ó±àºÅ
-    long long msgOrder;         //  ÏûÏ¢ÎÕÊÖ
-    long msgSection;            //  Ğ¡Çø±àºÅ
-    long msgExtend;             //  À©Õ¹×Ö¶Î
-    long msgSize;               //  ÏûÏ¢Ìå³¤¶È
-    long msgEncSize;            //  ¼ÓÃÜºó³¤¶È
+    unsigned char msgChk[4];    //  æœ‰æ•ˆç½‘ç»œæ¶ˆæ¯æ ‡è¯†ç ä¸º 0x4A, 0x4D, 0x50, 0x53
+    long msgID;                 //  æ¶ˆæ¯ç¼–å·
+    long subID;                 //  æ¶ˆæ¯å­ç¼–å·
+    long long msgOrder;         //  æ¶ˆæ¯æ¡æ‰‹
+    long msgSection;            //  å°åŒºç¼–å·
+    long msgExtend;             //  æ‰©å±•å­—æ®µ
+    long msgSize;               //  æ¶ˆæ¯ä½“é•¿åº¦
+    long msgEncSize;            //  åŠ å¯†åé•¿åº¦
 }NetMessageHead, *pNetMessageHead;
 
 
 
-//  ÍøÂçÏûÏ¢
+//  ç½‘ç»œæ¶ˆæ¯
 typedef struct _NetMessage_
 {
-    NetMessageHead      msgHead;    //  ÏûÏ¢Í·
-    void*               msgBody;    //  ÏûÏ¢Ìå
+    NetMessageHead      msgHead;    //  æ¶ˆæ¯å¤´
+    void*               msgBody;    //  æ¶ˆæ¯ä½“
 }NetMessage, *pNetMessage;
 
 
-#define PNM_SUCCESS             0           //  ½âÊÍ³É¹¦
-#define PNM_FAILED              1           //  ´íÎóµÄĞ­Òé
-#define PNM_UNKNOWN             2           //  Î´ÖªĞ­Òé
-#define PNM_EXCEPTION           3           //  Òì³£
+#define PNM_SUCCESS             0           //  è§£é‡ŠæˆåŠŸ
+#define PNM_FAILED              1           //  é”™è¯¯çš„åè®®
+#define PNM_UNKNOWN             2           //  æœªçŸ¥åè®®
+#define PNM_EXCEPTION           3           //  å¼‚å¸¸
 
 
-//  »ñÈ¡ÏûÏ¢Í·
+//  è·å–æ¶ˆæ¯å¤´
 extern int GetMessageHead(pNetMessageHead mh, unsigned char* msg, int size);
 
-//  ½âÎöÏûÏ¢
+//  è§£ææ¶ˆæ¯
 extern int PeekNetMessage(pNetMessage* nm, unsigned char** buf, long& bufsize, void** tmpbuf, long& tmpsize);
 
-//  ÊÍ·ÅÏûÏ¢
+//  é‡Šæ”¾æ¶ˆæ¯
 extern void FreeNetMessage(pNetMessage msg);
 
-//  Éú³ÉÏûÏ¢
+//  ç”Ÿæˆæ¶ˆæ¯
 extern bool BuildNetMessage(pNetMessage nm, long msgID, long subID, long extend, long section, unsigned char* body, long size);
 
-//  »ñÈ¡ÃÜÔ¿
+//  è·å–å¯†é’¥
 extern _byte* GetInfoKey();
 
-//  »ñÈ¡ÃÜÂë(¾¡ÏŞGameServerÊ¹ÓÃ)
+//  è·å–å¯†ç (å°½é™GameServerä½¿ç”¨)
 extern _byte* GetPassword();
 
 class InfoThread;
-//  ¿Í»§¶Ë½Ó¿Ú
+//  å®¢æˆ·ç«¯æ¥å£
 class InfoNetBase
 {
 public:
     InfoNetBase();
     virtual ~InfoNetBase();
-    virtual bool RunInfoService(const char* ip, short port);  //  ÔËĞĞ¿Í»§¶Ë·şÎñ
-    virtual bool StopInfoService(); //  Í£Ö¹¿Í»§¶Ë·şÎñ
-    virtual bool PostInfoSend(long msgID, long subID, long extend, long section, unsigned char* body, long size, bool resnd = false);   //  ·¢ËÍÏûÏ¢
-    virtual bool PostInfoSend(pNetMessage msg, bool resnd = false);     //  ·¢ËÍÏûÏ¢
+    virtual bool RunInfoService(const char* ip, short port);  //  è¿è¡Œå®¢æˆ·ç«¯æœåŠ¡
+    virtual bool StopInfoService(); //  åœæ­¢å®¢æˆ·ç«¯æœåŠ¡
+    virtual bool PostInfoSend(long msgID, long subID, long extend, long section, unsigned char* body, long size, bool resnd = false);   //  å‘é€æ¶ˆæ¯
+    virtual bool PostInfoSend(pNetMessage msg, bool resnd = false);     //  å‘é€æ¶ˆæ¯
     virtual bool IsConnect();
 
 public:
-    virtual void OnConnect(bool result) = 0;            //  Á¬½ÓÊ±ÏìÓ¦
-    virtual void OnNetMessage(pNetMessage msg) = 0;     //  ÓÃ»§½Ó¿ÚĞ­Òé£¬msgÓÉÓÃ»§ÊÖ¹¤ÊÍ·Å¡£
-    virtual void OnResend(pNetMessage msg) = 0;         //  ÖØ·¢Íê³Éºó£¬×Ô¶¯ÊÍ·Åmsg¡£
-    virtual void OnDisconnect() = 0;        //  ¶Ï¿ªÊ±ÏìÓ¦
+    virtual void OnConnect(bool result) = 0;            //  è¿æ¥æ—¶å“åº”
+    virtual void OnNetMessage(pNetMessage msg) = 0;     //  ç”¨æˆ·æ¥å£åè®®ï¼Œmsgç”±ç”¨æˆ·æ‰‹å·¥é‡Šæ”¾ã€‚
+    virtual void OnResend(pNetMessage msg) = 0;         //  é‡å‘å®Œæˆåï¼Œè‡ªåŠ¨é‡Šæ”¾msgã€‚
+    virtual void OnDisconnect() = 0;        //  æ–­å¼€æ—¶å“åº”
 
 protected:
     virtual bool Connect();
-    virtual bool Disconnect();      //  ¶Ï¿ª
-    virtual bool PostInfoRecv();    //  Í¶µİ½ÓÊÕ
+    virtual bool Disconnect();      //  æ–­å¼€
+    virtual bool PostInfoRecv();    //  æŠ•é€’æ¥æ”¶
     friend class InfoThread;
 
 protected:

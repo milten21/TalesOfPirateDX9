@@ -46,17 +46,17 @@ void CGameConfig::SetDefault()
 	m_lDBSave = 20 * 60 * 1000;
 
 	strcpy(m_szResDir, "");
-	strcpy(m_szLogDir, "log\\");
+	strcpy(m_szLogDir, "log/");
 
 	strcpy(m_szInfoIP, "");
 	m_nInfoPort = 0;
 	strcpy(m_szInfoPwd, "");
 	m_nSection = 0;
 
-	m_bLogAI		= FALSE;	// ÊÇ·ñ´ò¿ªAIµÄlog
-	m_bLogCha		= FALSE;	// ÊÇ·ñ´ò¿ª½ÇÉ«µÄlog
-	m_bLogCal		= FALSE;	// ÊÇ·ñ´ò¿ªÊıÖµ¼ÆËãµÄlog
-	m_bLogMission	= FALSE;	// ÊÇ·ñ´ò¿ªMissionµÄlog
+	m_bLogAI		= FALSE;	// æ˜¯å¦æ‰“å¼€AIçš„log
+	m_bLogCha		= FALSE;	// æ˜¯å¦æ‰“å¼€è§’è‰²çš„log
+	m_bLogCal		= FALSE;	// æ˜¯å¦æ‰“å¼€æ•°å€¼è®¡ç®—çš„log
+	m_bLogMission	= FALSE;	// æ˜¯å¦æ‰“å¼€Missionçš„log
 
 	m_bSuperCmd     = FALSE;
 
@@ -133,7 +133,7 @@ bool CGameConfig::Load(char *pszFileName)
 					m_nGateCnt++;
             }
         }
-        else if(strKey=="info") // ½âÎöInfoServer IPºÍport
+        else if(strKey=="info") // è§£æInfoServer IPå’Œport
         {
             string strList[4];
             int nCnt = Util_ResolveTextLine(strValue.c_str(), strList, 4, ',');
@@ -170,9 +170,9 @@ bool CGameConfig::Load(char *pszFileName)
 		else if (strKey == "BaseID")
 		{
 			size_t stPos = 0;
-			if ((stPos = strValue.find("0x")) != std::string::npos || (stPos = strValue.find("0X")) != std::string::npos) // Ê®Áù½øÖÆÖµ
+			if ((stPos = strValue.find("0x")) != std::string::npos || (stPos = strValue.find("0X")) != std::string::npos) // åå…­è¿›åˆ¶å€¼
 				sscanf(strValue.c_str(), "%x", &m_ulBaseID);
-			else // Ê®½øÖÆÖµ
+			else // åè¿›åˆ¶å€¼
 				sscanf(strValue.c_str(), "%d", &m_ulBaseID);
 		}
 		else if(strKey=="max_ply")

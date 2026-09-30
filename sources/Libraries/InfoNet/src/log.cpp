@@ -78,8 +78,8 @@ __END_TRY
 
 LogMgr::LogMgr()
 {
-    mkdir(LOG_FOLDER);                  //  创建log目录
-    getcwd(m_path, 260);   //  获取工作目录
+    mkdir(LOG_FOLDER);                  //  鍒涘缓log鐩綍
+    getcwd(m_path, 260);   //  鑾峰彇宸ヤ綔鐩綍
 }
 
 
@@ -103,7 +103,7 @@ __BEGIN_TRY
     {
         plog = new Log;
         char logpath[MAX_PATH] = {0};
-        sprintf(logpath, "%s\\%s\\%s.log", m_path, LOG_FOLDER, filename);
+        sprintf(logpath, "%s/%s/%s.log", m_path, LOG_FOLDER, filename);
         plog->Open(logpath);
         m_list[filename] = plog;
     }

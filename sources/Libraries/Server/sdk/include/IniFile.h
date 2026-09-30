@@ -50,7 +50,7 @@ private:
 		IniSection ** m_sect;
 	};
 	bool	m_update;
-	bool	m_rw;					//false:Ö»¶Á;true:¶ÁºÍĞ´¡£
+	bool	m_rw;					//false:åªè¯»;true:è¯»å’Œå†™ã€‚
 	char	m_filename[512];
 };
 

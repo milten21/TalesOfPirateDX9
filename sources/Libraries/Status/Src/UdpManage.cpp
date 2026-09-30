@@ -25,7 +25,7 @@ void CUdpManage::Run()
 {
 	_Socket.Init( _nPort );
 
-	// ÉèÖÃ»º½ÓÊÕ³åÇø´óĞ¡
+	// è®¾ç½®ç¼“æ¥æ”¶å†²åŒºå¤§å°
 	int n = 1024;
 	setsockopt( _Socket.GetSocket(), SOL_SOCKET, SO_RCVBUF, (char*)&n, sizeof(n) );
 

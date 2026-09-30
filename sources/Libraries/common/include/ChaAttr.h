@@ -25,13 +25,13 @@ public:
 	LONG32	GetAttr(long lNo);
 	long	SetAttr(long lNo, LONG32 lVal);
 	LONG32	GetAttrMaxVal(long lNo);
-	long	DirectSetAttr(long lNo, LONG32 lVal); // Ö±½ÓÉèÖÃ×î´óÖµ£¬Ö»ÓÃÓÚ¿Í»§¶Ë£¨ÒòÎª¿Í»§¶ËµÄÊı¾İÀ´Ô´ÓÚ·şÎñ¶Ë£¬ÊÇºÏ·¨Êı¾İ£©
+	long	DirectSetAttr(long lNo, LONG32 lVal); // ç›´æ¥è®¾ç½®æœ€å¤§å€¼ï¼Œåªç”¨äºå®¢æˆ·ç«¯ï¼ˆå› ä¸ºå®¢æˆ·ç«¯çš„æ•°æ®æ¥æºäºæœåŠ¡ç«¯ï¼Œæ˜¯åˆæ³•æ•°æ®ï¼‰
 	long	AddAttr(long lNo, LONG32 lVal);
 	long	ReEvaluation(long lNo);
 
 	void	SetChangeFlag();
 	void	ResetChangeFlag();
-	void	SetChangeFlag(const char *cszChangeFlag, unsigned short usLen = ATTR_SIGN_BYTE_NUM); // ´Ë½Ó¿Ú²»ÉèÖÃm_sChangeNumClient
+	void	SetChangeFlag(const char *cszChangeFlag, unsigned short usLen = ATTR_SIGN_BYTE_NUM); // æ­¤æ¥å£ä¸è®¾ç½®m_sChangeNumClient
 	char*	GetChangeFlag(unsigned short& usLen);
 	void	SetChangeBitFlag(long lBit);
 	bool	GetChangeBitFlag(long lBit);
@@ -44,8 +44,8 @@ private:
 
 	LONG32	m_lAttribute[ATTR_MAX_NUM];
 
-	char	m_szChangeFlag[ATTR_SIGN_BYTE_NUM]; // ±êÊ¶¸Ä±äµÄÊôĞÔ
-	short	m_sChangeNumClient; // ¸Ä±äµÄÖÕ¶ËÊôĞÔ¸öÊı
+	char	m_szChangeFlag[ATTR_SIGN_BYTE_NUM]; // æ ‡è¯†æ”¹å˜çš„å±æ€§
+	short	m_sChangeNumClient; // æ”¹å˜çš„ç»ˆç«¯å±æ€§ä¸ªæ•°
 
 };
 
@@ -65,7 +65,7 @@ inline LONG32 CChaAttr::GetAttrMaxVal(long lNo)
 	return g_lMaxChaAttr[lNo];
 T_E}
 
-// ·µ»ØÖµ£º0£¬Ê§°Ü¡£1£¬³É¹¦ÉèÖÃ£¬µ«ÇëÇóµÄÖµ³¬¹ı×î´óÖµ¡£2£¬³É¹¦ÉèÖÃ¡£
+// è¿”å›å€¼ï¼š0ï¼Œå¤±è´¥ã€‚1ï¼ŒæˆåŠŸè®¾ç½®ï¼Œä½†è¯·æ±‚çš„å€¼è¶…è¿‡æœ€å¤§å€¼ã€‚2ï¼ŒæˆåŠŸè®¾ç½®ã€‚
 inline long CChaAttr::SetAttr(long lNo, LONG32 lVal)
 {T_B
 	if (lNo >= ATTR_MAX_NUM) return 0;
@@ -77,7 +77,7 @@ inline long CChaAttr::SetAttr(long lNo, LONG32 lVal)
 		//if (!g_IsNosignChaAttr(lNo))
 		{
 			lVal = (int)g_lMaxChaAttr[lNo];
-			//LG("attr_error", "ÉèÖÃCha[%s] Attrib[%d]³¬¹ı×î´óÖµ[%d]\n", m_szName, lNo, lVal); 
+			//LG("attr_error", "è®¾ç½®Cha[%s] Attrib[%d]è¶…è¿‡æœ€å¤§å€¼[%d]\n", m_szName, lNo, lVal); 
 			LG("attr_error", "set Cha[%s] Attrib[%d] greater than max value [%d]\n", m_szName, lNo, lVal); 
 		}
 	}
@@ -91,7 +91,7 @@ inline long CChaAttr::SetAttr(long lNo, LONG32 lVal)
 	return lRet;
 T_E}
 
-// Ö±½ÓÉèÖÃ×î´óÖµ£¬Ö»ÓÃÓÚ¿Í»§¶Ë£¨ÒòÎª¿Í»§¶ËµÄÊı¾İÀ´Ô´ÓÚ·şÎñ¶Ë£¬ÊÇºÏ·¨Êı¾İ£©
+// ç›´æ¥è®¾ç½®æœ€å¤§å€¼ï¼Œåªç”¨äºå®¢æˆ·ç«¯ï¼ˆå› ä¸ºå®¢æˆ·ç«¯çš„æ•°æ®æ¥æºäºæœåŠ¡ç«¯ï¼Œæ˜¯åˆæ³•æ•°æ®ï¼‰
 inline long CChaAttr::DirectSetAttr(long lNo, LONG32 lVal)
 {T_B
 	if (lNo >= ATTR_MAX_NUM) return 0;
@@ -136,7 +136,7 @@ inline void CChaAttr::ResetChangeFlag()
 	m_sChangeNumClient = 0;
 T_E}
 
-// ´Ë½Ó¿Ú²»ÉèÖÃm_sChangeNumClient
+// æ­¤æ¥å£ä¸è®¾ç½®m_sChangeNumClient
 inline void CChaAttr::SetChangeFlag(const char *cszChangeFlag, unsigned short usLen)
 {T_B
 	if (!cszChangeFlag)

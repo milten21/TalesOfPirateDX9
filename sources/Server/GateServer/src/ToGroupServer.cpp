@@ -1,4 +1,4 @@
-﻿
+
 #include "gateserver.h"
 
 using namespace dbc;

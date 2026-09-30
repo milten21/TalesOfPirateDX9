@@ -30,16 +30,16 @@ void CUdpSocket::Close()
 
 bool CUdpSocket::RegeditReadEvent( HWND hWnd, DWORD dwMessage )
 {
-	//FD_READ£º ÍøÂçÊı¾İ°üµ½´ï 
-	//FD_WRITE£º ·¢ËÍÍøÂçÊı¾İ 
-	//FD_OOB£º OOBÊı¾İµ½´ï 
-	//FD_ACCEPT£º ÊÕµ½Á¬½ÓÇëÇó 
-	//FD_CONNECT£º ÒÑ½¨Á¢Á¬½Ó 
-	//FD_CLOSE£º ¶Ï¿ªÁ¬½Ó 
-	//FD_QOS£º ·şÎñÖÊÁ¿(QoS)·¢Éú±ä»¯ 
-	//FD_GROUP_QOS£º ±£ÁôÊÂ¼ş 
-	//FD_ROUTING_INTERFACE_CHANGE£º Ö¸¶¨µØÖ·µÄÂ·ÓÉ½Ó¿Ú·¢Éú±ä»¯ 
-	//FD_ADDRESS_LIST_CHANGE£º ±¾µØµØÖ·±ä»¯ 
+	//FD_READï¼š ç½‘ç»œæ•°æ®åŒ…åˆ°è¾¾ 
+	//FD_WRITEï¼š å‘é€ç½‘ç»œæ•°æ® 
+	//FD_OOBï¼š OOBæ•°æ®åˆ°è¾¾ 
+	//FD_ACCEPTï¼š æ”¶åˆ°è¿æ¥è¯·æ±‚ 
+	//FD_CONNECTï¼š å·²å»ºç«‹è¿æ¥ 
+	//FD_CLOSEï¼š æ–­å¼€è¿æ¥ 
+	//FD_QOSï¼š æœåŠ¡è´¨é‡(QoS)å‘ç”Ÿå˜åŒ– 
+	//FD_GROUP_QOSï¼š ä¿ç•™äº‹ä»¶ 
+	//FD_ROUTING_INTERFACE_CHANGEï¼š æŒ‡å®šåœ°å€çš„è·¯ç”±æ¥å£å‘ç”Ÿå˜åŒ– 
+	//FD_ADDRESS_LIST_CHANGEï¼š æœ¬åœ°åœ°å€å˜åŒ– 
 
 	if (WSAAsyncSelect(m_Socket, hWnd, dwMessage, FD_READ) == SOCKET_ERROR)
 	{
@@ -54,7 +54,7 @@ bool CUdpSocket::OnNetworkEvent( WPARAM wParam, LPARAM lParam )
     switch (WSAGETSELECTEVENT(lParam))
     {
     case FD_READ:
-        // ½ÓÊÕÊı¾İ
+        // æ¥æ”¶æ•°æ®
         break;
     case FD_WRITE:
         break;
@@ -95,11 +95,11 @@ bool CUdpServer::Init( int nPort )
 	}
 
 	SOCKADDR_IN m_saAddr;
-	m_nPort = nPort;							// ¶Ë¿ÚºÅ
+	m_nPort = nPort;							// ç«¯å£å·
 	ZeroMemory(&m_saAddr, sizeof(m_saAddr));
 	m_saAddr.sin_family      = AF_INET;
-	m_saAddr.sin_port        = htons(m_nPort);  // Èç¹û´ËÖµÎª0£¬ÏµÍ³½«Ëæ»úÑ¡ÔñÒ»¸öÎ´±»Ê¹ÓÃµÄ¶Ë¿ÚºÅ
-	m_saAddr.sin_addr.s_addr = INADDR_ANY;      // ÌîÈë±¾»úIPµØÖ·
+	m_saAddr.sin_port        = htons(m_nPort);  // å¦‚æœæ­¤å€¼ä¸º0ï¼Œç³»ç»Ÿå°†éšæœºé€‰æ‹©ä¸€ä¸ªæœªè¢«ä½¿ç”¨çš„ç«¯å£å·
+	m_saAddr.sin_addr.s_addr = INADDR_ANY;      // å¡«å…¥æœ¬æœºIPåœ°å€
 	if (bind(m_Socket, (LPSOCKADDR) &m_saAddr, sizeof(m_saAddr)) == SOCKET_ERROR)
 	{
 		return false;
@@ -129,8 +129,8 @@ bool CUdpServer::Read( ReceiveEvent pEvent, void* pParam )
         return false;
     }
 
-    // IPµØÖ·£ºinet_ntoa(m_saFromAddr.sin_addr);
-    // ¶Ë¿ÚºÅ£ºntohs(m_saFromAddr.sin_port);
+    // IPåœ°å€ï¼šinet_ntoa(m_saFromAddr.sin_addr);
+    // ç«¯å£å·ï¼šntohs(m_saFromAddr.sin_port);
     chIncomingDataBuffer[nEnd] = '\0';
     if (lstrlen(chIncomingDataBuffer) != 0) 
     {
@@ -186,8 +186,8 @@ bool CUdpClient::Init(const char* szIP, unsigned int nPort, int nReadTimeOut)
 	}
 
 	m_ServerAddr.sin_family=AF_INET; 
-	m_ServerAddr.sin_port=htons(nPort);				// serverµÄ¼àÌı¶Ë¿Ú 
-	m_ServerAddr.sin_addr.s_addr=inet_addr(szIP);	// serverµÄµØÖ· ¡¡¡¡ 
+	m_ServerAddr.sin_port=htons(nPort);				// serverçš„ç›‘å¬ç«¯å£ 
+	m_ServerAddr.sin_addr.s_addr=inet_addr(szIP);	// serverçš„åœ°å€ ã€€ã€€ 
 	m_Socket = socket(AF_INET,SOCK_DGRAM,0); 
 	if( m_Socket == INVALID_SOCKET )
 		return false;

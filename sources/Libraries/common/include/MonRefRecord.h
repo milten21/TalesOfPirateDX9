@@ -16,17 +16,17 @@ using	namespace	GAME;
 
 const char cchMonRefRecordKeyValue = (char)0xff;
 
-#define defMAX_REGION_MONSTER_TYPE	15	// Ã¿¸öÇøÓòµÄ×î¶à¹ÖÎïÀàĞÍ
+#define defMAX_REGION_MONSTER_TYPE	15	// æ¯ä¸ªåŒºåŸŸçš„æœ€å¤šæ€ªç‰©ç±»å‹
 
 class CMonRefRecord : public CRawDataInfo
 {
 public:
 	//CMonRefRecord();
 
-	long	lID;		// ÇøÓò±àºÅ
-	Point	SRegion[2];	// ÇøÓòµÄ×óÉÏ½ÇºÍÓÒÏÂ½Ç
-	short	sAngle;		// ³öÉú·½Ïò
-	long	lMonster[defMAX_REGION_MONSTER_TYPE][4]; // ID£¬ÊıÁ¿£¬Ë¢ĞÂ¸ÅÂÊ£¬Ë¢ĞÂ¼ä¸ô
+	long	lID;		// åŒºåŸŸç¼–å·
+	Point	SRegion[2];	// åŒºåŸŸçš„å·¦ä¸Šè§’å’Œå³ä¸‹è§’
+	short	sAngle;		// å‡ºç”Ÿæ–¹å‘
+	long	lMonster[defMAX_REGION_MONSTER_TYPE][4]; // IDï¼Œæ•°é‡ï¼Œåˆ·æ–°æ¦‚ç‡ï¼Œåˆ·æ–°é—´éš”
 };
 
 class CMonRefRecordSet : public CRawDataSet
@@ -44,7 +44,7 @@ public:
 
 protected:
 
-	static CMonRefRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CMonRefRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

@@ -130,7 +130,7 @@ long Task::WaitMe()
 {
 	TaskWait	*l_taskwait;
 	bool		l_canwait	=false;
-	long		l_retval	=NOTWAITSTATE;	//�߳�û�д��ڿɵȴ�״̬
+	long		l_retval	=NOTWAITSTATE;	//线程没有处于可等待状态
 	__mtxtaskwait.lock();
 	try
 	{

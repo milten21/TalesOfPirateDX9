@@ -21,11 +21,11 @@ public:
 	CHairRecord();
 	char	szColor[10];
 
-	DWORD	dwNeedItem[defHAIR_MAX_ITEM][2];		// ĞèÒªµÄµÀ¾ßID,ÒÔ¼°ËùĞèÒªµÄÊıÁ¿
-	DWORD	dwMoney;								// ĞèÒªµÄ½ğÇ®
-	DWORD	dwItemID;								// ¶ÔÓ¦µÄ(·¢ĞÍ²¿Î»)µÀ¾ßID
-	DWORD	dwFailItemID[defHAIR_MAX_FAIL_ITEM];	// Ê§°ÜÊ±µÄ·¢ĞÍ
-	bool	IsChaUse[4];							// 4¸öÖ÷½ÇÊÇ·ñ¿ÉÓÃ
+	DWORD	dwNeedItem[defHAIR_MAX_ITEM][2];		// éœ€è¦çš„é“å…·ID,ä»¥åŠæ‰€éœ€è¦çš„æ•°é‡
+	DWORD	dwMoney;								// éœ€è¦çš„é‡‘é’±
+	DWORD	dwItemID;								// å¯¹åº”çš„(å‘å‹éƒ¨ä½)é“å…·ID
+	DWORD	dwFailItemID[defHAIR_MAX_FAIL_ITEM];	// å¤±è´¥æ—¶çš„å‘å‹
+	bool	IsChaUse[4];							// 4ä¸ªä¸»è§’æ˜¯å¦å¯ç”¨
 	
 	int		GetFailItemNum()		{ return _nFailNum;		}
 	void	RefreshPrivateData();
@@ -48,7 +48,7 @@ public:
 	}
 
 protected:
-	static CHairRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CHairRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

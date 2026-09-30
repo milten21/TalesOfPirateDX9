@@ -870,7 +870,7 @@ int PSS_GetCredit(char const* section, char const* name, std::string& strErr)
 	if (gr.connect("61.152.115.184", 8080)) {
         if (gr.request(buf)) {
             while (gr.process()) {}
-            rc = atoi(gr.getData().c_str()); // Data Ö÷Ìå¾ÍÊÇ·µ»ØÖµ
+            rc = atoi(gr.getData().c_str()); // Data ä¸»ä½“å°±æ˜¯è¿”å›å€¼
         } else {
             rc = 1;
         }
@@ -891,16 +891,16 @@ int PSS_GetCredit(char const* section, char const* name, std::string& strErr)
     case -4: strErr = "point is't enough , please bug point first!"; break;
     default: strErr = "query failed, please retry later"; break;
 		// Modify by lark.li2008
-    /*case 0: strErr = "³É¹¦"; break;
+    /*case 0: strErr = "æˆåŠŸ"; break;
 
-    case 1: strErr = "·¢ËÍÕÊºÅµÇÂ¼ÇëÇóÊ§°Ü£¬ÇëÉÔºóÖØÊÔ"; break;
-    case 2: strErr = "ÎŞ·¨Á¬½ÓÕÊºÅ·şÎñÆ÷£¬ÇëÉÔºóÖØÊÔ"; break;
+    case 1: strErr = "å‘é€å¸å·ç™»å½•è¯·æ±‚å¤±è´¥ï¼Œè¯·ç¨åé‡è¯•"; break;
+    case 2: strErr = "æ— æ³•è¿æ¥å¸å·æœåŠ¡å™¨ï¼Œè¯·ç¨åé‡è¯•"; break;
 
-    case -1: strErr = "ÏµÍ³³öÏÖ¹ÊÕÏ£¬ÇëÉÔºóÖØÊÔ"; break;
-    case -2: strErr = "Á¬½ÓÕÊÎñÏµÍ³Ê§°Ü£¬ÇëÉÔºóÖØÊÔ"; break;
-    case -3: strErr = "Î´¼¤»îÓÎÏ··ÖÇø"; break;
-    case -4: strErr = "µãÊı²»×ã£¬ÇëÏÈ³äÖµ"; break;
-    default: strErr = "²éÑ¯¹ı³Ì³öÏÖÎ´Öª´íÎó£¬ÇëÉÔºóÖØÊÔ"; break;*/
+    case -1: strErr = "ç³»ç»Ÿå‡ºç°æ•…éšœï¼Œè¯·ç¨åé‡è¯•"; break;
+    case -2: strErr = "è¿æ¥å¸åŠ¡ç³»ç»Ÿå¤±è´¥ï¼Œè¯·ç¨åé‡è¯•"; break;
+    case -3: strErr = "æœªæ¿€æ´»æ¸¸æˆåˆ†åŒº"; break;
+    case -4: strErr = "ç‚¹æ•°ä¸è¶³ï¼Œè¯·å…ˆå……å€¼"; break;
+    default: strErr = "æŸ¥è¯¢è¿‡ç¨‹å‡ºç°æœªçŸ¥é”™è¯¯ï¼Œè¯·ç¨åé‡è¯•"; break;*/
     }
 
     return rc;

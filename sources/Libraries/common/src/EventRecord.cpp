@@ -20,27 +20,27 @@ BOOL CEventRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
     string strList[80];
 	string strLine;
 
-	// ±àºÅ
+	// ç¼–å·
 	pInfo->lID = pInfo->nID;
-	// Ãû³Æ
+	// åç§°
 	_tcsncpy(pInfo->szName, pInfo->szDataName, defEVENT_NAME_LEN);
 	pInfo->szName[defEVENT_NAME_LEN - 1] = _TEXT('0');
 
-    // ÊÂ¼þÀàÐÍ
+    // äº‹ä»¶ç±»åž‹
     pInfo->sEventType = Str2Int(ParamList[m++]);
-	// ´¥·¢ÀàÐÍ
+	// è§¦å‘ç±»åž‹
 	pInfo->sArouseType = Str2Int(ParamList[m++]);
-	// ´¥·¢°ë¾¶
+	// è§¦å‘åŠå¾„
 	pInfo->sArouseRadius = Str2Int(ParamList[m++]);
-	// ´¥·¢ÌØÐ§
+	// è§¦å‘ç‰¹æ•ˆ
 	pInfo->sEffect = Str2Int(ParamList[m++]);
-	// ´¥·¢ÒôÐ§
+	// è§¦å‘éŸ³æ•ˆ
 	pInfo->sMusic = Str2Int(ParamList[m++]);
-	// ³öÉúÊ±µÄÌØÐ§
+	// å‡ºç”Ÿæ—¶çš„ç‰¹æ•ˆ
 	pInfo->sBornEffect = Str2Int(ParamList[m++]);	
-	// ÊÂ¼þÏÔÊ¾µÄ¹â±ê
+	// äº‹ä»¶æ˜¾ç¤ºçš„å…‰æ ‡
 	pInfo->sCursor = Str2Int(ParamList[m++]);		
-	// Êó±êÖ¸ÕëÊ²Ã´Çé¿öÓÐÐ§(0-¶¼ÓÐÐ§,1-ÈË£¬2-´¬)
+	// é¼ æ ‡æŒ‡é’ˆä»€ä¹ˆæƒ…å†µæœ‰æ•ˆ(0-éƒ½æœ‰æ•ˆ,1-äººï¼Œ2-èˆ¹)
 	pInfo->chMainChaType = Str2Int(ParamList[m++]);		
 	return TRUE;
 }

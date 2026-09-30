@@ -16,10 +16,10 @@
 class CNpcRecord : public CRawDataInfo
 {
 public:
-	char szNpc[NPC_MAX_NAMESIZE];		// npcнд╪ЧцШ
-	char szName[NPC_MAX_NAMESIZE];		// ╣ьм╪жпотй╬npcцШЁф
-	USHORT ulCharID;	// ╫ги╚ап╠М╠Ю╨екВрЩ
-	USHORT x, y;		// npcн╩жцпео╒
+	char szNpc[NPC_MAX_NAMESIZE];		// npcФ√┤Д╩╤Е░█
+	char szName[NPC_MAX_NAMESIZE];		// Е°╟Е⌡╬Д╦╜Ф≤╬Г╓╨npcЕ░█Г╖╟
+	USHORT ulCharID;	// Х╖▓Х┴╡Е┬≈Х║╗Г╪√Е▐╥Г╢╒Е╪∙
+	USHORT x, y;		// npcД╫█Г╫╝Д©║Ф│╞
 	USHORT w, h;
 	USHORT usParam1, usParam2;
 };

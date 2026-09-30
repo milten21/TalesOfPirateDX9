@@ -6,7 +6,7 @@
 
 HANDLE hConsole = NULL;
 
-// ³õÊ¼»¯Ë³Ğò
+// åˆå§‹åŒ–é¡ºåº
 #pragma init_seg( lib )
 pi_LeakReporter pi_leakReporter("groupememleak.log");
 CResourceBundleManage g_ResourceBundleManage("GroupServer.loc"); //Add by alfred.shi 20080130

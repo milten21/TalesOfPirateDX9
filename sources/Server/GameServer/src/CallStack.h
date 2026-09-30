@@ -4,6 +4,7 @@
 #define __CALLSTACK_H__
 
 #include "StackWalker.h"
+#include "log.h"
 
 // Simple implementation of an additional output to the console:
 class MyStackWalker : public StackWalker
@@ -13,19 +14,19 @@ public:
 	MyStackWalker(DWORD dwProcessId, HANDLE hProcess) : StackWalker(dwProcessId, hProcess) {}
 	virtual void OnOutput(LPCSTR szText) 
 	{
-		//	º∆À„Œƒº˛√˚◊÷°£
-		char sName[24];
-
-		sprintf( sName, "c:\\exception%d.txt", GetCurrentThreadId() );
+		//	ËÆ°ÁÆóÊñá‰ª∂ÂêçÂ≠ó„ÄÇ
+		std::string sName;
+		GetLGDir( sName );
+		sName += "/exception" + std::to_string( GetCurrentThreadId() ) + ".txt";
 
 		//
 		FILE* fp;
 
-		fp = fopen( sName, "a+" );
+		fp = fopen( sName.c_str(), "a+" );
 
 		if( !fp )
 		{
-			fp = fopen( sName, "w+" );
+			fp = fopen( sName.c_str(), "w+" );
 		}
 
 		if( fp )

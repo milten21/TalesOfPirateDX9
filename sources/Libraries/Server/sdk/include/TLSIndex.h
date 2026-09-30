@@ -10,7 +10,7 @@ struct TLSIndex
 	{
 		if(index ==TLS_OUT_OF_INDEXES)
 		{
-			THROW_EXCP(excpThrd,"分配线程本地存储索引超过最大数");
+			THROW_EXCP(excpThrd,"鍒嗛厤绾跨▼鏈湴瀛樺偍绱㈠紩瓒呰繃鏈�澶ф暟");
 		}
 	}
 	~TLSIndex()

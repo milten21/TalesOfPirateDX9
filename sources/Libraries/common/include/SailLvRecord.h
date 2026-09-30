@@ -19,9 +19,9 @@ class CSailLvRecord : public CRawDataInfo
 public:
 	//CSailLvRecord();
 
-	long	lID;			// ±àºÅ
-	short	sLevel;			// µÈ¼¶
-	unsigned long	ulExp;	// ¾­ÑéÖµ
+	long	lID;			// ç¼–å·
+	short	sLevel;			// ç­‰çº§
+	unsigned long	ulExp;	// ç»éªŒå€¼
 };
 
 class CSailLvRecordSet : public CRawDataSet
@@ -39,7 +39,7 @@ public:
 
 protected:
 
-	static CSailLvRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CSailLvRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

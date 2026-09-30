@@ -71,8 +71,8 @@ bool CTableMaster::Init(void)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -141,8 +141,8 @@ bool CTableCha::Init(void)
 	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::character));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -502,7 +502,7 @@ bool CTableCha::SaveAllData(CPlayer *pPlayer, char chSaveType)
 	char szSaveCha[256];
 	strncpy( szSaveCha, RES_STRING(GM_GAMEDB_CPP_00013), 256 - 1 );
 
-	//char	szSaveChaFile[256] = "log\\�����ɫ��ʱ.log";
+	//char	szSaveChaFile[256] = "log/�����ɫ��ʱ.log";
 	char szSaveChaFile[256];
 	strncpy( szSaveChaFile, RES_STRING(GM_GAMEDB_CPP_00014), 256 - 1 );
 
@@ -730,8 +730,8 @@ bool CTableCha::SaveAllData(CPlayer *pPlayer, char chSaveType)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		
 		if (pf)
 		{
@@ -789,8 +789,8 @@ bool CTableCha::SavePos(CPlayer *pPlayer)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -830,8 +830,8 @@ bool CTableCha::SaveMoney(CPlayer *pPlayer)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -870,8 +870,8 @@ bool CTableCha::SaveKBagDBID(CPlayer *pPlayer)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -910,8 +910,8 @@ bool CTableCha::SaveKBagTmpDBID(CPlayer *pPlayer)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -951,8 +951,8 @@ bool CTableCha::SaveKBState(CPlayer *pPlayer)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -991,8 +991,8 @@ BOOL CTableCha::SaveStoreItemID(DWORD atorID, long lStoreItemID)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -1025,8 +1025,8 @@ BOOL CTableCha::AddMoney(DWORD atorID, long money)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -1059,8 +1059,8 @@ BOOL CTableCha::AddCreditByDBID(DWORD atorID, long lCredit)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -1244,8 +1244,8 @@ bool CTableCha::SaveMMaskDBID(CPlayer *pPlayer)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -1287,8 +1287,8 @@ bool CTableCha::SaveBankDBID(CPlayer *pPlayer)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -1367,8 +1367,8 @@ BOOL CTableCha::SaveMissionData(CPlayer *pPlayer, DWORD atorID)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -1656,8 +1656,8 @@ bool CTableWinTicket::Exchange(int issue, char* itemno)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -2312,8 +2312,8 @@ bool CTableResource::Init(void)
 	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::resource));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -2342,8 +2342,8 @@ bool CTableResource::Create(long &lDBID, long lChaId, long lTypeId)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -2435,8 +2435,8 @@ bool CTableResource::SaveKitbagData(CCharacter *pCha)
 	//LG("enter_map", "��֯SQL���ɹ�\n");
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -2605,8 +2605,8 @@ bool CTableResource::SaveKitbagTmpData(long lRecDBID, const string& strData)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -2652,8 +2652,8 @@ bool CTableResource::SaveKitbagTmpData(CCharacter *pCha)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -2792,8 +2792,8 @@ bool CTableResource::SaveBankData(CPlayer *pCPly, char chBankNO)
 		//LG("enter_map", "��֯SQL���ɹ�\n");
 		if (strlen(g_sql) >= SQL_MAXLEN)
 		{
-			//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-			FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+			//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+			FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 			if (pf)
 			{
 				fprintf(pf, "%s\n\n", g_sql);
@@ -2828,8 +2828,8 @@ bool CTableMapMask::Init(void)
 	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::map_mask));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -2886,8 +2886,8 @@ bool CTableMapMask::Create(long &lDBID, long lChaId)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -3000,8 +3000,8 @@ BOOL CTableMapMask::_ExecSQL(const char *pszSQL)
 	t.Begin();
 	if (strlen(pszSQL) >= SQL_MAXLEN)
 	{
-		//FILE *pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");`
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE *pf = fopen("log/SQL��䳤��Խ��.txt", "a+");`
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", pszSQL);
@@ -3075,8 +3075,8 @@ bool CTableAct::Init(void)
 	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::account));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -3147,8 +3147,8 @@ bool CTableBoat::Init(void)
 	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::boat));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -3195,8 +3195,8 @@ BOOL CTableBoat::Create( DWORD& dwBoatID, const BOAT_DATA& Data )
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -3338,8 +3338,8 @@ BOOL CTableBoat::SaveBoatTempData( DWORD dwBoatID, DWORD dwOwnerID, BYTE byIsDel
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -3359,8 +3359,8 @@ BOOL CTableBoat::SaveBoatDelTag( DWORD dwBoatID, BYTE byIsDeleted )
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -3385,8 +3385,8 @@ BOOL CTableBoat::SaveBoatTempData( CCharacter& Boat, BYTE byIsDeleted )
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -3445,8 +3445,8 @@ BOOL CTableBoat::SaveBoat( CCharacter& Boat, char chSaveType )
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -3512,8 +3512,8 @@ bool CTableBoat::SaveCabin(CCharacter& Boat, char chSaveType)
 
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);
@@ -4009,8 +4009,8 @@ bool CTableGuild::Init(void)
 	game_sql::copy_to(g_sql, game_sql::probe(_get_table(), game_sql::columns::guild));
 	if (strlen(g_sql) >= SQL_MAXLEN)
 	{
-		//FILE	*pf = fopen("log\\SQL��䳤��Խ��.txt", "a+");
-		FILE	*pf = fopen("log\\SQLsentence_length_slopover.txt", "a+");
+		//FILE	*pf = fopen("log/SQL��䳤��Խ��.txt", "a+");
+		FILE	*pf = fopen("log/SQLsentence_length_slopover.txt", "a+");
 		if (pf)
 		{
 			fprintf(pf, "%s\n\n", g_sql);

@@ -1,4 +1,4 @@
-// LogvwrDlg.cpp : ÊµÏÖÎÄ¼ş
+// LogvwrDlg.cpp : å®ç°æ–‡ä»¶
 //
 
 #include "stdafx.h"
@@ -19,20 +19,20 @@
 #endif
 
 
-// ÓÃÓÚÓ¦ÓÃ³ÌĞò¡°¹ØÓÚ¡±²Ëµ¥ÏîµÄ CAboutDlg ¶Ô»°¿ò
+// ç”¨äºåº”ç”¨ç¨‹åºâ€œå…³äºâ€èœå•é¡¹çš„ CAboutDlg å¯¹è¯æ¡†
 
 class CAboutDlg : public CDialog
     {
 public:
     CAboutDlg();
 
-    // ¶Ô»°¿òÊı¾İ
+    // å¯¹è¯æ¡†æ•°æ®
     enum {IDD = IDD_ABOUTBOX};
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
-    // ÊµÏÖ
+    // å®ç°
 protected:
     DECLARE_MESSAGE_MAP()
 	};
@@ -50,7 +50,7 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-// CLogvwrDlg ¶Ô»°¿ò
+// CLogvwrDlg å¯¹è¯æ¡†
 CLogvwrDlg::CLogvwrDlg(CWnd* pParent /*=NULL*/) : CDialog(CLogvwrDlg::IDD, pParent),
                                                   m_CS()
     {
@@ -106,11 +106,11 @@ BEGIN_MESSAGE_MAP(CLogvwrDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-// CLogvwrDlg ÏûÏ¢´¦Àí³ÌĞò
+// CLogvwrDlg æ¶ˆæ¯å¤„ç†ç¨‹åº
 const int FIELD_NUM = 6;
-//static TCHAR FieldText[FIELD_NUM][16 * sizeof TCHAR] = {"NO", "Ê±¼ä", "ºÁÃë",
-//                                                        "¼ä¸ô£¨ºÁÃë£©",
-//                                                        "ÀàĞÍ", "ÄÚÈİ"};
+//static TCHAR FieldText[FIELD_NUM][16 * sizeof TCHAR] = {"NO", "æ—¶é—´", "æ¯«ç§’",
+//                                                        "é—´éš”ï¼ˆæ¯«ç§’ï¼‰",
+//                                                        "ç±»å‹", "å†…å®¹"};
 static TCHAR FieldText[FIELD_NUM][16 * sizeof TCHAR] = {"NO", "Time", "millisecond",
                                                         "interval(ms)",
                                                         "Type", "Content"};
@@ -123,9 +123,9 @@ BOOL CLogvwrDlg::OnInitDialog()
     {
     CDialog::OnInitDialog();
 
-    // ½«\¡°¹ØÓÚ...\¡±²Ëµ¥ÏîÌí¼Óµ½ÏµÍ³²Ëµ¥ÖĞ¡£
+    // å°†\â€œå…³äº...\â€èœå•é¡¹æ·»åŠ åˆ°ç³»ç»Ÿèœå•ä¸­ã€‚
 
-    // IDM_ABOUTBOX ±ØĞëÔÚÏµÍ³ÃüÁî·¶Î§ÄÚ¡£
+    // IDM_ABOUTBOX å¿…é¡»åœ¨ç³»ç»Ÿå‘½ä»¤èŒƒå›´å†…ã€‚
     ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
     ASSERT(IDM_ABOUTBOX < 0xF000);
 
@@ -141,23 +141,23 @@ BOOL CLogvwrDlg::OnInitDialog()
             }
         }
 
-    // ÉèÖÃ´Ë¶Ô»°¿òµÄÍ¼±ê¡£µ±Ó¦ÓÃ³ÌĞòÖ÷´°¿Ú²»ÊÇ¶Ô»°¿òÊ±£¬¿ò¼Ü½«×Ô¶¯
-    //  Ö´ĞĞ´Ë²Ù×÷
-    SetIcon(m_hIcon, TRUE);         // ÉèÖÃ´óÍ¼±ê
-    SetIcon(m_hIcon, FALSE);        // ÉèÖÃĞ¡Í¼±ê
+    // è®¾ç½®æ­¤å¯¹è¯æ¡†çš„å›¾æ ‡ã€‚å½“åº”ç”¨ç¨‹åºä¸»çª—å£ä¸æ˜¯å¯¹è¯æ¡†æ—¶ï¼Œæ¡†æ¶å°†è‡ªåŠ¨
+    //  æ‰§è¡Œæ­¤æ“ä½œ
+    SetIcon(m_hIcon, TRUE);         // è®¾ç½®å¤§å›¾æ ‡
+    SetIcon(m_hIcon, FALSE);        // è®¾ç½®å°å›¾æ ‡
 
-    // TODO: ÔÚ´ËÌí¼Ó¶îÍâµÄ³õÊ¼»¯´úÂë
-    // ´´½¨GPL viewµÄ¶Ô»°¿ò
+    // TODO: åœ¨æ­¤æ·»åŠ é¢å¤–çš„åˆå§‹åŒ–ä»£ç 
+    // åˆ›å»ºGPL viewçš„å¯¹è¯æ¡†
     m_pGplDlg = new CGplViewDlg(this);
     m_pGplDlg->Create(IDD_GPLVIEW);
     m_pGplDlg->SetLgDataList(&m_LGData);
     m_pGplDlg->SetGplDataList(&m_GPLData);
 
-    // µÃµ½µ±Ç°Ö÷²Ëµ¥¶ÔÏóÖ¸Õë
+    // å¾—åˆ°å½“å‰ä¸»èœå•å¯¹è±¡æŒ‡é’ˆ
 	m_PopMenu.LoadMenu(IDR_MAINMENU);
     m_pMainMenu = &m_PopMenu;
 
-    // ³õÊ¼»¯ListCtrlµÄheader
+    // åˆå§‹åŒ–ListCtrlçš„header
     LVCOLUMN lv;
     lv.mask = LVCF_WIDTH | LVCF_TEXT | LVCF_FMT;
     for (int i = 0; i < FIELD_NUM; ++ i)
@@ -173,13 +173,13 @@ BOOL CLogvwrDlg::OnInitDialog()
                                m_LogList.GetExtendedStyle());
 
 
-    // ÉèÖÃµ±Ç°¼¤»îµÄListCtrlÎªm_LogList
+    // è®¾ç½®å½“å‰æ¿€æ´»çš„ListCtrlä¸ºm_LogList
     m_pActiveWnd = &m_LogList;
 
-	// ÉèÖÃTimer#1
+	// è®¾ç½®Timer#1
 	SetTimer(1, 3000, NULL);
 
-    return TRUE;  // ³ı·ÇÉèÖÃÁË¿Ø¼şµÄ½¹µã£¬·ñÔò·µ»Ø TRUE
+    return TRUE;  // é™¤éè®¾ç½®äº†æ§ä»¶çš„ç„¦ç‚¹ï¼Œå¦åˆ™è¿”å› TRUE
     }
 
 void CLogvwrDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -188,12 +188,12 @@ void CLogvwrDlg::OnSysCommand(UINT nID, LPARAM lParam)
         {
         DWORD style = GetExStyle();
         if (style & WS_EX_TOPMOST)
-            { // È¡Ïû TOPMOST ÊôĞÔ
+            { // å–æ¶ˆ TOPMOST å±æ€§
             SetWindowPos(&wndNoTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
             CMenu* pSysMenu = GetSystemMenu(FALSE);
             if (pSysMenu != NULL)
                 pSysMenu->CheckMenuItem(IDM_ABOUTBOX, MF_UNCHECKED);}
-        else{ // ÉèÖÃ TOPMOST ÊôĞÔ
+        else{ // è®¾ç½® TOPMOST å±æ€§
             SetWindowPos(&wndTopMost, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
             CMenu* pSysMenu = GetSystemMenu(FALSE);
             if (pSysMenu != NULL)
@@ -202,20 +202,20 @@ void CLogvwrDlg::OnSysCommand(UINT nID, LPARAM lParam)
     else{CDialog::OnSysCommand(nID, lParam);}
     }
 
-// Èç¹ûÏò¶Ô»°¿òÌí¼Ó×îĞ¡»¯°´Å¥£¬ÔòĞèÒªÏÂÃæµÄ´úÂë
-//  À´»æÖÆ¸ÃÍ¼±ê¡£¶ÔÓÚÊ¹ÓÃÎÄµµ/ÊÓÍ¼Ä£ĞÍµÄ MFC Ó¦ÓÃ³ÌĞò£¬
-//  Õâ½«ÓÉ¿ò¼Ü×Ô¶¯Íê³É¡£
+// å¦‚æœå‘å¯¹è¯æ¡†æ·»åŠ æœ€å°åŒ–æŒ‰é’®ï¼Œåˆ™éœ€è¦ä¸‹é¢çš„ä»£ç 
+//  æ¥ç»˜åˆ¶è¯¥å›¾æ ‡ã€‚å¯¹äºä½¿ç”¨æ–‡æ¡£/è§†å›¾æ¨¡å‹çš„ MFC åº”ç”¨ç¨‹åºï¼Œ
+//  è¿™å°†ç”±æ¡†æ¶è‡ªåŠ¨å®Œæˆã€‚
 
 void CLogvwrDlg::OnPaint()
     {
     if (IsIconic())
         {
-        CPaintDC dc(this); // ÓÃÓÚ»æÖÆµÄÉè±¸ÉÏÏÂÎÄ
+        CPaintDC dc(this); // ç”¨äºç»˜åˆ¶çš„è®¾å¤‡ä¸Šä¸‹æ–‡
 
         SendMessage(WM_ICONERASEBKGND,
                     reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-        // Ê¹Í¼±êÔÚ¹¤×÷¾ØĞÎÖĞ¾ÓÖĞ
+        // ä½¿å›¾æ ‡åœ¨å·¥ä½œçŸ©å½¢ä¸­å±…ä¸­
         int cxIcon = GetSystemMetrics(SM_CXICON);
         int cyIcon = GetSystemMetrics(SM_CYICON);
         CRect rect;
@@ -223,7 +223,7 @@ void CLogvwrDlg::OnPaint()
         int x = (rect.Width() - cxIcon + 1) / 2;
         int y = (rect.Height() - cyIcon + 1) / 2;
 
-        // »æÖÆÍ¼±ê
+        // ç»˜åˆ¶å›¾æ ‡
         dc.DrawIcon(x, y, m_hIcon);
         }
     else
@@ -232,13 +232,13 @@ void CLogvwrDlg::OnPaint()
         }
     }
 
-//µ±ÓÃ»§ÍÏ¶¯×îĞ¡»¯´°¿ÚÊ±ÏµÍ³µ÷ÓÃ´Ëº¯ÊıÈ¡µÃ¹â±êÏÔÊ¾¡£
+//å½“ç”¨æˆ·æ‹–åŠ¨æœ€å°åŒ–çª—å£æ—¶ç³»ç»Ÿè°ƒç”¨æ­¤å‡½æ•°å–å¾—å…‰æ ‡æ˜¾ç¤ºã€‚
 HCURSOR CLogvwrDlg::OnQueryDragIcon()
     {
     return static_cast<HCURSOR>(m_hIcon);
     }
 
-// ×ÔÌí¼ÓÏûÏ¢´¦Àíº¯Êı
+// è‡ªæ·»åŠ æ¶ˆæ¯å¤„ç†å‡½æ•°
 void CLogvwrDlg::OnSize(UINT nType, int cx, int cy)
     {
     if (m_Container.GetSafeHwnd())
@@ -248,7 +248,7 @@ void CLogvwrDlg::OnSize(UINT nType, int cx, int cy)
         RECT rcCntnr;
         m_Container.GetClientRect(&rcCntnr);
 
-        // µ÷Õûµ±Ç°¼¤»î´°¿Ú
+        // è°ƒæ•´å½“å‰æ¿€æ´»çª—å£
         try
             {
             if (m_pActiveWnd->GetSafeHwnd())
@@ -258,14 +258,14 @@ void CLogvwrDlg::OnSize(UINT nType, int cx, int cy)
             }
         catch (...)
             {
-            // Èç¹û³öÏÖÒì³££¬ÔòÏÔÊ¾ËùÓĞLOG´°¿Ú
+            // å¦‚æœå‡ºç°å¼‚å¸¸ï¼Œåˆ™æ˜¾ç¤ºæ‰€æœ‰LOGçª—å£
             if (m_LogList.GetSafeHwnd())
                 {
                 m_LogList.MoveWindow(&rcCntnr);
                 }
             }
 
-        // µ÷Õû°´Å¥£º²âÊÔºÍÇå³ı
+        // è°ƒæ•´æŒ‰é’®ï¼šæµ‹è¯•å’Œæ¸…é™¤
         int btn_width;
         int btn_height;
         RECT rc;
@@ -297,54 +297,54 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
 
     try
         {
-        static CLogString type_str; // ´Ë´ÎLOGµÄÀà±ğ
+        static CLogString type_str; // æ­¤æ¬¡LOGçš„ç±»åˆ«
 
-        // ½âÎöLOGÊı¾İ°ü
+        // è§£æLOGæ•°æ®åŒ…
         (*m_pLogPacket) << (*pCopyDataStruct);
 
-        // È¡³ö°üÍ·
+        // å–å‡ºåŒ…å¤´
         (*m_pLogPacket) >> hdr;
 
-        // ¸ù¾İ°üÍ·µÄdwReservedÓòÅĞ¶Ï¶Ô¶ËµÄº¯Êıµ÷ÓÃÀàĞÍ
-        // ²¢×ö²»Í¬´¦Àí
+        // æ ¹æ®åŒ…å¤´çš„dwReservedåŸŸåˆ¤æ–­å¯¹ç«¯çš„å‡½æ•°è°ƒç”¨ç±»å‹
+        // å¹¶åšä¸åŒå¤„ç†
         if (hdr.dwReserved == LG_CALL)
             {
-            // ¶Ô¶ËÊ¹ÓÃÁËLGº¯Êı£¬Èç£º
+            // å¯¹ç«¯ä½¿ç”¨äº†LGå‡½æ•°ï¼Œå¦‚ï¼š
             // LG("init", "(%d,%d)", x, y);
 
-            // Ôö¼Ó½ÓÊÕ°ü¼ÆÊı£¬²¢½«ĞòºÅ·ÅÈëËùÓĞ°üµÄListCtrl
+            // å¢åŠ æ¥æ”¶åŒ…è®¡æ•°ï¼Œå¹¶å°†åºå·æ”¾å…¥æ‰€æœ‰åŒ…çš„ListCtrl
             ++ m_dwPacketCnt;
 
-            // ¸ù¾İ°üÍ·ÖĞitemµÄ¸öÊı·ÖÅäCLogString¶ÔÏó
+            // æ ¹æ®åŒ…å¤´ä¸­itemçš„ä¸ªæ•°åˆ†é…CLogStringå¯¹è±¡
             int num = min(FIELD_NUM - 1, hdr.dwItemCount);
             CLogString** pStrList = new CLogString*[num];
 
-            // ½«Êı¾İÈ¡³ö
+            // å°†æ•°æ®å–å‡º
             for (int i = 0; i < num; ++ i)
                 {
                 pStrList[i] = new CLogString();
 
-                // È¡³öItem
+                // å–å‡ºItem
                 (*m_pLogPacket) >> (*pStrList[i]);
 
-                // µÚËÄ¸öÊÇÀàĞÍ£¬Áí´æ
+                // ç¬¬å››ä¸ªæ˜¯ç±»å‹ï¼Œå¦å­˜
                 if (i == 3)
                     type_str = (*pStrList[i]);
                 }
 
 
-            // Ñ°ÕÒ´Ë´ÎLOGµÄÀà±ğËù¶ÔÓ¦µÄListCtrl´°¿Ú¶ÔÏó£¬Ã»ÓĞÔò»áĞÂ½¨
-            // Ò»¸öCLogTypeData¶ÔÏó
+            // å¯»æ‰¾æ­¤æ¬¡LOGçš„ç±»åˆ«æ‰€å¯¹åº”çš„ListCtrlçª—å£å¯¹è±¡ï¼Œæ²¡æœ‰åˆ™ä¼šæ–°å»º
+            // ä¸€ä¸ªCLogTypeDataå¯¹è±¡
             CLogTypeData* pltd;
             CListCtrl* pList;
             if (HaveThisLGType(LPSTR(type_str), &pltd))
                 {
-                // Ö±½ÓÕÒµ½£¬¿Éµ½ListCtrl´°¿Ú¶ÔÏóÖ¸Õë
+                // ç›´æ¥æ‰¾åˆ°ï¼Œå¯åˆ°ListCtrlçª—å£å¯¹è±¡æŒ‡é’ˆ
                 pList = (CListCtrl *) (*pltd);
                 }
             else
                 {
-                // ÒªĞÂ½¨Ò»¸öĞÂµÄCLogTypeData¶ÔÏó£¬»áÔÚ´°¿ÚÍË³öÊ±×Ô¶¯Ïú»Ù
+                // è¦æ–°å»ºä¸€ä¸ªæ–°çš„CLogTypeDataå¯¹è±¡ï¼Œä¼šåœ¨çª—å£é€€å‡ºæ—¶è‡ªåŠ¨é”€æ¯
                 UINT nListID = (UINT) (MY_LGLIST_BASE + 1 + m_LGData.size());
                 UINT nMenuID = (UINT) (MY_LGMENU_BASE + 1 + m_LGData.size());
                 pltd = new CLogTypeData(this, LPSTR(type_str), nListID);
@@ -361,14 +361,14 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
                     pList->InsertColumn(i, &lv);
                     }
 
-                // ½«type_str²åÈëµ½View²Ëµ¥ÖĞ
-                CMenu* pSubMenu = m_pMainMenu->GetSubMenu(1); // FileÊÇÎ»ÖÃ0£¬ViewÊÇÎ»ÖÃ1
+                // å°†type_stræ’å…¥åˆ°Viewèœå•ä¸­
+                CMenu* pSubMenu = m_pMainMenu->GetSubMenu(1); // Fileæ˜¯ä½ç½®0ï¼ŒViewæ˜¯ä½ç½®1
                 pSubMenu->AppendMenu(MF_STRING, nMenuID, LPSTR(type_str));
                 }
 
 			m_pActiveWnd->SetRedraw(FALSE);
 			
-            // ¿ªÊ¼½«Êı¾İ²åÈëÁ½¸öListCtrlÖĞ
+            // å¼€å§‹å°†æ•°æ®æ’å…¥ä¸¤ä¸ªListCtrlä¸­
 			// 1) All ListCtrl
             char buf[20];
             LVITEMA lv;
@@ -384,14 +384,14 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
                 lv.pszText = LPSTR(*pStrList[i]);
                 m_LogList.SetItem(&lv);
                 }
-			// ×î¶àÖ§³Ö100Ìõ¼ÇÂ¼
+			// æœ€å¤šæ”¯æŒ100æ¡è®°å½•
 			int n = m_LogList.GetItemCount();
 			if (n > 100)
-				m_LogList.DeleteItem(0); // É¾³ıµÚÒ»Ìõ
+				m_LogList.DeleteItem(0); // åˆ é™¤ç¬¬ä¸€æ¡
 
 			
             // 2) This type ListCtrl
-            // ×¢Òâ£ºÒªÖØĞÂ¼ÆËãÊ±¼ä¼ä¸ô£¨×¨ÃÅÕë¶Ô´ËÀàListCtrl£©
+            // æ³¨æ„ï¼šè¦é‡æ–°è®¡ç®—æ—¶é—´é—´éš”ï¼ˆä¸“é—¨é’ˆå¯¹æ­¤ç±»ListCtrlï¼‰
             int type_cnt = pList->GetItemCount();
             static CString strLastPoint;
             static DWORD dwLastPoint;
@@ -400,10 +400,10 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
             static DWORD dwInterval;
             if (type_cnt > 0)
                 {
-                // µÃµ½ÉÏÒ»¸ö´ËÀàLOGµÄºÁÃëµã
+                // å¾—åˆ°ä¸Šä¸€ä¸ªæ­¤ç±»LOGçš„æ¯«ç§’ç‚¹
                 strLastPoint = pList->GetItemText(type_cnt - 1, 2);
                 dwLastPoint = (DWORD) atoi(LPCSTR(strLastPoint));
-                // µÃµ½µ±Ç°´ËÀàLOGµÄºÁÃëµã
+                // å¾—åˆ°å½“å‰æ­¤ç±»LOGçš„æ¯«ç§’ç‚¹
                 strNewPoint = LPSTR(*pStrList[1]);
                 dwNewPoint = (DWORD) atoi(LPCSTR(strNewPoint));
                 if (dwNewPoint < dwLastPoint) // system start-up time wrap around
@@ -411,13 +411,13 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
                 else
                     dwInterval = dwNewPoint - dwLastPoint;
 
-                // Ìæ»»Ê±¼ä¼ä¸ô
+                // æ›¿æ¢æ—¶é—´é—´éš”
                 itoa(dwInterval, buf, 10);
                 (*pStrList[2]) = buf;
                 }
             else if (type_cnt == 0)
                 {
-                // µÚÒ»´Î£¬¼òµ¥·Å¸ö"0"
+                // ç¬¬ä¸€æ¬¡ï¼Œç®€å•æ”¾ä¸ª"0"
                 (*pStrList[2]) = "0";
                 }
             else
@@ -434,19 +434,19 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
                 lv.pszText = LPSTR(*pStrList[i]);
                 pList->SetItem(&lv);
                 }
-			// ×î¶àÖ§³Ö100Ìõ¼ÇÂ¼
+			// æœ€å¤šæ”¯æŒ100æ¡è®°å½•
 			n = pList->GetItemCount();
 			if (n > 100)
-				pList->DeleteItem(0); // É¾³ıµÚÒ»Ìõ
+				pList->DeleteItem(0); // åˆ é™¤ç¬¬ä¸€æ¡
 
-            // Ïú»ÙpStrList¶ÔÏó¼°ÄÚ²¿×Ó¶ÔÏó
+            // é”€æ¯pStrListå¯¹è±¡åŠå†…éƒ¨å­å¯¹è±¡
             for (i = 0; i < num; ++ i)
                 delete pStrList[i];
             delete pStrList;
             }
         else if (hdr.dwReserved == GPL_CALL)
             {
-            // ¶Ô¶ËÊ¹ÓÃÁËGPLº¯Êı£¬Èç£º
+            // å¯¹ç«¯ä½¿ç”¨äº†GPLå‡½æ•°ï¼Œå¦‚ï¼š
             // GPL("FPS", 20, 20, "FPS : %d", fps);
 
             int num = hdr.dwItemCount;
@@ -457,36 +457,36 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
                 {
                 pStrList[i] = new CLogString();
 
-                // È¡³öItem
+                // å–å‡ºItem
                 (*m_pLogPacket) >> (*pStrList[i]);
                 }
 
-            // pStrList[0]ÊÇ±¾ĞÅÏ¢ËùÊôµÄÀàĞÍÃû
-            // pStrList[1]ÊÇÎ¨Ò»±êÊ¶id
-            // pStrList[2]ÊÇÒªÊä³öµÄÎÄ±¾
+            // pStrList[0]æ˜¯æœ¬ä¿¡æ¯æ‰€å±çš„ç±»å‹å
+            // pStrList[1]æ˜¯å”¯ä¸€æ ‡è¯†id
+            // pStrList[2]æ˜¯è¦è¾“å‡ºçš„æ–‡æœ¬
             CGplTypeData* pgtd;
             int id = atoi(LPSTR(*pStrList[1]));
             if (HaveThisGPLType(LPSTR(*pStrList[0]), &pgtd))
                 {
-                // ÒÑÓĞ£¬ÎŞĞèÖØ½¨
+                // å·²æœ‰ï¼Œæ— éœ€é‡å»º
                 }
             else
                 {
-                // ´´½¨Ò»¸öĞÂµÄCGplTypeData¶ÔÏó£¬²¢·ÅÈëm_GPLDataÖĞ
+                // åˆ›å»ºä¸€ä¸ªæ–°çš„CGplTypeDataå¯¹è±¡ï¼Œå¹¶æ”¾å…¥m_GPLDataä¸­
                 UINT nMenuID = (UINT)
                                (MY_GPLMENU_BASE + 1 + m_GPLData.size());
                 pgtd = new CGplTypeData(LPSTR(*pStrList[0]));
                 ASSERT(pgtd != NULL);
 
-                // ¼ÓÈëµ½m_GPLDataÖĞ
+                // åŠ å…¥åˆ°m_GPLDataä¸­
                 m_GPLData.push_back(pgtd);
 
-                // ÔÚView²Ëµ¥ÖĞµÄ·Ö¸ô·ûÇ°²åÈë¸ö²Ëµ¥
-                CMenu* pSubMenu = m_pMainMenu->GetSubMenu(1); // FileÊÇÎ»ÖÃ0£¬ViewÊÇÎ»ÖÃ1
+                // åœ¨Viewèœå•ä¸­çš„åˆ†éš”ç¬¦å‰æ’å…¥ä¸ªèœå•
+                CMenu* pSubMenu = m_pMainMenu->GetSubMenu(1); // Fileæ˜¯ä½ç½®0ï¼ŒViewæ˜¯ä½ç½®1
                 UINT mcnt = pSubMenu->GetMenuItemCount();
-                ASSERT(mcnt >= 3); // Ò»¸öGPL£¬Ò»¸ö·Ö¸ô·û£¬Ò»¸öLG
+                ASSERT(mcnt >= 3); // ä¸€ä¸ªGPLï¼Œä¸€ä¸ªåˆ†éš”ç¬¦ï¼Œä¸€ä¸ªLG
 
-                // Ñ°ÕÒ·Ö¸ô·ûµÄÎ»ÖÃ
+                // å¯»æ‰¾åˆ†éš”ç¬¦çš„ä½ç½®
                 UINT sid = -1;
                 int pos;
                 for (pos = 0; pos < int(mcnt); ++ pos)
@@ -497,29 +497,29 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
                     }
                 ASSERT(sid == 0);
 
-                // ÔÚ·Ö¸ô·ûÇ°²åÈë
+                // åœ¨åˆ†éš”ç¬¦å‰æ’å…¥
                 BOOL bRet = pSubMenu->InsertMenu(pos, MF_BYPOSITION, nMenuID,
                                                  LPSTR(*pStrList[0]));
                 ASSERT(bRet);
 
-                // ¸üĞÂËüµÄ×´Ì¬
+                // æ›´æ–°å®ƒçš„çŠ¶æ€
                 if (pgtd->IsEnabled())
                     {
-                    // ´ò¸ö¶Ô¹´
+                    // æ‰“ä¸ªå¯¹å‹¾
                     pSubMenu->CheckMenuItem(nMenuID, MF_CHECKED);
                     }
                 }
 
-            // ²åÈëÊı¾İ
+            // æ’å…¥æ•°æ®
             pgtd->m_Map[id] = LPSTR(*pStrList[2]);
 
 
-            // Ïú»ÙpStrList¶ÔÏó¼°ÄÚ²¿×Ó¶ÔÏó
+            // é”€æ¯pStrListå¯¹è±¡åŠå†…éƒ¨å­å¯¹è±¡
             for (i = 0; i < num; ++ i)
                 delete pStrList[i];
             delete pStrList;
 
-            // ¸øGplView·¢¸öË¢ĞÂÏûÏ¢À´¸üĞÂÏÔÊ¾
+            // ç»™GplViewå‘ä¸ªåˆ·æ–°æ¶ˆæ¯æ¥æ›´æ–°æ˜¾ç¤º
             if (m_pActiveWnd->m_hWnd == m_pGplDlg->m_hWnd)
                 {
                 m_pGplDlg->Invalidate(FALSE);
@@ -537,23 +537,23 @@ BOOL CLogvwrDlg::OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct)
     return TRUE;
     }
 
-// ´¦Àí×Ô¼ºµÄ¶¯Ì¬²Ëµ¥ÏûÏ¢
+// å¤„ç†è‡ªå·±çš„åŠ¨æ€èœå•æ¶ˆæ¯
 BOOL CLogvwrDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     {
-    UINT nID = LOWORD(wParam); // ¿Ø¼ş¡¢¿ì½İ¼ü¡¢²Ëµ¥µÄID
-    int nCode = HIWORD(wParam); // ÏûÏ¢¡¢1¡¢0
-    HWND hWndCtrl = (HWND) lParam; // ´°¿Ú¾ä±ú¡¢0¡¢0
+    UINT nID = LOWORD(wParam); // æ§ä»¶ã€å¿«æ·é”®ã€èœå•çš„ID
+    int nCode = HIWORD(wParam); // æ¶ˆæ¯ã€1ã€0
+    HWND hWndCtrl = (HWND) lParam; // çª—å£å¥æŸ„ã€0ã€0
 
     if ((nID > MY_LGMENU_BASE) &&
         (nID <= MY_LGMENU_BASE + UINT(m_LGData.size())))
         {
         if ((nCode == 0) && (hWndCtrl == NULL))
             {
-            // ×Ô¼ºµÄ¶¯Ì¬LGµÄMENUÏûÏ¢
+            // è‡ªå·±çš„åŠ¨æ€LGçš„MENUæ¶ˆæ¯
             CString txt;
-            m_pMainMenu->GetMenuString(nID, txt, MF_BYCOMMAND); // µÃµ½Ñ¡¶¨²Ëµ¥µÄ×Ö·û´®
+            m_pMainMenu->GetMenuString(nID, txt, MF_BYCOMMAND); // å¾—åˆ°é€‰å®šèœå•çš„å­—ç¬¦ä¸²
 
-            // ÇĞ»»µ½´Ë´°¿Ú
+            // åˆ‡æ¢åˆ°æ­¤çª—å£
             SwitchView(txt);
             return TRUE;
             }
@@ -564,34 +564,34 @@ BOOL CLogvwrDlg::OnCommand(WPARAM wParam, LPARAM lParam)
         {
         if ((nCode == 0) && (hWndCtrl == NULL))
             {
-            // ×Ô¼ºµÄ¶¯Ì¬GPLµÄMENUÏûÏ¢
+            // è‡ªå·±çš„åŠ¨æ€GPLçš„MENUæ¶ˆæ¯
             CString txt;
-            m_pMainMenu->GetMenuString(nID, txt, MF_BYCOMMAND); // µÃµ½Ñ¡¶¨²Ëµ¥µÄ×Ö·û´®
+            m_pMainMenu->GetMenuString(nID, txt, MF_BYCOMMAND); // å¾—åˆ°é€‰å®šèœå•çš„å­—ç¬¦ä¸²
 
-            // ËÑË÷ÊÇ·ñÓĞ´ËÀàGPL
+            // æœç´¢æ˜¯å¦æœ‰æ­¤ç±»GPL
             CGplTypeData* pgtd = NULL;
             if (HaveThisGPLType((LPCTSTR) txt, &pgtd))
                 {
                 //
                 if (pgtd->IsEnabled())
                     {
-                    // ±äÎªÊ§Ğ§
+                    // å˜ä¸ºå¤±æ•ˆ
                     pgtd->Enable(FALSE);
                     m_pMainMenu->CheckMenuItem(nID, MF_UNCHECKED);
                     }
                 else
                     {
-                    // ±äÎªÓĞĞ§
+                    // å˜ä¸ºæœ‰æ•ˆ
                     pgtd->Enable();
                     m_pMainMenu->CheckMenuItem(nID, MF_CHECKED);
                     }
 
-                // Ë¢ĞÂGpl view
+                // åˆ·æ–°Gpl view
                 m_pGplDlg->Invalidate(FALSE);
                 }
             else
                 {
-                // Ê²Ã´¶¼²»×÷
+                // ä»€ä¹ˆéƒ½ä¸ä½œ
                 }
 
             return TRUE;
@@ -604,7 +604,7 @@ BOOL CLogvwrDlg::OnCommand(WPARAM wParam, LPARAM lParam)
         }
     }
 
-// ´¦Àí×Ô¼ºµÄ¶¯Ì¬ListCtrlÏûÏ¢
+// å¤„ç†è‡ªå·±çš„åŠ¨æ€ListCtrlæ¶ˆæ¯
 BOOL CLogvwrDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
     {
     ASSERT(pResult != NULL);
@@ -618,17 +618,17 @@ BOOL CLogvwrDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
 
         if (pNMHDR->code == NM_RCLICK)
             {
-            // µ¯³öÓÒ¼ü²Ëµ¥
+            // å¼¹å‡ºå³é”®èœå•
             POINT pt;
             GetCursorPos(&pt);
-            CMenu* pSub = m_pMainMenu->GetSubMenu(1); // µÃµ½View×Ó²Ëµ¥
+            CMenu* pSub = m_pMainMenu->GetSubMenu(1); // å¾—åˆ°Viewå­èœå•
             pSub->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y,
                                  this);
             return TRUE;
             }
         else if (pNMHDR->code == NM_DBLCLK)
             {
-            // »Øµ½ËùÓĞLOGµÄ´°¿Ú
+            // å›åˆ°æ‰€æœ‰LOGçš„çª—å£
             OnViewAll();
             return TRUE;
             }
@@ -641,14 +641,14 @@ BOOL CLogvwrDlg::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
         }
     }
 
-// ÓÃ»§µã»÷Çå³ı°´Å¥£¬½«Çå³ım_LogListÖĞµÄËùÓĞÄÚÈİ
+// ç”¨æˆ·ç‚¹å‡»æ¸…é™¤æŒ‰é’®ï¼Œå°†æ¸…é™¤m_LogListä¸­çš„æ‰€æœ‰å†…å®¹
 void CLogvwrDlg::OnBnClickedClearlog()
     {
     // TODO: Add your control notification handler code here
 
     }
 
-// ²âÊÔ¸ø×Ô¼º´°¿Ú·¢¸öÊı¾İ°ü
+// æµ‹è¯•ç»™è‡ªå·±çª—å£å‘ä¸ªæ•°æ®åŒ…
 void CLogvwrDlg::OnBnClickedTestlog()
     {
     // TODO: Add your control notification handler code here
@@ -656,7 +656,7 @@ void CLogvwrDlg::OnBnClickedTestlog()
     }
 
 
-// ²âÊÔ£¬µ¯³ö¶Ô»°¿ò£¬ÊäÈë×Ô¶¨ÒåÏûÏ¢£¬·¢³ö
+// æµ‹è¯•ï¼Œå¼¹å‡ºå¯¹è¯æ¡†ï¼Œè¾“å…¥è‡ªå®šä¹‰æ¶ˆæ¯ï¼Œå‘å‡º
 void CLogvwrDlg::OnFileTest()
     {
     // TODO: Add your command handler code here
@@ -702,17 +702,17 @@ BOOL CLogvwrDlg::SwitchView(CWnd& ActiveWnd)
     RECT rcMainWnd;
     GetClientRect(&rcMainWnd);
 
-    // ×öÒ»¸öĞé¼Ùµ÷ÓÃ
+    // åšä¸€ä¸ªè™šå‡è°ƒç”¨
     //OnSize(0, rcMainWnd.right - rcMainWnd.left, rcMainWnd.bottom - rcMainWnd.top);
     OnSize(0, rcMainWnd.right, rcMainWnd.bottom);
 
-    // ÕÒµ½ÈİÆ÷µÄÎ»ÖÃ
+    // æ‰¾åˆ°å®¹å™¨çš„ä½ç½®
     RECT rcCntnr;
     m_Container.GetClientRect(&rcCntnr);
 
     try
         {
-        // Òş²ØËùÓĞ´°¿Ú
+        // éšè—æ‰€æœ‰çª—å£
         std::vector<CLogTypeData*>::iterator i;
         CListCtrl* pList;
         for (i = m_LGData.begin(); i != m_LGData.end(); ++ i)
@@ -723,11 +723,11 @@ BOOL CLogvwrDlg::SwitchView(CWnd& ActiveWnd)
         m_LogList.ShowWindow(SW_HIDE);
         m_pGplDlg->ShowWindow(SW_HIDE);
 
-        // ÏÔÊ¾¼¤»î´°¿Ú
+        // æ˜¾ç¤ºæ¿€æ´»çª—å£
         if ((ActiveWnd.m_hWnd != m_LogList.m_hWnd) &&
             (ActiveWnd.m_hWnd != m_pGplDlg->m_hWnd))
             {
-            // ¶¯Ì¬LOGÀà±ğ´°¿Úµ÷ÕûÏÂ´óĞ¡
+            // åŠ¨æ€LOGç±»åˆ«çª—å£è°ƒæ•´ä¸‹å¤§å°
             rcCntnr.left += 1;
             rcCntnr.right -= 1;
             rcCntnr.top += 1;
@@ -735,7 +735,7 @@ BOOL CLogvwrDlg::SwitchView(CWnd& ActiveWnd)
             }
 
         m_pActiveWnd = &ActiveWnd;
-        ActiveWnd.MoveWindow(&rcCntnr); // ·Åµ½ÈİÆ÷ÖĞ
+        ActiveWnd.MoveWindow(&rcCntnr); // æ”¾åˆ°å®¹å™¨ä¸­
         ActiveWnd.ShowWindow(SW_SHOW);
         }
     catch (...)
@@ -746,7 +746,7 @@ BOOL CLogvwrDlg::SwitchView(CWnd& ActiveWnd)
     return TRUE;
     }
 
-// ´Ëº¯ÊıÖ»»á±»¶¯Ì¬´´½¨µÄLOG²Ëµ¥´¦ÀíÀı³Ìµ÷ÓÃ
+// æ­¤å‡½æ•°åªä¼šè¢«åŠ¨æ€åˆ›å»ºçš„LOGèœå•å¤„ç†ä¾‹ç¨‹è°ƒç”¨
 BOOL CLogvwrDlg::SwitchView(CString& strActiveWnd)
     {
     std::vector<CLogTypeData*>::iterator i;
@@ -772,7 +772,7 @@ void CLogvwrDlg::OnViewAll()
     {
     // TODO: Add your command handler code here
 
-    // ÇĞ»»µ½ËùÓĞLOG´°¿Ú
+    // åˆ‡æ¢åˆ°æ‰€æœ‰LOGçª—å£
     SwitchView(m_LogList);
     }
 
@@ -783,7 +783,7 @@ void CLogvwrDlg::OnNMRclickLoglist(NMHDR* pNMHDR, LRESULT* pResult)
     ASSERT(pList != NULL);
     POINT pt;
     GetCursorPos(&pt);
-    CMenu* pSub = m_pMainMenu->GetSubMenu(1); // µÃµ½View×Ó²Ëµ¥
+    CMenu* pSub = m_pMainMenu->GetSubMenu(1); // å¾—åˆ°Viewå­èœå•
     pSub->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y, this); 
 
     *pResult = 0;
@@ -807,7 +807,7 @@ void CLogvwrDlg::OnNMDblclkLoglist(NMHDR* pNMHDR, LRESULT* pResult)
             int nItem = pList->GetNextSelectedItem(pos);
             TRACE1("Item %d was selected!\n", nItem);
 
-            // ÇĞ»»µ½ÏàÓ¦µÄListCtrl´°¿Ú
+            // åˆ‡æ¢åˆ°ç›¸åº”çš„ListCtrlçª—å£
             CString txt = pList->GetItemText(nItem, 4);
             SwitchView(txt);
             }
@@ -821,7 +821,7 @@ void CLogvwrDlg::OnViewGpl()
     {
     // TODO: Add your command handler code here
 
-    // ÇĞ»»µ½GPL´°¿Ú
+    // åˆ‡æ¢åˆ°GPLçª—å£
     SwitchView(*m_pGplDlg);
     }
 
@@ -943,13 +943,13 @@ void CLogvwrDlg::OnViewTest()
 
     LG("init", "hehe");
 
-    LG("init", "µÚ%dÌõLOGÏûÏ¢\n", ++ cnt);
-    GPL("FPS", 20, 20, "FPS : µÚ%dÌõLOGÏûÏ¢\n", ++ cnt);
-    LG("debug", "µÚ%dÌõLOGÏûÏ¢\n", ++ cnt);
-    GPL("CPU", 20, 80, "CPU : µÚ%dÌõLOGÏûÏ¢\n", ++ cnt);
+    LG("init", "ç¬¬%dæ¡LOGæ¶ˆæ¯\n", ++ cnt);
+    GPL("FPS", 20, 20, "FPS : ç¬¬%dæ¡LOGæ¶ˆæ¯\n", ++ cnt);
+    LG("debug", "ç¬¬%dæ¡LOGæ¶ˆæ¯\n", ++ cnt);
+    GPL("CPU", 20, 80, "CPU : ç¬¬%dæ¡LOGæ¶ˆæ¯\n", ++ cnt);
 #endif
 #if 0
-	// ²âÊÔÇĞ·Ö·½·¨
+	// æµ‹è¯•åˆ‡åˆ†æ–¹æ³•
 	char Record[80] = {0};
 	strcpy(Record, "1;");
 	string strList[16];
@@ -989,7 +989,7 @@ void CLogvwrDlg::OnViewClear()
 void CLogvwrDlg::OnViewPlaymp3()
 	{
 	// TODO: Add your command handler code here
-	// ²âÊÔmp3ºÍwavÒôÀÖ²¥·Å
+	// æµ‹è¯•mp3å’ŒwavéŸ³ä¹æ’­æ”¾
 	//int nRet = PlayBkMusic("west96.mp2");
 	}
 

@@ -19,9 +19,9 @@ class CLifeLvRecord : public CRawDataInfo
 public:
 	//CLifeLvRecord();
 
-	long	lID;			// ±àºÅ
-	short	sLevel;			// µÈ¼¶
-	unsigned long	ulExp;	// ¾­ÑéÖµ
+	long	lID;			// ç¼–å·
+	short	sLevel;			// ç­‰çº§
+	unsigned long	ulExp;	// ç»éªŒå€¼
 };
 
 class CLifeLvRecordSet : public CRawDataSet
@@ -39,7 +39,7 @@ public:
 
 protected:
 
-	static CLifeLvRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CLifeLvRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

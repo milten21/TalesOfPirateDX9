@@ -36,7 +36,7 @@ string StringLimit(const string& str,size_t len)
 }
 
 //------------------------------------------------------------------------
-//	´Ó×Ö·û´®ÖĞÈ¡ÈËÎïÃû×Ö£¬ÈËÃû×î´ó³¤¶ÈÎª16¸ö×Ö·û
+//	ä»å­—ç¬¦ä¸²ä¸­å–äººç‰©åå­—ï¼Œäººåæœ€å¤§é•¿åº¦ä¸º16ä¸ªå­—ç¬¦
 //------------------------------------------------------------------------
 bool GetNameFormString(const string &str,string &name)
 {
@@ -57,7 +57,7 @@ bool GetNameFormString(const string &str,string &name)
 }
 
 //------------------------------------------------------------------------
-//	·Ö¸îº¬ÓĞ±íÇé±ê¼ÇµÄÖĞÎÄÎÄ×Ö£¬·Ö¸îºó¿ÉÓÃÓÚ·ÖĞĞÏÔÊ¾
+//	åˆ†å‰²å«æœ‰è¡¨æƒ…æ ‡è®°çš„ä¸­æ–‡æ–‡å­—ï¼Œåˆ†å‰²åå¯ç”¨äºåˆ†è¡Œæ˜¾ç¤º
 //------------------------------------------------------------------------
 string CutFaceText(string &text,size_t cutLimitlen)
 {
@@ -70,7 +70,7 @@ string CutFaceText(string &text,size_t cutLimitlen)
 
 	if(0 == stricmp(g_oLangRec.GetString(0), "English"))
 	{
-		// Ö§³ÖÓ¢ÎÄµ¥´Ê½Ø¶Ï
+		// æ”¯æŒè‹±æ–‡å•è¯æˆªæ–­
 		string temp = text.substr(0,cutLimitlen);
 		size_t nPos = temp.find_last_of(" ");
 		if(nPos != string::npos && nPos > 8)
@@ -85,7 +85,7 @@ string CutFaceText(string &text,size_t cutLimitlen)
 	}
 	else
 	{
-		// ÖĞÎÄ½Ø¶Ï
+		// ä¸­æ–‡æˆªæ–­
 		retStr=text.substr(0,cutLimitlen);
 	}
 
@@ -106,7 +106,7 @@ string CutFaceText(string &text,size_t cutLimitlen)
 }
 
 ////------------------------------------------------------------------------
-////	×Ö·û´®²éÕÒ£¬²¢Ê¹ÓÃ*ºÅÌæ»»×Ö·û´®
+////	å­—ç¬¦ä¸²æŸ¥æ‰¾ï¼Œå¹¶ä½¿ç”¨*å·æ›¿æ¢å­—ç¬¦ä¸²
 ////------------------------------------------------------------------------
 //void ReplaceText(string &text,const string strRpl)
 //{
@@ -119,7 +119,7 @@ string CutFaceText(string &text,size_t cutLimitlen)
 //}
 //
 ////------------------------------------------------------------------------
-////	¸ù¾İ×Ö·û´®±í¹ıÂË×Ö·û´®
+////	æ ¹æ®å­—ç¬¦ä¸²è¡¨è¿‡æ»¤å­—ç¬¦ä¸²
 ////------------------------------------------------------------------------
 //void FilterText(string &text,vector<char*> *p_strFilterTxt)
 //{
@@ -131,11 +131,11 @@ string CutFaceText(string &text,size_t cutLimitlen)
 //}
 
 //------------------------------------------------------------------------
-//	½âÎö·û×ª»»,´Ó0Æğ,Àı:
+//	è§£æç¬¦è½¬æ¢,ä»0èµ·,ä¾‹:
 //	#00 -> </00>
 //	#01 -> </01>
 //	#02 -> </02>
-//	...µ½nMaxCount-1
+//	...åˆ°nMaxCount-1
 //------------------------------------------------------------------------
 void ChangeParseSymbol(string &text,int nMaxCount)
 {
@@ -155,17 +155,17 @@ void ChangeParseSymbol(string &text,int nMaxCount)
 }
 
 
-// ½«InBufÖĞµÄ×Ö·û´®°´nWidth²å·Å»Ø³µ·ÅÔÚOutBufÖĞ
+// å°†InBufä¸­çš„å­—ç¬¦ä¸²æŒ‰nWidthæ’æ”¾å›è½¦æ”¾åœ¨OutBufä¸­
 int StringNewLine( char* pOutBuf, unsigned int nWidth, const char* pInBuf, unsigned int nInLen )
 {
 	if(0 == _stricmp(g_oLangRec.GetString(0), "english"))
 	{
-		// Ó¢ÎÄ
+		// è‹±æ–‡
 		return StringNewLineEng(pOutBuf, nWidth, pInBuf, nInLen);
 	}
 	else
 	{
-		// ÖĞÎÄ
+		// ä¸­æ–‡
 		return StringNewLineChs(pOutBuf, nWidth, pInBuf, nInLen);
 	}
 }

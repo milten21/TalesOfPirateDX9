@@ -12,8 +12,8 @@ BOOL CRawDataSet::_LoadRawDataInfo_Bin(const char* pszFileName)
 	if (fp == NULL)
 	{
 		LG2("error", "Load Raw Data Info Bin File [%s] Failed!\n", pszFileName);
-		//sprintf(szMsg, "´ò¿ª±í¸ñÎÄ¼þÊ§°Ü£º%s\n³ÌÐò¼´½«ÍË³ö!\n", pszFileName);
-		//MessageBox(NULL, szMsg, "´íÎó", MB_OK | MB_ICONERROR);
+		//sprintf(szMsg, "æ‰“å¼€è¡¨æ ¼æ–‡ä»¶å¤±è´¥ï¼š%s\nç¨‹åºå³å°†é€€å‡º!\n", pszFileName);
+		//MessageBox(NULL, szMsg, "é”™è¯¯", MB_OK | MB_ICONERROR);
 		sprintf(szMsg, "Open table file failed:%s\nProgram will exit!\n", pszFileName);
 		MessageBox(NULL, szMsg, "Error", MB_OK | MB_ICONERROR);
 		return FALSE;
@@ -33,11 +33,11 @@ BOOL CRawDataSet::_LoadRawDataInfo_Bin(const char* pszFileName)
 	{
 		//sprintf(szMsg, "dwInfoSize: %d\n_GetRawDataInfoSize: %d!\n", dwInfoSize, _GetRawDataInfoSize());
 		//MessageBox(NULL, szMsg, "Error2", MB_OK | MB_ICONERROR);
-		//LG2("table", "msg¶ÁÈ¡±í¸ñÎÄ¼þ[%s]Ê±, ·¢ÏÖ°æ±¾²»Ò»ÖÂ!\n", pszFileName);
+		//LG2("table", "msgè¯»å–è¡¨æ ¼æ–‡ä»¶[%s]æ—¶, å‘çŽ°ç‰ˆæœ¬ä¸ä¸€è‡´!\n", pszFileName);
 		LG2("table", "msg read table file [%s], version can't match!\n", pszFileName);
 		fclose(fp);
-		//sprintf(szMsg, "¶ÁÈ¡±í¸ñÎÄ¼þ´íÎó£º%s\n³ÌÐò¼´½«ÍË³ö!\n", pszFileName);
-		//MessageBox(NULL, szMsg, "´íÎó", MB_OK | MB_ICONERROR);
+		//sprintf(szMsg, "è¯»å–è¡¨æ ¼æ–‡ä»¶é”™è¯¯ï¼š%s\nç¨‹åºå³å°†é€€å‡º!\n", pszFileName);
+		//MessageBox(NULL, szMsg, "é”™è¯¯", MB_OK | MB_ICONERROR);
 		sprintf(szMsg, "Open table file failed:%s\nProgram will exit!\n", pszFileName);
 		MessageBox(NULL, szMsg, "Error", MB_OK | MB_ICONERROR);
 		exit(0);
@@ -72,7 +72,7 @@ BOOL CRawDataSet::_LoadRawDataInfo_Bin(const char* pszFileName)
 		if (IsValidID(i) == FALSE) continue;
 
 		CRawDataInfo* pCurInfo = _GetRawDataInfo(pInfo->nID);
-		memcpy(pCurInfo, pInfo, nInfoSize); // Ìæ´úÔ­ÓÐµÄÐÅÏ¢
+		memcpy(pCurInfo, pInfo, nInfoSize); // æ›¿ä»£åŽŸæœ‰çš„ä¿¡æ¯
 		_IDIdx[pCurInfo->szDataName] = pCurInfo;
 		//vector<string> ParamList; _ReadRawDataInfo(pCurInfo, ParamList);
 		_ProcessRawDataInfo(pCurInfo);

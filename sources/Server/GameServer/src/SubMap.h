@@ -23,7 +23,7 @@ class CActiveMgrUnitL;
 class Entity;
 class CFightAble;
 
-// µØÍ¼Íâ½ÇÉ«¶ÓÁĞ£¬µ±¹ÖÎïËÀÍöºó¼ÓÈëµ½´ËÁĞ±í£¬ÖØÉúºóÀë¿ª´ËÁĞ±í
+// åœ°å›¾å¤–è§’è‰²é˜Ÿåˆ—ï¼Œå½“æ€ªç‰©æ­»äº¡ååŠ å…¥åˆ°æ­¤åˆ—è¡¨ï¼Œé‡ç”Ÿåç¦»å¼€æ­¤åˆ—è¡¨
 class	COutMapCha
 {
 public:
@@ -31,9 +31,9 @@ public:
 	{
 		bool	IsValidCha(void) {if (!pCCha) return false; return pCCha->GetID() == ulChaID;}
 
-		dbc::Long	lLeftTick1;	// Ê£ÓàÊ±¼ä
-		dbc::Long	lLeftTick2;	// Ê£ÓàÊ±¼ä
-		dbc::Char	chAction;	// ¶¨Ê±µÄĞĞ¶¯
+		dbc::Long	lLeftTick1;	// å‰©ä½™æ—¶é—´
+		dbc::Long	lLeftTick2;	// å‰©ä½™æ—¶é—´
+		dbc::Char	chAction;	// å®šæ—¶çš„è¡ŒåŠ¨
 		CCharacter	*pCCha;
 		dbc::uLong	ulChaID;
 		SSwitchMapInfo	SwitchInfo;
@@ -52,10 +52,10 @@ public:
 	std::deque<std::unique_ptr<SMgrUnit>>  spawnQueue;	// Spawn queue rework - Mdr
 private:
 	unsigned long	m_ulTick;
-	unsigned short	m_usFreq;	// Ö´ĞĞĞÄÌø£¨ÆµÂÊ£©
+	unsigned short	m_usFreq;	// æ‰§è¡Œå¿ƒè·³ï¼ˆé¢‘ç‡ï¼‰
 };
 
-// µØÍ¼¸±±¾Àà
+// åœ°å›¾å‰¯æœ¬ç±»
 class SubMap
 {
 public:
@@ -67,7 +67,7 @@ public:
 
 	const char*  GetName(void) {return m_pCMapRes->GetName();}
 
-	//pt·µ»ØÔÚ¹ÜÀíµ¥ÔªÖĞµÄ×ø±ê.
+	//ptè¿”å›åœ¨ç®¡ç†å•å…ƒä¸­çš„åæ ‡.
 	Rect   GetEyeshot(Point &pt)const;
 	Rect   GetEyeshot(short sMgrUnitX, short sMgrUnitY)const;
 	void   GetEyeshotCenter(Point &pt);
@@ -113,19 +113,19 @@ public:
 
 	void NotiStateCellToEyeshot(dbc::Short sCellX, dbc::Short sCellY);
 
-	// ÔÚ·¶Î§ÄÚËÑË÷ÊµÌå£¨ÒÀÀµ×´Ì¬µ¥Ôª½øĞĞËÑË÷£¬¼´ËÑË÷²»µ½µÀ¾ßÀà£©
+	// åœ¨èŒƒå›´å†…æœç´¢å®ä½“ï¼ˆä¾èµ–çŠ¶æ€å•å…ƒè¿›è¡Œæœç´¢ï¼Œå³æœç´¢ä¸åˆ°é“å…·ç±»ï¼‰
 	void		BeginSearchInRange(dbc::Long *plRangeBParam, dbc::Long *plRangeEParam, bool bIncludeHideEnti = false);
 	CCharacter*	GetNextCharacterInRange(void);
 
-	// Ïò·¶Î§Ôö¼Ó¼¼ÄÜ×´Ì¬
+	// å‘èŒƒå›´å¢åŠ æŠ€èƒ½çŠ¶æ€
 	bool		RangeAddState(dbc::uChar uchFightID, dbc::uLong ulSrcWorldID, dbc::Long lSrcHandle,
 				dbc::Char chObjType, dbc::Char chObjHabitat, dbc::Char chEffType, dbc::Short *sStateParam);
 	bool		RangeAddState(Rect *pSRange, dbc::uChar uchFightID, dbc::uLong ulSrcWorldID, dbc::Long lSrcHandle,
 				dbc::Char chObjType, dbc::Char chObjHabitat, dbc::Char chEffType, dbc::Short *sStateParam);
 
-	// ËÑÑ°ÊµÌåÖ¸Õë
+	// æœå¯»å®ä½“æŒ‡é’ˆ
 	CCharacter*	FindCharacter( dbc::uLong ulID, const Point& point );
-	// ¼ì²âÎ»ÖÃÊÇ·ñ¿ÉÒÔÍ¨¹ı
+	// æ£€æµ‹ä½ç½®æ˜¯å¦å¯ä»¥é€šè¿‡
 	bool		IsMoveAble(Entity *pCEnt, dbc::Long lPosX, dbc::Long lPosY);
 
 	void		LoadMonsterInfo(void);
@@ -186,7 +186,7 @@ public:
 	void		BeginGetPlyCha(void);
 	CCharacter*	GetNextPlyCha(void);
 	bool		CheckRun(void);
-	void		DealActivePlayer(std::string & function);//2006.10.12wsj´¦ÀíÂÒ¶·°×Òø³ÇµÄÊ¤Õß.
+	void		DealActivePlayer(std::string & function);//2006.10.12wsjå¤„ç†ä¹±æ–—ç™½é“¶åŸçš„èƒœè€….
 	void		DealPlayer(std::string & function);
 	//void		OnPlayerDie(CCharacter	*pCCha)//2006.10.12wsj
 	//{
@@ -195,12 +195,12 @@ public:
 
 	//	if (!pCCha->m_pCEyeshotHost)
 	//	{
-	//		LG("µØÍ¼½ÇÉ«²Ù×÷´íÎó", "½ÇÉ«ËÀÍê %s Í³¼ÆµØÍ¼ÄÚ´æ»î½ÇÉ«ÊıÊ±£¬½ÇÉ«ÊÓÒ°µ¥Ôª[%d, %d]%s £¬·¢ÏÖ²»ÔÚÊÓÒ°µ¥ÔªÖĞ\n", GetName(), l_pt.x, l_pt.y, pCCha->GetLogName());
+	//		LG("åœ°å›¾è§’è‰²æ“ä½œé”™è¯¯", "è§’è‰²æ­»å®Œ %s ç»Ÿè®¡åœ°å›¾å†…å­˜æ´»è§’è‰²æ•°æ—¶ï¼Œè§’è‰²è§†é‡å•å…ƒ[%d, %d]%s ï¼Œå‘ç°ä¸åœ¨è§†é‡å•å…ƒä¸­\n", GetName(), l_pt.x, l_pt.y, pCCha->GetLogName());
 	//		return;
 	//	}
 	//	if (pCCha->m_pCEyeshotHost != &m_pCEyeshotCell[l_pt.y][l_pt.x])
 	//	{
-	//		LG("µØÍ¼½ÇÉ«²Ù×÷´íÎó", "½ÇÉ«ËÀÍê %s  Í³¼ÆµØÍ¼ÄÚ´æ»î½ÇÉ«ÊıÊ±£¬½ÇÉ«ÊÓÒ°µ¥Ôª[%d, %d]%s £¬·¢ÏÖÆäÓë¼ÇÂ¼ÊÓÒ°µ¥Ôª[%d, %d]²»·û\n", GetName(), l_pt.x, l_pt.y, pCCha->GetLogName(), pCCha->m_pCEyeshotHost->m_sPosX, pCCha->m_pCEyeshotHost->m_sPosY);
+	//		LG("åœ°å›¾è§’è‰²æ“ä½œé”™è¯¯", "è§’è‰²æ­»å®Œ %s  ç»Ÿè®¡åœ°å›¾å†…å­˜æ´»è§’è‰²æ•°æ—¶ï¼Œè§’è‰²è§†é‡å•å…ƒ[%d, %d]%s ï¼Œå‘ç°å…¶ä¸è®°å½•è§†é‡å•å…ƒ[%d, %d]ä¸ç¬¦\n", GetName(), l_pt.x, l_pt.y, pCCha->GetLogName(), pCCha->m_pCEyeshotHost->m_sPosX, pCCha->m_pCEyeshotHost->m_sPosY);
 	//		return;
 	//	}
 	//	m_lActivePlayerNum--;
@@ -239,10 +239,10 @@ public:
 		m_pCEyeshotCell[lCellY][lCellX].m_lActNum--;
 		if (m_pCEyeshotCell[lCellY][lCellX].m_lActNum == 0)
 		{
-			if (CountEyeshotPlyActiveNum(lCellX, lCellY) > 0) // ´æÔÚÊÓÒ°¼¤»îµÄÍæ¼Ò½ÇÉ«£¬ÕâÖÖÇé¿ö²»Ó¦¸Ã³öÏÖ
+			if (CountEyeshotPlyActiveNum(lCellX, lCellY) > 0) // å­˜åœ¨è§†é‡æ¿€æ´»çš„ç©å®¶è§’è‰²ï¼Œè¿™ç§æƒ…å†µä¸åº”è¯¥å‡ºç°
 			{
 				m_pCEyeshotCell[lCellY][lCellX].m_lActNum++;
-				//LG("ÊÓÒ°¼¤»î´íÎó", "!!!ÊÓÒ°µ¥Ôª[%d,%d]Í£Ö¹¼¤»îÊ±£¬·¢ÏÖÆäÖĞ´æÔÚÓĞÊÓÒ°ÄÜÁ¦µÄÍæ¼Ò½ÇÉ«\n", lCellX, lCellY);
+				//LG("è§†é‡æ¿€æ´»é”™è¯¯", "!!!è§†é‡å•å…ƒ[%d,%d]åœæ­¢æ¿€æ´»æ—¶ï¼Œå‘ç°å…¶ä¸­å­˜åœ¨æœ‰è§†é‡èƒ½åŠ›çš„ç©å®¶è§’è‰²\n", lCellX, lCellY);
 				LG("eyeshot activation error", "when eyeshot cell[%d,%d] stop activation ,find the character player who has eyeshot ability.\n", lCellX, lCellY);
 			}
 			else
@@ -312,15 +312,15 @@ public:
 		}
 	}
 
-	CEyeshotCell	**m_pCEyeshotCell; // ÊÓÒ°µ¥Ôª
-	CStateCell		***m_pCStateCell; // ×´Ì¬µ¥Ôª
-	COutMapCha		m_COutMapCha; // µØÍ¼Íâ½ÇÉ«
-	//¹©Ëæ»ú·ÃÎÊµÄµØÍ¼ĞÅÏ¢Êı×é
-	CActEyeshotCell	m_CEyeshotCellL;	// ¼¤»îµÄÊÓÒ°µ¥ÔªÁĞ±í
-	CActStateCell	m_CStateCellL;		// ¼¤»îµÄ×´Ì¬µ¥ÔªÁĞ±í
+	CEyeshotCell	**m_pCEyeshotCell; // è§†é‡å•å…ƒ
+	CStateCell		***m_pCStateCell; // çŠ¶æ€å•å…ƒ
+	COutMapCha		m_COutMapCha; // åœ°å›¾å¤–è§’è‰²
+	//ä¾›éšæœºè®¿é—®çš„åœ°å›¾ä¿¡æ¯æ•°ç»„
+	CActEyeshotCell	m_CEyeshotCellL;	// æ¿€æ´»çš„è§†é‡å•å…ƒåˆ—è¡¨
+	CActStateCell	m_CStateCellL;		// æ¿€æ´»çš„çŠ¶æ€å•å…ƒåˆ—è¡¨
 
-	bool			m_bIsRun;		// ±êÊ¾±¾µØÍ¼ÊÇ·ñÔÚÔËĞĞ
-	CWeatherMgr		m_WeatherMgr;	// ÌìÆø¹ÜÀíÆ÷
+	bool			m_bIsRun;		// æ ‡ç¤ºæœ¬åœ°å›¾æ˜¯å¦åœ¨è¿è¡Œ
+	CWeatherMgr		m_WeatherMgr;	// å¤©æ°”ç®¡ç†å™¨
 
 private:
 	CMapRes	*m_pCMapRes;
@@ -337,15 +337,15 @@ private:
 		}
 	}
 
-	// ·¶Î§ÄÚËÑË÷
+	// èŒƒå›´å†…æœç´¢
 	struct
 	{
-		bool				m_bIncludeHideEnti;							// ÊÇ·ñËÑË÷ÒşÉíµÄÊµÌå
-		dbc::Short			m_sRangeMgrUnitNum;							// ·¶Î§ÄÚ¹ÜÀíµ¥ÔªµÄÊıÄ¿
-		dbc::Long			m_lRangeMgrUnit[defRANGE_MGRUNIU_NUM][2];	// ·¶Î§ÄÚµÄ¹ÜÀíµ¥Ôª±àºÅÁĞ±í£¨x,y£©
-		dbc::Long			m_lRangeCentUnit[2];						// ·¶Î§ÖĞĞÄµ¥Ôª;
-		dbc::Short			m_sRangeCurMgrUnit;							// ËÑË÷¹ı³ÌÖĞ£¬µ±Ç°µÄ¹ÜÀíµ¥Ôª
-		CChaListNode*		m_pRangeCurEntiNode;						// ËÑË÷¹ı³ÌÖĞ£¬µ±Ç°µÄÊµÌå
+		bool				m_bIncludeHideEnti;							// æ˜¯å¦æœç´¢éšèº«çš„å®ä½“
+		dbc::Short			m_sRangeMgrUnitNum;							// èŒƒå›´å†…ç®¡ç†å•å…ƒçš„æ•°ç›®
+		dbc::Long			m_lRangeMgrUnit[defRANGE_MGRUNIU_NUM][2];	// èŒƒå›´å†…çš„ç®¡ç†å•å…ƒç¼–å·åˆ—è¡¨ï¼ˆx,yï¼‰
+		dbc::Long			m_lRangeCentUnit[2];						// èŒƒå›´ä¸­å¿ƒå•å…ƒ;
+		dbc::Short			m_sRangeCurMgrUnit;							// æœç´¢è¿‡ç¨‹ä¸­ï¼Œå½“å‰çš„ç®¡ç†å•å…ƒ
+		CChaListNode*		m_pRangeCurEntiNode;						// æœç´¢è¿‡ç¨‹ä¸­ï¼Œå½“å‰çš„å®ä½“
 		CRangeBase			*m_pCBaseRange;
 
 		CRangeStick		m_CStickRange;

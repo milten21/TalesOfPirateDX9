@@ -9,7 +9,7 @@ _DBC_USING
 char g_isSuportAcquire		=0;
 
 //=======PreAllocHeapPtr=======================================================================
-uLong PreAllocStru::Size()	//ºóÒáÀàOverride·µ»Øµ±Ç°½á¹¹¹ÜÀíµÄ»º´æ³ß´ç
+uLong PreAllocStru::Size()	//åŽè£”ç±»Overrideè¿”å›žå½“å‰ç»“æž„ç®¡ç†çš„ç¼“å­˜å°ºå¯¸
 {
 	return __preAllocHeapPtr?__preAllocHeapPtr->m_unitsize:(__preAllocHeap?__preAllocHeap->m_unitsize:0);
 }
@@ -103,7 +103,7 @@ LONG InterLockedLong::Assign(LONG newval)							//The return value is the initia
 {
 	return InterlockedExchange(&m_plVal,newval);
 }
-LONG InterLockedLong::CompareAssign(LONG Comperand,LONG newval)		//ÏàµÈÊ±ºò²Å¸³Öµ,The return value is the initial value
+LONG InterLockedLong::CompareAssign(LONG Comperand,LONG newval)		//ç›¸ç­‰æ—¶å€™æ‰èµ‹å€¼,The return value is the initial value
 {
 	/*
 	if(g_isSuportAcquire >0)

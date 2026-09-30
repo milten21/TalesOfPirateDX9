@@ -71,10 +71,10 @@ bool CDataBaseCtrl::CreateObject()
 		return false;
 	C_PRINT("success!\n");
 
-	//³õÊ¼»¯²¢²âÊÔÊý¾Ý¿â×Ö¶Î
+	//åˆå§‹åŒ–å¹¶æµ‹è¯•æ•°æ®åº“å­—æ®µ
 	try
 	{
-        //  TOM±íÃûÒÑÐÞ¸Ä
+        //  TOMè¡¨åå·²ä¿®æ”¹
 		//if (g_TomService.IsEnable())
 		//{
 		//	//m_pDataBase->ExecuteSQL("update tom_account set login_status=0, from_server='', last_login_tick=0");
@@ -162,7 +162,7 @@ bool CDataBaseCtrl::Connect()
 {
 	if (IsConnect()) return true;
 
-	//½¨Á¢Êý¾Ý¿â¶ÔÏó
+	//å»ºç«‹æ•°æ®åº“å¯¹è±¡
 	try
 	{
 		m_pDataBase=new CSQLDatabase();
@@ -180,7 +180,7 @@ bool CDataBaseCtrl::Connect()
 		return false;
 	}
 
-	//Á¬½ÓÊý¾Ý¿â
+	//è¿žæŽ¥æ•°æ®åº“
 	std::string err;
 	m_pDataBase->SetClientEncoding(m_strClientEncoding.c_str());
 	if (!m_pDataBase->OpenPostgres(m_strServerIP.c_str(), m_strServerDB.c_str(), m_strUserID.c_str(), m_strUserPwd.c_str(), err))
@@ -481,7 +481,7 @@ bool CDataBaseCtrl::UserLogoutMap(std::string strUserName)
 	m_mapUsers.erase(strUserName.c_str());
 	
 	CTimeSpan ctSpan=CTime::GetCurrentTime() - sData.ctLoginTime;
-	if (ctSpan > CTimeSpan(5) && ctSpan < CTimeSpan(30, 0, 0, 0))	//¼ÇÂ¼ÓÐÐ§Ê±¼ä5Ãëµ½30Ìì
+	if (ctSpan > CTimeSpan(5) && ctSpan < CTimeSpan(30, 0, 0, 0))	//è®°å½•æœ‰æ•ˆæ—¶é—´5ç§’åˆ°30å¤©
 	{
 		char buf[1024];
 		__int64 i64Span = ctSpan.GetTotalSeconds();

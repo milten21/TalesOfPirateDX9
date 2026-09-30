@@ -24,40 +24,40 @@ class CSkillStateRecord : public CRawDataInfo
 public:
 	// CSkillStateRecord();
 
-	char	chID;									// ±àºÅ
-	char	szName[defSKILLSTATE_NAME_LEN];			// Ãû³Æ
-	short	sFrequency;								// ´¥·¢µÄÊ±¼ä¼ä¸ô£¨µ¥Î»£ºÃë£©
-	char	szOnTransfer[defSKILLSTATE_SCRIPT_NAME];// ×´Ì¬µ½´«µİÄ¿±êÉÏµÄ×÷ÓÃÊ±¼ä½Å±¾
-	char	szAddState[defSKILLSTATE_SCRIPT_NAME];	// Ê¹ÓÃĞ§¹û½Å±¾
-	char	szSubState[defSKILLSTATE_SCRIPT_NAME];	// ÒÆ³ıĞ§¹û½Å±¾
-	char	chAddType;								// Ìæ»»²ßÂÔ
-	bool	bCanCancel;								// ÊÇ·ñ¿ÉÓÉÖÕ¶ËÈ¡Ïû
-	bool	bCanMove;								// ÊÇ·ñÄÜ¹»ÒÆ¶¯
-	bool	bCanMSkill;								// ÊÇ·ñÄÜ¹»Ê¹ÓÃÄ§·¨¼¼ÄÜ
-	bool	bCanGSkill;								// ÊÇ·ñÄÜ¹»Ê¹ÓÃÆÕÍ¨¼¼ÄÜ
-	bool	bCanTrade;								// ÊÇ·ñÄÜ¹»½»Ò×
-	bool	bCanItem;								// ÊÇ·ñÄÜ¹»Ê¹ÓÃÎïÆ·
-	bool	bCanUnbeatable;							// ÊÇ·ñÎŞµĞ
-	bool	bCanItemmed;							// ÊÇ·ñÄÜ¹»±»Ê¹ÓÃÎïÆ·
-	bool	bCanSkilled;							// ÊÇ·ñÄÜ¹»±»Ê¹ÓÃ¼¼ÄÜ
-	bool	bNoHide;								// ÊÇ·ñ²»ÒşÉí
-	bool	bNoShow;								// ÊÇ·ñ²»ÏÔĞÎ
-	bool	bOptItem;								// ÊÇ·ñ¿É²Ù×÷µÀ¾ß
-	bool	bTalkToNPC;								// ÊÇ·ñ¿ÉºÍNPC¶Ô»°
-	char	bFreeStateID;							// ½â³ıµÄĞ§¹û±àºÅ
+	char	chID;									// ç¼–å·
+	char	szName[defSKILLSTATE_NAME_LEN];			// åç§°
+	short	sFrequency;								// è§¦å‘çš„æ—¶é—´é—´éš”ï¼ˆå•ä½ï¼šç§’ï¼‰
+	char	szOnTransfer[defSKILLSTATE_SCRIPT_NAME];// çŠ¶æ€åˆ°ä¼ é€’ç›®æ ‡ä¸Šçš„ä½œç”¨æ—¶é—´è„šæœ¬
+	char	szAddState[defSKILLSTATE_SCRIPT_NAME];	// ä½¿ç”¨æ•ˆæœè„šæœ¬
+	char	szSubState[defSKILLSTATE_SCRIPT_NAME];	// ç§»é™¤æ•ˆæœè„šæœ¬
+	char	chAddType;								// æ›¿æ¢ç­–ç•¥
+	bool	bCanCancel;								// æ˜¯å¦å¯ç”±ç»ˆç«¯å–æ¶ˆ
+	bool	bCanMove;								// æ˜¯å¦èƒ½å¤Ÿç§»åŠ¨
+	bool	bCanMSkill;								// æ˜¯å¦èƒ½å¤Ÿä½¿ç”¨é­”æ³•æŠ€èƒ½
+	bool	bCanGSkill;								// æ˜¯å¦èƒ½å¤Ÿä½¿ç”¨æ™®é€šæŠ€èƒ½
+	bool	bCanTrade;								// æ˜¯å¦èƒ½å¤Ÿäº¤æ˜“
+	bool	bCanItem;								// æ˜¯å¦èƒ½å¤Ÿä½¿ç”¨ç‰©å“
+	bool	bCanUnbeatable;							// æ˜¯å¦æ— æ•Œ
+	bool	bCanItemmed;							// æ˜¯å¦èƒ½å¤Ÿè¢«ä½¿ç”¨ç‰©å“
+	bool	bCanSkilled;							// æ˜¯å¦èƒ½å¤Ÿè¢«ä½¿ç”¨æŠ€èƒ½
+	bool	bNoHide;								// æ˜¯å¦ä¸éšèº«
+	bool	bNoShow;								// æ˜¯å¦ä¸æ˜¾å½¢
+	bool	bOptItem;								// æ˜¯å¦å¯æ“ä½œé“å…·
+	bool	bTalkToNPC;								// æ˜¯å¦å¯å’ŒNPCå¯¹è¯
+	char	bFreeStateID;							// è§£é™¤çš„æ•ˆæœç¼–å·
 
-	// ¿Í»§¶Ë±íÏÖ
-	char	chScreen;								// ÆÁÄ»Ğ§¹û
-	char    nActBehave[defSKILLSTATE_ACT_NUM];		// ¶¯×÷±íÏÖ
-	short	sChargeLink;							// ¿Í»§¶Ë±íÏÖ±êÊ¶,ÓÃÓÚ±íÏÖ³äµç±´¿Ç
-    short   sAreaEffect;                            // µØÃæ³ÖĞøÌØĞ§
-	bool	IsShowCenter;							// µØÃæ×´Ì¬ÌØĞ§,ÊÇ·ñ½öÏÔÊ¾ÖĞĞÄµã
-	bool	IsDizzy;								// ÊÇ·ñÏÔÊ¾Ñ£ÔÎĞ§¹û
-	short	sEffect;								// ¹ÒĞ§¹û·½ÌØĞ§±íÏÖ
-	short	sDummy1;								// ¹ÒÌØĞ§Íæ¼ÒµÄ²¥·Ådummyµã
-	short	sBitEffect;								// ¸Ã×´Ì¬ÏÂÊÜ»÷ÌØĞ§±íÏÖ
-	short	sDummy2;								// ÌØĞ§²¥·Ådummyµã
-	short	sIcon;									// ÖĞ¸ÃĞ§¹û¹ÒÔÚÉíÉÏµÄICON±íÏÖ
+	// å®¢æˆ·ç«¯è¡¨ç°
+	char	chScreen;								// å±å¹•æ•ˆæœ
+	char    nActBehave[defSKILLSTATE_ACT_NUM];		// åŠ¨ä½œè¡¨ç°
+	short	sChargeLink;							// å®¢æˆ·ç«¯è¡¨ç°æ ‡è¯†,ç”¨äºè¡¨ç°å……ç”µè´å£³
+    short   sAreaEffect;                            // åœ°é¢æŒç»­ç‰¹æ•ˆ
+	bool	IsShowCenter;							// åœ°é¢çŠ¶æ€ç‰¹æ•ˆ,æ˜¯å¦ä»…æ˜¾ç¤ºä¸­å¿ƒç‚¹
+	bool	IsDizzy;								// æ˜¯å¦æ˜¾ç¤ºçœ©æ™•æ•ˆæœ
+	short	sEffect;								// æŒ‚æ•ˆæœæ–¹ç‰¹æ•ˆè¡¨ç°
+	short	sDummy1;								// æŒ‚ç‰¹æ•ˆç©å®¶çš„æ’­æ”¾dummyç‚¹
+	short	sBitEffect;								// è¯¥çŠ¶æ€ä¸‹å—å‡»ç‰¹æ•ˆè¡¨ç°
+	short	sDummy2;								// ç‰¹æ•ˆæ’­æ”¾dummyç‚¹
+	short	sIcon;									// ä¸­è¯¥æ•ˆæœæŒ‚åœ¨èº«ä¸Šçš„ICONè¡¨ç°
 	char	szIcon[defSKILLSTATE_NAME_LEN][10];		// icons for pots per level 
 	char	szDesc[defSKILLSTATE_DESC_NAME_LEN];
 	int		lColour;
@@ -67,7 +67,7 @@ public:
 	int		GetActNum()			{ return _nActNum;		}
 
 public:
-	int		_nActNum;								// ¶¯×÷±íÏÖ¸öÊı
+	int		_nActNum;								// åŠ¨ä½œè¡¨ç°ä¸ªæ•°
 
 };
 
@@ -86,7 +86,7 @@ public:
 
 protected:
 
-	static CSkillStateRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CSkillStateRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

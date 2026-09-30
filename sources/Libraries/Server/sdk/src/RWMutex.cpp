@@ -23,9 +23,9 @@ private:
 
 	friend class	RWMutex;
 	RWMutex		*	m_rwsync;
-	volatile int	m_RDCount;				//¶Á¼ÆÊý
-	volatile int	m_WRCount;				//Ð´¼ÆÊý
-	AccThread	*	nextthread;				//Á´Ê½½á¹¹µÄÏÂÒ»¸öÏîÄ¿
+	volatile int	m_RDCount;				//è¯»è®¡æ•°
+	volatile int	m_WRCount;				//å†™è®¡æ•°
+	AccThread	*	nextthread;				//é“¾å¼ç»“æž„çš„ä¸‹ä¸€ä¸ªé¡¹ç›®
 };
 typedef AccThread * PAccThread;
 static TLSIndex st_tls;
@@ -49,14 +49,14 @@ void RWMutex::BeginRead()
 
 	m_mtxRWCount.lock();
 	try{
-		while(m_WRCount&&(!l_AccThread->m_WRCount)){	//ÓÐÐ´Ïß³Ì²¢ÇÒ²»ÊÇµ±Ç°Ïß³ÌÔÚÐ´,¾Í×èÈûÔÚ¶ÁËøÉÏ
+		while(m_WRCount&&(!l_AccThread->m_WRCount)){	//æœ‰å†™çº¿ç¨‹å¹¶ä¸”ä¸æ˜¯å½“å‰çº¿ç¨‹åœ¨å†™,å°±é˜»å¡žåœ¨è¯»é”ä¸Š
 			m_mtxRWCount.unlock();
 			try{
-				m_semRead.lock();	//×èÈû¶ÁÏß³Ì
+				m_semRead.lock();	//é˜»å¡žè¯»çº¿ç¨‹
 			}catch(...){}
 			m_mtxRWCount.lock();
 		}
-		m_semRead.unlock();//ÊÍ·ÅÈÃÆäËû¶ÁÏß³Ì²¢·¢²Ù×÷
+		m_semRead.unlock();//é‡Šæ”¾è®©å…¶ä»–è¯»çº¿ç¨‹å¹¶å‘æ“ä½œ
 
 		l_AccThread->m_RDCount++;
 		m_RDCount++;
@@ -81,11 +81,11 @@ void RWMutex::BeginWrite(){
 
 	m_mtxRWCount.lock();
 	try{
-		while((m_WRCount &&(!l_AccThread->m_WRCount))||				//ÓÐÐ´Ïß³Ì²¢ÇÒ²»ÊÇµ±Ç°Ïß³ÌÔÚÐ´»òÕß
-				(m_RDCount &&(m_RDCount !=l_AccThread->m_RDCount))){	//ÓÐ¶ÁÏß³Ì²¢ÇÒ²»Ö»µ±Ç°Ïß³ÌÔÚ¶Á,¾Í×èÈûÔÚÐ´ËøÉÏ
+		while((m_WRCount &&(!l_AccThread->m_WRCount))||				//æœ‰å†™çº¿ç¨‹å¹¶ä¸”ä¸æ˜¯å½“å‰çº¿ç¨‹åœ¨å†™æˆ–è€…
+				(m_RDCount &&(m_RDCount !=l_AccThread->m_RDCount))){	//æœ‰è¯»çº¿ç¨‹å¹¶ä¸”ä¸åªå½“å‰çº¿ç¨‹åœ¨è¯»,å°±é˜»å¡žåœ¨å†™é”ä¸Š
 			m_mtxRWCount.unlock();
 			try{
-				m_semWrite.lock();										//×èÈûÐ´Ïß³Ì
+				m_semWrite.lock();										//é˜»å¡žå†™çº¿ç¨‹
 			}catch(...){}
 			m_mtxRWCount.lock();
 		}
@@ -111,9 +111,9 @@ void RWMutex::EndRead()
 	try{
 		m_RDCount --;
 		l_AccThread->m_RDCount --;
-		m_semWrite.unlock();		//¶ÁÏß³Ì,ÊÍ·ÅÐ´Ëø,ÈÃÐ´Ëø¼ì²é
+		m_semWrite.unlock();		//è¯»çº¿ç¨‹,é‡Šæ”¾å†™é”,è®©å†™é”æ£€æŸ¥
 
-		if(!l_AccThread->m_RDCount && !l_AccThread->m_WRCount){ //×îºóÒ»´Î²Ù×÷
+		if(!l_AccThread->m_RDCount && !l_AccThread->m_WRCount){ //æœ€åŽä¸€æ¬¡æ“ä½œ
 			m_mtxRWCount.unlock();
 
 			if(l_bakAccThread){
@@ -144,9 +144,9 @@ void RWMutex::EndWrite(){
 	try{
 		m_WRCount --;
 		l_AccThread->m_WRCount --;
-		m_semWrite.unlock();//ÊÍ·ÅÐ´Ëø
-		m_semRead.unlock();//ÊÍ·Å¶ÁËø
-		if(!l_AccThread->m_WRCount && !l_AccThread->m_RDCount){ //×îºóÒ»´Î²Ù×÷
+		m_semWrite.unlock();//é‡Šæ”¾å†™é”
+		m_semRead.unlock();//é‡Šæ”¾è¯»é”
+		if(!l_AccThread->m_WRCount && !l_AccThread->m_RDCount){ //æœ€åŽä¸€æ¬¡æ“ä½œ
 			m_mtxRWCount.unlock();
 			if(l_bakAccThread){
 				l_bakAccThread->nextthread =l_AccThread->nextthread;

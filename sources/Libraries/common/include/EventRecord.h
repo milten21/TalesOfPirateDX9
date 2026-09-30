@@ -13,16 +13,16 @@
 #include "TableData.h"
 #include "point.h"
 
-// ÊÂ¼ş´¥·¢ÀàĞÍ
+// äº‹ä»¶è§¦å‘ç±»å‹
 enum EEventTouchType
 {
-	enumEVENTT_RANGE	= 1,		// °´°ë¾¶´¥·¢
+	enumEVENTT_RANGE	= 1,		// æŒ‰åŠå¾„è§¦å‘
 };
 
 enum EEventExecType
 {
-	enumEVENTE_SMAP_ENTRY	= 1,	// µØÍ¼¾²Ì¬ÇĞ»»µã
-	enumEVENTE_DMAP_ENTRY	= 2,	// µØÍ¼¶¯Ì¬ÇĞ»»µã
+	enumEVENTE_SMAP_ENTRY	= 1,	// åœ°å›¾é™æ€åˆ‡æ¢ç‚¹
+	enumEVENTE_DMAP_ENTRY	= 2,	// åœ°å›¾åŠ¨æ€åˆ‡æ¢ç‚¹
 };
 
 enum EEventType
@@ -31,11 +31,11 @@ enum EEventType
 	enumEVENT_TYPE_ENTITY,
 };
 
-// ´¥·¢ÀàĞÍ,¾ö¶¨¿Í»§¶ËÔõÑù´¥·¢
+// è§¦å‘ç±»å‹,å†³å®šå®¢æˆ·ç«¯æ€æ ·è§¦å‘
 enum EEventArouseType
 {
-	enumEVENT_AROUSE_DISTANCE,		// °´°ë¾¶´¥·¢
-	enumEVENT_AROUSE_CLICK,			// µã»÷´¥·¢
+	enumEVENT_AROUSE_DISTANCE,		// æŒ‰åŠå¾„è§¦å‘
+	enumEVENT_AROUSE_CLICK,			// ç‚¹å‡»è§¦å‘
 };
 
 const char cchEventRecordKeyValue = (char)0xff;
@@ -47,16 +47,16 @@ class CEventRecord : public CRawDataInfo
 public:
 	//CEventRecord();
 
-	long	lID;						// ±àºÅ
-	char	szName[defEVENT_NAME_LEN];	// Ãû³Æ
-    short   sEventType;                 // ÊÂ¼şÀàĞÍ,ÓÃÓÚÇø·Ö·¢ËÍĞ­Òé·½Ê½,²Î¿´EEventType
-	short	sArouseType;				// ´¥·¢ÀàĞÍ
-	short	sArouseRadius;				// ´¥·¢°ë¾¶
-	short	sEffect;					// ´¥·¢ÌØĞ§
-	short	sMusic;						// ´¥·¢ÒôĞ§
-	short   sBornEffect;				// ³öÉúÊ±µÄÌØĞ§
-	short	sCursor;					// ÊÂ¼şÏÔÊ¾µÄ¹â±ê
-	char	chMainChaType;				// ÊÂ¼şµã»÷Ê±Ê²Ã´Çé¿öÓĞĞ§(0-¶¼ÓĞĞ§,1-ÈË£¬2-´¬)
+	long	lID;						// ç¼–å·
+	char	szName[defEVENT_NAME_LEN];	// åç§°
+    short   sEventType;                 // äº‹ä»¶ç±»å‹,ç”¨äºåŒºåˆ†å‘é€åè®®æ–¹å¼,å‚çœ‹EEventType
+	short	sArouseType;				// è§¦å‘ç±»å‹
+	short	sArouseRadius;				// è§¦å‘åŠå¾„
+	short	sEffect;					// è§¦å‘ç‰¹æ•ˆ
+	short	sMusic;						// è§¦å‘éŸ³æ•ˆ
+	short   sBornEffect;				// å‡ºç”Ÿæ—¶çš„ç‰¹æ•ˆ
+	short	sCursor;					// äº‹ä»¶æ˜¾ç¤ºçš„å…‰æ ‡
+	char	chMainChaType;				// äº‹ä»¶ç‚¹å‡»æ—¶ä»€ä¹ˆæƒ…å†µæœ‰æ•ˆ(0-éƒ½æœ‰æ•ˆ,1-äººï¼Œ2-èˆ¹)
 
 	bool	IsValid( int MainChaType )	{ return chMainChaType==0 || MainChaType==chMainChaType;	}
 };
@@ -76,7 +76,7 @@ public:
 
 protected:
 
-	static CEventRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CEventRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

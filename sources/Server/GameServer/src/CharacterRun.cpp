@@ -6,10 +6,10 @@
 #include "SubMap.h"
 
 //----------------------------------------------
-//       ËùÓÐCharacter×ÔÉíµÄ¶¨Ê±Ñ­»·´¦Àí
+//       æ‰€æœ‰Characterè‡ªèº«çš„å®šæ—¶å¾ªçŽ¯å¤„ç†
 //----------------------------------------------
 
-// ×ÜÑ­»·Èë¿Ú
+// æ€»å¾ªçŽ¯å…¥å£
 void CCharacter::Run(DWORD dwCurTime)
 {
 	T_B
@@ -30,10 +30,10 @@ void CCharacter::Run(DWORD dwCurTime)
 
 	m_dwCellRunTime[chCount++] = t.End();
 
-	// ¹ÖÎï(°üº¬³èÎïµÈ)ÉúÃüÊ±¼ä¼ì²é
+	// æ€ªç‰©(åŒ…å«å® ç‰©ç­‰)ç”Ÿå‘½æ—¶é—´æ£€æŸ¥
 	if (!IsPlayerCha() && !IsNpc())
 	{
-		if (CheckLifeTime()) // Ê±¼äµ½
+		if (CheckLifeTime()) // æ—¶é—´åˆ°
 		{
 			if (m_HostCha && m_HostCha->IsPlayerCha())
 			{
@@ -41,9 +41,9 @@ void CCharacter::Run(DWORD dwCurTime)
 				if (nPetNum > 0)
 					m_HostCha->GetPlyMainCha()->SetPetNum(nPetNum - 1);
 			}
-			// µ÷ÓÃÒ»¸ö½Å±¾×÷ÎªÊÂ¼þÍ¨Öª 
+			// è°ƒç”¨ä¸€ä¸ªè„šæœ¬ä½œä¸ºäº‹ä»¶é€šçŸ¥ 
 			g_CParser.DoString("event_cha_lifetime", enumSCRIPT_RETURN_NONE, 0, enumSCRIPT_PARAM_LIGHTUSERDATA, 1, this, DOSTRING_PARAM_END);
-			Free(); // ÊÍ·Å, ÊÓÒ°Í¨Öª
+			Free(); // é‡Šæ”¾, è§†é‡Žé€šçŸ¥
 			// char szLua[255];
 			// sprintf(szLua, "CreateCha(133, %d, %d, 145, 50)", this->GetPos().x, this->GetPos().y);
 			// lua_dostring(g_pLuaState, szLua);
@@ -51,14 +51,14 @@ void CCharacter::Run(DWORD dwCurTime)
 		}
 	}
 
-	//·ÀÍâ¹ÒÔÝÊ±²»ÉÏ
+	//é˜²å¤–æŒ‚æš‚æ—¶ä¸ä¸Š
 	/*if(IsPlayerCha() && !IsGMCha2() && ((!(GetAreaAttr() & enumAREA_TYPE_NOT_FIGHT)) || IsBoat()) && !GetPlyCtrlCha()->GetSubMap()->GetMapRes()->CanPK())
 	{
 		GetPlyMainCha()->CheatRun(dwCurTime);
 	}*/
 
 	//add by jilinlee 2007/4/20
-	//ÊÇ·ñÔÚ¶ÁÊé×´Ì¬
+	//æ˜¯å¦åœ¨è¯»ä¹¦çŠ¶æ€
 	if (IsReadBook())
 	{
 		if (bIsLiveing)
@@ -74,17 +74,17 @@ void CCharacter::Run(DWORD dwCurTime)
 				dwReadBookTime = g_CParser.GetReturnNumber(0);
 			}
 			//else 
-			//	dwReadBookTime = 600*1000;   //È¡²»µ½µÄ»°£¬Ä¬ÈÏÎªÊ®·ÖÖÓ¡£
+			//	dwReadBookTime = 600*1000;   //å–ä¸åˆ°çš„è¯ï¼Œé»˜è®¤ä¸ºååˆ†é’Ÿã€‚
 			if (dwCurTime - m_SReadBook.dwLastReadCallTick >= dwReadBookTime)
 			{
-				//µ÷ÓÃ½Å±¾º¯Êý
+				//è°ƒç”¨è„šæœ¬å‡½æ•°
 				char chSkillLv = 0;
 				static short sSkillID = 0;
 				if (sSkillID == 0 && g_CParser.DoString("ReadBookSkillId", enumSCRIPT_RETURN_NUMBER, 1, DOSTRING_PARAM_END))
 				{
 					sSkillID = g_CParser.GetReturnNumber(0);
 				}
-				SSkillGrid* pSkill = this->m_CSkillBag.GetSkillContByID(sSkillID); //¶ÁÊé¼¼ÄÜµÄ¼¼ÄÜID
+				SSkillGrid* pSkill = this->m_CSkillBag.GetSkillContByID(sSkillID); //è¯»ä¹¦æŠ€èƒ½çš„æŠ€èƒ½ID
 				if (pSkill)
 				{
 					chSkillLv = pSkill->chLv;
@@ -130,7 +130,7 @@ void CCharacter::Run(DWORD dwCurTime)
 		GetPlayer()->Run(dwCurTime);
 	m_dwCellRunTime[chCount++] = t.End();
 
-	// ¶¨Ê±Æ÷¼ì²é
+	// å®šæ—¶å™¨æ£€æŸ¥
 	t.Begin();
 	if (m_timerAI.IsOK(dwCurTime))         OnAI(dwCurTime);
 	m_dwCellRunTime[chCount++] = t.End();
@@ -189,7 +189,7 @@ void CCharacter::RunEnd(DWORD dwCurTime)
 	T_B
 		if (m_byExit == CHAEXIT_BEGIN && m_timerExit.IsOK(dwCurTime))
 		{
-			// ÕýÊ½ÍË³ö
+			// æ­£å¼é€€å‡º
 			Exit();
 		}
 	T_E
@@ -198,7 +198,7 @@ void CCharacter::RunEnd(DWORD dwCurTime)
 void CCharacter::StartExit()
 {
 	T_B
-		//LG( "ÑÓÊ±ÍË³ö", "StartExit: Name = %s,exitcode = %d\n", this->GetName(), m_byExit );
+		//LG( "å»¶æ—¶é€€å‡º", "StartExit: Name = %s,exitcode = %d\n", this->GetName(), m_byExit );
 		LG("time too long exit", "StartExit: Name = %s,exitcode = %d\n", this->GetName(), m_byExit);
 	if (m_byExit != CHAEXIT_BEGIN)
 	{
@@ -217,7 +217,7 @@ void CCharacter::StartExit()
 void CCharacter::CancelExit()
 {
 	T_B
-		//LG( "ÑÓÊ±ÍË³ö", "CancelExit: Name = %s,exitcode = %d\n", this->GetName(), m_byExit );
+		//LG( "å»¶æ—¶é€€å‡º", "CancelExit: Name = %s,exitcode = %d\n", this->GetName(), m_byExit );
 		LG("time too long exit", "CancelExit: Name = %s,exitcode = %d\n", this->GetName(), m_byExit);
 	if (m_byExit == CHAEXIT_BEGIN)
 	{
@@ -234,8 +234,8 @@ void CCharacter::CancelExit()
 void CCharacter::Exit()
 {
 	T_B
-		// ÕýÊ½ÍË³ö
-		//LG( "ÑÓÊ±ÍË³ö", "Exit: Name = %s, exitcode = %d\n", this->GetName(), m_byExit );
+		// æ­£å¼é€€å‡º
+		//LG( "å»¶æ—¶é€€å‡º", "Exit: Name = %s, exitcode = %d\n", this->GetName(), m_byExit );
 		LG("time too long exit", "Exit: Name = %s, exitcode = %d\n", this->GetName(), m_byExit);
 	WPACKET	l_wpk = GETWPACKET();
 	WRITE_CMD(l_wpk, CMD_MT_PALYEREXIT);
@@ -247,7 +247,7 @@ void CCharacter::Exit()
 	T_E
 }
 
-// ¶¨Ê±¼ì²éµØÓò±ä»¯
+// å®šæ—¶æ£€æŸ¥åœ°åŸŸå˜åŒ–
 void CCharacter::OnAreaCheck(DWORD dwCurTime)
 {
 }
@@ -274,7 +274,7 @@ BOOL CCharacter::SaveMissionData()
 	if (!pCPlayer) return FALSE;
 	if (!game_db.SaveMissionData(pCPlayer, pCPlayer->GetDBChaId()))
 	{
-		//SystemNotice( "ÐÂ½¨½ÇÉ«¡¶%s¡·´æ´¢½ÇÉ«³õÊ¼ÈÎÎñÐÅÏ¢Ê§°Ü£¡ID[0x%X]", this->GetName(), pCPlayer->GetDBChaId() );
+		//SystemNotice( "æ–°å»ºè§’è‰²ã€Š%sã€‹å­˜å‚¨è§’è‰²åˆå§‹ä»»åŠ¡ä¿¡æ¯å¤±è´¥ï¼ID[0x%X]", this->GetName(), pCPlayer->GetDBChaId() );
 		SystemNotice(RES_STRING(GM_CHARACTERRUN_CPP_00001), this->GetName(), pCPlayer->GetDBChaId());
 		return FALSE;
 	}
@@ -292,7 +292,7 @@ void CCharacter::OnTeamNotice(DWORD dwCurTime)
 	T_E
 }
 
-// ½Å±¾¶¨Ê±Æ÷£¬ÓÃÓÚHP»Ø¸´£¬³èÎïÏûºÄµÈ
+// è„šæœ¬å®šæ—¶å™¨ï¼Œç”¨äºŽHPå›žå¤ï¼Œå® ç‰©æ¶ˆè€—ç­‰
 void CCharacter::OnScriptTimer(DWORD dwExecTime, bool bNotice)
 {
 	T_B
@@ -305,7 +305,7 @@ void CCharacter::OnScriptTimer(DWORD dwExecTime, bool bNotice)
 		m_CKitbag.SetChangeFlag(false);
 	g_CParser.DoString("cha_timer", enumSCRIPT_RETURN_NONE, 0, enumSCRIPT_PARAM_LIGHTUSERDATA, 1, this, enumSCRIPT_PARAM_NUMBER, 2, defCHA_SCRIPT_TIMER / 1000, dwExecTime, DOSTRING_PARAM_END);
 
-	// ´¬ÔÚº£ÉÏÊ±»áÏûºÄÉúÃü
+	// èˆ¹åœ¨æµ·ä¸Šæ—¶ä¼šæ¶ˆè€—ç”Ÿå‘½
 	if (lOldHP > 0 && getAttr(ATTR_HP) <= 0)
 	{
 		if (IsBoat() && IsPlayerCha())

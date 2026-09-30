@@ -73,7 +73,7 @@ CResourceBundleManage::CResourceBundleManage(const char* configFileName)
     {
         throw "GetModuleFileName failed \n"; 
     }
-	// È¡µÃÈë¿Ú³ÌĞòµÄÂ·¾¶
+	// å–å¾—å…¥å£ç¨‹åºçš„è·¯å¾„
 	const char* ret = strrchr(szPath, '\\');
 	long dirLength = (long)(ret - szPath);
 
@@ -81,7 +81,7 @@ CResourceBundleManage::CResourceBundleManage(const char* configFileName)
 	//char* fileName = new char[dirLength + length + 2 ];
 	auto fileName = std::make_unique<char[]>(dirLength + length + 2);
 	memcpy(fileName.get(), szPath, dirLength);
-	fileName[dirLength] = '\\';
+	fileName[dirLength] = '/';
 	memcpy(fileName.get() + dirLength + 1, configFileName, length);
 	fileName[dirLength + length + 1] = 0;
 
@@ -117,7 +117,7 @@ CResourceBundleManage::CResourceBundleManage(const char* configFileName)
 
 	if(m_LogFlag)
 	{
-		string logFileName = string(m_ResDir.get()) + "\\res.log";
+		string logFileName = string(m_ResDir.get()) + "/res.log";
 		
 		m_LogFile = fopen(logFileName.c_str(), "w+");
 	}
@@ -148,13 +148,13 @@ CResourceBundleManage::~CResourceBundleManage(void)
 	Release();
 }
 
-// È¡µÃ×ÊÔ´¸öÊı
+// å–å¾—èµ„æºä¸ªæ•°
 int CResourceBundleManage::GetSize(void)
 {
 	return (int)mapRes.size();
 }
 
-// °ÑUnicode×Ö·û´®×ª»»Îª¶à×Ö½Ú±¾»ú±àÂë
+// æŠŠUnicodeå­—ç¬¦ä¸²è½¬æ¢ä¸ºå¤šå­—èŠ‚æœ¬æœºç¼–ç 
 UErrorCode CResourceBundleManage::ToCodePageString(UConverter *conv, UChar* source, char* target, int destCapacity, int& len)
 {
   UErrorCode status = U_ZERO_ERROR;
@@ -167,7 +167,7 @@ UErrorCode CResourceBundleManage::ToCodePageString(UConverter *conv, UChar* sour
   return status;
 }
 
-// ³õÊ¼»¯×ÊÔ´¹ÜÀíÆ÷
+// åˆå§‹åŒ–èµ„æºç®¡ç†å™¨
 bool CResourceBundleManage::Init()
 {
 	int len = 0;
@@ -212,7 +212,7 @@ bool CResourceBundleManage::Init()
 	return false;
 }
 
-// ÊÍ·Å×ÊÔ´
+// é‡Šæ”¾èµ„æº
 void CResourceBundleManage::Release(void)
 {
 	m_ResDir.reset(nullptr);
@@ -234,7 +234,7 @@ void CResourceBundleManage::Release(void)
 	}
 }
 
-// ¸ù¾İIDÈ¡µÃ×Ö·û´®
+// æ ¹æ®IDå–å¾—å­—ç¬¦ä¸²
 const char* CResourceBundleManage::LoadResString(const char* key)
 {
 	const char* ret ="";
@@ -268,7 +268,7 @@ UnicodeString CResourceBundleManage::LoadUResString(const char* key)
 	return m_pResourceBundle->getStringEx(key, status);
 }
 
-// ¸ñÊ½¸ù¾İ²ÎÊı»¯Ò»¸ö×Ö·û´®
+// æ ¼å¼æ ¹æ®å‚æ•°åŒ–ä¸€ä¸ªå­—ç¬¦ä¸²
 int CResourceBundleManage::Format(const char* key, CFormatParameter& parameter, char buffer[])
 {
     UErrorCode status = U_ZERO_ERROR;

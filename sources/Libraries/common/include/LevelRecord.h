@@ -19,9 +19,9 @@ class CLevelRecord : public CRawDataInfo
 public:
 	//CLevelRecord();
 
-	long	lID;			// ±àºÅ
-	short	sLevel;			// µÈ¼¶
-	unsigned int	ulExp;	// ¾­ÑéÖµ
+	long	lID;			// ç¼–å·
+	short	sLevel;			// ç­‰çº§
+	unsigned int	ulExp;	// ç»éªŒå€¼
 };
 
 class CLevelRecordSet : public CRawDataSet
@@ -39,7 +39,7 @@ public:
 
 protected:
 
-	static CLevelRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CLevelRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

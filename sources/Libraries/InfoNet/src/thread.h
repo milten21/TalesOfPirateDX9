@@ -1,7 +1,7 @@
 
 /* * * * * * * * * * * * * * * * * * * *
 
-    Ïß³Ì·â×°
+    çº¿ç¨‹å°è£…
     Jampe
     2006/3/27
 
@@ -20,13 +20,13 @@ public:
     Thread();
     virtual ~Thread();
 
-    virtual bool Begin(int flag = 0);  //  ¿ªÊ¼Ïß³Ì
-    virtual bool Resume();  //  »Ö¸´Ïß³Ì
-    virtual bool Suspend(); //  ¹ÒÆğÏß³Ì
-    virtual bool Terminate();   //  Ç¿ÖÆÖÕÖ¹Ïß³Ì
-    virtual bool SetPriority(int priority);     //  ÉèÖÃÓÅÏÈ¼¶
-    virtual int GetPriority();  //  »ñÈ¡ÓÅÏÈ¼¶
-    virtual int Wait(int time = INFINITE);  //  µÈ´ıÊ±¼ä
+    virtual bool Begin(int flag = 0);  //  å¼€å§‹çº¿ç¨‹
+    virtual bool Resume();  //  æ¢å¤çº¿ç¨‹
+    virtual bool Suspend(); //  æŒ‚èµ·çº¿ç¨‹
+    virtual bool Terminate();   //  å¼ºåˆ¶ç»ˆæ­¢çº¿ç¨‹
+    virtual bool SetPriority(int priority);     //  è®¾ç½®ä¼˜å…ˆçº§
+    virtual int GetPriority();  //  è·å–ä¼˜å…ˆçº§
+    virtual int Wait(int time = INFINITE);  //  ç­‰å¾…æ—¶é—´
     virtual unsigned Run() = 0;
 
 public:

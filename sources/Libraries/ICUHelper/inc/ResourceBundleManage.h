@@ -1,8 +1,8 @@
 #pragma once
-#include "unicode/resbund.h"		//资源管理信息
-#include "unicode/ucnv.h"			//字符编码转换
-#include "unicode/uclean.h"			//字符编码转换
-#include "unicode/msgfmt.h"			//格式化字符串
+#include "unicode/resbund.h"		//璧勬簮绠＄悊淇℃伅
+#include "unicode/ucnv.h"			//瀛楃缂栫爜杞崲
+#include "unicode/uclean.h"			//瀛楃缂栫爜杞崲
+#include "unicode/msgfmt.h"			//鏍煎紡鍖栧瓧绗︿覆
 	
 //#include "pi_Alloc.h"
 
@@ -76,7 +76,7 @@ private:
 	bool Init();
 
 public:
-	int GetSize(void);			// 取得资源个数
+	int GetSize(void);			// 鍙栧緱璧勬簮涓暟
 	
 	void Release(void);
 

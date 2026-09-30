@@ -162,7 +162,7 @@ inline void Util_ClearStrEndline(std::string &str)
     {
         p = str.find('\n');
     }
-    if(p!=std::string::npos) // ½áÊø×Ö·û´®
+    if(p!=std::string::npos) // ç»“æŸå­—ç¬¦ä¸²
     {
        str[p] = '\0';
     }
@@ -267,7 +267,7 @@ protected:
 
 
 
-class CBlockData // °Ñ°´Î»±£´æµÄÊı¾İ±äÎª×Ö½Ú, Ìá¸ß´æÈ¡ËÙ¶È
+class CBlockData // æŠŠæŒ‰ä½ä¿å­˜çš„æ•°æ®å˜ä¸ºå­—èŠ‚, æé«˜å­˜å–é€Ÿåº¦
 {
 public:
 

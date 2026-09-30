@@ -1,4 +1,4 @@
-// LogvwrDlg.h : Í·ÎÄ¼ş
+// LogvwrDlg.h : å¤´æ–‡ä»¶
 //
 
 #pragma once
@@ -6,39 +6,39 @@
 #include "afxcmn.h"
 
 
-// CLogvwrDlg ¶Ô»°¿ò
+// CLogvwrDlg å¯¹è¯æ¡†
 class CLogPacket;
 class CLogTypeData;
 class CGplTypeData;
 class CGplViewDlg;
 class CLogvwrDlg : public CDialog
     {
-    // ¹¹Ôì
+    // æ„é€ 
 public:
-    CLogvwrDlg(CWnd* pParent = NULL);   // ±ê×¼¹¹Ôìº¯Êı
+    CLogvwrDlg(CWnd* pParent = NULL);   // æ ‡å‡†æ„é€ å‡½æ•°
 	~CLogvwrDlg();
 
-    // ¶Ô»°¿òÊı¾İ
+    // å¯¹è¯æ¡†æ•°æ®
     enum {IDD = IDD_LOGVWR_DIALOG};
 
-	// Ö÷²Ëµ¥¶ÔÏóÖ¸Õë
+	// ä¸»èœå•å¯¹è±¡æŒ‡é’ˆ
 	CMenu* m_pMainMenu;
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Ö§³Ö
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV æ”¯æŒ
 
 
-    // ÊµÏÖ
+    // å®ç°
 protected:
     HICON m_hIcon;
 
-    // Éú³ÉµÄÏûÏ¢Ó³Éäº¯Êı
+    // ç”Ÿæˆçš„æ¶ˆæ¯æ˜ å°„å‡½æ•°
     virtual BOOL OnInitDialog();
     afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
     afx_msg void OnPaint();
     afx_msg HCURSOR OnQueryDragIcon();
 
-    // ×ÔÌí¼ÓÏûÏ¢Ó³Éäº¯Êı
+    // è‡ªæ·»åŠ æ¶ˆæ¯æ˜ å°„å‡½æ•°
     afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg BOOL OnCopyData(CWnd* pWnd, COPYDATASTRUCT* pCopyDataStruct);
 	afx_msg BOOL OnCommand(WPARAM wParam, LPARAM lParam);
@@ -46,38 +46,38 @@ protected:
     DECLARE_MESSAGE_MAP()
 
 private:
-	// ÓÒ¼üµ¯³ö²Ëµ¥¶ÔÏó
+	// å³é”®å¼¹å‡ºèœå•å¯¹è±¡
 	CMenu m_PopMenu;
 
-    // ·ÅÖÃËùÓĞÏÔÊ¾ÔªËØµÄÈİÆ÷
+    // æ”¾ç½®æ‰€æœ‰æ˜¾ç¤ºå…ƒç´ çš„å®¹å™¨
     CStatic m_Container;
 
-	// µ±Ç°¼¤»îµÄ´°¿Ú
+	// å½“å‰æ¿€æ´»çš„çª—å£
 	CWnd* m_pActiveWnd;
 
-    // ÏÔÊ¾ËùÓĞLOGµÄÁĞ±í
+    // æ˜¾ç¤ºæ‰€æœ‰LOGçš„åˆ—è¡¨
     CListCtrl m_LogList;
 
-	// ´æ·Å¸÷ÖÖÀà±ğLOGµÄListCtrl¶ÔÏó¼°Àà±ğ±êÊ¶´®
+	// å­˜æ”¾å„ç§ç±»åˆ«LOGçš„ListCtrlå¯¹è±¡åŠç±»åˆ«æ ‡è¯†ä¸²
 	std::vector<CLogTypeData*> m_LGData;
 
-	// ÏÔÊ¾ËùÓĞGPLµÄ¶Ô»°¿ò
+	// æ˜¾ç¤ºæ‰€æœ‰GPLçš„å¯¹è¯æ¡†
 	CGplViewDlg* m_pGplDlg;
 
-	// ´æ·Å¸÷ÖÖÀà±ğGPLµÄÀà±ğ¶ÔÏó
+	// å­˜æ”¾å„ç§ç±»åˆ«GPLçš„ç±»åˆ«å¯¹è±¡
 	std::vector<CGplTypeData*> m_GPLData;
 
-	// ²âÊÔ¡¢Çå³ı°´Å¥
+	// æµ‹è¯•ã€æ¸…é™¤æŒ‰é’®
     CButton m_btnTestLog;
     CButton m_btnClearLog;
 
-    // ÏÔÊ¾ÓëÇå³ı¼°·ÀÖ¹ÖØÈëµÄÍ¬²½¶ÔÏó
+    // æ˜¾ç¤ºä¸æ¸…é™¤åŠé˜²æ­¢é‡å…¥çš„åŒæ­¥å¯¹è±¡
     CCriticalSection m_CS;
 
-    // LOG°ü¶ÔÏó
+    // LOGåŒ…å¯¹è±¡
     CLogPacket* m_pLogPacket;
 
-    // ½ÓÊÕËùÓĞ°ü¼ÆÊı
+    // æ¥æ”¶æ‰€æœ‰åŒ…è®¡æ•°
     DWORD m_dwPacketCnt;
 
 public:

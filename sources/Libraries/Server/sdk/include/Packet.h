@@ -8,7 +8,7 @@
 //=================================================================
 #pragma once
 
-#include "dstring.h"		//±ÜÃâ³åÍ»£¬Packet.hÍ·ÎÄ¼ş±¾Éí²¢²»Ê¹ÓÃ¡£
+#include "dstring.h"		//é¿å…å†²çªï¼ŒPacket.hå¤´æ–‡ä»¶æœ¬èº«å¹¶ä¸ä½¿ç”¨ã€‚
 #include "BaseBuf.h"
 
 _DBC_BEGIN
@@ -52,7 +52,7 @@ public:
 	bool		WriteFloat(float fVal);
 
 	operator bool()const			{return rptr<rbuf>::operator bool();}
-	uLong		HasData()const		{return (*this)?m_wpos:0;}//·µ»ØÖµ£º·Ç0£¬·µ»ØÒÑĞ´Êı¾İµÄ×Ö½ÚÊı£»0£¬ÎŞÊı¾İÒÑĞ´¡£
+	uLong		HasData()const		{return (*this)?m_wpos:0;}//è¿”å›å€¼ï¼šé0ï¼Œè¿”å›å·²å†™æ•°æ®çš„å­—èŠ‚æ•°ï¼›0ï¼Œæ— æ•°æ®å·²å†™ã€‚
 	uLong		Size()const			{return	(*this)?(*this)->Size():0;}
 	uLong		Head()const			{return m_head;}
 private:
@@ -123,11 +123,11 @@ public:
 	uLong		ReverseReadLong();
 	LONG64 ReverseReadLongLong();
 	uint64_t	ReverseReadAddress();
-	bool		DiscardLast(uLong len);//·µ»ØÖµ£ºtrue-³É¹¦£»false-¶ªÆúÊ§°Ü(¶ªÆúµÄ³¤¶È´óÓÚ°üËùÓµÓĞµÄÊı¾İ³¤¶È£¬²»×÷ÈÎºÎ¸Ä±ä)
+	bool		DiscardLast(uLong len);//è¿”å›å€¼ï¼štrue-æˆåŠŸï¼›false-ä¸¢å¼ƒå¤±è´¥(ä¸¢å¼ƒçš„é•¿åº¦å¤§äºåŒ…æ‰€æ‹¥æœ‰çš„æ•°æ®é•¿åº¦ï¼Œä¸ä½œä»»ä½•æ”¹å˜)
 
 	operator bool()const				{return rptr<rbuf>::operator bool();}
 	uLong		HasData()const			{return (bool(*this)&&(m_len>(m_head +em_cmdsize)))?(m_len -m_head -em_cmdsize):0;}
-	//RemainData()·µ»ØÖµ£º·Ç0£¬·µ»Ø¿É¶ÁÊı¾İµÄ×Ö½ÚÊı£»0£¬ÎŞÊı¾İ¿É¶Á¡£
+	//RemainData()è¿”å›å€¼ï¼šé0ï¼Œè¿”å›å¯è¯»æ•°æ®çš„å­—èŠ‚æ•°ï¼›0ï¼Œæ— æ•°æ®å¯è¯»ã€‚
 	uLong		RemainData()const		{return (bool(*this)&&(m_len>(m_head +em_cmdsize +m_rpos)))?(m_len -m_head -em_cmdsize -m_rpos):0;}
 	uLong		Size()const				{return	(*this)?(*this)->Size():0;}
 	uLong		GetDataLen()const;

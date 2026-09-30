@@ -17,7 +17,7 @@ int StringNewLineChs( char* pOutBuf, unsigned int nWidth, const char* pInBuf, un
 int StringNewLineEng( char* pOutBuf, unsigned int nWidth, const char* pInBuf, unsigned int nInLen );
 
 
-// StringSplitNum函数功能为将一个数字的字符串szBuf，按nCount插入分隔符cSplit
+// StringSplitNum鍑芥暟鍔熻兘涓哄皢涓�涓暟瀛楃殑瀛楃涓瞫zBuf锛屾寜nCount鎻掑叆鍒嗛殧绗Split
 const char* StringSplitNum( long nNumber, int nCount=3, char cSplit=',' );
 const char* StringSplitNum( const char* bigIntBuf, int nCount=3, char cSplit=',' );
 

@@ -11,66 +11,66 @@ _DBC_BEGIN
 
 //------------------------------------------------------------------------------------------------------------------
 //common exception define
-class excp :public std::runtime_error			//»ùÒì³£Àà
+class excp :public std::runtime_error			//åŸºå¼‚å¸¸ç±»
 {
 public:
 	excp(const char* desc) : std::runtime_error(desc) {}
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpMem:public excp				//ÄÚ´æ·ÖÅä»òÊÍ·ÅÒì³£
+class excpMem:public excp				//å†…å­˜åˆ†é…æˆ–é‡Šæ”¾å¼‚å¸¸
 {
 public:
 	excpMem(cChar * desc):excp(desc){};
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpArr:public excp				//Êı×éÔ½½ç»òÆäËûÊı×éÏà¹Ø´íÎóÒì³£
+class excpArr:public excp				//æ•°ç»„è¶Šç•Œæˆ–å…¶ä»–æ•°ç»„ç›¸å…³é”™è¯¯å¼‚å¸¸
 {
 public:
 	excpArr(cChar * desc):excp(desc){};
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpSync:public excp				//²Ù×÷ÏµÍ³Í¬²½¶ÔÏó²Ù×÷Òì³£
+class excpSync:public excp				//æ“ä½œç³»ç»ŸåŒæ­¥å¯¹è±¡æ“ä½œå¼‚å¸¸
 {
 public:
 	excpSync(cChar * desc):excp(desc){};
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpThrd:public excp				//²Ù×÷ÏµÍ³Ïß³Ì²Ù×÷Òì³£
+class excpThrd:public excp				//æ“ä½œç³»ç»Ÿçº¿ç¨‹æ“ä½œå¼‚å¸¸
 {
 public:
 	excpThrd(cChar * desc):excp(desc){};
 };
-class excpSock:public excp				//²Ù×÷ÏµÍ³Ïß³Ì²Ù×÷Òì³£
+class excpSock:public excp				//æ“ä½œç³»ç»Ÿçº¿ç¨‹æ“ä½œå¼‚å¸¸
 {
 public:
 	excpSock(cChar * desc):excp(desc){};
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpCOM:public excp				//COM²Ù×÷Òì³£
+class excpCOM:public excp				//COMæ“ä½œå¼‚å¸¸
 {
 public:
 	excpCOM(cChar * desc):excp(desc){};
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpDB:public excp				//Êı¾İ¿â²Ù×÷Òì³£
+class excpDB:public excp				//æ•°æ®åº“æ“ä½œå¼‚å¸¸
 {
 public:
 	excpDB(cChar * desc):excp(desc){};
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpIniF:public excp				//ÎÄ¼ş²Ù×÷Òì³£
+class excpIniF:public excp				//æ–‡ä»¶æ“ä½œå¼‚å¸¸
 {
 public:
 	excpIniF(cChar * desc):excp(desc){};
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpFile:public excp				//ÎÄ¼ş²Ù×÷Òì³£
+class excpFile:public excp				//æ–‡ä»¶æ“ä½œå¼‚å¸¸
 {
 public:
 	excpFile(cChar * desc):excp(desc){};
 };
 //------------------------------------------------------------------------------------------------------------------
-class excpXML:public excp				//ÎÄ¼ş²Ù×÷Òì³£
+class excpXML:public excp				//æ–‡ä»¶æ“ä½œå¼‚å¸¸
 {
 public:
 	excpXML(cChar * desc):excp(desc){};

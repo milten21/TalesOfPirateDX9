@@ -2,7 +2,7 @@
 
 #include "udpsocket.h"
 
-// ·şÎñÆ÷¼àÌıÓÃ
+// æœåŠ¡å™¨ç›‘å¬ç”¨
 
 class CUdpManage;
 typedef void (*ReceiveManageEvent) ( CUdpManage* pManage, CUdpServer* pUdpServer, const char* szClientIP, unsigned int nClientPort, const char* pData, int len );

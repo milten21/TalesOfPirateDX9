@@ -2,21 +2,21 @@
 
 #include "Util.h"
 
-// MapData Êı¾İ¹ÜÀíÀà
+// MapData æ•°æ®ç®¡ç†ç±»
 
-// Ö§³ÖÊı¾İ¶¯Ì¬¶ÁÈë, ²»ÏŞÖÆÊı¾İÀàĞÍ
+// æ”¯æŒæ•°æ®åŠ¨æ€è¯»å…¥, ä¸é™åˆ¶æ•°æ®ç±»å‹
 
-// ±ÈÈçµØ±í, Îï¼ş´æÅÌÎÄ¼ş¶¼¿ÉÒÔÊ¹ÓÃ´ËÀà
+// æ¯”å¦‚åœ°è¡¨, ç‰©ä»¶å­˜ç›˜æ–‡ä»¶éƒ½å¯ä»¥ä½¿ç”¨æ­¤ç±»
 
-// Ö§³ÖÊı¾İ¿éÖ®¼äµÄ¸´ÖÆ, ¿ÉÒÔ·½±ãµØÍ¼ÇĞ¸î, ×éºÏ
+// æ”¯æŒæ•°æ®å—ä¹‹é—´çš„å¤åˆ¶, å¯ä»¥æ–¹ä¾¿åœ°å›¾åˆ‡å‰², ç»„åˆ
 
 
 struct SDataSection
 {
-    void*		pData;				// Ö¸ÏòÊµ¼ÊµÄÊı¾İ
-    DWORD		dwDataOffset;		// ÎÄ¼şÊı¾İÖ¸ÕëÎ»ÖÃ = 0, ±íÊ¾Ã»ÓĞÊı¾İ
-	DWORD		dwActiveTime;		// ×îºóÒ»´ÎÊ¹ÓÃµÄÊ±¼ä
-    DWORD       dwParam;            // ²ÎÊı
+    void*		pData;				// æŒ‡å‘å®é™…çš„æ•°æ®
+    DWORD		dwDataOffset;		// æ–‡ä»¶æ•°æ®æŒ‡é’ˆä½ç½® = 0, è¡¨ç¤ºæ²¡æœ‰æ•°æ®
+	DWORD		dwActiveTime;		// æœ€åä¸€æ¬¡ä½¿ç”¨çš„æ—¶é—´
+    DWORD       dwParam;            // å‚æ•°
 	
 	SDataSection()
     :pData(NULL),dwActiveTime(0),dwDataOffset(0),dwParam(0)
@@ -35,35 +35,35 @@ public:
 
     ~CSectionDataMgr();
     
-    // ´ÓÎÄ¼ş¶ÁÈë, ²¢¾ö¶¨ÊÇ·ñĞèÒª±à¼­²Ù×÷
+    // ä»æ–‡ä»¶è¯»å…¥, å¹¶å†³å®šæ˜¯å¦éœ€è¦ç¼–è¾‘æ“ä½œ
     BOOL    CreateFromFile(const char *pszMapName, BOOL bEdit = FALSE);
     
-    // ´´½¨, »áÉú³ÉÎÄ¼ş
+    // åˆ›å»º, ä¼šç”Ÿæˆæ–‡ä»¶
     BOOL    Create(int nSectionCntX, int nSectionCntY, const char *pszMapName);
 	
-    // ¶ÁÅÌ, ¿ÉÒÔÒ»´ÎĞÔ¶ÁÈë, Ò²¿ÉÒÔ¶¯Ì¬¶ÁÈë
+    // è¯»ç›˜, å¯ä»¥ä¸€æ¬¡æ€§è¯»å…¥, ä¹Ÿå¯ä»¥åŠ¨æ€è¯»å…¥
     void	Load(BOOL bFull, DWORD dwTimeParam = 0);
     
-    // ¶ÁÈ¡SectionÊı¾İµÄ»Øµ÷º¯Êı
+    // è¯»å–Sectionæ•°æ®çš„å›è°ƒå‡½æ•°
     void	SetLoadSectionCallback(MAP_LOADING_PROC pfn)	{	_pfnProc = pfn;				        }
     
-    // ¸´ÖÆSectionÊı¾İ
+    // å¤åˆ¶Sectionæ•°æ®
     void    CopySectionData(SDataSection* pDest, SDataSection *pSrc);
     
-    // ±£´æSectionÊı¾İµ½ÎÄ¼ş
+    // ä¿å­˜Sectionæ•°æ®åˆ°æ–‡ä»¶
     void    SaveSectionData(int nSectionX, int nSectionY);
 
-    // Çå³ıÖ¸¶¨SectionµÄÊı¾İ, ÄÚ²¿»áÇå³ıÎÄ¼şË÷Òı
+    // æ¸…é™¤æŒ‡å®šSectionçš„æ•°æ®, å†…éƒ¨ä¼šæ¸…é™¤æ–‡ä»¶ç´¢å¼•
     void    ClearSectionData(int nSectionX, int nSectionY);
 
-    // »ñÈ¡SectionÊı¾İ, Èç¹û²»ÔÚÄÚ´æÀïÔò·µ»Ø¿Õ
+    // è·å–Sectionæ•°æ®, å¦‚æœä¸åœ¨å†…å­˜é‡Œåˆ™è¿”å›ç©º
     SDataSection* GetSectionData(int nSectionX, int nSectionY);
     
-    // ¶ÁÈ¡Ö¸¶¨SectionµÄÊı¾İ
+    // è¯»å–æŒ‡å®šSectionçš„æ•°æ®
     SDataSection* LoadSectionData(int nSectionX, int nSectionY);
 
 	
-	// »ñÈ¡mapÏà¹ØÃèÊöĞÅÏ¢
+	// è·å–mapç›¸å…³æè¿°ä¿¡æ¯
 	int		GetSectionCntX()						        { return _nSectionCntX;			        }
 	int		GetSectionCntY()						        { return _nSectionCntY;			        }
     int     GetSectionCnt()                                 { return _nSectionCntX * _nSectionCntY; }
@@ -71,10 +71,10 @@ public:
     char*   GetDataName()                                   { return _szDataName;                    }
     void    SetDataName(const char *pszName)                { strcpy(_szDataName, pszName);          }   
 
-    // ¼ÆËãÓĞĞ§Êı¾İ
+    // è®¡ç®—æœ‰æ•ˆæ•°æ®
     // int     CalValidSectionCnt();
     
-    // ÉèÖÃ¶¯Ì¬¶ÁÈëµÄÖĞĞÄÎ»ÖÃºÍ·¶Î§
+    // è®¾ç½®åŠ¨æ€è¯»å…¥çš„ä¸­å¿ƒä½ç½®å’ŒèŒƒå›´
     void	SetLoadSize(int nWidth, int nHeight)	{ _nLoadWidth  = nWidth;_nLoadHeight = nHeight; }
 	int		GetLoadWidth()							{ return _nLoadWidth;					        }
 	int		GetLoadHeight()							{ return _nLoadHeight;					        }
@@ -102,22 +102,22 @@ protected:
         return *(_SectionArray + dwSectionNo);
     }
 
-	char                _szFileName[255];   // °üº¬ÍêÕûÂ·¾¶µÄÃû³Æ
-    char                _szDataName[32];     // µØÍ¼Ãû³Æ
-	int					_nSectionCntX;		// µØÍ¼Ë®Æ½·½ÏòÉÏSectionµÄ¿éÊı
-	int					_nSectionCntY;		// µØÍ¼´¹Ö±·½ÏòÉÏSectionµÄ¿éÊı
-	int					_nLoadCenterX;		// ¶¯Ì¬¶ÁÈëµÄÖĞĞÄÎ»ÖÃ
+	char                _szFileName[255];   // åŒ…å«å®Œæ•´è·¯å¾„çš„åç§°
+    char                _szDataName[32];     // åœ°å›¾åç§°
+	int					_nSectionCntX;		// åœ°å›¾æ°´å¹³æ–¹å‘ä¸ŠSectionçš„å—æ•°
+	int					_nSectionCntY;		// åœ°å›¾å‚ç›´æ–¹å‘ä¸ŠSectionçš„å—æ•°
+	int					_nLoadCenterX;		// åŠ¨æ€è¯»å…¥çš„ä¸­å¿ƒä½ç½®
 	int 				_nLoadCenterY;
-	int					_nLoadWidth;		// ¿ÉÊÓ·¶Î§
+	int					_nLoadWidth;		// å¯è§†èŒƒå›´
 	int					_nLoadHeight;
 	
     int					_nSectionStartX;
 	int					_nSectionStartY;
     
-	MAP_LOADING_PROC	_pfnProc;			// µØÍ¼¶¯Ì¬¶ÁÈë»Øµ÷Í¨Öªº¯Êı
+	MAP_LOADING_PROC	_pfnProc;			// åœ°å›¾åŠ¨æ€è¯»å…¥å›è°ƒé€šçŸ¥å‡½æ•°
 	
-	FILE*				_fp;				// µØÍ¼ÎÄ¼ş¾ä±ú
-	BOOL				_bEdit;				// ÊÇ·ñ¿É±à¼­
+	FILE*				_fp;				// åœ°å›¾æ–‡ä»¶å¥æŸ„
+	BOOL				_bEdit;				// æ˜¯å¦å¯ç¼–è¾‘
     BOOL                _bDebug;
 	
     std::list<SDataSection*>	_SectionList;

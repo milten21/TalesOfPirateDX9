@@ -88,7 +88,7 @@ void CHairRecordSet::_ProcessRawDataInfo(CRawDataInfo *pInfo)
 {
 	CHairRecord *pHair = (CHairRecord*)pInfo;
 
-    // ¸üÐÂ¶¯Ì¬ÊôÐÔ
+    // æ›´æ–°åŠ¨æ€å±žæ€§
 	pHair->RefreshPrivateData();	
 }
 

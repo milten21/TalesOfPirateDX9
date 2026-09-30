@@ -14,7 +14,7 @@
 #include "CompCommand.h"
 #include "JobType.h"
 
-const char cchItemRecordKeyValue = (char)0xfe;	// µÀ¾ß¶ÔÖ°ÒµµÄĞèÇóÖĞÕ¼ÓÃÁË-1
+const char cchItemRecordKeyValue = (char)0xfe;	// é“å…·å¯¹èŒä¸šçš„éœ€æ±‚ä¸­å ç”¨äº†-1
 
 #define defITEM_NAME_LEN	80
 #define defITEM_MODULE_NUM	5
@@ -31,54 +31,54 @@ const char cchItemRecordKeyValue = (char)0xfe;	// µÀ¾ß¶ÔÖ°ÒµµÄĞèÇóÖĞÕ¼ÓÃÁË-1
 
 enum EItemType
 {
-	enumItemTypeSword		= 1,	// ½£
-	enumItemTypeGlave		= 2,	// ¾Ş½£
-	enumItemTypeBow			= 3,	// ¹­
-	enumItemTypeHarquebus	= 4,	// »ğÉşÇ¹
-	enumItemTypeFalchion	= 5,	// µ¶
-	enumItemTypeMitten		= 6,	// È­Ì×
-	enumItemTypeStylet		= 7,	// Ø°Ê×
-	enumItemTypeMoneybag	= 8,	// Ç®´ü
-	enumItemTypeCosh		= 9,	// ¶Ì°ô
-	enumItemTypeSinker		= 10,	// ´¸×Ó
-	enumItemTypeShield		= 11,	// ¶Ü
-	enumItemTypeArrow		= 12,	// ¼ı
-	enumItemTypeAmmo		= 13,	// µ¯Ò©
-	enumItemTypeHeadpiece	= 19,	// Í·¿ø
-	enumItemTypeHair		= 20,	// Í··¢
-	enumItemTypeFace		= 21,	// Á³ĞÍ
-	enumItemTypeClothing	= 22,	// ÒÂ·ş
-	enumItemTypeGlove		= 23,	// ÊÖÌ×
-	enumItemTypeBoot		= 24,	// Ñ¥×Ó
+	enumItemTypeSword		= 1,	// å‰‘
+	enumItemTypeGlave		= 2,	// å·¨å‰‘
+	enumItemTypeBow			= 3,	// å¼“
+	enumItemTypeHarquebus	= 4,	// ç«ç»³æª
+	enumItemTypeFalchion	= 5,	// åˆ€
+	enumItemTypeMitten		= 6,	// æ‹³å¥—
+	enumItemTypeStylet		= 7,	// åŒ•é¦–
+	enumItemTypeMoneybag	= 8,	// é’±è¢‹
+	enumItemTypeCosh		= 9,	// çŸ­æ£’
+	enumItemTypeSinker		= 10,	// é”¤å­
+	enumItemTypeShield		= 11,	// ç›¾
+	enumItemTypeArrow		= 12,	// ç®­
+	enumItemTypeAmmo		= 13,	// å¼¹è¯
+	enumItemTypeHeadpiece	= 19,	// å¤´ç›”
+	enumItemTypeHair		= 20,	// å¤´å‘
+	enumItemTypeFace		= 21,	// è„¸å‹
+	enumItemTypeClothing	= 22,	// è¡£æœ
+	enumItemTypeGlove		= 23,	// æ‰‹å¥—
+	enumItemTypeBoot		= 24,	// é´å­
 	enumItemTypeNecklace	= 25,
 	enumItemTypeRing		= 26,
 	enumItemTypeTattoo		= 27,
-	enumItemTypeConch		= 29,	// ±´¿Ç
-	enumItemTypeMedicine	= 31,	// Ò©Æ·
-	enumItemTypeOvum		= 32,	// º£ÂÑ
+	enumItemTypeConch		= 29,	// è´å£³
+	enumItemTypeMedicine	= 31,	// è¯å“
+	enumItemTypeOvum		= 32,	// æµ·åµ
 	enumItemTypeUnknownConsumable = 33, // TODO: Proper naming
-	enumItemTypeScroll		= 36,	// »Ø³Ç¾íÖá
-	enumItemTypeGeneral		= 41,	// Ò»°ãÎïÆ·
-    enumItemTypeMission     = 42,   // ÈÎÎñµÀ¾ß
-	enumItemTypeBoat		= 43,	// ´¬³¤Ö¤Ã÷
-	enumItemTypeWing		= 44,	// ³á°ò£¬¿Í»§¶ËÓÃÓÚÏÔÊ¾ÌØĞ§ÓÃ
-	enumItemTypeTrade		= 45,	// Ã³Ò×Ö¤Ã÷
-	enumItemTypeBravery		= 46,	// ÓÂÕßÖ®Ö¤
-	enumItemTypeHull		= 51,	// ´¬Éí
-	enumItemTypeEmbolon		= 52,	// ×²½Ç
-	enumItemTypeEngine		= 53,	// ·¢¶¯»ú
-	enumItemTypeArtillery	= 54,	// »ğÅÚ
-	enumItemTypeAirscrew	= 55,	// ÂİĞı½¬
-	enumItemTypeBoatSign	= 56,	// ´¬±êÖ¾
-	enumItemTypePetFodder	= 57,	// ³èÎïËÇÁÏ
-	enumItemTypePetSock		= 58,	// ÄÜÁ¿ÁãÊ³
-	enumItemTypePet			= 59,	// ÊØ»¤¾«Áé
+	enumItemTypeScroll		= 36,	// å›åŸå·è½´
+	enumItemTypeGeneral		= 41,	// ä¸€èˆ¬ç‰©å“
+    enumItemTypeMission     = 42,   // ä»»åŠ¡é“å…·
+	enumItemTypeBoat		= 43,	// èˆ¹é•¿è¯æ˜
+	enumItemTypeWing		= 44,	// ç¿…è†€ï¼Œå®¢æˆ·ç«¯ç”¨äºæ˜¾ç¤ºç‰¹æ•ˆç”¨
+	enumItemTypeTrade		= 45,	// è´¸æ˜“è¯æ˜
+	enumItemTypeBravery		= 46,	// å‹‡è€…ä¹‹è¯
+	enumItemTypeHull		= 51,	// èˆ¹èº«
+	enumItemTypeEmbolon		= 52,	// æ’è§’
+	enumItemTypeEngine		= 53,	// å‘åŠ¨æœº
+	enumItemTypeArtillery	= 54,	// ç«ç‚®
+	enumItemTypeAirscrew	= 55,	// èºæ—‹æµ†
+	enumItemTypeBoatSign	= 56,	// èˆ¹æ ‡å¿—
+	enumItemTypePetFodder	= 57,	// å® ç‰©é¥²æ–™
+	enumItemTypePetSock		= 58,	// èƒ½é‡é›¶é£Ÿ
+	enumItemTypePet			= 59,	// å®ˆæŠ¤ç²¾çµ
 
 	enumItemCloak			= 88,
 	enumItemMount			= 90,
 
 	// Add by lark.li 20080514 begin
-	enumItemTypeNo			= 99,	// ²ÊÆ±Ğ¡Çò
+	enumItemTypeNo			= 99,	// å½©ç¥¨å°çƒ
 	// End
 };
 
@@ -93,116 +93,116 @@ class CItemRecord : public CRawDataInfo
 public:
 	enum EItemExtendInfo
 	{
-		enumItemNormalStart		= 0,		// ÆÕÍ¨µÀ¾ß
+		enumItemNormalStart		= 0,		// æ™®é€šé“å…·
 		enumItemNormalEnd		= 4999,
-		enumItemFusionEndure   = 23000,      // ÈÚºÏµÀ¾ßËùÒªÇóµÄ×î´óÄÍ¾Ã¶È//Modify by ning.yan 20080821 £¨´óÅìÒªÇóÈÚºÏµÀ¾ßµÄÌõ¼şÓÉµÀ¾ßÆğÊ¼¡¢½áÊøÀ¸¸ÄÎª×î´óÄÍ¾Ã¶È£©
-		enumItemFusionStart		= 5000,		// ÈÛºÏµÀ¾ßÆğÊ¼À¸Î»
-		enumItemFusionEnd		= 9800,		// ÈÛºÏµÀ¾ß½áÊøÀ¸Î»
+		enumItemFusionEndure   = 23000,      // èåˆé“å…·æ‰€è¦æ±‚çš„æœ€å¤§è€ä¹…åº¦//Modify by ning.yan 20080821 ï¼ˆå¤§æ¾è¦æ±‚èåˆé“å…·çš„æ¡ä»¶ç”±é“å…·èµ·å§‹ã€ç»“æŸæ æ”¹ä¸ºæœ€å¤§è€ä¹…åº¦ï¼‰
+		enumItemFusionStart		= 5000,		// ç†”åˆé“å…·èµ·å§‹æ ä½
+		enumItemFusionEnd		= 9800,		// ç†”åˆé“å…·ç»“æŸæ ä½
 		// Modify by lark.li 20080703
-		enumItemMax				= 32768,		// µÀ¾ß±í×î´ó¼ÇÂ¼ÊıÁ¿
+		enumItemMax				= 32768,		// é“å…·è¡¨æœ€å¤§è®°å½•æ•°é‡
 		// End
 
 	};
 
 	CItemRecord();
 
-	long	lID;							// ±àºÅ
-	_TCHAR	szName[defITEM_NAME_LEN];		// Ãû³Æ
+	long	lID;							// ç¼–å·
+	_TCHAR	szName[defITEM_NAME_LEN];		// åç§°
 	char    szICON[defITEM_ICON_NAME_LEN];	// ICON
-	_TCHAR	chModule[defITEM_MODULE_NUM][defITEM_MODULE_LEN];	// Ä£ĞÍ
-	short	sShipFlag;						// ´¬±êÖ¾
-	short	sShipType;						// ´¬ÌåĞÍºÅ
-	short	sType;							// ÀàĞÍ
+	_TCHAR	chModule[defITEM_MODULE_NUM][defITEM_MODULE_LEN];	// æ¨¡å‹
+	short	sShipFlag;						// èˆ¹æ ‡å¿—
+	short	sShipType;						// èˆ¹ä½“å‹å·
+	short	sType;							// ç±»å‹
 
-	char	chForgeLv;						// ¾«Á¶µÈ¼¶
-	char	chForgeSteady;					// °²¶¨Öµ£¨¾«Á¶ÎïÆ·µÄÎÈ¶¨Öµ£¬³¬¹ıÕâ¸öÖµ£¬Ã¿¾«Á¶Ò»´Î¾Íµİ¼õÒ»¶¨³É¹¦ÂÊ£©
-	char	chExclusiveID;					// ÊÇ·ñÓµÓĞÎ¨Ò»ID
-    char    chIsTrade;                      // ¿É½»Ò×
-    char    chIsPick;                       // ¿ÉÊ°È¡
-    char    chIsThrow;                      // ¿É¶ªÆú
-	char	chIsDel;						// ¿ÉÏú»Ù
-    long    lPrice;                         // ½»Ò×¼Û¸ñ
-	char	chBody[defITEM_BODY];			// ÌåĞÎÏŞÖÆ
-	short	sNeedLv;						// ÒªÇóµÄµÈ¼¶
-    char    szWork[MAX_JOB_TYPE];           // Ö°Òµ
+	char	chForgeLv;						// ç²¾ç‚¼ç­‰çº§
+	char	chForgeSteady;					// å®‰å®šå€¼ï¼ˆç²¾ç‚¼ç‰©å“çš„ç¨³å®šå€¼ï¼Œè¶…è¿‡è¿™ä¸ªå€¼ï¼Œæ¯ç²¾ç‚¼ä¸€æ¬¡å°±é€’å‡ä¸€å®šæˆåŠŸç‡ï¼‰
+	char	chExclusiveID;					// æ˜¯å¦æ‹¥æœ‰å”¯ä¸€ID
+    char    chIsTrade;                      // å¯äº¤æ˜“
+    char    chIsPick;                       // å¯æ‹¾å–
+    char    chIsThrow;                      // å¯ä¸¢å¼ƒ
+	char	chIsDel;						// å¯é”€æ¯
+    long    lPrice;                         // äº¤æ˜“ä»·æ ¼
+	char	chBody[defITEM_BODY];			// ä½“å½¢é™åˆ¶
+	short	sNeedLv;						// è¦æ±‚çš„ç­‰çº§
+    char    szWork[MAX_JOB_TYPE];           // èŒä¸š
 
-	int		nPileMax;						// ÔÚµÀ¾ßÀ¸Ò»¸ñÖĞ¿ÉÒÔ·ÅÖÃµÄ×î¶à¸öÊı
-	char	chInstance;						// ÊÇ·ñÊµÀı»¯
-	char	szAbleLink[enumEQUIP_NUM];		// ¿É×°±¸µÄÎ»ÖÃ
-	char	szNeedLink[enumEQUIP_NUM];		// ĞèÒªµÄÎ»ÖÃ
-	char	chPickTo;						// 0 Ê°È¡Ê±½øÈë±³°ü£¬1 ½øÈë´¬²Õ
+	int		nPileMax;						// åœ¨é“å…·æ ä¸€æ ¼ä¸­å¯ä»¥æ”¾ç½®çš„æœ€å¤šä¸ªæ•°
+	char	chInstance;						// æ˜¯å¦å®ä¾‹åŒ–
+	char	szAbleLink[enumEQUIP_NUM];		// å¯è£…å¤‡çš„ä½ç½®
+	char	szNeedLink[enumEQUIP_NUM];		// éœ€è¦çš„ä½ç½®
+	char	chPickTo;						// 0 æ‹¾å–æ—¶è¿›å…¥èƒŒåŒ…ï¼Œ1 è¿›å…¥èˆ¹èˆ±
 
-	short	sStrCoef;						// Á¦Á¿ÏµÊı¼Ó³É
-	short	sAgiCoef;						// Ãô½İÏµÊı¼Ó³É
-	short	sDexCoef;						// ×¨×¢ÏµÊı¼Ó³É
-	short	sConCoef;						// ÌåÖÊÏµÊı¼Ó³É
-	short	sStaCoef;						// ¾«Á¦ÏµÊı¼Ó³É
-	short	sLukCoef;						// ĞÒÔËÏµÊı¼Ó³É	
-	short	sASpdCoef;						// ¹¥»÷ÆµÂÊÏµÊı¼Ó³É
-	short	sADisCoef;						// ¹¥»÷¾àÀëÏµÊı¼Ó³É
-	short	sMnAtkCoef;						// ×îĞ¡¹¥»÷Á¦ÏµÊı¼Ó³É
-	short	sMxAtkCoef;						// ×î´ó¹¥»÷Á¦ÏµÊı¼Ó³É
-	short	sDefCoef;						// ·ÀÓùÏµÊı¼Ó³É
-	short	sMxHpCoef;						// ×î´óHpÏµÊı¼Ó³É
-	short	sMxSpCoef;						// ×î´óSpÏµÊı¼Ó³É
-	short	sFleeCoef;						// ÉÁ±ÜÂÊÏµÊı¼Ó³É
-	short	sHitCoef;						// ÃüÖĞÂÊÏµÊı¼Ó³É
-	short	sCrtCoef;						// ±¬»÷ÂÊÏµÊı¼Ó³É
-	short	sMfCoef;						// Ñ°±¦ÂÊÏµÊı¼Ó³É
-	short	sHRecCoef;						// hp»Ö¸´ËÙ¶ÈÏµÊı¼Ó³É
-	short	sSRecCoef;						// sp»Ö¸´ËÙ¶ÈÏµÊı¼Ó³É
-	short	sMSpdCoef;						// ÒÆ¶¯ËÙ¶ÈÏµÊı¼Ó³É
-	short	sColCoef;						// ×ÊÔ´²É¼¯ËÙ¶ÈÏµÊı¼Ó³É
+	short	sStrCoef;						// åŠ›é‡ç³»æ•°åŠ æˆ
+	short	sAgiCoef;						// æ•æ·ç³»æ•°åŠ æˆ
+	short	sDexCoef;						// ä¸“æ³¨ç³»æ•°åŠ æˆ
+	short	sConCoef;						// ä½“è´¨ç³»æ•°åŠ æˆ
+	short	sStaCoef;						// ç²¾åŠ›ç³»æ•°åŠ æˆ
+	short	sLukCoef;						// å¹¸è¿ç³»æ•°åŠ æˆ	
+	short	sASpdCoef;						// æ”»å‡»é¢‘ç‡ç³»æ•°åŠ æˆ
+	short	sADisCoef;						// æ”»å‡»è·ç¦»ç³»æ•°åŠ æˆ
+	short	sMnAtkCoef;						// æœ€å°æ”»å‡»åŠ›ç³»æ•°åŠ æˆ
+	short	sMxAtkCoef;						// æœ€å¤§æ”»å‡»åŠ›ç³»æ•°åŠ æˆ
+	short	sDefCoef;						// é˜²å¾¡ç³»æ•°åŠ æˆ
+	short	sMxHpCoef;						// æœ€å¤§Hpç³»æ•°åŠ æˆ
+	short	sMxSpCoef;						// æœ€å¤§Spç³»æ•°åŠ æˆ
+	short	sFleeCoef;						// é—ªé¿ç‡ç³»æ•°åŠ æˆ
+	short	sHitCoef;						// å‘½ä¸­ç‡ç³»æ•°åŠ æˆ
+	short	sCrtCoef;						// çˆ†å‡»ç‡ç³»æ•°åŠ æˆ
+	short	sMfCoef;						// å¯»å®ç‡ç³»æ•°åŠ æˆ
+	short	sHRecCoef;						// hpæ¢å¤é€Ÿåº¦ç³»æ•°åŠ æˆ
+	short	sSRecCoef;						// spæ¢å¤é€Ÿåº¦ç³»æ•°åŠ æˆ
+	short	sMSpdCoef;						// ç§»åŠ¨é€Ÿåº¦ç³»æ•°åŠ æˆ
+	short	sColCoef;						// èµ„æºé‡‡é›†é€Ÿåº¦ç³»æ•°åŠ æˆ
 
-	short	sStrValu[2];					// Á¦Á¿³£Êı¼Ó³É£¨×îĞ¡Öµ£¬×î´óÖµ£©
-	short	sAgiValu[2];					// Ãô½İ³£Êı¼Ó³É
-	short	sDexValu[2];					// ×¨×¢³£Êı¼Ó³É
-	short	sConValu[2];					// ÌåÖÊ³£Êı¼Ó³É
-	short	sStaValu[2];					// ¾«Á¦³£Êı¼Ó³É
-	short	sLukValu[2];					// ĞÒÔË³£Êı¼Ó³É
-	short	sASpdValu[2];					// ¹¥»÷ÆµÂÊ³£Êı¼Ó³É
-	short	sADisValu[2];					// ¹¥»÷¾àÀë³£Êı¼Ó³É
-	short	sMnAtkValu[2];					// ×îĞ¡¹¥»÷Á¦³£Êı¼Ó³É
-	short	sMxAtkValu[2];					// ×î´ó¹¥»÷Á¦³£Êı¼Ó³É
-	short	sDefValu[2];					// ·ÀÓù³£Êı¼Ó³É
-	short	sMxHpValu[2];					// ×î´óHp³£Êı¼Ó³É
-	short	sMxSpValu[2];					// ×î´óSp³£Êı¼Ó³É
-	short	sFleeValu[2];					// ÉÁ±ÜÂÊ³£Êı¼Ó³É
-	short	sHitValu[2];					// ÃüÖĞÂÊ³£Êı¼Ó³É
-	short	sCrtValu[2];					// ±¬»÷ÂÊ³£Êı¼Ó³É
-	short	sMfValu[2];						// Ñ°±¦ÂÊ³£Êı¼Ó³É
-	short	sHRecValu[2];					// hp»Ö¸´ËÙ¶È³£Êı¼Ó³É
-	short	sSRecValu[2];					// sp»Ö¸´ËÙ¶È³£Êı¼Ó³É
-	short	sMSpdValu[2];					// ÒÆ¶¯ËÙ¶È³£Êı¼Ó³É
-	short	sColValu[2];					// ×ÊÔ´²É¼¯ËÙ¶È³£Êı¼Ó³É
+	short	sStrValu[2];					// åŠ›é‡å¸¸æ•°åŠ æˆï¼ˆæœ€å°å€¼ï¼Œæœ€å¤§å€¼ï¼‰
+	short	sAgiValu[2];					// æ•æ·å¸¸æ•°åŠ æˆ
+	short	sDexValu[2];					// ä¸“æ³¨å¸¸æ•°åŠ æˆ
+	short	sConValu[2];					// ä½“è´¨å¸¸æ•°åŠ æˆ
+	short	sStaValu[2];					// ç²¾åŠ›å¸¸æ•°åŠ æˆ
+	short	sLukValu[2];					// å¹¸è¿å¸¸æ•°åŠ æˆ
+	short	sASpdValu[2];					// æ”»å‡»é¢‘ç‡å¸¸æ•°åŠ æˆ
+	short	sADisValu[2];					// æ”»å‡»è·ç¦»å¸¸æ•°åŠ æˆ
+	short	sMnAtkValu[2];					// æœ€å°æ”»å‡»åŠ›å¸¸æ•°åŠ æˆ
+	short	sMxAtkValu[2];					// æœ€å¤§æ”»å‡»åŠ›å¸¸æ•°åŠ æˆ
+	short	sDefValu[2];					// é˜²å¾¡å¸¸æ•°åŠ æˆ
+	short	sMxHpValu[2];					// æœ€å¤§Hpå¸¸æ•°åŠ æˆ
+	short	sMxSpValu[2];					// æœ€å¤§Spå¸¸æ•°åŠ æˆ
+	short	sFleeValu[2];					// é—ªé¿ç‡å¸¸æ•°åŠ æˆ
+	short	sHitValu[2];					// å‘½ä¸­ç‡å¸¸æ•°åŠ æˆ
+	short	sCrtValu[2];					// çˆ†å‡»ç‡å¸¸æ•°åŠ æˆ
+	short	sMfValu[2];						// å¯»å®ç‡å¸¸æ•°åŠ æˆ
+	short	sHRecValu[2];					// hpæ¢å¤é€Ÿåº¦å¸¸æ•°åŠ æˆ
+	short	sSRecValu[2];					// spæ¢å¤é€Ÿåº¦å¸¸æ•°åŠ æˆ
+	short	sMSpdValu[2];					// ç§»åŠ¨é€Ÿåº¦å¸¸æ•°åŠ æˆ
+	short	sColValu[2];					// èµ„æºé‡‡é›†é€Ÿåº¦å¸¸æ•°åŠ æˆ
 
-	short	sPDef[2];						// ÎïÀíµÖ¿¹
-	short	sLHandValu;						// µÀ¾ß×óÊÖ·¢»Ó
-	short	sEndure[2];						// ÄÍ¾Ã¶È
-	short	sEnergy[2];						// ÄÜÁ¿
-	short	sHole;							// ¶´Êı
-	char	szAttrEffect[defITEM_ATTREFFECT_NAME_LEN];	// Ê¹ÓÃĞ§¹û
+	short	sPDef[2];						// ç‰©ç†æŠµæŠ—
+	short	sLHandValu;						// é“å…·å·¦æ‰‹å‘æŒ¥
+	short	sEndure[2];						// è€ä¹…åº¦
+	short	sEnergy[2];						// èƒ½é‡
+	short	sHole;							// æ´æ•°
+	char	szAttrEffect[defITEM_ATTREFFECT_NAME_LEN];	// ä½¿ç”¨æ•ˆæœ
 	short	sDrap;							// drap
-	short	sEffect[defITEM_BIND_EFFECT_NUM][2];		// ÎäÆ÷À¦°óÌØĞ§ÒÔ¼°¶ÔÓ¦dummy
-	short	sItemEffect[2];					// µÀ¾ßÍâ¹ÛÌØĞ§
-	short	sAreaEffect[2];					// ·ÅÔÚµØÉÏÊ±µÄÌØĞ§
-	short	sUseItemEffect[2];				// Ê¹ÓÃÊ±µÄÌØĞ§
-    _TCHAR  szDescriptor[defITEM_DESCRIPTOR_NAME_LEN];   // ÃèÊö
+	short	sEffect[defITEM_BIND_EFFECT_NUM][2];		// æ­¦å™¨æ†ç»‘ç‰¹æ•ˆä»¥åŠå¯¹åº”dummy
+	short	sItemEffect[2];					// é“å…·å¤–è§‚ç‰¹æ•ˆ
+	short	sAreaEffect[2];					// æ”¾åœ¨åœ°ä¸Šæ—¶çš„ç‰¹æ•ˆ
+	short	sUseItemEffect[2];				// ä½¿ç”¨æ—¶çš„ç‰¹æ•ˆ
+    _TCHAR  szDescriptor[defITEM_DESCRIPTOR_NAME_LEN];   // æè¿°
 
 	float		nCooldown;
 	//short	sSeteffect[enumEQUIP_NUM][2];
 	//_TCHAR  szDescriptor[5][defITEM_DESCRIPTOR_SET_LEN];
 
 public:
-    const char* GetIconFile();              // µÃµ½ÍêÕûµÄiconÎÄ¼şÃû³Æ
+    const char* GetIconFile();              // å¾—åˆ°å®Œæ•´çš„iconæ–‡ä»¶åç§°
 	static bool	IsVaildFusionID(CItemRecord* pItem); // add by ning.yan  2008-08-21
 	
 	bool		GetIsPile()							{ return nPileMax>1;	}
 
-	// ¼ì²é½ÇÉ«ÌåĞÍÊÇ·ñ¿ÉÒÔ×°±¸
+	// æ£€æŸ¥è§’è‰²ä½“å‹æ˜¯å¦å¯ä»¥è£…å¤‡
 	bool		IsAllowEquip( unsigned int nChaID );
 
-	// ¼ì²éÊÇ·ñÃ»ÓĞÌåĞÍÏŞÖÆ
+	// æ£€æŸ¥æ˜¯å¦æ²¡æœ‰ä½“å‹é™åˆ¶
 	bool		IsAllEquip()						{ return chBody[0]==-1;	}
 
 	void		RefreshData();
@@ -225,7 +225,7 @@ public:
 	bool IsLockable() const;
 
 public:
-	short		sEffNum;					// ÎäÆ÷À¦°óÌØĞ§ÊıÁ¿
+	short		sEffNum;					// æ­¦å™¨æ†ç»‘ç‰¹æ•ˆæ•°é‡
 
 private:
 	bool		_IsBody[5];
@@ -247,7 +247,7 @@ public:
 
 protected:
 
-	static CItemRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CItemRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

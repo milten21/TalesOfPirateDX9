@@ -8,10 +8,10 @@
 
 enum ESaveType
 {
-	enumSAVE_TYPE_OFFLINE,	// ÏÂÏß
-	enumSAVE_TYPE_SWITCH,	// µØÍ¼ÇĞ»»
-	enumSAVE_TYPE_TIMER,	// ¶¨Ê±±£´æ
-	enumSAVE_TYPE_TRADE,	// ½»Ò×
+	enumSAVE_TYPE_OFFLINE,	// ä¸‹çº¿
+	enumSAVE_TYPE_SWITCH,	// åœ°å›¾åˆ‡æ¢
+	enumSAVE_TYPE_TIMER,	// å®šæ—¶ä¿å­˜
+	enumSAVE_TYPE_TRADE,	// äº¤æ˜“
 };
 
 class CPlayer;
@@ -27,18 +27,18 @@ public:
 
 	bool ShowExpRank(CCharacter* pCha, int count);
 	bool Init(void);
-    bool ReadAllData(CPlayer *pPlayer, DWORD atorID);	// ½ÇÉ«½øÈëÓÎÏ·¶ÁÅÌ
-    bool SaveAllData(CPlayer *pPlayer, char chSaveType);// ½ÇÉ«´æÅÌ
-	bool SavePos(CPlayer *pPlayer);						// ±£´æ½ÇÉ«Î»ÖÃ
+    bool ReadAllData(CPlayer *pPlayer, DWORD atorID);	// è§’è‰²è¿›å…¥æ¸¸æˆè¯»ç›˜
+    bool SaveAllData(CPlayer *pPlayer, char chSaveType);// è§’è‰²å­˜ç›˜
+	bool SavePos(CPlayer *pPlayer);						// ä¿å­˜è§’è‰²ä½ç½®
 	bool SaveMoney(CPlayer *pPlayer);
 	bool SaveKBagDBID(CPlayer *pPlayer);
-    bool SaveKBagTmpDBID(CPlayer *pPlayer);             // ±£´æÁÙÊ±±³°üID
-    bool SaveKBState(CPlayer *pPlayer);                 // ±£´æÃÜÂëËø¶¨×´Ì¬
+    bool SaveKBagTmpDBID(CPlayer *pPlayer);             // ä¿å­˜ä¸´æ—¶èƒŒåŒ…ID
+    bool SaveKBState(CPlayer *pPlayer);                 // ä¿å­˜å¯†ç é”å®šçŠ¶æ€
 	bool SaveMMaskDBID(CPlayer *pPlayer);
 	bool SaveBankDBID(CPlayer *pPlayer);
-	bool SaveTableVer(DWORD atorID);					// ±£´æ±íµÄ°æ±¾
-	BOOL SaveMissionData(CPlayer *pPlayer, DWORD atorID); // ½ÇÉ«ÈÎÎñĞÅÏ¢´æÅÌ
-    BOOL VerifyName(const char *pszName);               // ½ÇÉ«ÃûÊÇ·ñ´æÔÚ
+	bool SaveTableVer(DWORD atorID);					// ä¿å­˜è¡¨çš„ç‰ˆæœ¬
+	BOOL SaveMissionData(CPlayer *pPlayer, DWORD atorID); // è§’è‰²ä»»åŠ¡ä¿¡æ¯å­˜ç›˜
+    BOOL VerifyName(const char *pszName);               // è§’è‰²åæ˜¯å¦å­˜åœ¨
 	std::string GetName(int cha_id);
 
 	BOOL AddCreditByDBID(DWORD atorID, long lCredit);
@@ -71,24 +71,24 @@ public:
 	bool IsMasterRelation(int masterID, int prenticeID);
 };
 
-// ´ËÖµºÍÊı¾İ¿â¶ÔÓ¦£¬²»¿É¸Ä¶¯
+// æ­¤å€¼å’Œæ•°æ®åº“å¯¹åº”ï¼Œä¸å¯æ”¹åŠ¨
 enum ResDBTypeID
 {
-	enumRESDB_TYPE_LOOK,	// Íâ¹Û
-	enumRESDB_TYPE_KITBAG,	// µÀ¾ßÀ¸
-	enumRESDB_TYPE_BANK,	// ÒøĞĞ
-	enumRESDB_TYPE_KITBAGTMP, //ÁÙÊ±±³°ü
+	enumRESDB_TYPE_LOOK,	// å¤–è§‚
+	enumRESDB_TYPE_KITBAG,	// é“å…·æ 
+	enumRESDB_TYPE_BANK,	// é“¶è¡Œ
+	enumRESDB_TYPE_KITBAGTMP, //ä¸´æ—¶èƒŒåŒ…
 };
 
 // Add by lark.li 20080521 begin
 enum IssueState
 {
-	enumCURRENT = 0,	// µ±Ç°ÆÚ
-	enumPASTDUE = 1,	// ¹ıÆÚ
-	enumDISUSE = 2,		// ·ÏÆú
+	enumCURRENT = 0,	// å½“å‰æœŸ
+	enumPASTDUE = 1,	// è¿‡æœŸ
+	enumDISUSE = 2,		// åºŸå¼ƒ
 };
 
-// ²ÊÆ±Éè¶¨
+// å½©ç¥¨è®¾å®š
 class CTableLotterySetting : public cfl_rs
 {
 public:
@@ -106,7 +106,7 @@ public:
 	bool GetWinItemNo(int issue, std::string& itemno);
 };
 
-// ²ÊÆ±±£´æ
+// å½©ç¥¨ä¿å­˜
 class CTableTicket : public cfl_rs
 {
 public:
@@ -124,7 +124,7 @@ private:
 	bool AddTicket(int atorID, int issue, char itemno1, char itemno2, char itemno3, char itemno4, char itemno5, char itemno6, int real = 1);
 };
 
-// ÖĞ½±ºÅÂë±£´æ
+// ä¸­å¥–å·ç ä¿å­˜
 class CTableWinTicket : public cfl_rs
 {
 public:
@@ -152,16 +152,16 @@ struct AmphitheaterTeam
 {
 	enum AmphitheaterSateTeam
 	{
-		enumNotUse = 0,				//Ã»×¢²á
-		enumUse = 1,				// Õı³£
-		enumPromotion = 2,			// ½ú¼¶
-		enumRelive = 3,				// ¸´»î
-		enumOut = 4,				// ÌÔÌ­
+		enumNotUse = 0,				//æ²¡æ³¨å†Œ
+		enumUse = 1,				// æ­£å¸¸
+		enumPromotion = 2,			// æ™‹çº§
+		enumRelive = 3,				// å¤æ´»
+		enumOut = 4,				// æ·˜æ±°
 	};
 };
 
-// ¾º¼¼³¡Éè¶¨ĞÅÏ¢±£´æ
-// ±£´æ µ±Ç°ÊÇµÚ¼¸Èü¼¾ µÚ¼¸ÂÖ´Î µÈĞÅÏ¢
+// ç«æŠ€åœºè®¾å®šä¿¡æ¯ä¿å­˜
+// ä¿å­˜ å½“å‰æ˜¯ç¬¬å‡ èµ›å­£ ç¬¬å‡ è½®æ¬¡ ç­‰ä¿¡æ¯
 class CTableAmphitheaterSetting : public cfl_rs
 {
 public:
@@ -178,7 +178,7 @@ public:
 	bool UpdateRound(int season, int round);
 };
 
-// ¾º¼¼³¡²ÎÈü¶ÓÎéĞÅÏ¢±£´æ
+// ç«æŠ€åœºå‚èµ›é˜Ÿä¼ä¿¡æ¯ä¿å­˜
 class CTableAmphitheaterTeam : public cfl_rs
 {
 public:
@@ -279,7 +279,7 @@ public:
 protected:
 
 	BOOL			_ExecSQL(const char *pszSQL);
-	std::list<std::string>	_SaveMapMaskList;  // ±£´æ´óµØÍ¼µÄ¶ÓÁĞ
+	std::list<std::string>	_SaveMapMaskList;  // ä¿å­˜å¤§åœ°å›¾çš„é˜Ÿåˆ—
 };
 
 void inline CTableMapMask::AddSaveQuest(const char *pszSQL)
@@ -322,8 +322,8 @@ public:
 	BOOL SaveBoatDelTag( DWORD dwBoatID, BYTE byIsDeleted = 0 );	
 
     bool SaveAllData(CPlayer *pPlayer, char chSaveType);
-	bool ReadCabin(CCharacter& Boat);	// ¶ÁÈ¡´¬²Õ
-	bool SaveCabin(CCharacter& Boat, char chSaveType);	// ±£´æ´¬²Õ
+	bool ReadCabin(CCharacter& Boat);	// è¯»å–èˆ¹èˆ±
+	bool SaveCabin(CCharacter& Boat, char chSaveType);	// ä¿å­˜èˆ¹èˆ±
 	bool SaveAllCabin(CPlayer *pPlayer, char chSaveType);
 };
 
@@ -375,7 +375,7 @@ public:
 	bool Motto(CCharacter* pCha,cChar *motto);
 	bool GetGuildName(long lGuildID, std::string& strGuildName);
 
-	// ¹«»áÌôÕ½
+	// å…¬ä¼šæŒ‘æˆ˜
 	bool Challenge( CCharacter* pCha, BYTE byLevel, DWORD dwMoney );
 	bool Leizhu( CCharacter* pCha, BYTE byLevel, DWORD dwMoney );
 	void ListChallenge( CCharacter* pCha );
@@ -388,7 +388,7 @@ public:
 	bool HasGuildLevel( CCharacter* pChar, BYTE byLevel );
 };
 
-// Log×¨ÓÃ±í
+// Logä¸“ç”¨è¡¨
 class CTableLog : public cfl_rs
 {
 public:
@@ -452,7 +452,7 @@ public:
 	bool	SavePlayerKitbag(CPlayer *pPlayer, char chSaveType = enumSAVE_TYPE_TRADE)
 	{
 		return false;
-		// ÒòÎª´Ë²Ù×÷¿ÉÄÜ°üº¬Êı¾İ¿â»Ø¹ö²Ù×÷£¬ËùÒÔÆÚ¼ä²»ÄÜthrowÒì³£
+		// å› ä¸ºæ­¤æ“ä½œå¯èƒ½åŒ…å«æ•°æ®åº“å›æ»šæ“ä½œï¼Œæ‰€ä»¥æœŸé—´ä¸èƒ½throwå¼‚å¸¸
 		try
 		{
 			if (!_tab_res->SaveKitbagData(pPlayer->GetMainCha()))
@@ -462,7 +462,7 @@ public:
 		}
 		catch (...)
 		{
-			//LG("enter_map", "±£´æÍæ¼ÒµÀ¾ßºÍ½ğÇ®Ê±£¬·¢ÉúÒì³£!\n");
+			//LG("enter_map", "ä¿å­˜ç©å®¶é“å…·å’Œé‡‘é’±æ—¶ï¼Œå‘ç”Ÿå¼‚å¸¸!\n");
 			LG("enter_map", "When save character item and money occured abnormity\n");
 			return false;
 		}
@@ -471,10 +471,10 @@ public:
 	}
 	bool	SaveChaAssets(CCharacter *pCCha)
 	{
-		// ÒòÎª´Ë²Ù×÷¿ÉÄÜ°üº¬Êı¾İ¿â»Ø¹ö²Ù×÷£¬ËùÒÔÆÚ¼ä²»ÄÜthrowÒì³£
+		// å› ä¸ºæ­¤æ“ä½œå¯èƒ½åŒ…å«æ•°æ®åº“å›æ»šæ“ä½œï¼Œæ‰€ä»¥æœŸé—´ä¸èƒ½throwå¼‚å¸¸
 		try
 		{
-			//LG("enter_map", "¿ªÊ¼±£´æ½ÇÉ«×Ê²ú.\n");
+			//LG("enter_map", "å¼€å§‹ä¿å­˜è§’è‰²èµ„äº§.\n");
 			LG("enter_map", "Start save character assets.\n");
 			if (!pCCha || !pCCha->GetPlayer())
 				return false;
@@ -494,14 +494,14 @@ public:
 					return false;
 			}
 
-			//LG("enter_map", "±£´æ½ÇÉ« %s(%s) ×Ê²ú³É¹¦.\n", pCCha->GetLogName(), pCCha->GetPlyMainCha()->GetLogName());
+			//LG("enter_map", "ä¿å­˜è§’è‰² %s(%s) èµ„äº§æˆåŠŸ.\n", pCCha->GetLogName(), pCCha->GetPlyMainCha()->GetLogName());
 			LG("enter_map", "Save character %s(%s)assets succeed.\n", pCCha->GetLogName(), pCCha->GetPlyMainCha()->GetLogName());
-			//LG("±£´æÊı¾İºÄÊ±", "×Ü¼Æ%-8d.[%d %s]\n", GetTickCount() - dwStartTick, pCCha->GetPlayer()->GetDBChaId(), pCCha->GetLogName());
+			//LG("ä¿å­˜æ•°æ®è€—æ—¶", "æ€»è®¡%-8d.[%d %s]\n", GetTickCount() - dwStartTick, pCCha->GetPlayer()->GetDBChaId(), pCCha->GetLogName());
 			LG("Save data waste time", "totalled %-8d.[%d %s]\n", GetTickCount() - dwStartTick, pCCha->GetPlayer()->GetDBChaId(), pCCha->GetLogName());
 		}
 		catch (...)
 		{
-			//LG("enter_map", "±£´æ½ÇÉ«×Ê²úÊ±£¬·¢ÉúÒì³£!\n");
+			//LG("enter_map", "ä¿å­˜è§’è‰²èµ„äº§æ—¶ï¼Œå‘ç”Ÿå¼‚å¸¸!\n");
 			LG("enter_map", "When save character assets occured abnormity\n");
 			return false;
 		}
@@ -625,7 +625,7 @@ public:
 		return ret;
 	}
 
-	// Ê¦Í½¹ØÏµÅĞ¶Ï
+	// å¸ˆå¾’å…³ç³»åˆ¤æ–­
 	bool IsMasterRelation(int masterID, int prenticeID)
 	{
 		bool ret = false;
@@ -642,7 +642,7 @@ public:
 		return ret;
 	}
 
-	// È¡µÃµ±Ç°Èü¼¾ ºÍ ÂÖ´Îs
+	// å–å¾—å½“å‰èµ›å­£ å’Œ è½®æ¬¡s
 	bool GetAmphitheaterSeasonAndRound(int& season, int& round)
 	{
 		try
@@ -655,7 +655,7 @@ public:
 		}
 	}
 
-	// ×·¼ÓÈü¼¾
+	// è¿½åŠ èµ›å­£
 	bool AddAmphitheaterSeason(int season)
 	{
 		try
@@ -668,7 +668,7 @@ public:
 		}
 	}
 
-	// ¸üĞÂÈü¼¾×´Ì¬
+	// æ›´æ–°èµ›å­£çŠ¶æ€
 	bool DisuseAmphitheaterSeason(int season, int state,const char* winner)
 	{
 		try
@@ -681,7 +681,7 @@ public:
 		}
 	}
 
-	// ¸üĞÂÂÖ´Î 
+	// æ›´æ–°è½®æ¬¡ 
 	bool UpdateAmphitheaterRound(int season, int round)
 	{
 		try
@@ -694,7 +694,7 @@ public:
 		}
 	}
 
-	// »ñÈ¡¶ÓÎé¸öÊı
+	// è·å–é˜Ÿä¼ä¸ªæ•°
 	bool GetAmphitheaterTeamCount(int& count)
 	{
 		try
@@ -707,7 +707,7 @@ public:
 		}
 	}
 
-	// »ñÈ¡¶ÓÎéID
+	// è·å–é˜Ÿä¼ID
 	bool GetAmphitheaterNoUseTeamID(int &teamID)
 	{
 		try
@@ -720,7 +720,7 @@ public:
 		}
 	}
 
-	// ×¢²á
+	// æ³¨å†Œ
 	bool AmphitheaterTeamSignUP(int &teamID, int captain, int member1, int member2)
 	{
 		try
@@ -733,7 +733,7 @@ public:
 		}
 	}
 
-	// ×¢Ïú
+	// æ³¨é”€
 	bool AmphitheaterTeamCancel(int teamID)
 	{
 		try
@@ -746,7 +746,7 @@ public:
 		}
 	}
 	//Add by sunny.sun20080714
-	//²éÑ¯¸Ã½ÇÉ«IDÊÇ·ñÒÑ¾­×¢²á
+	//æŸ¥è¯¢è¯¥è§’è‰²IDæ˜¯å¦å·²ç»æ³¨å†Œ
 	bool IsAmphitheaterLogin(int pActorID)
 	{
 		try
@@ -759,7 +759,7 @@ public:
 		}
 	
 	}
-	//ÅĞ¶ÏÊÇ·ñµØÍ¼¶ÓÎéÒÑÂú
+	//åˆ¤æ–­æ˜¯å¦åœ°å›¾é˜Ÿä¼å·²æ»¡
 	bool IsMapFull(int MapID,int &PActorIDNum)
 	{
 		try 
@@ -771,7 +771,7 @@ public:
 			return false;
 		}
 	}
-		//¸üĞÂµØÍ¼¶ÓÎémapflag
+		//æ›´æ–°åœ°å›¾é˜Ÿä¼mapflag
 	bool UpdateMapNum(int Teamid,int Mapid,int MapFlag)
 	{
 		try
@@ -1078,12 +1078,12 @@ public:
 		return _tab_cha->SetChaAddr(atorID, addr);
 	}
 
-	BOOL	SaveMissionData( CPlayer *pPlayer, DWORD atorID ) // ½ÇÉ«ÈÎÎñĞÅÏ¢´æÅÌ
+	BOOL	SaveMissionData( CPlayer *pPlayer, DWORD atorID ) // è§’è‰²ä»»åŠ¡ä¿¡æ¯å­˜ç›˜
 	{T_B
 		return _tab_cha->SaveMissionData( pPlayer, atorID );
 	T_E}
 
-	// ´¬Ö»´æ´¢
+	// èˆ¹åªå­˜å‚¨
 	BOOL Create( DWORD& dwBoatID, const BOAT_DATA& Data )
 	{T_B
 		return _tab_boat->Create( dwBoatID, Data );
@@ -1256,18 +1256,18 @@ public:
 		return _tab_gld->HasGuildLevel( pChar, byLevel );
 	}
 
-	// Ö´ĞĞsqlÓï¾äµ½gamelog±í
+	// æ‰§è¡Œsqlè¯­å¥åˆ°gamelogè¡¨
 	void ExecLogSQL(const char *pszSQL)
 	{
 		SQLRETURN l_sqlret  =  _tab_log->exec_sql_direct(pszSQL);
 		if(!DBOK(l_sqlret))
 		{
-			//LG("gamelog", "Ìí¼Ólog¼ÇÂ¼Ê§°Ü, sql = [%s]!\n", pszSQL);
+			//LG("gamelog", "æ·»åŠ logè®°å½•å¤±è´¥, sql = [%s]!\n", pszSQL);
 			LG("gamelog", "add log note failed, sql = [%s]!\n", pszSQL);
 		}
 	}
 	
-	// ¿ÉÒÔLog 5¸ö×Ö·û´®×Ö¶Î, ×îºóÒ»¸ö³¤¶ÈÎª8000×Ö·ûÒÔÄÚ
+	// å¯ä»¥Log 5ä¸ªå­—ç¬¦ä¸²å­—æ®µ, æœ€åä¸€ä¸ªé•¿åº¦ä¸º8000å­—ç¬¦ä»¥å†…
 	//void Log(const char *type, const char *c1, const char *c2, const char *c3, const char *c4, const char *p, BOOL bAddToList = TRUE);
 	//void Log1(int nType, const char *cha1, const char *cha2, const char *pszContent);
 	//void Log2(int nType, CCharacter *pCha1, CCharacter *pCha2, const char *pszContent);
@@ -1307,12 +1307,12 @@ protected:
 	CTableResource*	_tab_res;
 	
 	// Add by lark.li 20080521 begin
-	// ²ÊÆ±
+	// å½©ç¥¨
 	CTableLotterySetting*	_tab_setting;
 	CTableTicket*			_tab_ticket;
 	CTableWinTicket*			_tab_winticket;
 
-	// ¾º¼¼³¡
+	// ç«æŠ€åœº
 	CTableAmphitheaterSetting*	_tab_amp_setting;
 	CTableAmphitheaterTeam*	_tab_amp_team;
 	// End

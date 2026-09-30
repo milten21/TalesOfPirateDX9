@@ -35,7 +35,7 @@ void CTestLog::OnBnClickedOk()
     {
     // TODO: Add your control notification handler code here
 
-    // µÃµ½LOGµÄÀàĞÍ£¬µ¥ĞĞ
+    // å¾—åˆ°LOGçš„ç±»å‹ï¼Œå•è¡Œ
     static char type[81] = {0};
     int cnt = 0;
     cnt = m_LogType.GetLine(0, type, sizeof type);
@@ -46,12 +46,12 @@ void CTestLog::OnBnClickedOk()
     else
         {
         type[min(cnt, 8)] = 0;
-        } // ×î¶à8¸ö×Ö·û
+        } // æœ€å¤š8ä¸ªå­—ç¬¦
 
-    // µÃµ½LOGµÄÄÚÈİ£¨ÕâÀïÌØÊâ»¯ÁË£©
+    // å¾—åˆ°LOGçš„å†…å®¹ï¼ˆè¿™é‡Œç‰¹æ®ŠåŒ–äº†ï¼‰
     static char ctx[81] = "this is log context";
 
-    // Êä³öµ÷ÊÔĞÅÏ¢
+    // è¾“å‡ºè°ƒè¯•ä¿¡æ¯
     LG(type, ctx);
     //GPL(type, 20, 100, ctx);
 

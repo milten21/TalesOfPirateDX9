@@ -10,23 +10,23 @@
 #include "TableData.h"
 
 //---------------------------------------------------------
-#define FORGE_MAXNUM_ITEM				6 // ¾«Á·ĞèÇó×î´óÎïÆ·Êı
+#define FORGE_MAXNUM_ITEM				6 // ç²¾ç»ƒéœ€æ±‚æœ€å¤§ç‰©å“æ•°
 
 class CForgeRecord : public CRawDataInfo
 {
 public:
-	BYTE byLevel;	// ¾«Á·µÈ¼¶
-	BYTE byFailure; // Ê§°ÜºóÎïÆ·ÍË»ØµÈ¼¶
-	BYTE byRate;	// ¾«Á·ÎäÆ÷µÄ³É¹¦ÂÊ	
-	BYTE byParam;	// ±£Áô²ÎÊı
-	DWORD dwMoney;  // ¾«Á·ĞèÇó½ğÇ®
+	BYTE byLevel;	// ç²¾ç»ƒç­‰çº§
+	BYTE byFailure; // å¤±è´¥åç‰©å“é€€å›ç­‰çº§
+	BYTE byRate;	// ç²¾ç»ƒæ­¦å™¨çš„æˆåŠŸç‡	
+	BYTE byParam;	// ä¿ç•™å‚æ•°
+	DWORD dwMoney;  // ç²¾ç»ƒéœ€æ±‚é‡‘é’±
 
-	// ¾«Á·ÎïÆ·ĞèÇóÊı¾İ
+	// ç²¾ç»ƒç‰©å“éœ€æ±‚æ•°æ®
 	struct FORGE_ITEM
 	{
-		USHORT sItem;	// ĞèÇóÎïÆ·ID
-		BYTE   byNum;	// ĞèÇóÎïÆ·µÄÊıÁ¿
-		BYTE   byParam; // ±£Áô²ÎÊı
+		USHORT sItem;	// éœ€æ±‚ç‰©å“ID
+		BYTE   byNum;	// éœ€æ±‚ç‰©å“çš„æ•°é‡
+		BYTE   byParam; // ä¿ç•™å‚æ•°
 	};	
 	FORGE_ITEM ForgeItem[FORGE_MAXNUM_ITEM];
 };
@@ -45,7 +45,7 @@ public:
 	}
 
 protected:
-	static CForgeRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CForgeRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

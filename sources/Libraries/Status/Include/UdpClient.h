@@ -20,8 +20,8 @@ class	CGateInfo
 {
 public:
 	CGateInfo( CGroupInfo* pGroup, const char* name );
-	void			Start();			// ³õÊ¼»¯Socket,»ñÈ¡Êı¾İ
-	void			Exit();				// ¹Ø±ÕSocket
+	void			Start();			// åˆå§‹åŒ–Socket,è·å–æ•°æ®
+	void			Exit();				// å…³é—­Socket
 	CGroupInfo*		GetOwner()	{ return pOwner;			}
 	bool			Read();
 	bool			Send();
@@ -44,7 +44,7 @@ public:
 	CGateInfo*		Find( const char* Name );
 	CRegionInfo*	GetOwner()	{ return pOwner;		}
 	int				GetNum();
-	CGateInfo*		GetMinGate();		// »ñµÃ¸ºÔØ×îĞ¡µÄGate
+	CGateInfo*		GetMinGate();		// è·å¾—è´Ÿè½½æœ€å°çš„Gate
 
 	void			Start();
 	void			Exit();
@@ -83,18 +83,18 @@ private:
 
 typedef void (*GateChangeEvent) ( CGateInfo* pGate );
 
-// ¿Í»§¶Ë·¢ËÍÓÃ
+// å®¢æˆ·ç«¯å‘é€ç”¨
 class CRegionMgr
 {
 public:
 	CRegionMgr();
 	void	Init( HWND hWnd, UINT uRegeditNetMes );
 
-	bool	Add( const char* szRegion, const char* szGroup, const char* szGate );	// Ôö¼Ó»ù´¡Êı¾İ
+	bool	Add( const char* szRegion, const char* szGroup, const char* szGate );	// å¢åŠ åŸºç¡€æ•°æ®
 
-	bool	EnterRegion( const char* szRegion );	// ½øÈëÁËÇø£¬×¼±¸»ñÈ¡Êı¾İ
-	int		GetGroupNum( const char* szGroup );		// µÃµ½µ±Ç°ÇøÖĞÄ³¸öGroupÈËÊı,·µ»Ø-1ÎªÊ§°Ü
-	bool	ExitRegion();							// ´Óµ±Ç°GroupÖĞÍË³ö
+	bool	EnterRegion( const char* szRegion );	// è¿›å…¥äº†åŒºï¼Œå‡†å¤‡è·å–æ•°æ®
+	int		GetGroupNum( const char* szGroup );		// å¾—åˆ°å½“å‰åŒºä¸­æŸä¸ªGroupäººæ•°,è¿”å›-1ä¸ºå¤±è´¥
+	bool	ExitRegion();							// ä»å½“å‰Groupä¸­é€€å‡º
 	CRegionInfo*	GetActiovRegion()	{ return _pRegion;		}
 
 	void	Exit();
@@ -103,7 +103,7 @@ public:
 
 	void	FrameMove( DWORD dwTime );
 
-public:		// ÁĞ±íµÄ²Ù×÷
+public:		// åˆ—è¡¨çš„æ“ä½œ
 	CRegionInfo*	Find( const char* Name );
 	void			Add( CRegionInfo* pRegion )		{ if( pRegion ) _Regions.push_back( pRegion );	}
 
@@ -115,14 +115,14 @@ public:
 
 private:
 	typedef std::vector<CRegionInfo*> regions;
-	regions			_Regions;			// ËùÓĞÇø
+	regions			_Regions;			// æ‰€æœ‰åŒº
 
-	CRegionInfo*	_pRegion;			// µ±Ç°¼¤»îµÄÇø£¬¿ÉÄÜÎª¿Õ
+	CRegionInfo*	_pRegion;			// å½“å‰æ¿€æ´»çš„åŒºï¼Œå¯èƒ½ä¸ºç©º
 	HWND			_hWnd;
 	UINT			_uNetMessage;
 
 	typedef std::map<SOCKET, CGateInfo*> gates;
-	gates			_gates;				// ÓÃÓÚ¸ù¾İsocket¿ìËÙ²éÕÒCGateInfo
+	gates			_gates;				// ç”¨äºæ ¹æ®socketå¿«é€ŸæŸ¥æ‰¾CGateInfo
 
 	DWORD			_dwLastSendTime;
 

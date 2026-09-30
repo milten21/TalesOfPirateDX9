@@ -6,24 +6,24 @@
 #if !defined(LOGUTIL_PRECOMPILED_HEADER_FILE)
 #define LOGUTIL_PRECOMPILED_HEADER_FILE
 
-// Æ½Ì¨ÎŞ¹Øºê¶¨Òå
+// å¹³å°æ— å…³å®å®šä¹‰
 #define LINE_COMMENT /##/
 #define LC LINE_COMMENT
 #define $ LINE_COMMENT
 
-// C±ê×¼¿â
+// Cæ ‡å‡†åº“
 #include <stdio.h>
 #include <time.h>
 
-// C++±ê×¼¿â
+// C++æ ‡å‡†åº“
 #include <list>
 #include <map>
 #include <list>
 #include <string>
 
-// Æ½Ì¨Ïà¹Ø¶¨Òå
+// å¹³å°ç›¸å…³å®šä¹‰
 #if defined(WIN32)
-	// Win32Æ½Ì¨ËùĞè¶¨ÒåºÍ°üº¬
+	// Win32å¹³å°æ‰€éœ€å®šä¹‰å’ŒåŒ…å«
     #pragma warning(disable : 4251)
     #pragma warning(disable : 4786)
 
@@ -32,7 +32,7 @@
 	#include <direct.h>
 
 #elif defined(LINUX)
-	// LinuxÆ½Ì¨ËùĞè¶¨ÒåºÍ°üº¬
+	// Linuxå¹³å°æ‰€éœ€å®šä¹‰å’ŒåŒ…å«
     #include <unistd.h>
     #include <string.h>
     
@@ -56,7 +56,7 @@
 	#define _LOG
 	#define _LOG_CONSOLE
 #elif defined(FREEBSD)
-	// FreeBSDÆ½Ì¨ËùĞè¶¨ÒåºÍ°üº¬
+	// FreeBSDå¹³å°æ‰€éœ€å®šä¹‰å’ŒåŒ…å«
 
 #endif
 

@@ -43,7 +43,7 @@ void CGplViewDlg::OnPaint()
     // Do not call CDialog::OnPaint() for painting messages
 
     GetClientRect(m_RC);
-    dc.FillRect(m_RC, &m_Brush); // Ë¢±³¾°
+    dc.FillRect(m_RC, &m_Brush); // åˆ·èƒŒæ™¯
 
     DrawGplData(dc);
     }
@@ -52,19 +52,19 @@ BOOL CGplViewDlg::DrawGplData(CPaintDC& dc)
     {
     if (m_pGPLData == NULL)
         {
-        TRACE0("Êý¾ÝÔ´·Ç·¨\n");
+        TRACE0("æ•°æ®æºéžæ³•\n");
         return FALSE;
         }
 
-    // ²é¿´Êý¾Ý
+    // æŸ¥çœ‹æ•°æ®
     int size = int(m_pGPLData->size());
     if (size == 0)
         {
-        TRACE0("Êý¾ÝÔ´Îª¿Õ\n");
+        TRACE0("æ•°æ®æºä¸ºç©º\n");
         return FALSE;
         }
 
-    // ÏÔÊ¾Êý¾Ý
+    // æ˜¾ç¤ºæ•°æ®
     dc.SetBkMode(TRANSPARENT);
 	dc.SelectObject(GetFont());
     dc.SetTextColor(RGB(255, 0, 0));
@@ -75,7 +75,7 @@ BOOL CGplViewDlg::DrawGplData(CPaintDC& dc)
     for (i = m_pGPLData->begin(); i != m_pGPLData->end(); ++ i)
         if ((*i)->IsEnabled())
             {
-            // ÏÔÊ¾
+            // æ˜¾ç¤º
             for (std::map<int, std::string>::iterator it = (*i)->m_Map.begin();
                  it !=
                  (*i)->m_Map.end();
@@ -98,11 +98,11 @@ void CGplViewDlg::OnRButtonDown(UINT nFlags, CPoint point)
 
     try
         {
-        // µ¯³öÓÒ¼ü²Ëµ¥
+        // å¼¹å‡ºå³é”®èœå•
         POINT pt;
         ::GetCursorPos(&pt);
 
-        CMenu* pSub = (m_pParent->m_pMainMenu)->GetSubMenu(1); // µÃµ½View×Ó²Ëµ¥
+        CMenu* pSub = (m_pParent->m_pMainMenu)->GetSubMenu(1); // å¾—åˆ°Viewå­èœå•
         pSub->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pt.x, pt.y,
                              m_pParent);
         }
@@ -115,16 +115,16 @@ void CGplViewDlg::OnRButtonDown(UINT nFlags, CPoint point)
 
 BOOL CGplViewDlg::OnCommand(WPARAM wParam, LPARAM lParam)
     {
-    UINT nID = LOWORD(wParam); // ¿Ø¼þ¡¢¿ì½Ý¼ü¡¢²Ëµ¥µÄID
-    int nCode = HIWORD(wParam); // ÏûÏ¢¡¢1¡¢0
-    HWND hWndCtrl = (HWND) lParam; // ´°¿Ú¾ä±ú¡¢0¡¢0
+    UINT nID = LOWORD(wParam); // æŽ§ä»¶ã€å¿«æ·é”®ã€èœå•çš„ID
+    int nCode = HIWORD(wParam); // æ¶ˆæ¯ã€1ã€0
+    HWND hWndCtrl = (HWND) lParam; // çª—å£å¥æŸ„ã€0ã€0
 
     if ((nID > MY_LGMENU_BASE) &&
         (nID <= MY_LGMENU_BASE + UINT(m_pLGData->size())) &&
         (nCode == 0) &&
         (hWndCtrl == NULL))
         {
-        // ×Ô¼ºµÄ¶¯Ì¬LGµÄMENUÏûÏ¢£¬×ª·¢¸ø¸¸´°¿Ú
+        // è‡ªå·±çš„åŠ¨æ€LGçš„MENUæ¶ˆæ¯ï¼Œè½¬å‘ç»™çˆ¶çª—å£
         m_pParent->PostMessage(WM_COMMAND, wParam, lParam);
         return TRUE;
         }
@@ -133,7 +133,7 @@ BOOL CGplViewDlg::OnCommand(WPARAM wParam, LPARAM lParam)
              (nCode == 0) &&
              (hWndCtrl == NULL))
         {
-        // ×Ô¼ºµÄ¶¯Ì¬GPLµÄMENUÏûÏ¢£¬×ª·¢¸ø¸¸´°¿Ú
+        // è‡ªå·±çš„åŠ¨æ€GPLçš„MENUæ¶ˆæ¯ï¼Œè½¬å‘ç»™çˆ¶çª—å£
         m_pParent->PostMessage(WM_COMMAND, wParam, lParam);
         return TRUE;
         }

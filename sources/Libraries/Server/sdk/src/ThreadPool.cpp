@@ -35,12 +35,12 @@ ThreadPool::ThreadPool(long idle,long max,long taskmaxnum,int nPriority)
 	{
 		*const_cast<int*>(&m_nPriority)	=THREAD_PRIORITY_NORMAL;
 	}
-//Ïß³Ì¶ÓÁÐ³õÊ¼»¯
+//çº¿ç¨‹é˜Ÿåˆ—åˆå§‹åŒ–
 	if(!m_taskQue||!m_thrdQue)
 	{
 		delete m_thrdQue;
 		delete m_taskQue;
-		THROW_EXCP(excpMem,"Ïß³Ì³Ø·ÖÅä¶ÓÁÐÄÚ´æÊ§°Ü");
+		THROW_EXCP(excpMem,"çº¿ç¨‹æ± åˆ†é…é˜Ÿåˆ—å†…å­˜å¤±è´¥");
 	}
 
 	auto const pool_lock = std::lock_guard{ m_thrdQue->m_mtxPool };
@@ -55,18 +55,18 @@ ThreadPool::ThreadPool(long idle,long max,long taskmaxnum,int nPriority)
 		catch (const excpThrd&)
 		{
 			l_err1count++;
-			if (l_err1count >= 20)//×î¶àÔÊÐí20´Î·ÖÅä´íÎó,ÑÓÊ±1000ºÁÃë(1Ãë)
+			if (l_err1count >= 20)//æœ€å¤šå…è®¸20æ¬¡åˆ†é…é”™è¯¯,å»¶æ—¶1000æ¯«ç§’(1ç§’)
 				throw;
-			Sleep(50);				//ÐÝÏ¢50ºÁÃëÔÙ·ÖÅäÒ»´Î"
+			Sleep(50);				//ä¼‘æ¯50æ¯«ç§’å†åˆ†é…ä¸€æ¬¡"
 			i--;
 			continue;
 		}
 		if (!l_newthrd)
 		{
 			l_err2count++;
-			if (l_err2count >= 20)//×î¶àÔÊÐí20´Î·ÖÅä´íÎó,ÑÓÊ±1000ºÁÃë(1Ãë)
-				THROW_EXCP(excpMem, "Ïß³Ì³Ø³õÊ¼»¯Ïß³Ì¶ÔÏóÉêÇëÄÚ´æÊ§°Ü");
-			Sleep(50);//ÐÝÏ¢50ºÁÃëÔÙ·ÖÅäÒ»´Î"
+			if (l_err2count >= 20)//æœ€å¤šå…è®¸20æ¬¡åˆ†é…é”™è¯¯,å»¶æ—¶1000æ¯«ç§’(1ç§’)
+				THROW_EXCP(excpMem, "çº¿ç¨‹æ± åˆå§‹åŒ–çº¿ç¨‹å¯¹è±¡ç”³è¯·å†…å­˜å¤±è´¥");
+			Sleep(50);//ä¼‘æ¯50æ¯«ç§’å†åˆ†é…ä¸€æ¬¡"
 			i--;
 			continue;
 		}
@@ -97,9 +97,9 @@ void ThreadPool::DestroyPool()
 {
 	m_taskexitflag	=1;
 	m_exitflag		=1;
-	for(long WaitCount =0;m_thrdQue && m_thrdQue->m_thread&&(WaitCount<40);WaitCount++)		//µÈ´ýÏß³Ì½áÊø
-	{//µÈ´ý³¬¹ý10ÃëÖÓÇ¿ÐÐÖÐ¶ÏËùÓÐÏß³Ì
-		Sleep(100);					//ÐÝÏ¢100ºÁÃëÖÓ
+	for(long WaitCount =0;m_thrdQue && m_thrdQue->m_thread&&(WaitCount<40);WaitCount++)		//ç­‰å¾…çº¿ç¨‹ç»“æŸ
+	{//ç­‰å¾…è¶…è¿‡10ç§’é’Ÿå¼ºè¡Œä¸­æ–­æ‰€æœ‰çº¿ç¨‹
+		Sleep(100);					//ä¼‘æ¯100æ¯«ç§’é’Ÿ
 	}
 	if(m_thrdQue)
 	{
@@ -148,7 +148,7 @@ inline Task	*	Task::TaskExec(Thread *ThisThread)
 			l_taskwait	=__taskwait->next;
 			__taskwait->m_semWait.unlock();
 			__taskwait =l_taskwait;
-		}				//Ö±µ½	m_taskwait	=0;
+		}				//ç›´åˆ°	m_taskwait	=0;
 	}catch(...){}
 	__mtxtaskwait.unlock();
 
@@ -175,7 +175,7 @@ inline void ThrdQue::DelThrd(Thread *th)
 	if(m_thread ==th){m_thread =th->m_next;}
 }
 //==============================================================================
-DWORD WINAPI Thread::ThreadProc(LPVOID lpParameter)//Ó²Ïß³Ì¹ý³Ì(µ÷ÓÃThreadExcute)
+DWORD WINAPI Thread::ThreadProc(LPVOID lpParameter)//ç¡¬çº¿ç¨‹è¿‡ç¨‹(è°ƒç”¨ThreadExcute)
 {
 	Thread		*l_myself =reinterpret_cast<Thread*>(lpParameter);
 	LogLine l_line(g_dbclog);
@@ -294,7 +294,7 @@ inline Task	* ThreadPool::PoolProcess(Thread *l_myself)
 				l_myself->m_freeflag	=false;
 			}catch(excp &e)
 			{
-				std::cout<<e.what()<<std::endl;		//ÔÚÈÕÖ¾ÖÐ¼ÇÂ¼´íÎó
+				std::cout<<e.what()<<std::endl;		//åœ¨æ—¥å¿—ä¸­è®°å½•é”™è¯¯
 			}catch(...)
 			{
 			}
@@ -322,7 +322,7 @@ inline Task	* ThreadPool::PoolProcess(Thread *l_myself)
 						m_thrdQue->InsThrd(l_newthrd);
 					}
 				}
-			}catch(excp &e)					//ÔÚÈÕÖ¾ÖÐ¼ÇÂ¼´íÎó
+			}catch(excp &e)					//åœ¨æ—¥å¿—ä¸­è®°å½•é”™è¯¯
 			{
 				std::cout<<e.what()<<std::endl;
 			}catch(...)
@@ -346,11 +346,11 @@ long ThreadPool::GetTaskCount()
 {
 	return m_taskQue->GetTaskCount();
 }
-//============================ThreadÊµÏÖ=====================================
+//============================Threadå®žçŽ°=====================================
 Thread::Thread(ThreadPool* pool) :m_pool(pool)
 {
 	m_handle =CreateThread(0,0,ThreadProc,this,0,&m_threadid);
-	if(!m_handle) THROW_EXCP(excpThrd,"Ïß³Ì¶ÔÏó½¨Á¢²Ù×÷ÏµÍ³Ïß³ÌÊ§°Ü");
+	if(!m_handle) THROW_EXCP(excpThrd,"çº¿ç¨‹å¯¹è±¡å»ºç«‹æ“ä½œç³»ç»Ÿçº¿ç¨‹å¤±è´¥");
 
 	m_pool->m_curr++;
 	m_pool->m_currfree++;
@@ -358,6 +358,6 @@ Thread::Thread(ThreadPool* pool) :m_pool(pool)
 //==============================================================================
 Thread::~Thread()
 {
-	//Ïß³Ì¶ÔÏó¶¼ÊÇ±»×Ô¼ºµÄÏß³ÌÉ¾³ý£¬²»ÓÃµÈ´ýÏß³Ì½áÊø¡£
+	//çº¿ç¨‹å¯¹è±¡éƒ½æ˜¯è¢«è‡ªå·±çš„çº¿ç¨‹åˆ é™¤ï¼Œä¸ç”¨ç­‰å¾…çº¿ç¨‹ç»“æŸã€‚
 	//CloseHandle(this->m_handle);
 };

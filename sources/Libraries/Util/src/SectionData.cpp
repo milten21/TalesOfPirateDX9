@@ -28,7 +28,7 @@ BOOL CSectionDataMgr::Create(int nSectionCntX, int nSectionCntY, const char *psz
    	
     if(_bDebug)
     {
-        //LG(GetDataName(), "¿ªÊ¼´´½¨ĞÂµÄÊı¾İÎÄ¼ş[%s], Size = (%d %d)\n", pszMapName, nSectionCntX, nSectionCntY);
+        //LG(GetDataName(), "å¼€å§‹åˆ›å»ºæ–°çš„æ•°æ®æ–‡ä»¶[%s], Size = (%d %d)\n", pszMapName, nSectionCntX, nSectionCntY);
 		LG(GetDataName(), "begin create new data file[%s], Size = (%d %d)\n", pszMapName, nSectionCntX, nSectionCntY);
     }
     
@@ -39,7 +39,7 @@ BOOL CSectionDataMgr::Create(int nSectionCntX, int nSectionCntY, const char *psz
 	_fp = fopen(pszMapName, "wb");
     if(_fp==NULL)
     {
-        //LG(GetDataName(), "msgÎÄ¼ş %s ´´½¨Ê§°Ü!\n", pszMapName);
+        //LG(GetDataName(), "msgæ–‡ä»¶ %s åˆ›å»ºå¤±è´¥!\n", pszMapName);
 		LG(GetDataName(), "msg file %s create failed!\n", pszMapName);
         return FALSE;
     }
@@ -50,7 +50,7 @@ BOOL CSectionDataMgr::Create(int nSectionCntX, int nSectionCntY, const char *psz
 
     int nTotal = GetSectionCnt();
     
-    // Ë÷ÒıÇøÈ«²¿ÌîĞ´Îª0
+    // ç´¢å¼•åŒºå…¨éƒ¨å¡«å†™ä¸º0
     _SectionArray = new SDataSection*[nTotal];
 	
     memset(_SectionArray, 0, nTotal * sizeof(SDataSection*));
@@ -62,20 +62,20 @@ BOOL CSectionDataMgr::Create(int nSectionCntX, int nSectionCntY, const char *psz
 
     if(_bDebug)
     {
-        //LG(GetDataName(), "´´½¨½áÊø, TotalSectionCnt = %d!\n", nTotal);
+        //LG(GetDataName(), "åˆ›å»ºç»“æŸ, TotalSectionCnt = %d!\n", nTotal);
 		LG(GetDataName(), "create ok, TotalSectionCnt = %d!\n", nTotal);
     }
     return TRUE;
 }
 
-// ´ÓÎÄ¼ş¶ÁÈë, ²¢¾ö¶¨ÊÇ·ñĞèÒª±à¼­²Ù×÷
+// ä»æ–‡ä»¶è¯»å…¥, å¹¶å†³å®šæ˜¯å¦éœ€è¦ç¼–è¾‘æ“ä½œ
 BOOL CSectionDataMgr::CreateFromFile(const char *pszMapName, BOOL bEdit)
 {
     strcpy(_szFileName, pszMapName);
     
     if(_bDebug)
     {
-       // LG(GetDataName(), "¿ªÊ¼¶ÁÈ¡Êı¾İÎÄ¼ş[%s]\n", pszMapName);
+       // LG(GetDataName(), "å¼€å§‹è¯»å–æ•°æ®æ–‡ä»¶[%s]\n", pszMapName);
 		 LG(GetDataName(), "begin read data file [%s]\n", pszMapName);
     }
     
@@ -104,7 +104,7 @@ BOOL CSectionDataMgr::CreateFromFile(const char *pszMapName, BOOL bEdit)
 
     if(!_ReadFileHeader())
     {
-        //LG("map", "msg¶ÁÈ¡ÎÄ¼şÍ·Ê§°Ü, [%s] ¿ÉÄÜÊÇÎŞĞ§Êı¾İÎÄ¼ş!\n", pszMapName);
+        //LG("map", "msgè¯»å–æ–‡ä»¶å¤´å¤±è´¥, [%s] å¯èƒ½æ˜¯æ— æ•ˆæ•°æ®æ–‡ä»¶!\n", pszMapName);
 		LG("map", "msg read file failed, [%s] invalid file!\n", pszMapName);
         fclose(fp);
         return FALSE;
@@ -120,7 +120,7 @@ BOOL CSectionDataMgr::CreateFromFile(const char *pszMapName, BOOL bEdit)
 
 SDataSection *CSectionDataMgr::LoadSectionData(int nSectionX, int nSectionY)
 {
-    // ¶ÁÈ¡SectionÊı¾İµÄÎÄ¼şÆ«ÒÆÎ»ÖÃ
+    // è¯»å–Sectionæ•°æ®çš„æ–‡ä»¶åç§»ä½ç½®
     DWORD dwLoc = (nSectionY * _nSectionCntX + nSectionX);
     
     SDataSection *pSection = new SDataSection;
@@ -133,7 +133,7 @@ SDataSection *CSectionDataMgr::LoadSectionData(int nSectionX, int nSectionY)
     {
         pSection->pData = new BYTE[_GetSectionDataSize()];
 		
-        // ¶ÁÈ¡Êµ¼ÊµÄSectionÊı¾İ
+        // è¯»å–å®é™…çš„Sectionæ•°æ®
         fseek(_fp, pSection->dwDataOffset, SEEK_SET);
         if(_bDebug)
         {
@@ -158,7 +158,7 @@ void CSectionDataMgr::SaveSectionData(int nSectionX, int nSectionY)
 	{
 		if(_bDebug)
         {
-            //LG(GetDataName(), "[%d %d]Çø¿éÊı¾İË÷ÒıÖµÒÑ¾­´æÔÚ, Ö±½Ó±£´æ!\n", nSectionX, nSectionY);
+            //LG(GetDataName(), "[%d %d]åŒºå—æ•°æ®ç´¢å¼•å€¼å·²ç»å­˜åœ¨, ç›´æ¥ä¿å­˜!\n", nSectionX, nSectionY);
 			LG(GetDataName(), "[%d %d] exsit, save directly!\n", nSectionX, nSectionY);
         }
         
@@ -168,15 +168,15 @@ void CSectionDataMgr::SaveSectionData(int nSectionX, int nSectionY)
     {
 	    if(_bDebug)
         {
-            //LG(GetDataName(), "[%d %d]µ½ÎÄ¼şÄ©Î²·ÖÅäĞÂµÄÇø¿éÊı¾İ¿Õ¼ä\n", nSectionX, nSectionY);
+            //LG(GetDataName(), "[%d %d]åˆ°æ–‡ä»¶æœ«å°¾åˆ†é…æ–°çš„åŒºå—æ•°æ®ç©ºé—´\n", nSectionX, nSectionY);
 			LG(GetDataName(), "[%d %d] alloc new area at file tail \n", nSectionX, nSectionY);
         }
-        // Ê×ÏÈÓ¦¸ÃÑ°ÕÒ·ÏÆúµÄDataÊı¾İ¶Î
-        // µ«È±·¦·ÏÆúÇøÓòË÷Òı, ËùÒÔÖ»ÄÜµ½ÎÄ¼şÄ©Î²È¥Ìí¼Ó
-        // ÕâÑù»áÔÚÕ³ÌùÊı¾İµÄ¹ı³ÌÖĞ²úÉú¿Õ¼äµÄÀË·Ñ
-        // ĞèÒªÔÚ·¢²¼Ê±°ÑÊı¾İTrimÒ»´Î, ´Ë¹ı³ÌÓĞµãÏñÎÄ¼ş´ÅÅÌËéÆ¬
+        // é¦–å…ˆåº”è¯¥å¯»æ‰¾åºŸå¼ƒçš„Dataæ•°æ®æ®µ
+        // ä½†ç¼ºä¹åºŸå¼ƒåŒºåŸŸç´¢å¼•, æ‰€ä»¥åªèƒ½åˆ°æ–‡ä»¶æœ«å°¾å»æ·»åŠ 
+        // è¿™æ ·ä¼šåœ¨ç²˜è´´æ•°æ®çš„è¿‡ç¨‹ä¸­äº§ç”Ÿç©ºé—´çš„æµªè´¹
+        // éœ€è¦åœ¨å‘å¸ƒæ—¶æŠŠæ•°æ®Trimä¸€æ¬¡, æ­¤è¿‡ç¨‹æœ‰ç‚¹åƒæ–‡ä»¶ç£ç›˜ç¢ç‰‡
 	
-        // µ½ÎÄ¼şÄ©Î²Ìí¼ÓĞÂµÄÊı¾İ¿é
+        // åˆ°æ–‡ä»¶æœ«å°¾æ·»åŠ æ–°çš„æ•°æ®å—
 	    fseek(_fp, 0, SEEK_END);
 	    pSection->dwDataOffset = ftell(_fp);
     }
@@ -187,13 +187,13 @@ void CSectionDataMgr::SaveSectionData(int nSectionX, int nSectionY)
 
 void CSectionDataMgr::ClearSectionData(int nSectionX, int nSectionY)
 {
-    // Çå³ıÎÄ¼şÀïµÄ¼ÇÂ¼
+    // æ¸…é™¤æ–‡ä»¶é‡Œçš„è®°å½•
     DWORD dwLoc = (nSectionY * _nSectionCntX + nSectionX);
     _WriteSectionIdx(dwLoc, 0);
 	
-    // Çå³ıÄÚ´æÀïµÄ¼ÇÂ¼
+    // æ¸…é™¤å†…å­˜é‡Œçš„è®°å½•
     SDataSection *pSection = GetSectionData(nSectionX, nSectionY);
-	if(pSection) // ´ËSectionÒÑ¾­¶ÁÈëÄÚ´æ
+	if(pSection) // æ­¤Sectionå·²ç»è¯»å…¥å†…å­˜
     {
         // _SectionList.remove(pSection);
          *(_SectionArray + dwLoc) = NULL;
@@ -206,7 +206,7 @@ void CSectionDataMgr::CopySectionData(SDataSection *pDest, SDataSection *pSrc)
     DWORD dwLastOffset = pDest->dwDataOffset;
     memcpy(pDest, pSrc, sizeof(SDataSection));
     
-    pDest->dwDataOffset = dwLastOffset; // Êı¾İÆ«ÒÆÎ»ÖÃ±£³Ö²»±ä
+    pDest->dwDataOffset = dwLastOffset; // æ•°æ®åç§»ä½ç½®ä¿æŒä¸å˜
     
     if(pSrc->pData==NULL)
     {
@@ -227,7 +227,7 @@ void CSectionDataMgr::Load(BOOL bFull, DWORD dwTimeParam)
     if(bFull)
     {
         int nTotal = _nSectionCntX * _nSectionCntY;
-        // ¶ÁÈ¡È«²¿SectionÊı¾İ
+        // è¯»å–å…¨éƒ¨Sectionæ•°æ®
         for(int i = 0; i < nTotal; i++)
         {
             int nSectionX = i % _nSectionCntX;

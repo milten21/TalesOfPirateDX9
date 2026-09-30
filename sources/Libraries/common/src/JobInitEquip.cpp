@@ -21,11 +21,11 @@ BOOL CJobEquipRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<str
     string strList[80];
 	string strLine;
 
-	// ±àºÅ
+	// ç¼–å·
 	pInfo->chID = (char)pInfo->nID;
-	// Ö°Òµ
+	// èŒä¸š
 	pInfo->chJob = (char)g_GetJobID(pInfo->szDataName);
-	// ×°±¸±àºÅ
+	// è£…å¤‡ç¼–å·
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');
 	n = n > defJOB_INIT_EQUIP_MAX ? defJOB_INIT_EQUIP_MAX : n;

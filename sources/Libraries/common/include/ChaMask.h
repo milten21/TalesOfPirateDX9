@@ -44,26 +44,26 @@ public:
 		long lpos;
 		long llen;
 	};
-	//Ò»´Î°ÑËùÓĞµØÍ¼´óĞ¡·ÖÅäºÃ¡£
+	//ä¸€æ¬¡æŠŠæ‰€æœ‰åœ°å›¾å¤§å°åˆ†é…å¥½ã€‚
 	void	AddMap(const char* pszName, int w,int h);
 
-	//´ÓÊı¾İ¿â¶ÁÈ¡µÄmaskÊı¾İ
+	//ä»æ•°æ®åº“è¯»å–çš„maskæ•°æ®
 	bool	InitMaskData(char* pszMapName, const char* szBase64Data, long llen = 0);
 
-	//µÃµ½Ä³¸öµØÍ¼µÄmaskÊı¾İ
+	//å¾—åˆ°æŸä¸ªåœ°å›¾çš„maskæ•°æ®
 	BYTE*	GetMapMask(const char* pszMapName, long& size);
 
-	// µÃµ½Ä³Ò»µØÍ¼µÄÌ½Ë÷¶È(°Ù·Ö±È)
+	// å¾—åˆ°æŸä¸€åœ°å›¾çš„æ¢ç´¢åº¦(ç™¾åˆ†æ¯”)
 	float	GetMapMaskOpenScale(const char* pszMapName);
 
-	//¸üĞÂÄ³µØÍ¼µÄmask, x,yÒÔÎªÎªµ¥Î»¡£w,hÎªµØÍ¼¿í¸ß£¬ÒÔÎªÎªµ¥Î»
+	//æ›´æ–°æŸåœ°å›¾çš„mask, x,yä»¥ä¸ºä¸ºå•ä½ã€‚w,hä¸ºåœ°å›¾å®½é«˜ï¼Œä»¥ä¸ºä¸ºå•ä½
 	bool	UpdateMapMask(char* pszMapName, int x, int y, int cha_range = SHOWRANGE);
 
 	//
 	//void	SetChaRange(int cha_range){ iChaRange = cha_range;}
 	//int 	GetChaRange(int cha_range){ iChaRange = cha_range;}
 
-	//µÃµ½½á¹ûÊı¾İ
+	//å¾—åˆ°ç»“æœæ•°æ®
 	//long	GetResultLength(){ return lResultSize;}
 	//const char*	GetResultMask(const char* pszMapName)
 	//{ 
@@ -83,7 +83,7 @@ public:
 		return (const char *)szBase64;
 	}
 protected:
-	//±£´æÊ±ÏÈÒª¼ÆËãÕû¸ö×Ö½ÚÊı
+	//ä¿å­˜æ—¶å…ˆè¦è®¡ç®—æ•´ä¸ªå­—èŠ‚æ•°
 	//void	ColResultMask();
 
 	//bool	GetMask(int x, int y)

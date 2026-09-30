@@ -49,21 +49,21 @@ void CItem::OnBeginSeen(CCharacter *pCMainCha)
 {T_B
 	WPACKET pk =GETWPACKET();
 	WRITE_CMD(pk, CMD_MC_ITEMBEGINSEE);
-	// 基本数据
+	// 鍩烘湰鏁版嵁
 	WRITE_LONG(pk, m_ID);							// world ID
 	WRITE_LONG(pk, m_lHandle);
 	WRITE_LONG(pk, m_pCItemRecord->lID);			// ID
-	WRITE_LONG(pk, GetShape().centre.x);			// 当前x位置
-	WRITE_LONG(pk, GetShape().centre.y);			// 当前y位置
-	WRITE_SHORT(pk, m_sAngle);					// 方向
-	WRITE_SHORT(pk, m_SGridContent.sNum);			// 个数
+	WRITE_LONG(pk, GetShape().centre.x);			// 褰撳墠x浣嶇疆
+	WRITE_LONG(pk, GetShape().centre.y);			// 褰撳墠y浣嶇疆
+	WRITE_SHORT(pk, m_sAngle);					// 鏂瑰悜
+	WRITE_SHORT(pk, m_SGridContent.sNum);			// 涓暟
 	//
 	WRITE_CHAR(pk, m_chSpawType);
 	WRITE_LONG(pk, m_lFromEntityID);
-	// 事件信息
+	// 浜嬩欢淇℃伅
 	WriteEventInfo(pk);
 
-	pCMainCha->ReflectINFof(this,pk);//通告
+	pCMainCha->ReflectINFof(this,pk);//閫氬憡
 T_E}
 
 void CItem::OnEndSeen(CCharacter *pCMainCha)
@@ -71,30 +71,30 @@ void CItem::OnEndSeen(CCharacter *pCMainCha)
 	WPACKET pk =GETWPACKET();
 	WRITE_CMD(pk, CMD_MC_ITEMENDSEE);
 	WRITE_LONG(pk, m_ID);				//ID
-	pCMainCha->ReflectINFof(this,pk);	//通告
+	pCMainCha->ReflectINFof(this,pk);	//閫氬憡
 T_E}
 
 void CItem::Run(dbc::uLong ulCurTick)
 {
 	if (m_ulProtID != 0)
-		if (m_ulProtOnTick != 0 && ulCurTick - m_ulStartTick >= m_ulProtOnTick) // 保护时间消失
+		if (m_ulProtOnTick != 0 && ulCurTick - m_ulStartTick >= m_ulProtOnTick) // 淇濇姢鏃堕棿娑堝け
 			m_ulProtID = 0;
 
 	if (m_ulOnTick != 0 && ulCurTick - m_ulStartTick >= m_ulOnTick)
 	{
-		// 判断是否船长证明道具
+		// 鍒ゆ柇鏄惁鑸归暱璇佹槑閬撳叿
 		CItemRecord* pItem = m_pCItemRecord;
 		if( pItem != NULL )
 		{
-			// 判断丢弃船长证明
+			// 鍒ゆ柇涓㈠純鑸归暱璇佹槑
 			if( pItem->sType == enumItemTypeBoat )
 			{
 				game_db.SaveBoatDelTag( this->GetGridContent()->GetDBParam( enumITEMDBP_INST_ID ), 1 );
 			}
 		}
 		if (!m_submap)
-			//LG("道具消失错误", "道具 %s(ID %u，HANDLE %u，位置[%d %d]) 在消失时发现其地图为空\n", GetName(), GetID(), GetHandle(), GetPos().x, GetPos().y);
-			LG("Item disappear error", "item %s(ID %u，HANDLE %u，position[%d %d]) when it disappear find the map is null\n", GetName(), GetID(), GetHandle(), GetPos().x, GetPos().y);
+			//LG("閬撳叿娑堝け閿欒", "閬撳叿 %s(ID %u锛孒ANDLE %u锛屼綅缃甗%d %d]) 鍦ㄦ秷澶辨椂鍙戠幇鍏跺湴鍥句负绌篭n", GetName(), GetID(), GetHandle(), GetPos().x, GetPos().y);
+			LG("Item disappear error", "item %s(ID %u锛孒ANDLE %u锛宲osition[%d %d]) when it disappear find the map is null\n", GetName(), GetID(), GetHandle(), GetPos().x, GetPos().y);
 		else
 		{
 			Free();

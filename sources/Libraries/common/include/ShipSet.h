@@ -5,7 +5,7 @@
 #include "util.h"
 #include "TableData.h"
 
-// ´¬Ìå¸ü»»ÃüÁî°´Å¥Öµ
+// èˆ¹ä½“æ›´æ¢å‘½ä»¤æŒ‰é’®å€¼
 enum ID_BTN_BOAT
 {
     ID_BTN_HEADLEFT =      0,
@@ -17,17 +17,17 @@ enum ID_BTN_BOAT
 
     ID_BTN_ITEM_NUM,
 };
-#define BOAT_MAXSIZE_MINNAME	2   // ´¬Ö»Ãû³Æ×îÉÙ×Ö·û³¤¶È
-#define BOAT_MAXSIZE_BOATNAME	17	// ´¬Ö»µÄÃû³Æ×î´ó³¤¶È
-#define BOAT_MAXSIZE_NAME		64	// ´¬Ö»²¿¼þÃû³Æ×î´ó³¤¶È
-#define BOAT_MAXSIZE_DESP		128 // ´¬Ö»²¿¼þÐÅÏ¢×î´óÃèÊö×Ö½ÚÊý
-#define BOAT_MAXSIZE_PART		3   // ´¬Ö»×î´ó²¿¼þÊýÁ¿
-#define BOAT_MAXNUM_PARTITEM	16  // ´¬Ö»Ã¿¸ö¿É»»²¿¼þ×î´óµÄÑ¡ÔñÊýÁ¿
-#define BOAT_MAXNUM_MOTOR		4	// Ã¿¸öÒýÇæ×î´ó¿ÉÒÔÓÐ×î´óÂí´ïÊýÁ¿
-#define BOAT_MAXNUM_MODEL		8	// Ã¿¸ö´¬Ö»×î´óÄ£ÐÍÊýÁ¿
-#define MAX_CHAR_BOAT			3	// Ã¿¸ö½ÇÉ«×î´ó¿ÉÒÔÓµÓÐµÄ´¬Ö»ÊýÁ¿
+#define BOAT_MAXSIZE_MINNAME	2   // èˆ¹åªåç§°æœ€å°‘å­—ç¬¦é•¿åº¦
+#define BOAT_MAXSIZE_BOATNAME	17	// èˆ¹åªçš„åç§°æœ€å¤§é•¿åº¦
+#define BOAT_MAXSIZE_NAME		64	// èˆ¹åªéƒ¨ä»¶åç§°æœ€å¤§é•¿åº¦
+#define BOAT_MAXSIZE_DESP		128 // èˆ¹åªéƒ¨ä»¶ä¿¡æ¯æœ€å¤§æè¿°å­—èŠ‚æ•°
+#define BOAT_MAXSIZE_PART		3   // èˆ¹åªæœ€å¤§éƒ¨ä»¶æ•°é‡
+#define BOAT_MAXNUM_PARTITEM	16  // èˆ¹åªæ¯ä¸ªå¯æ¢éƒ¨ä»¶æœ€å¤§çš„é€‰æ‹©æ•°é‡
+#define BOAT_MAXNUM_MOTOR		4	// æ¯ä¸ªå¼•æ“Žæœ€å¤§å¯ä»¥æœ‰æœ€å¤§é©¬è¾¾æ•°é‡
+#define BOAT_MAXNUM_MODEL		8	// æ¯ä¸ªèˆ¹åªæœ€å¤§æ¨¡åž‹æ•°é‡
+#define MAX_CHAR_BOAT			3	// æ¯ä¸ªè§’è‰²æœ€å¤§å¯ä»¥æ‹¥æœ‰çš„èˆ¹åªæ•°é‡
 
-// ´¬Ö»Ñ¡ÔñÁÐ±íÊý¾Ý
+// èˆ¹åªé€‰æ‹©åˆ—è¡¨æ•°æ®
 struct BOAT_BERTH_DATA
 {
 	BYTE byID[MAX_CHAR_BOAT];
@@ -37,149 +37,149 @@ struct BOAT_BERTH_DATA
 
 enum BOAT_STATE
 {
-	BS_GOOD		= 0,				// ×´Ì¬Á¼ºÃ
-	BS_NOSP		= 1,				// ÐèÒª²¹³äSP
-	BS_NOHP		= 2,				// ÐèÒªÐÞÀí
-	BS_DEAD		= 3,				// ´¬Ö»³ÁÃ»
+	BS_GOOD		= 0,				// çŠ¶æ€è‰¯å¥½
+	BS_NOSP		= 1,				// éœ€è¦è¡¥å……SP
+	BS_NOHP		= 2,				// éœ€è¦ä¿®ç†
+	BS_DEAD		= 3,				// èˆ¹åªæ²‰æ²¡
 };
 
-// ½ÇÉ«½¨Ôì¡¢ÉèÖÃÓµÓÐµÄ´¬Ö»
+// è§’è‰²å»ºé€ ã€è®¾ç½®æ‹¥æœ‰çš„èˆ¹åª
 struct BOAT_DATA
 {
-	char szName[BOAT_MAXSIZE_BOATNAME];		// ´¬Ö»Ãû³Æ
-	USHORT sBoat;				// ´¬Ö»ÐÅÏ¢ID
-	USHORT sHeader;				// ´¬Í·
-	USHORT sBody;				// ´¬Éí
-	USHORT sEngine;				// ´¬Ö»Âí´ï
-	USHORT sCannon;				// ´¬Ö»»ðÅÚ
-	USHORT sEquipment;			// ´¬Ö»×°±¸
-	USHORT sBerth;				// ´¬Ö»Í£²´¸Û¿Ú
-	USHORT sCapacity;			// »õ²ÕÈÝÁ¿
-	DWORD  dwOwnerID;			// ´¬Ö»ÓµÓÐÕßID
+	char szName[BOAT_MAXSIZE_BOATNAME];		// èˆ¹åªåç§°
+	USHORT sBoat;				// èˆ¹åªä¿¡æ¯ID
+	USHORT sHeader;				// èˆ¹å¤´
+	USHORT sBody;				// èˆ¹èº«
+	USHORT sEngine;				// èˆ¹åªé©¬è¾¾
+	USHORT sCannon;				// èˆ¹åªç«ç‚®
+	USHORT sEquipment;			// èˆ¹åªè£…å¤‡
+	USHORT sBerth;				// èˆ¹åªåœæ³Šæ¸¯å£
+	USHORT sCapacity;			// è´§èˆ±å®¹é‡
+	DWORD  dwOwnerID;			// èˆ¹åªæ‹¥æœ‰è€…ID
 };
 
-// ½ÇÉ«×°ÔØ´¬Ö»ÊôÐÔ
+// è§’è‰²è£…è½½èˆ¹åªå±žæ€§
 struct BOAT_LOAD_INFO
 {
-	DWORD  dwID;				// ´¬Ö»Êý¾Ý¿âID
-	char   szName[BOAT_MAXSIZE_BOATNAME];			// ´¬Ö»Ãû³Æ
-	USHORT sHeader;				// ´¬Í·
-	USHORT sBody;				// ´¬Éí
-	USHORT sEngine;				// ´¬Ö»Âí´ï
-	USHORT sCannon;				// ´¬Ö»»ðÅÚ
-	USHORT sEquipment;			// ´¬Ö»×°±¸
-	USHORT sBerth;				// ´¬Ö»Í£²´¸Û¿Ú
+	DWORD  dwID;				// èˆ¹åªæ•°æ®åº“ID
+	char   szName[BOAT_MAXSIZE_BOATNAME];			// èˆ¹åªåç§°
+	USHORT sHeader;				// èˆ¹å¤´
+	USHORT sBody;				// èˆ¹èº«
+	USHORT sEngine;				// èˆ¹åªé©¬è¾¾
+	USHORT sCannon;				// èˆ¹åªç«ç‚®
+	USHORT sEquipment;			// èˆ¹åªè£…å¤‡
+	USHORT sBerth;				// èˆ¹åªåœæ³Šæ¸¯å£
 };
 
 struct xShipBuildInfo
 {
-	char szName[BOAT_MAXSIZE_NAME];			// ´¬Ãû
-	char szDesp[BOAT_MAXSIZE_DESP];			// ÃèÊö£¨µÀ¾ßµÈ¼¶£©
-	char szBerth[BOAT_MAXSIZE_NAME];		// ´¬Ö»Í£²´¸Û¿ÚÃû³Æ
-	char szHeader[BOAT_MAXSIZE_NAME];		// ´¬Í·Ãû³Æ
-	char szBody[BOAT_MAXSIZE_NAME];			// ´¬ÉíÃû³Æ
-	char szEngine[BOAT_MAXSIZE_NAME];		// ´¬Âí´ïÃû³Æ
-	char szCannon[BOAT_MAXSIZE_NAME];		// ´¬×°ÔØ»ðÅÚÃû³Æ
-	char szEquipment[BOAT_MAXSIZE_NAME];	// ´¬Åä¼þÃû³Æ
+	char szName[BOAT_MAXSIZE_NAME];			// èˆ¹å
+	char szDesp[BOAT_MAXSIZE_DESP];			// æè¿°ï¼ˆé“å…·ç­‰çº§ï¼‰
+	char szBerth[BOAT_MAXSIZE_NAME];		// èˆ¹åªåœæ³Šæ¸¯å£åç§°
+	char szHeader[BOAT_MAXSIZE_NAME];		// èˆ¹å¤´åç§°
+	char szBody[BOAT_MAXSIZE_NAME];			// èˆ¹èº«åç§°
+	char szEngine[BOAT_MAXSIZE_NAME];		// èˆ¹é©¬è¾¾åç§°
+	char szCannon[BOAT_MAXSIZE_NAME];		// èˆ¹è£…è½½ç«ç‚®åç§°
+	char szEquipment[BOAT_MAXSIZE_NAME];	// èˆ¹é…ä»¶åç§°
 
-	// ´¬Ö»×é³ÉÄ£ÐÍID	
-	USHORT sPosID;				// Ä£ÐÍ¶¯×÷ÐÅÏ¢ID
+	// èˆ¹åªç»„æˆæ¨¡åž‹ID	
+	USHORT sPosID;				// æ¨¡åž‹åŠ¨ä½œä¿¡æ¯ID
 	union
 	{
 		struct
 		{
-			DWORD dwBody;		// ´¬Éí		
-			DWORD dwHeader;		// ´¬Í·	
-			DWORD dwEngine;		// ´¬Ö»¶¯Á¦
-			DWORD dwFlag;		// ´¬±êÖ¾
+			DWORD dwBody;		// èˆ¹èº«		
+			DWORD dwHeader;		// èˆ¹å¤´	
+			DWORD dwEngine;		// èˆ¹åªåŠ¨åŠ›
+			DWORD dwFlag;		// èˆ¹æ ‡å¿—
 			DWORD dwMotor[BOAT_MAXNUM_MOTOR];
 		};
 
 		DWORD dwBuf[BOAT_MAXNUM_MODEL];
 	};
 
-	BYTE  byHeader;	   // ´¬Í·µÄÑ¡ÔñË÷Òý¼ÇÂ¼
-	BYTE  byEngine;	   // ´¬¶¯Á¦µÄÑ¡ÔñË÷Òý¼ÇÂ¼
-	BYTE  byCannon;	   // ´¬»ðÅÚµÄÑ¡ÔñË÷Òý¼ÇÂ¼
-	BYTE  byEquipment; // ´¬Åä¼þµÄÑ¡ÔñË÷Òý¼ÇÂ¼
-	BYTE  byIsUpdate;  // ÊÇ·ñ¿ÉÒÔ¸üÐÂ´¬Ö»²¿¼þ
-	DWORD dwMoney;	   // ¼ÛÖµ
-    DWORD dwMinAttack; // ×îÐ¡¹¥»÷
-    DWORD dwMaxAttack; // ×î´ó¹¥»÷
-    DWORD dwCurEndure; // µ±Ç°ÄÍ¾Ã
-    DWORD dwMaxEndure; // ×î´óÄÍ¾Ã
-    DWORD dwSpeed;	   // ÒÆ¶¯ËÙ¶È
-    DWORD dwDistance;  // ×î´ó¹¥»÷¾àÀë
-    DWORD dwDefence;   // ·ÀÓù
-	DWORD dwCurSupply; // µ±Ç°²¹¸ø
-	DWORD dwMaxSupply; // ×î´ó²¹¸ø
-	DWORD dwConsume;   // ´¬Ö»²¹¸øÏûºÄ
-    DWORD dwAttackTime;// ¹¥»÷¼ä¸ôÊ±¼ä
-	USHORT	sCapacity; // »õ²ÕÈÝÁ¿
+	BYTE  byHeader;	   // èˆ¹å¤´çš„é€‰æ‹©ç´¢å¼•è®°å½•
+	BYTE  byEngine;	   // èˆ¹åŠ¨åŠ›çš„é€‰æ‹©ç´¢å¼•è®°å½•
+	BYTE  byCannon;	   // èˆ¹ç«ç‚®çš„é€‰æ‹©ç´¢å¼•è®°å½•
+	BYTE  byEquipment; // èˆ¹é…ä»¶çš„é€‰æ‹©ç´¢å¼•è®°å½•
+	BYTE  byIsUpdate;  // æ˜¯å¦å¯ä»¥æ›´æ–°èˆ¹åªéƒ¨ä»¶
+	DWORD dwMoney;	   // ä»·å€¼
+    DWORD dwMinAttack; // æœ€å°æ”»å‡»
+    DWORD dwMaxAttack; // æœ€å¤§æ”»å‡»
+    DWORD dwCurEndure; // å½“å‰è€ä¹…
+    DWORD dwMaxEndure; // æœ€å¤§è€ä¹…
+    DWORD dwSpeed;	   // ç§»åŠ¨é€Ÿåº¦
+    DWORD dwDistance;  // æœ€å¤§æ”»å‡»è·ç¦»
+    DWORD dwDefence;   // é˜²å¾¡
+	DWORD dwCurSupply; // å½“å‰è¡¥ç»™
+	DWORD dwMaxSupply; // æœ€å¤§è¡¥ç»™
+	DWORD dwConsume;   // èˆ¹åªè¡¥ç»™æ¶ˆè€—
+    DWORD dwAttackTime;// æ”»å‡»é—´éš”æ—¶é—´
+	USHORT	sCapacity; // è´§èˆ±å®¹é‡
 };
 
 struct xShipAttrInfo
 {
-	// ´¬Ö»½¨Ôì»ù±¾ÊôÐÔ
-	DWORD dwMoney;	   // ¼ÛÖµ
-    DWORD dwMinAttack; // ×îÐ¡¹¥»÷
-    DWORD dwMaxAttack; // ×î´ó¹¥»÷
-    DWORD dwCurEndure; // µ±Ç°ÄÍ¾Ã
-    DWORD dwMaxEndure; // ×î´óÄÍ¾Ã
-    DWORD dwSpeed;	   // ÒÆ¶¯ËÙ¶È
-    DWORD dwDistance;  // ×î´ó¹¥»÷¾àÀë
-    DWORD dwDefence;   // ·ÀÓù
-	DWORD dwCurSupply; // µ±Ç°²¹¸ø
-	DWORD dwMaxSupply; // ×î´ó²¹¸ø
-    DWORD dwAttackTime;// ¹¥»÷¼ä¸ôÊ±¼ä
-	USHORT	sCapacity; // »õ²ÕÈÝÁ¿
+	// èˆ¹åªå»ºé€ åŸºæœ¬å±žæ€§
+	DWORD dwMoney;	   // ä»·å€¼
+    DWORD dwMinAttack; // æœ€å°æ”»å‡»
+    DWORD dwMaxAttack; // æœ€å¤§æ”»å‡»
+    DWORD dwCurEndure; // å½“å‰è€ä¹…
+    DWORD dwMaxEndure; // æœ€å¤§è€ä¹…
+    DWORD dwSpeed;	   // ç§»åŠ¨é€Ÿåº¦
+    DWORD dwDistance;  // æœ€å¤§æ”»å‡»è·ç¦»
+    DWORD dwDefence;   // é˜²å¾¡
+	DWORD dwCurSupply; // å½“å‰è¡¥ç»™
+	DWORD dwMaxSupply; // æœ€å¤§è¡¥ç»™
+    DWORD dwAttackTime;// æ”»å‡»é—´éš”æ—¶é—´
+	USHORT	sCapacity; // è´§èˆ±å®¹é‡
 
-	// ÆäËûÊôÐÔ	
-	DWORD dwResume;			// ´¬ÄÍ¾Ã»Ö¸´
-	DWORD dwResist;	        // ´¬Ö»¿¹Á¦
-	DWORD dwScope;			// ±¬Õ¨·¶Î§
-	DWORD dwConsume;		// ´¬Ö»²¹¸øÏûºÄ
-	DWORD dwCannonSpeed;	// ÅÚµ¯·ÉÐÐËÙ¶È
+	// å…¶ä»–å±žæ€§	
+	DWORD dwResume;			// èˆ¹è€ä¹…æ¢å¤
+	DWORD dwResist;	        // èˆ¹åªæŠ—åŠ›
+	DWORD dwScope;			// çˆ†ç‚¸èŒƒå›´
+	DWORD dwConsume;		// èˆ¹åªè¡¥ç»™æ¶ˆè€—
+	DWORD dwCannonSpeed;	// ç‚®å¼¹é£žè¡Œé€Ÿåº¦
 
-	// ´¬Ö»ÊôÐÔÏµÊý
+	// èˆ¹åªå±žæ€§ç³»æ•°
 };
 
 struct xShipInfo: public CRawDataInfo
 {
-	char szName[BOAT_MAXSIZE_NAME];	// ´¬Ö»Ãû³Æ
-	char szDesp[BOAT_MAXSIZE_DESP];	// ÃèÊö£¨µÀ¾ßµÈ¼¶£©
-	USHORT sItemID;					// ´¬³¤Ö¤Ã÷µÀ¾ßID
-	USHORT sCharID;					// ´¬Ö»½ÇÉ«ÊôÐÔID
-	USHORT sPosID;					// Ä£ÐÍ¶¯×÷ÐÅÏ¢ID
-	BYTE byIsUpdate;				// ÊÇ·ñ¿ÉÒÔ¸ü»»´¬¸÷²¿¼þ	
+	char szName[BOAT_MAXSIZE_NAME];	// èˆ¹åªåç§°
+	char szDesp[BOAT_MAXSIZE_DESP];	// æè¿°ï¼ˆé“å…·ç­‰çº§ï¼‰
+	USHORT sItemID;					// èˆ¹é•¿è¯æ˜Žé“å…·ID
+	USHORT sCharID;					// èˆ¹åªè§’è‰²å±žæ€§ID
+	USHORT sPosID;					// æ¨¡åž‹åŠ¨ä½œä¿¡æ¯ID
+	BYTE byIsUpdate;				// æ˜¯å¦å¯ä»¥æ›´æ¢èˆ¹å„éƒ¨ä»¶	
 	USHORT sNumHeader;
 	USHORT sNumEngine;
 	USHORT sNumCannon;
 	USHORT sNumEquipment;
-	USHORT sHeader[BOAT_MAXNUM_PARTITEM];		// ´¬Í·	
-	USHORT sEngine[BOAT_MAXNUM_PARTITEM];		// ¶¯Á¦
-	USHORT sCannon[BOAT_MAXNUM_PARTITEM];		// »ðÅÚ
-	USHORT sEquipment[BOAT_MAXNUM_PARTITEM];	// Åä¼þ
-	USHORT sBody;			// ´¬Éí	
-	USHORT sLvLimit;		// µÈ¼¶ÏÞÖÆ
+	USHORT sHeader[BOAT_MAXNUM_PARTITEM];		// èˆ¹å¤´	
+	USHORT sEngine[BOAT_MAXNUM_PARTITEM];		// åŠ¨åŠ›
+	USHORT sCannon[BOAT_MAXNUM_PARTITEM];		// ç«ç‚®
+	USHORT sEquipment[BOAT_MAXNUM_PARTITEM];	// é…ä»¶
+	USHORT sBody;			// èˆ¹èº«	
+	USHORT sLvLimit;		// ç­‰çº§é™åˆ¶
 	USHORT sNumPfLimit;
-	USHORT sPfLimit[BOAT_MAXNUM_PARTITEM];		// Ö°ÒµÏÞÖÆ
+	USHORT sPfLimit[BOAT_MAXNUM_PARTITEM];		// èŒä¸šé™åˆ¶
 
-	USHORT sEndure;			// ´¬Ö»ÄÍ¾Ã
-	USHORT sResume;			// ´¬ÄÍ¾Ã»Ö¸´
-	USHORT sDefence;		// ´¬Ö»·ÀÓùÁ¦
-	USHORT sResist;			// ´¬Ö»¿¹Á¦
-    USHORT sMinAttack;		// ×îÐ¡¹¥»÷
-    USHORT sMaxAttack;		// ×î´ó¹¥»÷
-	USHORT sDistance;		// ¹¥»÷¾àÀë
-	USHORT sTime;			// Ìíµ¯Ê±¼ä
-	USHORT sScope;			// ±¬Õ¨·¶Î§
-	USHORT sCapacity;		// »õ²ÕÈÝÁ¿
-	USHORT sSupply;			// ´¬Ö»²¹¸ø
-	USHORT sConsume;		// ´¬Ö»²¹¸øÏûºÄ
-	USHORT sCannonSpeed;	// ÅÚµ¯·ÉÐÐËÙ¶È
-	USHORT sSpeed;			// ´¬ÒÆ¶¯ËÙ¶È
-	USHORT sParam;			// ±¸×¢
+	USHORT sEndure;			// èˆ¹åªè€ä¹…
+	USHORT sResume;			// èˆ¹è€ä¹…æ¢å¤
+	USHORT sDefence;		// èˆ¹åªé˜²å¾¡åŠ›
+	USHORT sResist;			// èˆ¹åªæŠ—åŠ›
+    USHORT sMinAttack;		// æœ€å°æ”»å‡»
+    USHORT sMaxAttack;		// æœ€å¤§æ”»å‡»
+	USHORT sDistance;		// æ”»å‡»è·ç¦»
+	USHORT sTime;			// æ·»å¼¹æ—¶é—´
+	USHORT sScope;			// çˆ†ç‚¸èŒƒå›´
+	USHORT sCapacity;		// è´§èˆ±å®¹é‡
+	USHORT sSupply;			// èˆ¹åªè¡¥ç»™
+	USHORT sConsume;		// èˆ¹åªè¡¥ç»™æ¶ˆè€—
+	USHORT sCannonSpeed;	// ç‚®å¼¹é£žè¡Œé€Ÿåº¦
+	USHORT sSpeed;			// èˆ¹ç§»åŠ¨é€Ÿåº¦
+	USHORT sParam;			// å¤‡æ³¨
 
 	xShipInfo()
 	{
@@ -198,7 +198,7 @@ struct xShipInfo: public CRawDataInfo
 		memset( sCannon, 0, sizeof(USHORT)*BOAT_MAXNUM_PARTITEM );
 		memset( sEquipment, 0, sizeof(USHORT)*BOAT_MAXNUM_PARTITEM );
 		sBody = 0;
-		sLvLimit = 0;		// µÈ¼¶ÏÞÖÆ
+		sLvLimit = 0;		// ç­‰çº§é™åˆ¶
 		sNumPfLimit = 0;
 		memset( sPfLimit, 0, sizeof(USHORT)*BOAT_MAXNUM_PARTITEM );	
 
@@ -223,27 +223,27 @@ struct xShipInfo: public CRawDataInfo
 
 struct xShipPartInfo: public CRawDataInfo
 {
-	char szName[BOAT_MAXSIZE_NAME];	// ´¬Ö»²¿¼þÃû³Æ
-	char szDesp[BOAT_MAXSIZE_DESP];	// ÃèÊö£¨µÀ¾ßµÈ¼¶£©
-    DWORD dwModel;			// ²¿¼þÄ£ÐÍID
-	USHORT sMotor[BOAT_MAXNUM_MOTOR];	// ´¬Ö»ÒýÇæÂí´ï
-	DWORD  dwPrice;			// ¼Û¸ñ
+	char szName[BOAT_MAXSIZE_NAME];	// èˆ¹åªéƒ¨ä»¶åç§°
+	char szDesp[BOAT_MAXSIZE_DESP];	// æè¿°ï¼ˆé“å…·ç­‰çº§ï¼‰
+    DWORD dwModel;			// éƒ¨ä»¶æ¨¡åž‹ID
+	USHORT sMotor[BOAT_MAXNUM_MOTOR];	// èˆ¹åªå¼•æ“Žé©¬è¾¾
+	DWORD  dwPrice;			// ä»·æ ¼
 
-	USHORT sEndure;			// ´¬Ö»ÄÍ¾Ã
-	USHORT sResume;			// ´¬ÄÍ¾Ã»Ö¸´
-	USHORT sDefence;		// ´¬Ö»·ÀÓùÁ¦
-	USHORT sResist;			// ´¬Ö»¿¹Á¦
-    USHORT sMinAttack;		// ×îÐ¡¹¥»÷
-    USHORT sMaxAttack;		// ×î´ó¹¥»÷
-	USHORT sDistance;		// ¹¥»÷¾àÀë
-	USHORT sTime;			// Ìíµ¯Ê±¼ä
-	USHORT sScope;			// ±¬Õ¨·¶Î§
-	USHORT sCapacity;		// »õ²ÕÈÝÁ¿
-	USHORT sSupply;			// ´¬Ö»²¹¸ø
-	USHORT sConsume;		// ´¬Ö»²¹¸øÏûºÄ
-	USHORT sCannonSpeed;	// ÅÚµ¯·ÉÐÐËÙ¶È
-	USHORT sSpeed;			// ´¬ÒÆ¶¯ËÙ¶È
-	USHORT sParam;			// ±¸×¢
+	USHORT sEndure;			// èˆ¹åªè€ä¹…
+	USHORT sResume;			// èˆ¹è€ä¹…æ¢å¤
+	USHORT sDefence;		// èˆ¹åªé˜²å¾¡åŠ›
+	USHORT sResist;			// èˆ¹åªæŠ—åŠ›
+    USHORT sMinAttack;		// æœ€å°æ”»å‡»
+    USHORT sMaxAttack;		// æœ€å¤§æ”»å‡»
+	USHORT sDistance;		// æ”»å‡»è·ç¦»
+	USHORT sTime;			// æ·»å¼¹æ—¶é—´
+	USHORT sScope;			// çˆ†ç‚¸èŒƒå›´
+	USHORT sCapacity;		// è´§èˆ±å®¹é‡
+	USHORT sSupply;			// èˆ¹åªè¡¥ç»™
+	USHORT sConsume;		// èˆ¹åªè¡¥ç»™æ¶ˆè€—
+	USHORT sCannonSpeed;	// ç‚®å¼¹é£žè¡Œé€Ÿåº¦
+	USHORT sSpeed;			// èˆ¹ç§»åŠ¨é€Ÿåº¦
+	USHORT sParam;			// å¤‡æ³¨
 	
 	xShipPartInfo()
 	{
@@ -270,7 +270,7 @@ struct xShipPartInfo: public CRawDataInfo
 	}
 };
 
-// ´¬Ö»½¨ÔìÊôÐÔ±í
+// èˆ¹åªå»ºé€ å±žæ€§è¡¨
 class xShipSet : public CRawDataSet
 {
 public:
@@ -290,7 +290,7 @@ protected:
 		return (CRawDataInfo*)new xShipInfo[nCnt];
 	}
 	
-	static xShipSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static xShipSet* _Instance; // ç›¸å½“äºŽå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual void _DeleteRawDataArray()
 	{
@@ -315,7 +315,7 @@ protected:
 	virtual BOOL _ReadRawDataInfo(CRawDataInfo *pRawDataInfo, std::vector<std::string> &ParamList);
 };
 
-// ´¬Ö»²¿¼þ»ù±¾ÊôÐÔ±í
+// èˆ¹åªéƒ¨ä»¶åŸºæœ¬å±žæ€§è¡¨
 class xShipPartSet : public CRawDataSet
 {
 public:

@@ -13,7 +13,7 @@ extern void lua_callalert(lua_State* L, int status);
 
 BOOL GetOnlineCount( DWORD& dwLoginNum, DWORD& dwPlayerNum )
 {
-	// 初始化NPC脚本全局变量信息
+	// 鍒濆鍖朜PC鑴氭湰鍏ㄥ眬鍙橀噺淇℃伅
 	lua_getglobal( g_pLuaState, "GetOnlineCount" );
 	if( !lua_isfunction( g_pLuaState, -1 ) )
 	{
@@ -38,7 +38,7 @@ BOOL GetOnlineCount( DWORD& dwLoginNum, DWORD& dwPlayerNum )
 	int nStatus = lua_pcall( g_pLuaState, 8, 3, 0 );
 	if( nStatus )
 	{
-		//printf( "函数[GetOnlineCount]调用失败！\n" );
+		//printf( "鍑芥暟[GetOnlineCount]璋冪敤澶辫触锛乗n" );
 		printf( "call [GetOnlineCount] failed!\n" );
 		lua_callalert( g_pLuaState, nStatus );
 		lua_settop(g_pLuaState, 0);
@@ -224,7 +224,7 @@ inline int lua_EXLG(lua_State *L)
 			break;
 		default:
 			{
-				//str << "[无效标识(" << *(pszPos + 1) << ")]";
+				//str << "[鏃犳晥鏍囪瘑(" << *(pszPos + 1) << ")]";
 				str << "[invilid identifier(" << *(pszPos + 1) << ")]";
 			}
 			break;

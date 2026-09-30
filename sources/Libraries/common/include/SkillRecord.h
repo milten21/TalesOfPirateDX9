@@ -13,7 +13,7 @@
 #include "TableData.h"
 #include "SkillBag.h"
 
-const char cchSkillRecordKeyValue = (char)0xfe;				// Îª-1Ê±ÊÇ¶¼¿ÉÒÔÄÃ,Îª0Ê±ÊÇ¿ÕÊÖ,ËùÒÔ¸ÄÎª-2
+const char cchSkillRecordKeyValue = (char)0xfe;				// ä¸º-1æ—¶æ˜¯éƒ½å¯ä»¥æ‹¿,ä¸º0æ—¶æ˜¯ç©ºæ‰‹,æ‰€ä»¥æ”¹ä¸º-2
 
 #define	defSKILL_NAME_LEN	17
 #define defSKILL_JOB_SELECT_NUM	9
@@ -39,90 +39,90 @@ enum ESkillItemNeed
 
 enum ESkillObjType
 {
-	// ¸Ã¼¼ÄÜµÄÊ©·ÅÄ¿±êÑ¡Ôñ1¡¢×Ô¼º£»2¡¢¶ÓÓÑ£»3¡¢³¡¾°£»4¡¢µĞÈË£»5¡¢È«Ìå
+	// è¯¥æŠ€èƒ½çš„æ–½æ”¾ç›®æ ‡é€‰æ‹©1ã€è‡ªå·±ï¼›2ã€é˜Ÿå‹ï¼›3ã€åœºæ™¯ï¼›4ã€æ•Œäººï¼›5ã€å…¨ä½“
 
-	enumSKILL_TYPE_SELF		= 1,	// ×ÔÉí
-	enumSKILL_TYPE_TEAM		= 2,	// ¶ÓÓÑ
-	enumSKILL_TYPE_SCENE	= 3,	// ³¡¾°ÌØĞ§
-	enumSKILL_TYPE_ENEMY	= 4,	// µĞÈË
-	enumSKILL_TYPE_ALL		= 5,	// È«Ìå
-	enumSKILL_TYPE_PLAYER_DIE	= 6,	// Íæ¼ÒÊ¬Ìå
-	enumSKILL_TYPE_EXCEPT_SELF  = 7,    // ³ıÁË×Ô¼ºÒÔÍâµÄËùÓĞ½ÇÉ«ºÍ¹ÖÎï
+	enumSKILL_TYPE_SELF		= 1,	// è‡ªèº«
+	enumSKILL_TYPE_TEAM		= 2,	// é˜Ÿå‹
+	enumSKILL_TYPE_SCENE	= 3,	// åœºæ™¯ç‰¹æ•ˆ
+	enumSKILL_TYPE_ENEMY	= 4,	// æ•Œäºº
+	enumSKILL_TYPE_ALL		= 5,	// å…¨ä½“
+	enumSKILL_TYPE_PLAYER_DIE	= 6,	// ç©å®¶å°¸ä½“
+	enumSKILL_TYPE_EXCEPT_SELF  = 7,    // é™¤äº†è‡ªå·±ä»¥å¤–çš„æ‰€æœ‰è§’è‰²å’Œæ€ªç‰©
 
-	// ÌØÊâ¼¼ÄÜÀàĞÍ
-	enumSKILL_TYPE_REPAIR	= 17,	// ĞŞ²¹
-	enumSKILL_TYPE_TREE		= 18,	// ¿³Ê÷
-	enumSKILL_TYPE_MINE		= 19,	// ¿ª¿ó
-	enumSKILL_TYPE_TRADE	= 22,	// °ÚÌ¯
-	enumSKILL_TYPE_FISH		= 28,	// ²¶Óã
-	enumSKILL_TYPE_SALVAGE	= 29,	// ´òÀÌ³Á´¬
+	// ç‰¹æ®ŠæŠ€èƒ½ç±»å‹
+	enumSKILL_TYPE_REPAIR	= 17,	// ä¿®è¡¥
+	enumSKILL_TYPE_TREE		= 18,	// ç æ ‘
+	enumSKILL_TYPE_MINE		= 19,	// å¼€çŸ¿
+	enumSKILL_TYPE_TRADE	= 22,	// æ‘†æ‘Š
+	enumSKILL_TYPE_FISH		= 28,	// æ•é±¼
+	enumSKILL_TYPE_SALVAGE	= 29,	// æ‰“ææ²‰èˆ¹
 
 };
 
-enum eSelectCha		// ½ö¿Í»§¶ËÓÃ
+enum eSelectCha		// ä»…å®¢æˆ·ç«¯ç”¨
 {
-	enumSC_NONE = 0,		// ²»ÄÜ¶ÔËùÓĞÈËÊ¹ÓÃ
-	enumSC_ALL,				// ¶ÔËùÓĞÈËÊ¹ÓÃ
-	enumSC_PLAYER,			// ÆäËüÍæ¼Ò,²»°üÀ¨×Ô¼º,ÓÃÓÚ²Ëµ¥
+	enumSC_NONE = 0,		// ä¸èƒ½å¯¹æ‰€æœ‰äººä½¿ç”¨
+	enumSC_ALL,				// å¯¹æ‰€æœ‰äººä½¿ç”¨
+	enumSC_PLAYER,			// å…¶å®ƒç©å®¶,ä¸åŒ…æ‹¬è‡ªå·±,ç”¨äºèœå•
 
-	enumSC_ENEMY,			// µĞÈË:¿ÉPKÔò¹ÖÎï+·ÇÍ¬¶ÓÍæ¼Ò,·ñÔò½öÎª¹ÖÎï
-	enumSC_PLAYER_ASHES,	// Íæ¼ÒÊ¬Ìå(ÒÑËÀÍöµÄ)
+	enumSC_ENEMY,			// æ•Œäºº:å¯PKåˆ™æ€ªç‰©+éåŒé˜Ÿç©å®¶,å¦åˆ™ä»…ä¸ºæ€ªç‰©
+	enumSC_PLAYER_ASHES,	// ç©å®¶å°¸ä½“(å·²æ­»äº¡çš„)
 
-	enumSC_MONS,			// ÆÕÍ¨¹ÖÎï
-	enumSC_MONS_REPAIRABLE, // ¿ÉĞŞ²¹¹ÖÎï
-	enumSC_MONS_TREE,       // Ê÷¹ÖÎï
-	enumSC_MONS_MINE,		// ¿óÊ¯¹ÖÎï
-	enumSC_MONS_FISH,		// Óã¹ÖÎï
-	enumSC_MONS_DBOAT,		// ³Á´¬¹ÖÎï
+	enumSC_MONS,			// æ™®é€šæ€ªç‰©
+	enumSC_MONS_REPAIRABLE, // å¯ä¿®è¡¥æ€ªç‰©
+	enumSC_MONS_TREE,       // æ ‘æ€ªç‰©
+	enumSC_MONS_MINE,		// çŸ¿çŸ³æ€ªç‰©
+	enumSC_MONS_FISH,		// é±¼æ€ªç‰©
+	enumSC_MONS_DBOAT,		// æ²‰èˆ¹æ€ªç‰©
 
-	enumSC_SELF,			// Íæ¼Ò×Ô¼º
-	enumSC_TEAM,			// ¶ÓÔ±
+	enumSC_SELF,			// ç©å®¶è‡ªå·±
+	enumSC_TEAM,			// é˜Ÿå‘˜
 };
 
 enum ESkillEffType
 {
-	enumSKILL_EFF_BANEFUL	= 0,	// ÓĞº¦µÄ
-	enumSKILL_EFF_HELPFUL	= 1,	// ÓĞÒæµÄ
+	enumSKILL_EFF_BANEFUL	= 0,	// æœ‰å®³çš„
+	enumSKILL_EFF_HELPFUL	= 1,	// æœ‰ç›Šçš„
 };
 
 enum ESkillUpgrade
 {
-	enumSKILL_UPGRADE_NONE,			// ²»ÄÜÉı¼¶
-	enumSKILL_UPGRADE_CAN,			// ¿ÉÉı¼¶
-	enumSKILL_UPGRADE_MAX,			// ÒÑ¾­Éıµ½×î´óÖµ
+	enumSKILL_UPGRADE_NONE,			// ä¸èƒ½å‡çº§
+	enumSKILL_UPGRADE_CAN,			// å¯å‡çº§
+	enumSKILL_UPGRADE_MAX,			// å·²ç»å‡åˆ°æœ€å¤§å€¼
 };
 
 enum ESkillFightType
 {
-	enumSKILL_LAND_LIVE		= 0, // Â½µØÉú»î¼¼ÄÜ
-	enumSKILL_FIGHT			= 1, // Õ½¶·¼¼ÄÜ
-	enumSKILL_SAIL			= 2, // º½º£¼¼ÄÜ
-	enumSKILL_SEE_LIVE		= 3, // º£ÉÏÉú»î¼¼ÄÜ
+	enumSKILL_LAND_LIVE		= 0, // é™†åœ°ç”Ÿæ´»æŠ€èƒ½
+	enumSKILL_FIGHT			= 1, // æˆ˜æ–—æŠ€èƒ½
+	enumSKILL_SAIL			= 2, // èˆªæµ·æŠ€èƒ½
+	enumSKILL_SEE_LIVE		= 3, // æµ·ä¸Šç”Ÿæ´»æŠ€èƒ½
 };
 
 enum ESkillSrcType
 {
-	enumSKILL_SRC_HUMAN	= 1,	// ÈË
-	enumSKILL_SRC_BOAT	= 2,	// ´¬
+	enumSKILL_SRC_HUMAN	= 1,	// äºº
+	enumSKILL_SRC_BOAT	= 2,	// èˆ¹
 };
 
 enum ESkillTarHabitatType
 {
-	enumSKILL_TAR_LAND	= 1,	// Â½µØ
-	enumSKILL_TAR_SEA	= 2,	// º£Ñó
-	enumSKILL_TAR_LORS	= 3,	// Á½ÆÜ
+	enumSKILL_TAR_LAND	= 1,	// é™†åœ°
+	enumSKILL_TAR_SEA	= 2,	// æµ·æ´‹
+	enumSKILL_TAR_LORS	= 3,	// ä¸¤æ –
 };
 
 enum ESkillType
 {
-	enumSKILL_INBORN	= 0,	// ÌìÉúµÄ¼¼ÄÜ
-	enumSKILL_ACTIVE	= 1,	// Ö÷¶¯µÄ¼¼ÄÜ
-	enumSKILL_PASSIVE	= 2,	// ±»¶¯µÄ¼¼ÄÜ
+	enumSKILL_INBORN	= 0,	// å¤©ç”Ÿçš„æŠ€èƒ½
+	enumSKILL_ACTIVE	= 1,	// ä¸»åŠ¨çš„æŠ€èƒ½
+	enumSKILL_PASSIVE	= 2,	// è¢«åŠ¨çš„æŠ€èƒ½
 };
 
 enum ESkillPhaseType
 {
-	enumSKILL_NOT_MANUAL_ADD   = 6,	// Íæ¼Ò²»ÔÊĞíÊÖ¶¯Éı¼¶
+	enumSKILL_NOT_MANUAL_ADD   = 6,	// ç©å®¶ä¸å…è®¸æ‰‹åŠ¨å‡çº§
 };
 
 
@@ -131,89 +131,89 @@ class CSkillRecord : public CRawDataInfo
 public:
 	CSkillRecord();
 
-	short	sID;												// ±àºÅ
-	_TCHAR	szName[defSKILL_NAME_LEN];							// Ãû³Æ
-	char    chFightType;										// ¼¼ÄÜÀàĞÍ£¬Éú»î¼¼ÄÜ£¬Õ½¶·¼¼ÄÜ
-	char	chJobSelect[defSKILL_JOB_SELECT_NUM][2];			// ¿ÉÒÔÑ§Ï°¸Ã¼¼ÄÜµÄÖ°Òµ£¬¼°¶ÔÓ¦¸ÃÖ°Òµ¿ÉÒÔÑ§µ½µÄ×î¸ßµÈ¼¶¡£
-																// 0¡¢¹ÖÎï 1¡¢½£Ê¿ 2¡¢¾Ñ»÷ÊÖ 3¡¢º£¿Í 4¡¢º½º£Ê¿ 5¡¢ÉÌÈË 6¡¢Ò½Éú 7¡¢¼¼Ê¦ 8¡¢ËùÓĞ
-	short	sItemNeed[3][defSKILL_ITEM_NEED_NUM][2];			// ×ó(0)ÓÒ(1)ÊÖ£¬ÉíÌå(2)±ØĞë×°±¸ÏàÓ¦µÄµÀ¾ß²Å¿ÉÊ¹ÓÃ¼¼ÄÜ¡£
-	short	sConchNeed[defSKILL_ITEM_NEED_NUM][3];				// ±´¿ÇĞèÇó£¨×°±¸²¿Î»£¬ÀàĞÍ£¬±àºÅ£»×°±¸²¿Î»£¬ÀàĞÍ£¬±àºÅ£»¡£¡£¡££©
-	char	chPhase;											// ¼¼ÄÜ½×¶Î£º1¡£¹ÌÓĞ¼¼ÄÜ£¬2¡£»ù´¡¼¼ÄÜ£¬3¡£½ø½×¼¼ÄÜ£¬4¡£ÖÕ¼«¼¼ÄÜ£¬5¡£º£ÂÑ¼¼ÄÜ£¬6¡£¼¼ÄÜµÈ¼¶ÄÜ·ñÊÖ¶¯Ìí¼Ó
-	char	chType;												// ¼¼ÄÜÀàĞÍ£º1¡£Ö÷¶¯¼¼ÄÜ£¨ÊÖ¶¯ÊÍ·Å£©£¬2¡£±»¶¯¼¼ÄÜ£¨×Ô¶¯ÊÍ·Å£©
-	short	sLevelDemand;										// Ñ§Ï°¸Ã¼¼ÄÜĞèÒªµÄµÈ¼¶
-	short	sPremissSkill[defSKILL_PRE_SKILL_NUM][2];			// ĞèÒªµÄ3¸öÇ°Ìá¼¼ÄÜ£¨¼¼ÄÜ±àºÅ£¬µÈ¼¶£©
-	char	chPointExpend;										// ÏûºÄµÄ¼¼ÄÜµã
-	char	chSrcType;											// Ê©·ÅÕßĞÎÌ¬£¨ÈË£¬´¬£©
-	char	chTarType;											// Ä¿±êÀàĞÍ£¨Â½µØÉúÎï£¬º£ÉÏÉúÎï£©
-	short	sApplyDistance;										// Ê¹ÓÃ¾àÀë¡£µ¥Î»£ºÃ×
-	char	chApplyTarget;										// Ê¹ÓÃµÄÄ¿±ê¡£
-	char	chApplyType;										// ×÷ÓÃÀàĞÍ£º1¡£µ¥Ìå£¬2¡£·¶Î§£¬3¡£½¦Éä
-	char	chHelpful;											// ¼¼ÄÜÓĞÒæ,»¹ÊÇÓĞº¦
-	short	sAngle;												// ½Ç¶È£¨0-360£©£¬ÓÃÓÚ¡°·¶Î§¡°¹¥»÷ÀàĞÍ¡£
-	short	sRadii;												// °ë¾¶£¬ÓÃÓÚ¡°·¶Î§¡°¹¥»÷ÀàĞÍ¡£
-	char	chRange;											// ¼¼ÄÜÇøÓòĞÎ×´±àºÅ
-	char	szPrepare[defSKILL_RANGE_SET_SCRIPT];				// ×¼±¸¼¼ÄÜ
-	char	szUseSP[defSKILL_EFFECT_SCRIPT_LEN];				// ÏûºÄSP¹«Ê½
-	char	szUseEndure[defSKILL_EFFECT_SCRIPT_LEN];			// ÏûºÄ¡°ÄÍ¾Ã¶È¡°¹«Ê½
-	char	szUseEnergy[defSKILL_EFFECT_SCRIPT_LEN];			// ÏûºÄ¡°ÄÜÁ¿¡°¹«Ê½
-	char	szSetRange[defSKILL_EFFECT_SCRIPT_LEN];				// ¼¼ÄÜÇøÓòÉè¶¨
-	char	szRangeState[defSKILL_EFFECT_SCRIPT_LEN];			// µØ±í×´Ì¬Éè¶¨
-	char	szUse[defSKILL_EFFECT_SCRIPT_LEN];					// Ê©·Å½×¶Î¹«Ê½
-	char	szEffect[defSKILL_EFFECT_SCRIPT_LEN];				// Ğ§¹û½×¶Î¹«Ê½
-	char	szActive[defSKILL_EFFECT_SCRIPT_LEN];				// ÕıĞ§¹û¹«Ê½
-	char	szInactive[defSKILL_EFFECT_SCRIPT_LEN];				// ·´Ğ§¹û¹«Ê½
-	int		nStateID;											// °ó¶¨µÄ¿ÉÊÖ¶¯ÒÆ³ı×´Ì¬±àºÅ
-	short	sSelfAttr[defEFFECT_SELF_ATTR_NUM];					// ×ÔÉíÊôĞÔÊıÖµµÄ±ä»¯£¬¹«Ê½±àºÅ¡£
-	short	sSelfEffect[defSELF_EFFECT_NUM];					// ×ÔÉíĞ§¹û
-	short	sItemExpend[defEXPEND_ITEM_NUM][2];					// ÏûºÄµÄÎïÆ·£¨ID£¬ÊıÁ¿£©
-	short	sBeingTime;											// ³ÖĞøÊ±¼ä
-	short	sTargetAttr[defEFFECT_TAR_ATTR_NUM];				// Ä¿±êÊôĞÔÊıÖµµÄ±ä»¯£¬¹«Ê½±àºÅ¡£
-	short	sSplashPara;										// ½¦Éä²ÎÊı
-	short	sTargetEffect;										// Ä¿±ê³ÖĞøĞ§¹û
-	short	sSplashEffect;										// ½¦Éä³ÖĞøĞ§¹û
-	short	sVariation;											// ±äÉí±àºÅ
-	short	sSummon;											// ÕÙ»½±àºÅ
-	short	sPreTime;											// ÊÍ·ÅÊ±¼ä
-	char	szFireSpeed[defSKILL_EFFECT_SCRIPT_LEN];			// ÔÙÊ©·ÅËÙ¶È¹«Ê½
-	char	chOperate[defSKILL_OPERATE_NUM];					// ÌØÊâ²Ù×÷£º0£¬ÎŞ¡£1£¬ÉÏ´¬¡£2£¬ÏÂ´¬
+	short	sID;												// ç¼–å·
+	_TCHAR	szName[defSKILL_NAME_LEN];							// åç§°
+	char    chFightType;										// æŠ€èƒ½ç±»å‹ï¼Œç”Ÿæ´»æŠ€èƒ½ï¼Œæˆ˜æ–—æŠ€èƒ½
+	char	chJobSelect[defSKILL_JOB_SELECT_NUM][2];			// å¯ä»¥å­¦ä¹ è¯¥æŠ€èƒ½çš„èŒä¸šï¼ŒåŠå¯¹åº”è¯¥èŒä¸šå¯ä»¥å­¦åˆ°çš„æœ€é«˜ç­‰çº§ã€‚
+																// 0ã€æ€ªç‰© 1ã€å‰‘å£« 2ã€ç‹™å‡»æ‰‹ 3ã€æµ·å®¢ 4ã€èˆªæµ·å£« 5ã€å•†äºº 6ã€åŒ»ç”Ÿ 7ã€æŠ€å¸ˆ 8ã€æ‰€æœ‰
+	short	sItemNeed[3][defSKILL_ITEM_NEED_NUM][2];			// å·¦(0)å³(1)æ‰‹ï¼Œèº«ä½“(2)å¿…é¡»è£…å¤‡ç›¸åº”çš„é“å…·æ‰å¯ä½¿ç”¨æŠ€èƒ½ã€‚
+	short	sConchNeed[defSKILL_ITEM_NEED_NUM][3];				// è´å£³éœ€æ±‚ï¼ˆè£…å¤‡éƒ¨ä½ï¼Œç±»å‹ï¼Œç¼–å·ï¼›è£…å¤‡éƒ¨ä½ï¼Œç±»å‹ï¼Œç¼–å·ï¼›ã€‚ã€‚ã€‚ï¼‰
+	char	chPhase;											// æŠ€èƒ½é˜¶æ®µï¼š1ã€‚å›ºæœ‰æŠ€èƒ½ï¼Œ2ã€‚åŸºç¡€æŠ€èƒ½ï¼Œ3ã€‚è¿›é˜¶æŠ€èƒ½ï¼Œ4ã€‚ç»ˆææŠ€èƒ½ï¼Œ5ã€‚æµ·åµæŠ€èƒ½ï¼Œ6ã€‚æŠ€èƒ½ç­‰çº§èƒ½å¦æ‰‹åŠ¨æ·»åŠ 
+	char	chType;												// æŠ€èƒ½ç±»å‹ï¼š1ã€‚ä¸»åŠ¨æŠ€èƒ½ï¼ˆæ‰‹åŠ¨é‡Šæ”¾ï¼‰ï¼Œ2ã€‚è¢«åŠ¨æŠ€èƒ½ï¼ˆè‡ªåŠ¨é‡Šæ”¾ï¼‰
+	short	sLevelDemand;										// å­¦ä¹ è¯¥æŠ€èƒ½éœ€è¦çš„ç­‰çº§
+	short	sPremissSkill[defSKILL_PRE_SKILL_NUM][2];			// éœ€è¦çš„3ä¸ªå‰ææŠ€èƒ½ï¼ˆæŠ€èƒ½ç¼–å·ï¼Œç­‰çº§ï¼‰
+	char	chPointExpend;										// æ¶ˆè€—çš„æŠ€èƒ½ç‚¹
+	char	chSrcType;											// æ–½æ”¾è€…å½¢æ€ï¼ˆäººï¼Œèˆ¹ï¼‰
+	char	chTarType;											// ç›®æ ‡ç±»å‹ï¼ˆé™†åœ°ç”Ÿç‰©ï¼Œæµ·ä¸Šç”Ÿç‰©ï¼‰
+	short	sApplyDistance;										// ä½¿ç”¨è·ç¦»ã€‚å•ä½ï¼šç±³
+	char	chApplyTarget;										// ä½¿ç”¨çš„ç›®æ ‡ã€‚
+	char	chApplyType;										// ä½œç”¨ç±»å‹ï¼š1ã€‚å•ä½“ï¼Œ2ã€‚èŒƒå›´ï¼Œ3ã€‚æº…å°„
+	char	chHelpful;											// æŠ€èƒ½æœ‰ç›Š,è¿˜æ˜¯æœ‰å®³
+	short	sAngle;												// è§’åº¦ï¼ˆ0-360ï¼‰ï¼Œç”¨äºâ€œèŒƒå›´â€œæ”»å‡»ç±»å‹ã€‚
+	short	sRadii;												// åŠå¾„ï¼Œç”¨äºâ€œèŒƒå›´â€œæ”»å‡»ç±»å‹ã€‚
+	char	chRange;											// æŠ€èƒ½åŒºåŸŸå½¢çŠ¶ç¼–å·
+	char	szPrepare[defSKILL_RANGE_SET_SCRIPT];				// å‡†å¤‡æŠ€èƒ½
+	char	szUseSP[defSKILL_EFFECT_SCRIPT_LEN];				// æ¶ˆè€—SPå…¬å¼
+	char	szUseEndure[defSKILL_EFFECT_SCRIPT_LEN];			// æ¶ˆè€—â€œè€ä¹…åº¦â€œå…¬å¼
+	char	szUseEnergy[defSKILL_EFFECT_SCRIPT_LEN];			// æ¶ˆè€—â€œèƒ½é‡â€œå…¬å¼
+	char	szSetRange[defSKILL_EFFECT_SCRIPT_LEN];				// æŠ€èƒ½åŒºåŸŸè®¾å®š
+	char	szRangeState[defSKILL_EFFECT_SCRIPT_LEN];			// åœ°è¡¨çŠ¶æ€è®¾å®š
+	char	szUse[defSKILL_EFFECT_SCRIPT_LEN];					// æ–½æ”¾é˜¶æ®µå…¬å¼
+	char	szEffect[defSKILL_EFFECT_SCRIPT_LEN];				// æ•ˆæœé˜¶æ®µå…¬å¼
+	char	szActive[defSKILL_EFFECT_SCRIPT_LEN];				// æ­£æ•ˆæœå…¬å¼
+	char	szInactive[defSKILL_EFFECT_SCRIPT_LEN];				// åæ•ˆæœå…¬å¼
+	int		nStateID;											// ç»‘å®šçš„å¯æ‰‹åŠ¨ç§»é™¤çŠ¶æ€ç¼–å·
+	short	sSelfAttr[defEFFECT_SELF_ATTR_NUM];					// è‡ªèº«å±æ€§æ•°å€¼çš„å˜åŒ–ï¼Œå…¬å¼ç¼–å·ã€‚
+	short	sSelfEffect[defSELF_EFFECT_NUM];					// è‡ªèº«æ•ˆæœ
+	short	sItemExpend[defEXPEND_ITEM_NUM][2];					// æ¶ˆè€—çš„ç‰©å“ï¼ˆIDï¼Œæ•°é‡ï¼‰
+	short	sBeingTime;											// æŒç»­æ—¶é—´
+	short	sTargetAttr[defEFFECT_TAR_ATTR_NUM];				// ç›®æ ‡å±æ€§æ•°å€¼çš„å˜åŒ–ï¼Œå…¬å¼ç¼–å·ã€‚
+	short	sSplashPara;										// æº…å°„å‚æ•°
+	short	sTargetEffect;										// ç›®æ ‡æŒç»­æ•ˆæœ
+	short	sSplashEffect;										// æº…å°„æŒç»­æ•ˆæœ
+	short	sVariation;											// å˜èº«ç¼–å·
+	short	sSummon;											// å¬å”¤ç¼–å·
+	short	sPreTime;											// é‡Šæ”¾æ—¶é—´
+	char	szFireSpeed[defSKILL_EFFECT_SCRIPT_LEN];			// å†æ–½æ”¾é€Ÿåº¦å…¬å¼
+	char	chOperate[defSKILL_OPERATE_NUM];					// ç‰¹æ®Šæ“ä½œï¼š0ï¼Œæ— ã€‚1ï¼Œä¸Šèˆ¹ã€‚2ï¼Œä¸‹èˆ¹
 
-public:		// ¿Í»§¶Ë±íÏÖÓÃ
-	short	sActionHarm;										// ¶¯×÷ÌØĞ§²¥·ÅÉËº¦±íÏÖ·½Ê½
-	char	chActionPlayType;									// ¶¯×÷²¥·Å·½Ê½:0-Ë³Ğò²¥·Å,1-Ëæ»ú²¥·Å
-	short	sActionPose[defSKILL_POSE_NUM];						// ÊÍ·Å¸Ã¼¼ÄÜÖ÷½ÇµÄ¶¯×÷
-	short	sActionKeyFrme;										// ÈËÊÍ·Å¼¼ÄÜ¶¯×÷¹Ø¼üèå
-	short	sWhop;												// ¹¥»÷ÒôĞ§
-	short	sActionDummyLink[defSKILL_ACTION_EFFECT];			// ÊÍ·ÅÕßÈËÎïlinkµã
-	short	sActionEffect[defSKILL_ACTION_EFFECT];				// ÊÍ·Å¸Ã¼¼ÄÜÖ÷½ÇµÄÌØĞ§
-	short	sActionEffectType[defSKILL_ACTION_EFFECT];			// ÊÍ·Å¸Ã¼¼ÄÜµÄ·½Ê½:0-ÎŞ±ä»¯,1-ÄÜ×Ô¶¯Ëõ·Å
-	short	sItemDummyLink;										// ÊÍ·ÅÕßµÀ¾ßlinkµã
-	short	sItemEffect1[defSKILL_ITEM_EFFECT];					// ÊÍ·ÅÕßµÀ¾ßÌØĞ§,0Î»-µÀ¾ßÌØĞ§,1Î»-Ö´ĞĞÊ±¼äµã
+public:		// å®¢æˆ·ç«¯è¡¨ç°ç”¨
+	short	sActionHarm;										// åŠ¨ä½œç‰¹æ•ˆæ’­æ”¾ä¼¤å®³è¡¨ç°æ–¹å¼
+	char	chActionPlayType;									// åŠ¨ä½œæ’­æ”¾æ–¹å¼:0-é¡ºåºæ’­æ”¾,1-éšæœºæ’­æ”¾
+	short	sActionPose[defSKILL_POSE_NUM];						// é‡Šæ”¾è¯¥æŠ€èƒ½ä¸»è§’çš„åŠ¨ä½œ
+	short	sActionKeyFrme;										// äººé‡Šæ”¾æŠ€èƒ½åŠ¨ä½œå…³é”®æ¡¢
+	short	sWhop;												// æ”»å‡»éŸ³æ•ˆ
+	short	sActionDummyLink[defSKILL_ACTION_EFFECT];			// é‡Šæ”¾è€…äººç‰©linkç‚¹
+	short	sActionEffect[defSKILL_ACTION_EFFECT];				// é‡Šæ”¾è¯¥æŠ€èƒ½ä¸»è§’çš„ç‰¹æ•ˆ
+	short	sActionEffectType[defSKILL_ACTION_EFFECT];			// é‡Šæ”¾è¯¥æŠ€èƒ½çš„æ–¹å¼:0-æ— å˜åŒ–,1-èƒ½è‡ªåŠ¨ç¼©æ”¾
+	short	sItemDummyLink;										// é‡Šæ”¾è€…é“å…·linkç‚¹
+	short	sItemEffect1[defSKILL_ITEM_EFFECT];					// é‡Šæ”¾è€…é“å…·ç‰¹æ•ˆ,0ä½-é“å…·ç‰¹æ•ˆ,1ä½-æ‰§è¡Œæ—¶é—´ç‚¹
 	short	sItemEffect2[defSKILL_ITEM_EFFECT];					// 
-	short	sSkyEffectActionKeyFrame;							// ·É³öÌØĞ§¶¯×÷¹Ø¼üèå
-	short   sSkyEffectActionDummyLink;							// ·ÉĞĞ³ö·¢µãÈËÎïdummy
-	short   sSkyEffectItemDummyLink;							// ·ÉĞĞ³ö·¢µãµÀ¾ßdummy;
-	short   sSkyEffect;											// ÊÍ·Å¸Ã¼¼ÄÜ·ÉĞĞµÄÌØĞ§
-	short	sSkySpd;											// ·ÉĞĞËÙ¶È
-	short	sWhoped;											// ÊÜ»÷ÒôĞ§
-	short   sTargetDummyLink;									// ÊÜ»÷Õßlinkµã
-	short	sTargetEffectID;									// ÊÜ»÷ÌØĞ§
-	char	chTargetEffectTime;									// ÊÜ»÷ÌØĞ§Ê±¼äµã ,0-¶¯×÷¿ªÊ¼£¬1£­¹Ø¼üÖ¡£¬2£­¶¯×÷½áÊø(·ÉĞĞÌØĞ§ÉËº¦ÎŞĞ§)
-    short   sAgroundEffectID;                                   // ¶ÔÓÚ·¶Î§¹¥»÷,µØÉÏµÄ³öÏÖµÄÌØĞ§£¨°üÀ¨Ë®£©
-	short	sWaterEffectID;										// ¶ÔÓÚ·¶Î§¹¥»÷,Ë®ÃæÉÏµÄ³öÏÖµÄÌØĞ§ 
-	char	szICON[defSKILL_ICON_NAME_LEN];						// ¸Ã¼¼ÄÜÔÚÓÎÏ·½çÃæ±íÏÖµÄÍ¼±ê
-	char	chPlayTime;											// ¼¼ÄÜ²¥·Å´ÎÊı
-	char	szDescribeHint[128];								// ÃèÊö,ÓÃÓÚhint
-	char	szEffectHint[128];									// Ğ§¹û,ÓÃÓÚhint
-	char	szExpendHint[128];									// ÏûºÄ,ÓÃÓÚhint
+	short	sSkyEffectActionKeyFrame;							// é£å‡ºç‰¹æ•ˆåŠ¨ä½œå…³é”®æ¡¢
+	short   sSkyEffectActionDummyLink;							// é£è¡Œå‡ºå‘ç‚¹äººç‰©dummy
+	short   sSkyEffectItemDummyLink;							// é£è¡Œå‡ºå‘ç‚¹é“å…·dummy;
+	short   sSkyEffect;											// é‡Šæ”¾è¯¥æŠ€èƒ½é£è¡Œçš„ç‰¹æ•ˆ
+	short	sSkySpd;											// é£è¡Œé€Ÿåº¦
+	short	sWhoped;											// å—å‡»éŸ³æ•ˆ
+	short   sTargetDummyLink;									// å—å‡»è€…linkç‚¹
+	short	sTargetEffectID;									// å—å‡»ç‰¹æ•ˆ
+	char	chTargetEffectTime;									// å—å‡»ç‰¹æ•ˆæ—¶é—´ç‚¹ ,0-åŠ¨ä½œå¼€å§‹ï¼Œ1ï¼å…³é”®å¸§ï¼Œ2ï¼åŠ¨ä½œç»“æŸ(é£è¡Œç‰¹æ•ˆä¼¤å®³æ— æ•ˆ)
+    short   sAgroundEffectID;                                   // å¯¹äºèŒƒå›´æ”»å‡»,åœ°ä¸Šçš„å‡ºç°çš„ç‰¹æ•ˆï¼ˆåŒ…æ‹¬æ°´ï¼‰
+	short	sWaterEffectID;										// å¯¹äºèŒƒå›´æ”»å‡»,æ°´é¢ä¸Šçš„å‡ºç°çš„ç‰¹æ•ˆ 
+	char	szICON[defSKILL_ICON_NAME_LEN];						// è¯¥æŠ€èƒ½åœ¨æ¸¸æˆç•Œé¢è¡¨ç°çš„å›¾æ ‡
+	char	chPlayTime;											// æŠ€èƒ½æ’­æ”¾æ¬¡æ•°
+	char	szDescribeHint[128];								// æè¿°,ç”¨äºhint
+	char	szEffectHint[128];									// æ•ˆæœ,ç”¨äºhint
+	char	szExpendHint[128];									// æ¶ˆè€—,ç”¨äºhint
 
 public:
-    bool    IsPlayCyc()         { return chPlayTime==1;     }   // ÊÇ·ñÑ­»·²¥·Å
-    bool    IsAttackArea()		{ return chApplyType==2;    }   // ÊÇ·ñ¹¥»÷µØÃæ
-	bool	IsHarmRange()		{ return chApplyType!=1;	}	// ÊÇ·ñ·¶Î§ÉËº¦
-    bool    IsActKeyHarm()      { return sActionHarm==1;    }   // ÊÇ·ñ¶¯×÷¹Ø¼üÖ¡ÉËº¦
-    bool    IsEffectHarm()      { return sActionHarm==2;    }   // ÊÇ·ñÌØĞ§ÉËº¦
-    bool    IsNoHarm()          { return sActionHarm==0;    }   // ÎŞÉËº¦¼¼ÄÜ
-	bool	IsShow()			{ return szICON[1]!='\0';	}	// ÊÇ·ñÏÔÊ¾³öÀ´
+    bool    IsPlayCyc()         { return chPlayTime==1;     }   // æ˜¯å¦å¾ªç¯æ’­æ”¾
+    bool    IsAttackArea()		{ return chApplyType==2;    }   // æ˜¯å¦æ”»å‡»åœ°é¢
+	bool	IsHarmRange()		{ return chApplyType!=1;	}	// æ˜¯å¦èŒƒå›´ä¼¤å®³
+    bool    IsActKeyHarm()      { return sActionHarm==1;    }   // æ˜¯å¦åŠ¨ä½œå…³é”®å¸§ä¼¤å®³
+    bool    IsEffectHarm()      { return sActionHarm==2;    }   // æ˜¯å¦ç‰¹æ•ˆä¼¤å®³
+    bool    IsNoHarm()          { return sActionHarm==0;    }   // æ— ä¼¤å®³æŠ€èƒ½
+	bool	IsShow()			{ return szICON[1]!='\0';	}	// æ˜¯å¦æ˜¾ç¤ºå‡ºæ¥
 	bool	IsPlayRand()		{ return chActionPlayType==1;	}
 	int		GetPoseNum()		{ return _nPoseNum;			}
 
@@ -221,20 +221,20 @@ public:
     void    SetSkillGrid( SSkillGridEx& v )   { _Skill = v;   }
     SSkillGridEx&     GetSkillGrid()  { return _Skill;        }
 
-	int     GetSPExpend()       { return _Skill.sUseSP;     }   // SPÏûºÄ
-    short   GetRange()          { return _Skill.sRange[1];  }   // ¹¥»÷·¶Î§
+	int     GetSPExpend()       { return _Skill.sUseSP;     }   // SPæ¶ˆè€—
+    short   GetRange()          { return _Skill.sRange[1];  }   // æ”»å‡»èŒƒå›´
     short*  GetParam()          { return &_Skill.sRange[1]; }
-    int     GetShape()          { return _Skill.sRange[0];  }   // ¼¼ÄÜĞÎ×´
-    int     GetDistance()       { return sApplyDistance;    }   // Ê¹ÓÃ¾àÀë
+    int     GetShape()          { return _Skill.sRange[0];  }   // æŠ€èƒ½å½¢çŠ¶
+    int     GetDistance()       { return sApplyDistance;    }   // ä½¿ç”¨è·ç¦»
     int     GetLevel()          { return _Skill.chLv;       }
-    int     GetFireSpeed()      { return _Skill.lResumeTime;}   // ¹¥»÷ËÙ¶È
-    bool    GetIsValid()        { return _Skill.chState!=0; }   // ÊÇ·ñ¿ÉÓÃ
+    int     GetFireSpeed()      { return _Skill.lResumeTime;}   // æ”»å‡»é€Ÿåº¦
+    bool    GetIsValid()        { return _Skill.chState!=0; }   // æ˜¯å¦å¯ç”¨
 
 	int     GetUpgrade()		{ return _nUpgrade;			}
 	bool    GetIsUpgrade()		{ return _nUpgrade==enumSKILL_UPGRADE_CAN;	}
 
 	bool	GetIsUse()			{ return chType!=2;			}
-	bool	GetIsHelpful()		{ return chHelpful==1;		}	// ¼¼ÄÜÊÇÓĞÒæµÄ£¬¿ÉÓÃÓÚ°²È«Çø
+	bool	GetIsHelpful()		{ return chHelpful==1;		}	// æŠ€èƒ½æ˜¯æœ‰ç›Šçš„ï¼Œå¯ç”¨äºå®‰å…¨åŒº
 
 	void	Refresh( int nJob );
 
@@ -248,21 +248,21 @@ public:
 
 	bool	IsAutoAttack()		{ return !IsPlayCyc() && GetDistance()>0;	}
 
-	void	RefreshPrivateData();				// Ë¢ĞÂÄÚ²¿Êı¾İ
+	void	RefreshPrivateData();				// åˆ·æ–°å†…éƒ¨æ•°æ®
 	
 	bool	IsJobAllow( int nJob );
 	int		GetJobMax( int nJob );
 
 private:
     SSkillGridEx		_Skill;
-	int					_nUpgrade;				// 0-²»ÄÜÉı¼¶,1-¿ÉÉı¼¶,2-ÒÑ¾­Éı¼¶µ½×î´óÖµ
+	int					_nUpgrade;				// 0-ä¸èƒ½å‡çº§,1-å¯å‡çº§,2-å·²ç»å‡çº§åˆ°æœ€å¤§å€¼
 
-	bool				_IsActive;				// ÓÃÓÚ¶¯»­±íÏÖ,ÕıÔÚ¼¤»îµÄ»­Ò»¸ö¶¯Ì¬±ß¿ò
-	DWORD				_dwAttackTime;			// ÏÂ´Î¿É¹¥»÷µÄÊ±¼ä
+	bool				_IsActive;				// ç”¨äºåŠ¨ç”»è¡¨ç°,æ­£åœ¨æ¿€æ´»çš„ç”»ä¸€ä¸ªåŠ¨æ€è¾¹æ¡†
+	DWORD				_dwAttackTime;			// ä¸‹æ¬¡å¯æ”»å‡»çš„æ—¶é—´
 
-	eSelectCha			_eSelectCha;			// ÓÃÓÚ³¡¾°ÅĞ¶Ï¿ÉÒÔÑ¡ÔñÄÇĞ©Íæ¼Ò¹¥»÷
+	eSelectCha			_eSelectCha;			// ç”¨äºåœºæ™¯åˆ¤æ–­å¯ä»¥é€‰æ‹©é‚£äº›ç©å®¶æ”»å‡»
 
-	int					_nPoseNum;				// ×Ü¹²µÄpose¸öÊı
+	int					_nPoseNum;				// æ€»å…±çš„poseä¸ªæ•°
 
 	// added by clp
 public:
@@ -287,7 +287,7 @@ public:
 
 protected:
 
-	static CSkillRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CSkillRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

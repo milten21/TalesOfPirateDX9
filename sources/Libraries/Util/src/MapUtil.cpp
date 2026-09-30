@@ -4,12 +4,12 @@
 #include "ObjectData.h"
 using namespace std;
 
-// µØÍ¼¹¤¾ßº¯Êı, ¸ù¾İÎÄ¼şÃû, ¶ÁÈëµØÍ¼Êı¾İ
+// åœ°å›¾å·¥å…·å‡½æ•°, æ ¹æ®æ–‡ä»¶å, è¯»å…¥åœ°å›¾æ•°æ®
 BOOL MU_LoadMapData(CSectionDataMgr *pData, const char *pszDataName)
 {
 	if(!pData->CreateFromFile(pszDataName, TRUE)) 
     {
-        LG("maputil", "msg¶ÁÈ¡Êı¾İÎÄ¼ş%sÊ§°Ü!\n", pszDataName);
+        LG("maputil", "msgè¯»å–æ•°æ®æ–‡ä»¶%så¤±è´¥!\n", pszDataName);
         return FALSE;
     }
     
@@ -19,13 +19,13 @@ BOOL MU_LoadMapData(CSectionDataMgr *pData, const char *pszDataName)
 
 
 
-// µØÍ¼²¹¶¡¹¤¾ß
-// Ö÷Òª¹¤×÷Ô­Àí:
-// 1 .±éÀúÁ½ÕÅµØÍ¼, ÕÒ³ö²»Í¬µÄsection, °ÑÕâĞ©sectionÊı¾İÉú³ÉµØÍ¼²¹¶¡ÎÄ¼ş
-// 2. ÓÎÏ·¿Í»§¶ËÆô¶¯Ê±, ·¢ÏÖ´æÔÚµØÍ¼²¹¶¡ÎÄ¼ş, Ôò¶ÁÈë²¢ÎüÊÕ½øµØÍ¼ÎÄ¼ş, È»ºóÉ¾³ıµØÍ¼²¹¶¡ÎÄ¼ş
+// åœ°å›¾è¡¥ä¸å·¥å…·
+// ä¸»è¦å·¥ä½œåŸç†:
+// 1 .éå†ä¸¤å¼ åœ°å›¾, æ‰¾å‡ºä¸åŒçš„section, æŠŠè¿™äº›sectionæ•°æ®ç”Ÿæˆåœ°å›¾è¡¥ä¸æ–‡ä»¶
+// 2. æ¸¸æˆå®¢æˆ·ç«¯å¯åŠ¨æ—¶, å‘ç°å­˜åœ¨åœ°å›¾è¡¥ä¸æ–‡ä»¶, åˆ™è¯»å…¥å¹¶å¸æ”¶è¿›åœ°å›¾æ–‡ä»¶, ç„¶ååˆ é™¤åœ°å›¾è¡¥ä¸æ–‡ä»¶
 BOOL MU_CreateMapPatch(const char *pszOld, const char *pszNew)
 {
-	// ´ò¿ªÀÏµÄµØÍ¼ÎÄ¼ş
+	// æ‰“å¼€è€çš„åœ°å›¾æ–‡ä»¶
 	MPTerrainData oldmap, newmap;
  
 	if(!MU_LoadMapData(&oldmap, pszOld))
@@ -33,7 +33,7 @@ BOOL MU_CreateMapPatch(const char *pszOld, const char *pszNew)
         return FALSE;
     }
 
-	// ´ò¿ªĞÂµÄµØÍ¼ÎÄ¼ş
+	// æ‰“å¼€æ–°çš„åœ°å›¾æ–‡ä»¶
 	if(!MU_LoadMapData(&newmap, pszNew))
     {
         return FALSE;
@@ -41,7 +41,7 @@ BOOL MU_CreateMapPatch(const char *pszOld, const char *pszNew)
 
 	if(oldmap.GetSectionCntX()!=newmap.GetSectionCntX() || oldmap.GetSectionCntY()!=newmap.GetSectionCntY())
 	{
-		//LG("mappatch", "msgµØÍ¼³ß´ç²»Æ¥Åä, ÎŞ·¨¼ÌĞøÉú³É²¹¶¡!\n");
+		//LG("mappatch", "msgåœ°å›¾å°ºå¯¸ä¸åŒ¹é…, æ— æ³•ç»§ç»­ç”Ÿæˆè¡¥ä¸!\n");
 		LG("mappatch", "msg map size can't match, can't go on!\n");
 		return FALSE;
 	}
@@ -67,17 +67,17 @@ BOOL MU_CreateMapPatch(const char *pszOld, const char *pszNew)
 			
 			if(pOld==NULL && pNew==NULL) continue;
 			
-			BYTE btType = 0; // ²»¸üĞÂ
+			BYTE btType = 0; // ä¸æ›´æ–°
 			
 			if(pNew==NULL && pOld!=NULL)
 			{
-				btType = 2;  // Çå³ıÔ­µØÍ¼µÄÉÏ´Ësection
+				btType = 2;  // æ¸…é™¤åŸåœ°å›¾çš„ä¸Šæ­¤section
 			}
 			else
 			{
 				if(pOld==NULL || memcmp(pOld->pData, pNew->pData, oldmap.GetSectionDataSize())!=0)
 				{
-					btType = 1; // ĞèÒª¸üĞÂ
+					btType = 1; // éœ€è¦æ›´æ–°
 				}
 			}
 			if(btType > 0)
@@ -102,26 +102,26 @@ BOOL MU_CreateMapPatch(const char *pszOld, const char *pszNew)
 
 	if(dwCnt==0)
 	{
-		//LG("mappatch", "msg´ËÁ½ÕÅµØÍ¼ÍêÈ«ÏàÍ¬, ÎŞĞèÉú³É²¹¶¡ÎÄ¼ş!\n");
+		//LG("mappatch", "msgæ­¤ä¸¤å¼ åœ°å›¾å®Œå…¨ç›¸åŒ, æ— éœ€ç”Ÿæˆè¡¥ä¸æ–‡ä»¶!\n");
 		LG("mappatch", "msg the two file is the same!\n");
 		DeleteFile(szPatchName);
 	}
 	else
 	{
-		//LG("mappatch", "msgµØÍ¼²¹¶¡ÎÄ¼ş´´½¨³É¹¦, ×Ü¼ÆĞèÒª¸üĞÂ%d¸öÇøÓò, ²¹¶¡ÎÄ¼şÎª[%s]\n", dwCnt, szPatchName); 
+		//LG("mappatch", "msgåœ°å›¾è¡¥ä¸æ–‡ä»¶åˆ›å»ºæˆåŠŸ, æ€»è®¡éœ€è¦æ›´æ–°%dä¸ªåŒºåŸŸ, è¡¥ä¸æ–‡ä»¶ä¸º[%s]\n", dwCnt, szPatchName); 
 		LG("mappatch", "msg map patch create ok, totle update %d area, patch file is [%s]\n", dwCnt, szPatchName); 
 	}
 	return TRUE;
 }
 
-// ¸øÒ»¸öµØÍ¼ÎÄ¼ş´òÈë²¹¶¡
+// ç»™ä¸€ä¸ªåœ°å›¾æ–‡ä»¶æ‰“å…¥è¡¥ä¸
 BOOL MU_PatchMapFile(const char *pszMap, const char *pszPatch)
 {
-	// ´ò¿ª²¹¶¡ÎÄ¼ş
+	// æ‰“å¼€è¡¥ä¸æ–‡ä»¶
 	FILE *fp = fopen(pszPatch, "rb");
 	if(fp==NULL)
 	{
-		//LG("mappatch", "msg´ò¿ªµØÍ¼²¹¶¡ÎÄ¼ş[%s]Ê§°Ü!\n", pszPatch);
+		//LG("mappatch", "msgæ‰“å¼€åœ°å›¾è¡¥ä¸æ–‡ä»¶[%s]å¤±è´¥!\n", pszPatch);
 		LG("mappatch", "msg open patch map file [%s] failed!\n", pszPatch);
 		return FALSE;
 	}
@@ -129,7 +129,7 @@ BOOL MU_PatchMapFile(const char *pszMap, const char *pszPatch)
 	SMapPatchHeader header;
 	fread(&header,sizeof SMapPatchHeader, 1, fp);
 
-	//LG("mappatch", "msg×Ü¼ÆĞèÒª¸üĞÂÇøÓò[%d]¸ö\n", header.dwUpdateCnt);
+	//LG("mappatch", "msgæ€»è®¡éœ€è¦æ›´æ–°åŒºåŸŸ[%d]ä¸ª\n", header.dwUpdateCnt);
 	LG("mappatch", "msg totle update [%d] area\n", header.dwUpdateCnt);
 
 	MPTerrainData oldmap; MU_LoadMapData(&oldmap, pszMap);
@@ -144,7 +144,7 @@ BOOL MU_PatchMapFile(const char *pszMap, const char *pszPatch)
 		fread(&y, 4, 1, fp);
 		
 		SDataSection *pSec = oldmap.GetSectionData(x, y);
-		if(btType==1) // ÓĞÊı¾İµÄ¸üĞÂ
+		if(btType==1) // æœ‰æ•°æ®çš„æ›´æ–°
 		{
 			fread(pBuf, dwDataSize, 1, fp);
 			if(pSec==NULL)
@@ -157,7 +157,7 @@ BOOL MU_PatchMapFile(const char *pszMap, const char *pszPatch)
 			}
 			memcpy(pSec->pData, pBuf, dwDataSize);
 		}
-		else if(btType==2) // Çå¿ÕSection
+		else if(btType==2) // æ¸…ç©ºSection
 		{
 			oldmap.ClearSectionData(x, y);
 		}
@@ -168,7 +168,7 @@ BOOL MU_PatchMapFile(const char *pszMap, const char *pszPatch)
 	fclose(fp);
 	delete[] pBuf;
 
-	//LG("mappatch", "msgµØÍ¼²¹¶¡³É¹¦Ö´ĞĞ, ×Ü¼Æ¸üĞÂÇøÓò[%d]¸ö\n", dwCnt);
+	//LG("mappatch", "msgåœ°å›¾è¡¥ä¸æˆåŠŸæ‰§è¡Œ, æ€»è®¡æ›´æ–°åŒºåŸŸ[%d]ä¸ª\n", dwCnt);
 	LG("mappatch", "msg map patch create ok, totle update [%d] area\n", dwCnt);
 	return TRUE;
 }

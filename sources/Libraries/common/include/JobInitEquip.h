@@ -21,9 +21,9 @@ class CJobEquipRecord : public CRawDataInfo
 public:
 	//CJobEquipRecord();
 
-	char	chID;			// ±àºÅ
-	char	chJob;			// Ö°Òµ
-	short	sItemID[defJOB_INIT_EQUIP_MAX];		// ×°±¸±àºÅ
+	char	chID;			// ç¼–å·
+	char	chJob;			// èŒä¸š
+	short	sItemID[defJOB_INIT_EQUIP_MAX];		// è£…å¤‡ç¼–å·
 };
 
 class CJobEquipRecordSet : public CRawDataSet
@@ -41,7 +41,7 @@ public:
 
 protected:
 
-	static CJobEquipRecordSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CJobEquipRecordSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
 
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

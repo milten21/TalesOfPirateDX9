@@ -20,6 +20,11 @@ const char* GetResPath(const char *pszRes)
 	}
 	str+=pszRes;
 	strcpy(g_szTableName, str.c_str());
+	for(char *p = g_szTableName; *p; ++p)
+	{
+		if(*p == '\\')
+			*p = '/';
+	}
 	return g_szTableName;
 }
 
@@ -52,7 +57,7 @@ BOOL RegisterScript()
 {
 	lua_State *L = g_pLuaState;
 
-	//注册Lua函数
+	//娉ㄥ唽Lua鍑芥暟
 	if( !RegisterLuaFunc() )
 		return FALSE;
 
@@ -71,8 +76,8 @@ void ReloadLuaSdk()
 
 void ReloadScript()
 {
-	// 装载NPC任务数据信息
-	luaL_dofile( g_pLuaState, GetResPath("script/Script01.lua") );
+	// 瑁呰浇NPC浠诲姟鏁版嵁淇℃伅
+	luaL_dofile( g_pLuaState, GetResPath("script/script01.lua") );
 }
 
 void ReloadEntity( const char szFileName[] )
@@ -86,7 +91,7 @@ BOOL LoadScript()
 	ReloadLuaSdk();
 	ReloadScript();
 
-	//执行Lua脚本
+	//鎵цLua鑴氭湰
 
 	return TRUE;
 }

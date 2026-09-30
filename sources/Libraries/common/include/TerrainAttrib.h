@@ -15,18 +15,18 @@
 #define ATTRIB_FILE_DEFAULT_WIDTH 4096
 #define ATTRIB_FILE_DEFAULT_HEIGHT 4096
 
-// ÇøÓòÊôĞÔÖµÓò¶¨Òå
+// åŒºåŸŸå±æ€§å€¼åŸŸå®šä¹‰
 #define TILE_ATTRIB_MIN_BITS 1
 #define TILE_ATTRIB_MAX_BITS 16
 #define TILE_ATTRIB_DEFAULT_VALUE 0
 
-// º£µºÖµÓò¶¨Òå
+// æµ·å²›å€¼åŸŸå®šä¹‰
 #define TILE_ISLAND_MIN_VALUE 0
 #define TILE_ISLAND_MAX_VALUE 200
 #define TILE_ISLAND_DEFAULT_VALUE TILE_ISLAND_MIN_VALUE
 
 
-// ¿ª·Å¸ø¿Í»§¶ËÊ¹ÓÃ£¬ÆäÖĞfilename²»´øÀ©Õ¹Ãû
+// å¼€æ”¾ç»™å®¢æˆ·ç«¯ä½¿ç”¨ï¼Œå…¶ä¸­filenameä¸å¸¦æ‰©å±•å
 bool createAttribFile(char const* filename, int width = ATTRIB_FILE_DEFAULT_WIDTH,
 					  int height = ATTRIB_FILE_DEFAULT_HEIGHT,
 					  int option = 0);
@@ -40,18 +40,18 @@ bool delTileAttrib(int x, int y, unsigned char attrib);
 bool getTileIsland(int x, int y, unsigned char& index);
 
 
-// ·şÎñ¶ËÖ»Ê¹ÓÃÒÔÏÂ½Ó¿Ú£¬¿Í»§¶ËÇĞÎğÊ¹ÓÃ£¡
-int s_openAttribFile(char const* filename); // ·µ»Ø -1 Ôò´íÎó
+// æœåŠ¡ç«¯åªä½¿ç”¨ä»¥ä¸‹æ¥å£ï¼Œå®¢æˆ·ç«¯åˆ‡å‹¿ä½¿ç”¨ï¼
+int s_openAttribFile(char const* filename); // è¿”å› -1 åˆ™é”™è¯¯
 bool s_getAttribFileInfo(int id, unsigned int& width, unsigned int& height);
 bool s_getTileAttrib(int id, unsigned int x, unsigned int y, unsigned short& attrib);
 bool s_hasTileAttrib(int id, unsigned int x, unsigned int y, unsigned char attrib_mask);
 bool s_getTileIsland(int id, unsigned int x, unsigned int y, unsigned char& island_index);
 
-// ÉèÖÃ¶ÔÆë·½Ê½Îª1×Ö½Ú£¬ÒòÎªÒªĞ´ÈëÎÄ¼şÖĞ
+// è®¾ç½®å¯¹é½æ–¹å¼ä¸º1å­—èŠ‚ï¼Œå› ä¸ºè¦å†™å…¥æ–‡ä»¶ä¸­
 #pragma pack(push)
 #pragma pack(1)
 
-// ÇøÓòÊôĞÔÎÄ¼şÎÄ¼şÍ·¶¨Òå
+// åŒºåŸŸå±æ€§æ–‡ä»¶æ–‡ä»¶å¤´å®šä¹‰
 struct SAttribFileHeader
 	{
 	unsigned int width;
@@ -59,11 +59,11 @@ struct SAttribFileHeader
 	};
 typedef SAttribFileHeader terrain_attr_hdr;
 
-// ÇøÓòÊôĞÔÎÄ¼şµ¥Î»Êı¾İ¶¨Òå
+// åŒºåŸŸå±æ€§æ–‡ä»¶å•ä½æ•°æ®å®šä¹‰
 typedef struct _Tile_Attrib
 	{
-	unsigned short attrib; // tileÊôĞÔ
-	unsigned char island; // º£µº±àºÅ
+	unsigned short attrib; // tileå±æ€§
+	unsigned char island; // æµ·å²›ç¼–å·
 
 	} STILE_ATTRIB;
 typedef _Tile_Attrib terrain_attr_dat;

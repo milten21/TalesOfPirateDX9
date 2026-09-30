@@ -11,23 +11,23 @@
 
 //---------------------------------------------------------
 
-#define NPC_MAXSIZE_NAME			128 // npcÃû³Æ³¤¶È
-#define NPC_MAXSIZE_MSGPROC			16	// npcÏûÏ¢´¦Àíº¯ÊýÃû³Æ³¤¶È
+#define NPC_MAXSIZE_NAME			128 // npcåç§°é•¿åº¦
+#define NPC_MAXSIZE_MSGPROC			16	// npcæ¶ˆæ¯å¤„ç†å‡½æ•°åç§°é•¿åº¦
 
 class CNpcRecord : public CRawDataInfo
 {
 public:	
-	char szName[NPC_MAXSIZE_NAME];		// µØÍ¼ÖÐÏÔÊ¾npcÃû³Æ
-	USHORT sNpcType;					// npcÀàÐÍ
-	USHORT sCharID;						// ½ÇÉ«ÁÐ±í±àºÅË÷Òý
-	BYTE byShowType;					// ¿Í»§¶ËÏÔÊ¾ÑÕÉ«ÀàÐÍ
-	DWORD dwxPos0, dwyPos0;				// npcÎ»ÖÃÐÅÏ¢
+	char szName[NPC_MAXSIZE_NAME];		// åœ°å›¾ä¸­æ˜¾ç¤ºnpcåç§°
+	USHORT sNpcType;					// npcç±»åž‹
+	USHORT sCharID;						// è§’è‰²åˆ—è¡¨ç¼–å·ç´¢å¼•
+	BYTE byShowType;					// å®¢æˆ·ç«¯æ˜¾ç¤ºé¢œè‰²ç±»åž‹
+	DWORD dwxPos0, dwyPos0;				// npcä½ç½®ä¿¡æ¯
 	DWORD dwxPos1, dwyPos1;
 	USHORT sDir;
 	USHORT sParam1, sParam2;
-	char szNpc[NPC_MAXSIZE_NAME];		// npcÎÄ¼þÃû
-	char szMsgProc[NPC_MAXSIZE_MSGPROC];// npcÏûÏ¢´¦Àíº¯Êý
-	char szMisProc[NPC_MAXSIZE_MSGPROC];// npcÈÎÎñ×´Ì¬´¦Àíº¯Êý
+	char szNpc[NPC_MAXSIZE_NAME];		// npcæ–‡ä»¶å
+	char szMsgProc[NPC_MAXSIZE_MSGPROC];// npcæ¶ˆæ¯å¤„ç†å‡½æ•°
+	char szMisProc[NPC_MAXSIZE_MSGPROC];// npcä»»åŠ¡çŠ¶æ€å¤„ç†å‡½æ•°
 };
 
 class CNpcRecordSet : public CRawDataSet

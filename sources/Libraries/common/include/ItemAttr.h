@@ -38,7 +38,7 @@ inline short CItemAttr::GetAttr(short sAttrType)
 	return m_sAttr[sAttrType];
 }
 
-// ·µ»ØÖµ£º0£¬Ê§°Ü¡£1£¬³É¹¦ÉèÖÃ¡£
+// è¿”å›å€¼ï¼š0ï¼Œå¤±è´¥ã€‚1ï¼ŒæˆåŠŸè®¾ç½®ã€‚
 inline short CItemAttr::SetAttr(short sAttrType, short sVal)
 {
 	if (sAttrType < 1 || sAttrType >= ITEMATTR_MAX_NUM)
@@ -48,7 +48,7 @@ inline short CItemAttr::SetAttr(short sAttrType, short sVal)
 	return 1;
 }
 
-// ·µ»ØÖµ£º0£¬Ê§°Ü¡£1£¬³É¹¦ÉèÖÃ¡£
+// è¿”å›å€¼ï¼š0ï¼Œå¤±è´¥ã€‚1ï¼ŒæˆåŠŸè®¾ç½®ã€‚
 inline short CItemAttr::AddAttr(short sAttrType, short sVal)
 {
 	if (sAttrType < 1 || sAttrType >= ITEMATTR_MAX_NUM)
