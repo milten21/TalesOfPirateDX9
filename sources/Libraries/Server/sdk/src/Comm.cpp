@@ -6,9 +6,8 @@
 // This program is written(created) by Zhang.Dabo in 2000.3
 // This program is modified recently by Zhang.Dabo in 2003.7
 //=================================================================
-#define	FD_SETSIZE      1024
-
 #include "CommRPC.h"
+#include "SocketApi.h"
 #include "ThreadPool.h"
 #include "Sender.h"
 #include "Receiver.h"
@@ -17,14 +16,8 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <vector>
 using namespace std::string_literals;
-
-#ifdef	FD_SET	//FD_SET
-#undef	FD_SET
-#endif			//FD_SET
-#define FD_SET(fd, set) \
-	((fd_set FAR *)(set))->fd_array[((fd_set FAR *)(set))->fd_count] = (fd); \
-	((fd_set FAR *)(set))->fd_count++;
 
 _DBC_USING
 InterLockedLong				__bufinit	=0;
@@ -48,10 +41,7 @@ public:
 private:
 	virtual long Process()
 	{
-		long l_stat =0;
-		SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_HIGHEST);
 		m_tcpapp->TaskDispatcher(this);
-		SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_NORMAL);
 		return 0;
 	};
 
@@ -60,33 +50,11 @@ private:
 //================================================================================
 int TcpCommApp::WSAStartup()
 {
-	WORD wVersionRequested;
-	WSADATA wsaData;
-	int err;
-
-	wVersionRequested = MAKEWORD( 2, 2 );
-
-	err = ::WSAStartup( wVersionRequested, &wsaData );
-	if ( err != 0 )
-	{
-		/* Tell the user that we could not find a usable */
-		/* WinSock DLL.                                  */
-		return -1;
-	}
-
-	if ( LOBYTE( wsaData.wVersion ) != 2 ||
-			HIBYTE( wsaData.wVersion ) != 2 )
-	{
-		/* Tell the user that we could not find a usable */
-		/* WinSock DLL.                                  */
-		WSACleanup( );
-		return -1; 
-	}
-	return 0;
+	return net::Startup();
 }
 void TcpCommApp::WSACleanup()
 {
-	::WSACleanup();
+	net::Cleanup();
 }
 //================================================================================
 TcpCommApp::TcpCommApp(RPCMGR *rpc,ThreadPool *processor,ThreadPool *communicator,bool mode)
@@ -153,7 +121,7 @@ void	TcpCommApp::ShutDown(uLong ulMilliseconds)
 //--------------------------------------------------------------------
 void TcpCommApp::SetPKParse(uLong len_offset,uChar len_size,uLong pkt_maxlen,long maxsndque)
 {
-	*const_cast<long *>(&__maxsndque)	=max(maxsndque,10);
+	*const_cast<long *>(&__maxsndque)	=std::max<long>(maxsndque,10);
 	*const_cast<uLong *>(&__len_offset)	=len_offset;
 	*const_cast<uChar *>(&__len_size)	=len_size;
 	*const_cast<uLong *>(&__pkt_maxlen)	=pkt_maxlen;
@@ -271,10 +239,10 @@ long TcpCommApp::_SendData(DataSocket *datasock,WPacket &sendbuf)
 _DBC_BEGIN
 struct selparm
 {
-	fd_set			m_readfds{}, m_writefds{}, m_errfds{};
-	bool			m_readflag{}, m_writeflag{}, m_errflag{};
-	int				m_selretval{};
-	uLong			m_tick{};
+	std::vector<pollfd>			m_fds;
+	std::vector<DataSocket*>	m_socks;
+	int							m_selretval{};
+	uLong						m_tick{};
 };
 _DBC_END
 
@@ -429,18 +397,19 @@ void TcpCommApp::BeforeSel(selparm &p)
 			}
 		}
 
-		FD_SET(l_datasock->m_socket,&(p.m_errfds));
-		p.m_errflag	=true;
-
+		short l_events	=0;
 		if(!l_datasock->m_recvflag)
 		{
-			FD_SET(l_datasock->m_socket,&(p.m_readfds));
-			p.m_readflag	=true;
+			l_events	|=POLLIN;
 		}
 		if(!l_datasock->m_sendflag&&l_datasock->m_sender->HasData())
 		{
-			FD_SET(l_datasock->m_socket,&(p.m_writefds));
-			p.m_writeflag	=true;
+			l_events	|=POLLOUT;
+		}
+		if(l_events)
+		{
+			p.m_fds.push_back(pollfd{l_datasock->m_socket,l_events,0});
+			p.m_socks.push_back(l_datasock);
 		}
 	}//while(l_datasock =__socklist.GetNextItem())
 	if(l_flag)
@@ -493,37 +462,37 @@ void TcpCommApp::AfterSel(selparm &p)
 	}
 
 	RunChainGetArmor<DataSocket> l(__socklist);
-	DataSocket *l_datasock;
-	while((l_datasock	=__socklist.GetNextItem())&&p.m_selretval)
+	for(std::size_t i =0;(i <p.m_fds.size())&&(p.m_selretval >0);i++)
 	{
+		short const	l_events	=p.m_fds[i].events;
+		short const	l_revents	=p.m_fds[i].revents;
+		DataSocket *l_datasock	=p.m_socks[i];
+		if(!l_revents ||!l_datasock)continue;
+		p.m_selretval--;
 		if(l_datasock->m_delflag)continue;
-		if(FD_ISSET(l_datasock->m_socket,&(p.m_errfds)))
+		if(l_revents &POLLNVAL)
 		{
 			Disconnect(l_datasock,0,-1);
-			p.m_selretval--;
-		}else
+			continue;
+		}
+		if((l_events &POLLIN)&&(l_revents &(POLLIN|POLLERR|POLLHUP)))
 		{
-			if(!l_datasock->m_recvflag&&FD_ISSET(l_datasock->m_socket,&(p.m_readfds)))
+			if(l_datasock->m_recvflag++ ==0)
 			{
-				if(l_datasock->m_recvflag++ ==0)
-				{
-					__communicator->AddTask(l_datasock->m_receiver.get());
-				}else
-				{
-					l_datasock->m_recvflag--;
-				}
-				p.m_selretval--;
+				__communicator->AddTask(l_datasock->m_receiver.get());
+			}else
+			{
+				l_datasock->m_recvflag--;
 			}
-			if(!l_datasock->m_sendflag&&l_datasock->m_sender->HasData()&&FD_ISSET(l_datasock->m_socket,&(p.m_writefds)))
+		}
+		if((l_events &POLLOUT)&&(l_revents &(POLLOUT|POLLERR|POLLHUP))&&l_datasock->m_sender->HasData())
+		{
+			if(l_datasock->m_sendflag++	==0)
 			{
-				if(l_datasock->m_sendflag++	==0)
-				{
-					__communicator->AddTask(l_datasock->m_sender.get());
-				}else
-				{
-					l_datasock->m_sendflag--;
-				}
-				p.m_selretval--;
+				__communicator->AddTask(l_datasock->m_sender.get());
+			}else
+			{
+				l_datasock->m_sendflag--;
 			}
 		}
 	}
@@ -541,24 +510,19 @@ TcpClientApp::TcpClientApp(RPCMGR *rpc,ThreadPool *processor,ThreadPool *communi
 }
 void TcpClientApp::TaskDispatcher(Task *l_dt)
 {
-	timeval		l_timeout;
 	selparm		l_p;
 
 	while(!l_dt->GetExitFlag() && !m_selexit)
 	{
-		FD_ZERO(&(l_p.m_readfds));
-		FD_ZERO(&(l_p.m_writefds));
-		FD_ZERO(&(l_p.m_errfds));
-		l_p.m_readflag	=l_p.m_writeflag	=l_p.m_errflag	=false;
+		l_p.m_fds.clear();
+		l_p.m_socks.clear();
 		BeforeSel(l_p);
-		if(!l_p.m_readflag&&!l_p.m_writeflag&&!l_p.m_errflag)
+		if(l_p.m_fds.empty())
 		{
 			Sleep(2);
 			continue;
 		}
-		l_timeout.tv_sec	=0;
-		l_timeout.tv_usec	=2000;
-		l_p.m_selretval		=select(0,l_p.m_readflag?&(l_p.m_readfds):0,l_p.m_writeflag?&(l_p.m_writefds):0,l_p.m_errflag?&(l_p.m_errfds):0,&l_timeout);
+		l_p.m_selretval		=net::Poll(l_p.m_fds.data(),l_p.m_fds.size(),2);
 		switch(l_p.m_selretval)
 		{
 		case 0:
@@ -567,8 +531,7 @@ void TcpClientApp::TaskDispatcher(Task *l_dt)
 			}
 		case SOCKET_ERROR:
 			{
-				int l_wsaerr	=WSAGetLastError();
-				if((l_wsaerr==WSAENETDOWN)||(l_wsaerr==WSANOTINITIALISED))
+				if(net::IsNetworkUnusable(net::LastError()))
 				{
 					return;
 				}
@@ -590,31 +553,25 @@ DataSocket *	TcpClientApp::Connect(cChar *hostname,uShort port,SOCKET *sock_out)
 	{
 		RefArmor	l_conn(__conntotal);
 		sockaddr_in	l_peersaddr;
-		HOSTENT	*	l_hostent;
 
 		MemSet((char*)&l_peersaddr,0,sizeof(sockaddr_in));
 		l_peersaddr.sin_family					=AF_INET;
 		l_peersaddr.sin_port					=htons(port);
-		if((l_peersaddr.sin_addr.S_un.S_addr	=inet_addr(hostname))==INADDR_NONE)
+		if(!net::ResolveIPv4(hostname,l_peersaddr.sin_addr))
 		{
-			l_hostent	=gethostbyname(hostname);
-			if (!l_hostent) { return nullptr; }
-			l_peersaddr.sin_addr.S_un.S_addr	=*(uLong*)(l_hostent->h_addr);
+			return nullptr;
 		}
 		SOCKET	l_sock	=socket(PF_INET,SOCK_STREAM,0);
 		if(sock_out)*sock_out	=l_sock;
 
 		if(connect(l_sock,(sockaddr*)&l_peersaddr,sizeof(sockaddr))==SOCKET_ERROR)
 		{
-			closesocket(l_sock);
+			net::CloseSocket(l_sock);
 			return 0;
 		}
 
-		uLong l_noblock =1;
-		if (ioctlsocket(l_sock, FIONBIO, &l_noblock)) { closesocket(l_sock); return nullptr; }
-		BOOL l_enable =1;
-		//if(setsockopt(l_sock,SOL_SOCKET,SO_OOBINLINE,(cChar*)&l_enable,sizeof(l_enable))){return 0;}
-		if (setsockopt(l_sock, SOL_SOCKET, SO_KEEPALIVE, (cChar*)&l_enable, sizeof(l_enable))) { closesocket(l_sock); return nullptr; }
+		if (net::SetNonBlocking(l_sock)) { net::CloseSocket(l_sock); return nullptr; }
+		if (net::SetOption(l_sock, SOL_SOCKET, SO_KEEPALIVE, 1)) { net::CloseSocket(l_sock); return nullptr; }
 
 		DataSocket *l_datasock	=__sockheap.Get();
 		l_datasock->Init(l_sock,inet_ntoa(l_peersaddr.sin_addr),port,this,false);
@@ -643,14 +600,14 @@ TcpServerApp::TcpServerApp(RPCMGR *rpc,ThreadPool *processor,ThreadPool *communi
 		,TcpClientApp(rpc,processor,communicator,mode)
 {
 	in_addr l_ina;
-	l_ina.S_un.S_addr	=INADDR_ANY;
+	l_ina.s_addr	=INADDR_ANY;
 	strcpy(__localaddr,inet_ntoa(l_ina));
 }
 TcpServerApp::~TcpServerApp()
 {
 	if(__socket!=INVALID_SOCKET)
 	{
-		closesocket(__socket);
+		net::CloseSocket(__socket);
 	}
 };
 //--------------------------------------------------------------------
@@ -669,13 +626,14 @@ int TcpServerApp::OpenListenSocket(uShort port,cChar *cp)
 	}else
 	{
 		in_addr l_ina;
-		l_ina.S_un.S_addr	=INADDR_ANY;
+		l_ina.s_addr	=INADDR_ANY;
 		strcpy(__localaddr,inet_ntoa(l_ina));
 	}
 
 	if(__socket !=INVALID_SOCKET){return -1;}
 	__socket	=socket(PF_INET,SOCK_STREAM,0);
 	if(__socket ==INVALID_SOCKET){return -1;}
+	net::AllowAddressReuse(__socket);
 
 	sockaddr_in my_addr;
 	MemSet((char*)&my_addr,0,sizeof(my_addr));
@@ -684,14 +642,13 @@ int TcpServerApp::OpenListenSocket(uShort port,cChar *cp)
 	if(l_inaddr ==INADDR_NONE){return -1;}
 
 	my_addr.sin_family				=AF_INET;
-	my_addr.sin_addr.S_un.S_addr	=l_inaddr;
+	my_addr.sin_addr.s_addr			=l_inaddr;
 	my_addr.sin_port					=htons(__port);
 
-	if(bind(__socket,(sockaddr FAR*)&my_addr,sizeof(my_addr))){return -2;}
+	if(bind(__socket,(sockaddr*)&my_addr,sizeof(my_addr))){return -2;}
 	if(listen(__socket,5)){return -3;}
 
-	uLong l_noblock =1;
-	if(ioctlsocket(__socket,FIONBIO,&l_noblock)){return -4;}
+	if(net::SetNonBlocking(__socket)){return -4;}
 	__acceptflag	=false;
 
 	return 0;
@@ -703,7 +660,7 @@ void TcpServerApp::CloseListenSocket()
 	if(l_sock!=INVALID_SOCKET)
 	{
 		__socket	=INVALID_SOCKET;
-		closesocket(l_sock);
+		net::CloseSocket(l_sock);
 	}
 	__acceptflag	=true;
 };
@@ -711,34 +668,26 @@ void TcpServerApp::CloseListenSocket()
 void TcpServerApp::TaskDispatcher(Task *l_dt)
 {
 	AcceptConnect	*l_newconn;
-	timeval			l_timeout;
 	selparm			l_p;
 
 	while(!l_dt->GetExitFlag() && !m_selexit)
 	{
-		FD_ZERO(&(l_p.m_readfds));
-		FD_ZERO(&(l_p.m_writefds));
-		FD_ZERO(&(l_p.m_errfds));
-		l_p.m_readflag	=l_p.m_writeflag	=l_p.m_errflag	=false;
-		if(__socket!=INVALID_SOCKET)
+		l_p.m_fds.clear();
+		l_p.m_socks.clear();
+		SOCKET const	l_listen	=__socket;
+		if(l_listen!=INVALID_SOCKET)
 		{
-			FD_SET(__socket,&(l_p.m_errfds));
-			l_p.m_errflag	=true;
-			if(!__acceptflag && !__atnotconn)
-			{
-				FD_SET(__socket,&(l_p.m_readfds));
-				l_p.m_readflag	=true;
-			}
+			short const	l_events	=(!__acceptflag && !__atnotconn)?POLLIN:0;
+			l_p.m_fds.push_back(pollfd{l_listen,l_events,0});
+			l_p.m_socks.push_back(nullptr);
 		}
 		BeforeSel(l_p);
-		if(!l_p.m_readflag&&!l_p.m_writeflag&&!l_p.m_errflag)
+		if(l_p.m_fds.empty())
 		{
 			Sleep(2);
 			continue;
 		}
-		l_timeout.tv_sec	=0;
-		l_timeout.tv_usec	=2000;
-		l_p.m_selretval			=select(0,l_p.m_readflag?&(l_p.m_readfds):0,l_p.m_writeflag?&(l_p.m_writefds):0,l_p.m_errflag?&(l_p.m_errfds):0,&l_timeout);
+		l_p.m_selretval			=net::Poll(l_p.m_fds.data(),l_p.m_fds.size(),2);
 		switch(l_p.m_selretval)
 		{
 		case 0:
@@ -747,8 +696,7 @@ void TcpServerApp::TaskDispatcher(Task *l_dt)
 			}
 		case SOCKET_ERROR :
 			{
-				int l_wsaerr	=WSAGetLastError();
-				if((l_wsaerr==WSAENETDOWN)||(l_wsaerr==WSANOTINITIALISED))
+				if(net::IsNetworkUnusable(net::LastError()))
 				{
 					return;
 				}
@@ -756,12 +704,13 @@ void TcpServerApp::TaskDispatcher(Task *l_dt)
 			}
 		default:
 			{
-				if(FD_ISSET(__socket,&(l_p.m_errfds)))
+				short const	l_revents	=(l_listen!=INVALID_SOCKET)?l_p.m_fds[0].revents:0;
+				if((l_revents &(POLLERR|POLLHUP|POLLNVAL))&&(__socket ==l_listen))
 				{
 					CloseListenSocket();
 					OpenListenSocket(__port,__localaddr);
 					l_p.m_selretval--;
-				}else if(!__acceptflag&&FD_ISSET(__socket,&(l_p.m_readfds)))
+				}else if(!__acceptflag&&(l_revents &POLLIN))
 				{
 					++__conntotal;
 					if(!__atnotconn)
@@ -784,8 +733,6 @@ void TcpServerApp::TaskDispatcher(Task *l_dt)
 	m_selexit	=0;
 }
 std::string TcpCommApp::GetDisconnectErrText(int reason) const {
-	// WSA error codes
-	// https://docs.microsoft.com/en-us/windows/win32/winsock/windows-sockets-error-codes-2
 	switch (reason) {
 	case 0:
 		return "The local program exits normally.";
@@ -803,39 +750,41 @@ std::string TcpCommApp::GetDisconnectErrText(int reason) const {
 		return "The program uses the default anti-link.";
 	case DS_SHUTDOWN:
 		return "The program shut down due to the ShutDown network subsystem.";
-	case WSAECONNRESET:
+	case DBC_SOCKERR(ECONNRESET):
 		return "The remote host forcibly closed an existing connection.";
-	case WSAENETDOWN:
+	case DBC_SOCKERR(ENETDOWN):
 		return "The socket operation encountered a dead network.";
-	case WSAENETUNREACH:
+	case DBC_SOCKERR(ENETUNREACH):
 		return "A socket operation was attempted against an unreachable network.";
-	case WSAENETRESET:
+	case DBC_SOCKERR(ENETRESET):
 		return "While the operation was in progress, the connection was interrupted due to a failure detected by the keep-alive operation.";
-	case WSAECONNABORTED:
+	case DBC_SOCKERR(ECONNABORTED):
 		return "The software in your host dropped an established connection.";
-	case WSAENOBUFS:
+	case DBC_SOCKERR(ENOBUFS):
 		return "The operation on the socket cannot be performed because the system buffer space is insufficient or the queue is full.";
-	case WSAEISCONN:
+	case DBC_SOCKERR(EISCONN):
 		return "A connection request was made on an already connected socket.";
-	case WSAENOTCONN:
+	case DBC_SOCKERR(ENOTCONN):
 		return "Since the socket was not connected and (when sending a datagram socket using a sendto call) no address was provided, a request to send or receive data was not accepted.";
-	case WSAESHUTDOWN:
+	case DBC_SOCKERR(ESHUTDOWN):
 		return "Due to a previous close call, the socket has been closed in that direction, and requests to send or receive data were not accepted.";
-	case WSAETOOMANYREFS:
+	case DBC_SOCKERR(ETOOMANYREFS):
 		return "Too many references to a kernel object.";
-	case WSAETIMEDOUT:
+	case DBC_SOCKERR(ETIMEDOUT):
 		return "The connection attempt failed because the connecting party did not reply correctly after a while or the connected host did not respond.";
-	case WSAECONNREFUSED:
+	case DBC_SOCKERR(ECONNREFUSED):
 		return "Unable to connect because the target machine actively refused.";
-	case WSAEHOSTDOWN:
+	case DBC_SOCKERR(EHOSTDOWN):
 		return "The socket operation failed because the target host is broken.";
-	case WSAEHOSTUNREACH:
+	case DBC_SOCKERR(EHOSTUNREACH):
 		return "The socket operation attempted an unreachable host.";
+#ifdef _WIN32
 	case WSAEPROCLIM:
 		return "A Windows socket operation may have a limit on the number of applications that can be used simultaneously.";
-	case WSAEADDRINUSE:
+#endif
+	case DBC_SOCKERR(EADDRINUSE):
 		return "Usually each socket address (protocol / network address / port) is allowed to be used only once.";
-	case WSAEAFNOSUPPORT:
+	case DBC_SOCKERR(EAFNOSUPPORT):
 		return "An address that is incompatible with the requested protocol was used.";
 	default:
 		return "Unknown Disconnect code:"s + std::to_string(reason);

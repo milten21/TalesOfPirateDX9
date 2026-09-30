@@ -2,6 +2,7 @@
 
 #include "ThreadPool.h"
 
+#include <chrono>
 #include <mutex>
 
 _DBC_BEGIN
@@ -11,36 +12,15 @@ _DBC_BEGIN
 class Timekeeper
 {
 public:
-	Timekeeper(bool mode =false):m_mode(mode),m_ulTimeCount(0)	//mode=falseʹ��GetTickCount()��λʱ�䣬mode=trueʹ��QueryPerformance[X]������λʱ�䡣
+	Timekeeper(bool mode =false):m_mode(mode)
 	{
-		if(m_mode)
-		{
-			if(dwFrequency==1)
-			{
-				HANDLE		l_hThrd		=GetCurrentThread();
-				DWORD_PTR	l_oldmask	=SetThreadAffinityMask(l_hThrd,1);
-				LARGE_INTEGER l_freq; QueryPerformanceFrequency(&l_freq); // current frequency
-				SetThreadAffinityMask(l_hThrd,l_oldmask);
-
-				dwFrequency = uLong(l_freq.QuadPart/(1000*1000));
-			}
-			m_liStartTime.QuadPart	=0;
-		}
-		else
-		{
-			m_ulStartTime			=0;
-		}
 	}
-
 
 	void  Begin()
 	{
 		if(m_mode)
 		{
-			HANDLE		l_hThrd		=GetCurrentThread();
-			DWORD_PTR	l_oldmask	=SetThreadAffinityMask(l_hThrd,1);
-			QueryPerformanceCounter(&m_liStartTime);
-			SetThreadAffinityMask(l_hThrd,l_oldmask);
+			m_startTime	=std::chrono::steady_clock::now();
 		}
 		else
 		{
@@ -50,14 +30,9 @@ public:
 
 	uLong End()
 	{
-		LARGE_INTEGER   liEndTime;
 		if(m_mode)
 		{
-			HANDLE		l_hThrd		=GetCurrentThread();
-			DWORD_PTR	l_oldmask	=SetThreadAffinityMask(l_hThrd,1);
-			QueryPerformanceCounter(&liEndTime);	
-			SetThreadAffinityMask(l_hThrd,l_oldmask);
-			m_ulTimeCount = uLong((liEndTime.QuadPart - m_liStartTime.QuadPart)/dwFrequency);
+			m_ulTimeCount	=uLong(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::steady_clock::now() -m_startTime).count());
 		}
 		else
 		{
@@ -72,13 +47,11 @@ public:
 	}
 
 private:
-	static uLong dwFrequency;
-
 	bool	const	m_mode;
-	LARGE_INTEGER   m_liStartTime;
-	uLong			m_ulStartTime;
+	std::chrono::steady_clock::time_point	m_startTime;
+	uLong			m_ulStartTime{};
 
-	uLong           m_ulTimeCount;
+	uLong           m_ulTimeCount{};
 };
 //==============��ʱ��======================================
 class Timer

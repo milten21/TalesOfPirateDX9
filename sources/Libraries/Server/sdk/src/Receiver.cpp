@@ -10,6 +10,8 @@
 #include "Receiver.h"
 #include "Packet.h"
 #include "CommRPC.h"
+#include "SocketApi.h"
+#include <algorithm>
 #include <fstream>
 #include "iostream"
 
@@ -65,7 +67,7 @@ long Receiver::Process()
 	{
 		if(!HasSpace())
 		{
-			m_rpk	=__bufheap.Get(max(m_datasock->GetRecvBuf(),__tca->__pkt_maxlen));
+			m_rpk	=__bufheap.Get(std::max<uLong>(m_datasock->GetRecvBuf(),__tca->__pkt_maxlen));
 			m_p		=0;
 		}
 
@@ -167,7 +169,7 @@ long Receiver::Process()
 			}//while(!m_datasock->m_delflag)
 			if(!l_retval && !HasSpace() && !m_datasock->m_delflag)
 			{
-				rbuf	*l_rbuf	=__bufheap.Get(max(m_datasock->GetRecvBuf(),__tca->__pkt_maxlen));
+				rbuf	*l_rbuf	=__bufheap.Get(std::max<uLong>(m_datasock->GetRecvBuf(),__tca->__pkt_maxlen));
 				if(m_p)
 				{
 					MemCpy(l_rbuf->getbuf(),m_rpk.GetPktAddr(),m_p);
@@ -184,7 +186,7 @@ long Receiver::Process()
 			l_retval	= -3;
 		}else if(l_reallen	==SOCKET_ERROR)
 		{
-			l_retval	=WSAGetLastError();
+			l_retval	=net::LastError();
 		}else
 		{
 			l_retval	=-2;
@@ -195,7 +197,7 @@ long Receiver::Process()
 	{
 		m_datasock->m_recvflag --;
 		return	0;
-	}else if(l_retval && (l_retval !=WSAEWOULDBLOCK))
+	}else if(l_retval && !net::WouldBlock(l_retval))
 	{
 		__tca->Disconnect(m_datasock,0,l_retval);
 	}

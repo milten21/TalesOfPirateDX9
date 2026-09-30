@@ -10,9 +10,7 @@
 #ifndef _DB_H_
 #define _DB_H_
 
-#include "sql.h"
-#include "sqltypes.h"
-#include "sqlext.h"
+#include "OdbcApi.h"
 #include <vector>
 #include <string>
 

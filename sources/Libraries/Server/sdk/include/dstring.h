@@ -41,12 +41,6 @@ public:
 		SetSize(uLong(strlen(str)+1));
 		strcpy(m_buf->getbuf(),str);
 	}
-	dstring(cwChar *str):m_buf(0),m_overwrite(true)				//宽串构造
-	{
-		if(!str)return;
-		SetSize(wctmbcpy((char*)0,str)+1);
-		wctmbcpy(m_buf->getbuf(),str);
-	}
 	explicit dstring(int i):m_buf(0),m_overwrite(true)			//整数构造
 	{
 		char l_str[21];

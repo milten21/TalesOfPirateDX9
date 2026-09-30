@@ -500,27 +500,11 @@ void CLog2Mgr::Log(char const* szFormat, ...)
 //  CThrdLock class
 //
 //
-CThrdLock::CThrdLock()
-{
-#ifdef WIN32
-    InitializeCriticalSection(&_cs);
-#endif
-}
-CThrdLock::~CThrdLock()
-{
-#ifdef WIN32
-    DeleteCriticalSection(&_cs);
-#endif
-}
 void CThrdLock::Lock()
 {
-#ifdef WIN32
-    EnterCriticalSection(&_cs);
-#endif
+    _mtx.lock();
 }
 void CThrdLock::Unlock()
 {
-#ifdef WIN32
-    LeaveCriticalSection(&_cs);
-#endif
+    _mtx.unlock();
 }

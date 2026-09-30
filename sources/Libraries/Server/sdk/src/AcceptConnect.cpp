@@ -2,6 +2,7 @@
 #include "Comm.h"
 #include "AcceptConnect.h"
 #include "DataSocket.h"
+#include "SocketApi.h"
 
 _DBC_USING
 
@@ -43,14 +44,12 @@ long AcceptConnect::Process()
 {
 	SOCKET		l_sock;
 	sockaddr_in	l_peersaddr;
-	int			l_addrlen	=sizeof sockaddr_in;
+	socklen_t	l_addrlen	=sizeof(sockaddr_in);
 	l_sock	=accept(__tsa->GetListenSocket(),(sockaddr *)&l_peersaddr,&l_addrlen);
 	__tsa->ZeroAcceptFlag();
 	if(l_sock==INVALID_SOCKET){return -1;}
-	uLong l_noblock =1;
-	if(ioctlsocket(l_sock,FIONBIO,&l_noblock)){return 0;}
-	BOOL l_enable =1;
-	if(setsockopt(l_sock,SOL_SOCKET,SO_KEEPALIVE,(cChar*)&l_enable,sizeof(l_enable))){return 0;}
+	if(net::SetNonBlocking(l_sock)){net::CloseSocket(l_sock);return 0;}
+	if(net::SetOption(l_sock,SOL_SOCKET,SO_KEEPALIVE,1)){net::CloseSocket(l_sock);return 0;}
 	DataSocket*	l_datasock	=__sockheap.Get();
 	l_datasock->Init(l_sock,inet_ntoa(l_peersaddr.sin_addr),ntohs(l_peersaddr.sin_port),__tsa,true);
 

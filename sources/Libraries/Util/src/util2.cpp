@@ -654,7 +654,6 @@ int Util_RelaceString(const char *pszSrc, const char *s1, const char *s2, std::s
     return nReplace;
 }
 
-DWORD MPTimer::dwFrequency = 1;
 
 
 

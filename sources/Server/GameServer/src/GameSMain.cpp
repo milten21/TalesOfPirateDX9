@@ -82,12 +82,8 @@ int main(int argc, char* argv[])
 
 //_DBC_USING
 
-#ifdef USE_IOCP
-
-#else
 ThreadPool	*l_proc = NULL;
 ThreadPool	*l_comm = NULL;
-#endif
 
 
 extern DWORD WINAPI g_GameLogicProcess(LPVOID lpParameter);
@@ -106,13 +102,6 @@ LG("init", "game map server [%s] startup...\n", g_Config.m_szName);
 		return FALSE;
 	}
 	
-#ifdef USE_IOCP
-    cfl_iocpapp::startup();
-
-    g_mygmsvr = new myiocpclt();
-    g_mygmsvr->init_gtconn(&g_Config);
-
-#else
     TcpCommApp::WSAStartup();
     //l_proc = ThreadPool::CreatePool(1, 60, 512);
     l_comm = ThreadPool::CreatePool(8, 8, 512);//,THREAD_PRIORITY_ABOVE_NORMAL);
@@ -123,7 +112,6 @@ LG("init", "game map server [%s] startup...\n", g_Config.m_szName);
    // LG("init", "启动Gate服务器连接线程...\n");
 	 LG("init", "startup Gate server connect thread...\n");
     l_comm->AddTask(new ConnectGateServer(g_gmsvr));
-#endif
 
     //连接并监听InfoServer
 	//LG("init", "启动信息服务器连接线程...\n");
@@ -154,23 +142,12 @@ void GameServer_End()
 
 	SAFE_DELETE(g_pGameApp);
 
-#ifdef USE_IOCP
-    if (g_mygmsvr != NULL)
-    {
-        g_mygmsvr->exit();
-        Sleep(3000);
-        delete g_mygmsvr;
-    }
-
-    cfl_iocpapp::cleanup();
-#else
 	delete g_gmsvr;
 
 	// l_comm->DestroyPool();
 	// l_proc->DestroyPool();
 
 	TcpCommApp::WSACleanup();
-#endif
 
 T_E}
 

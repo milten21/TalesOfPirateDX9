@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <iostream>
+#include <mutex>
 // nil-mutex :
 //  nothing to do just return
 class cfl_nil_mutex
@@ -37,55 +38,21 @@ inline bool cfl_nil_mutex::unlock() {return true;}
 class cfl_mt_mutex : public cfl_nil_mutex
     {
 public:
-    cfl_mt_mutex();
-    ~cfl_mt_mutex();
-
-public:
     bool lock();
     bool unlock();
 
 protected:
-#if defined(WIN32)
-    HANDLE _mtx;
-#elif defined(FREEBSD)
-    pthread_mutex_t _mtx;
-#endif
+    std::mutex _mtx;
     };
-
-inline cfl_mt_mutex::cfl_mt_mutex()
-    {
-#if defined(WIN32)
-    _mtx = CreateEvent(0, TRUE, TRUE, 0);
-#elif defined(FREEBSD)
-    pthread_mutex_init(&_mtx, NULL);
-#endif
-    }
-
-inline cfl_mt_mutex::~cfl_mt_mutex()
-    {
-#if defined(WIN32)
-    CloseHandle(_mtx);
-#elif defined(FREEBSD)
-    pthread_mutex_destroy(&_mtx);
-#endif
-    }
 
 inline bool cfl_mt_mutex::lock()
     {
-#if defined(WIN32)
-    WaitForSingleObject(_mtx, INFINITE); return true;
-#elif defined(FREEBSD)
-    return (pthread_mutex_lock(&_mtx) == 0) ? true : false;
-#endif
+    _mtx.lock(); return true;
     }
 
 inline bool cfl_mt_mutex::unlock()
     {
-#if defined(WIN32)
-    SetEvent(_mtx); return true;
-#elif defined(FREEBSD)
-    return (pthread_mutex_unlock(&_mtx) == 0) ? true : false;
-#endif
+    _mtx.unlock(); return true;
     }
 
 

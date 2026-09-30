@@ -1,6 +1,10 @@
 
 #include "LanguageRecord.h"
-#include <io.h>
+
+#include <cstring>
+#include <filesystem>
+#include <memory>
+#include <system_error>
 
 __byte ENC_KEY[] = {0x42,0x34,0x19,0x56,0x10,0x14,0x29,0x72};
 
@@ -94,7 +98,8 @@ bool CLanguageRecord::LoadFromTxtFile(const char* szTxtFile)
 // 加密并生成二进制（TXT -> BIN）
 bool CLanguageRecord::MadeBinFile(const char* szBinFile, const char* szTxtFile)
 {
-	if(-1 != access(szBinFile, 0))	// BIN 文件已存在
+	std::error_code exists_error;
+	if(std::filesystem::exists(szBinFile, exists_error))	// BIN 文件已存在
 		return false;
 
 	std::ifstream ifs;

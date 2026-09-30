@@ -1,26 +1,46 @@
 #pragma once
 #include "excp.h"
 
+#include <atomic>
+#include <cstddef>
+#include <vector>
+
 _DBC_BEGIN
 
 //==============================================================================
 struct TLSIndex
 {
-	TLSIndex():index(TlsAlloc())
+	TLSIndex():index(NextIndex())
 	{
-		if(index ==TLS_OUT_OF_INDEXES)
+	}
+	LPVOID	GetPointer()
+	{
+		std::vector<LPVOID> &l_slots =Slots();
+		return index <l_slots.size()?l_slots[index]:nullptr;
+	}
+	BOOL	SetPointer(LPVOID p)
+	{
+		std::vector<LPVOID> &l_slots =Slots();
+		if(index >=l_slots.size())
 		{
-			THROW_EXCP(excpThrd,"分配线程本地存储索引超过最大数");
+			l_slots.resize(index +1,nullptr);
 		}
+		l_slots[index]	=p;
+		return TRUE;
 	}
-	~TLSIndex()
-	{
-		TlsFree(index);
-	}
-	LPVOID	GetPointer(){return TlsGetValue(index);}
-	BOOL	SetPointer(LPVOID p){return TlsSetValue(index,p);}
 private:
-	DWORD		index;
+	static std::size_t NextIndex()
+	{
+		static std::atomic<std::size_t> s_next{0};
+		return s_next++;
+	}
+	static std::vector<LPVOID> &Slots()
+	{
+		thread_local std::vector<LPVOID> s_slots;
+		return s_slots;
+	}
+
+	std::size_t	index;
 };
 
 _DBC_END

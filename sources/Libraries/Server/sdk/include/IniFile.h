@@ -23,12 +23,10 @@ private:
 
 	IniItem * AddItem(const char *name,const char *value);
 
-	struct{
-		int	m_itemcount;
-		int	m_itemsize;
-		IniItem ** m_item;
-		std::string	m_sectname;
-	};
+	int	m_itemcount;
+	int	m_itemsize;
+	IniItem ** m_item;
+	std::string	m_sectname;
 };
 
 class IniFile{

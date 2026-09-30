@@ -54,9 +54,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="playsound.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="util2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -116,9 +113,6 @@
     <ClInclude Include="..\include\pch.h">
       <Filter>Header Files\public</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\playsound.h">
-      <Filter>Header Files\public</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\singleton.h">
       <Filter>Header Files\public</Filter>
     </ClInclude>
@@ -127,9 +121,6 @@
     </ClInclude>
     <ClInclude Include="..\include\util2.h">
       <Filter>Header Files\public</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\AtlAux2.h">
-      <Filter>Header Files\exception</Filter>
     </ClInclude>
     <ClInclude Include="..\include\debug_stream.h">
       <Filter>Header Files\exception</Filter>

@@ -37,56 +37,6 @@ inline const char* g_GameGateConnError( int error_code )
 
 // 不同网络底层数据结构和类型抽象
 
-#ifdef USE_IOCP
-
-#define USE_NBO
-#include "cfl_pkt.h"
-#include "gmsvr.h"
-
-#define GETGMSVRNAME() g_mygmsvr->getname()
-#define ADDPLAYER(ply, pGate, gtaddr) g_mygmsvr->addplayer(ply, pGate, gtaddr)
-#define DELPLAYER(ply) g_mygmsvr->delplayer(ply)
-#define KICKPLAYER(ply, time) g_mygmsvr->kickplayer(ply, time)
-#define PEEKPACKET(ms) g_mygmsvr->peekpkt(ms)
-#define DISCONNECT(sk) g_mygmsvr->disconnect(sk)
-#define ISVALIDGATE(i) g_mygmsvr->isvalidgt(i)
-#define BEGINGETPLAYER(pGate) g_mygmsvr->begingetplayer(pGate)
-#define GETNEXTPLAYER(pGate) g_mygmsvr->getnextplayer(pGate)
-
-#define SENDTOWORLD(pkt) g_mygmsvr->sendtoworld(pkt)
-#define SENDTOCLIENT(pkt, l) g_mygmsvr->sendtoclient(pkt, l)
-#define SENDTOCLIENT2(pkt, n, a) g_mygmsvr->sendtoclient(pkt, n, a)
-#define SENDTOGAME(pkt, p) g_gmsvr->sendtogame(pkt, p)
-
-#define WPACKET Packet*
-#define RPACKET Packet*
-#define VALIDRPACKET(pkt) (pkt != NULL) ? true : false
-
-#define GETWPACKET() g_mygmsvr->getpkt()
-#define RETRPACKET(pkt) pkt->free()
-#define WRITE_CMD(pkt, cmd) pkt->WriteCmd(cmd)
-#define WRITE_CHAR(pkt, c) pkt->WriteChar(c)
-#define WRITE_SHORT(pkt, s) pkt->WriteShort(s)
-#define WRITE_LONG(pkt, l) pkt->WriteLong(l)
-#define WRITE_LONGLONG(pkt, l) pkt->WriteLongLong(l)
-#define WRITE_SEQ(pkt, seq, len) pkt->WriteSequence(seq, len)
-#define WRITE_STRING(pkt, str) pkt->WriteString(str)
-#define READ_CMD(pkt) pkt->ReadCmd()
-#define READ_CHAR(pkt) pkt->ReadChar()
-#define READ_SHORT(pkt) pkt->ReadShort()
-#define READ_LONG(pkt) pkt->ReadLong()
-#define READ_LONGLONG(pkt) pkt->ReadLongLong()
-#define READ_SEQ(pkt, len) pkt->ReadSequence(len)
-#define READ_STRING(pkt) pkt->ReadString()
-
-#define READ_LONG_R(pkt) pkt->ReverseReadLong()
-#define READ_SHORT_R(pkt) pkt->ReverseReadShort()
-
-#define BEGINGETGATE() g_mygmsvr->begingetgate()
-#define GETNEXTGATE() g_mygmsvr->getnextgate()
-
-
-#else
 
 
 #include "GameServerApp.h"
@@ -137,7 +87,6 @@ inline const char* g_GameGateConnError( int error_code )
 #define GETNEXTGATE() g_gmsvr->GetNextGate()
 
 
-#endif // USE_IOCP
 
 
 

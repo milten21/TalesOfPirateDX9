@@ -277,8 +277,6 @@ http://www.wintellect.com/robbins
 
 extern "C" {
 
-	WINBASEAPI BOOL WINAPI SwitchToThread(VOID);
-
 	typedef DWORD (WINAPI *SymGetModuleBaseFn)( IN HANDLE hProcess, IN DWORD dwAddr );
 	typedef BOOL  (WINAPI *SymGetSymFromAddrFn)( IN HANDLE hProcess, IN DWORD dwAddr, OUT PDWORD pdwDisplacement, OUT PIMAGEHLP_SYMBOL Symbol );
 	typedef BOOL  (WINAPI *StackWalkFn)( DWORD MachineType, HANDLE hProcess, HANDLE hThread, LPSTACKFRAME StackFrame, PVOID ContextRecord, PREAD_PROCESS_MEMORY_ROUTINE ReadMemoryRoutine, PFUNCTION_TABLE_ACCESS_ROUTINE FunctionTableAccessRoutine, PGET_MODULE_BASE_ROUTINE GetModuleBaseRoutine, PTRANSLATE_ADDRESS_ROUTINE TranslateAddress );
@@ -462,7 +460,6 @@ public:
 	"%m.%s + %sd bytes, in %f:line %l\n"
 	*/
 	static bool stack_trace(std::ostream&, CONTEXT *, unsigned skip = 0, const char * fmt = default_fmt());
-	static bool stack_trace(std::ostream&, unsigned skip = 1, const char * fmt = default_fmt());
 	static bool stack_trace(std::ostream&, sym_engine&, CONTEXT *, unsigned skip = 1, const char * fmt = default_fmt());
 
 private:
@@ -971,121 +968,6 @@ bool sym_engine::stack_trace(std::ostream& os, CONTEXT * pctx, unsigned skip, co
 	if (!fmt) return false;
 	sym_engine sym(0);
 	return stack_trace(os, sym, pctx, skip, fmt);
-}
-
-/////////////////////////////////////////////
-// prints a current thread's stack
-
-struct current_context : CONTEXT
-{
-	HANDLE	thread;
-	volatile int signal;
-};
-
-static DWORD WINAPI tproc(void * pv)
-{
-	current_context * p = reinterpret_cast<current_context*>(pv);
-
-	__try
-	{
-		// Konstantin, 14.01.2002 17:21:32
-		// must wait in spin lock until main thread will leave a ResumeThread (must return back to user context)
-		unsigned debug_only = 0;
-		while (p->signal)
-		{
-			if (!SwitchToThread())
-				Sleep(20); // forces switch to another thread
-			++debug_only;
-		}
-#ifdef SYM_ENGINE_TRACE_SPIN_COUNT
-		char s[256];
-		wsprintf(s, "sym_engine::tproc, spin count %u\n", debug_only);
-		OutputDebugString(s);
-#endif;
-
-		if (-1 == SuspendThread(p->thread))
-		{
-			p->signal  = -1;
-			__leave;
-		}
-
-		__try
-		{
-			p->signal = GetThreadContext(p->thread, p) ? 1 : -1;
-		}
-		__finally
-		{
-			VERIFY(-1 != ResumeThread(p->thread));
-		}
-	}
-	__except(EXCEPTION_EXECUTE_HANDLER)
-	{
-		p->signal  = -1;
-	}
-	return 0;
-}
-
-bool sym_engine::stack_trace(std::ostream& os, unsigned skip, const char * fmt)
-{
-	if (!fmt) return false;
-
-	// attempts to get current thread's context
-
-	current_context ctx;
-	memset(&ctx, 0, sizeof current_context);
-
-	BOOL r = DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(),
-		&ctx.thread, 0, 0, DUPLICATE_SAME_ACCESS);
-
-	_ASSERTE(r);
-	_ASSERTE(ctx.thread);
-
-	if (!r || !ctx.thread)
-		return false;
-
-	ctx.ContextFlags = CONTEXT_CONTROL; // CONTEXT_FULL;
-	ctx.signal = -1;
-
-	DWORD dummy;
-	HANDLE worker = CreateThread(0, 0, tproc, &ctx, CREATE_SUSPENDED, &dummy);
-	_ASSERTE(worker);
-
-	if (worker)
-	{
-		VERIFY(SetThreadPriority(worker, THREAD_PRIORITY_ABOVE_NORMAL)); //  THREAD_PRIORITY_HIGHEST
-		if (-1 != ResumeThread(worker))
-		{
-			unsigned debug_only = 0;
-			// Konstantin, 14.01.2002 17:21:32
-			ctx.signal = 0;				// only now the worker thread can get this thread context
-			while (!ctx.signal)
-				++debug_only; // wait in spin
-#ifdef SYM_ENGINE_TRACE_SPIN_COUNT
-			char s[256];
-			wsprintf(s, "sym_engine::stack_trace, spin count %u\n", debug_only);
-			OutputDebugString(s);
-#endif
-		}
-		else
-		{
-			VERIFY(TerminateThread(worker, 0));
-		}
-
-		VERIFY(CloseHandle(worker));
-	}
-
-	VERIFY(CloseHandle(ctx.thread));
-
-	if (ctx.signal == -1)
-	{
-		_ASSERTE(0);
-		return false;
-	}
-
-	// now it can print stack
-	sym_engine sym(0);
-	stack_trace(os, sym, &ctx, skip, fmt);
-	return true;
 }
 
 bool sym_engine::stack_trace(std::ostream& os, sym_engine& sym,

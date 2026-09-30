@@ -1,5 +1,6 @@
 #include "comutil.h"
 #include "util.h"
+#include "bill.h"
 #include <string>
 #include <stdio.h>
 #include <stdlib.h>

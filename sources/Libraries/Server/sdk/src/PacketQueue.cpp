@@ -4,35 +4,8 @@
 
 _DBC_USING
 
-void LimitCurrentProcTest()
-{
-    HANDLE hCurrentProcess = GetCurrentProcess();
-    
-    // Get the processor affinity mask for this process
-    DWORD_PTR dwProcessAffinityMask = 0;
-    DWORD_PTR dwSystemAffinityMask = 0;
-    
-    if( GetProcessAffinityMask( hCurrentProcess, &dwProcessAffinityMask, &dwSystemAffinityMask ) != 0 && dwProcessAffinityMask )
-    {
-        // Find the lowest processor that our process is allows to run against
-        DWORD_PTR dwAffinityMask = ( dwProcessAffinityMask & ((~dwProcessAffinityMask) + 1 ) );
-
-        // Set this as the processor that our thread must always run against
-        // This must be a subset of the process affinity mask
-        HANDLE hCurrentThread = GetCurrentThread();
-        if( INVALID_HANDLE_VALUE != hCurrentThread )
-        {
-            SetThreadAffinityMask( hCurrentThread, dwAffinityMask );
-            CloseHandle( hCurrentThread );
-        }
-    }
-
-    CloseHandle( hCurrentProcess );
-}
-
 PKQueue::PKQueue(bool mode/* =true*/):m_head(0),m_tail(0),m_isclose(false),m_mode(mode),m_pktotal(0)
 {
-	//LimitCurrentProcTest();
 	if(!m_mode){m_sem.Create(0,0x7FFFFFFF);}
 	PKItem	*l_it	=m_heap.Get();
 	l_it->Free();	

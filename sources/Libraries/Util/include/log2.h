@@ -4,24 +4,18 @@
 
 #include <string>
 #include <map>
+#include <mutex>
 
-#ifdef WIN32
-#include <windows.h>
-#endif
+#include "Portability.h"
 
 class CThrdLock
 {
 public:
-    CThrdLock();
-    ~CThrdLock();
-
     void Lock();
     void Unlock();
 
 private:
-#ifdef WIN32
-    CRITICAL_SECTION _cs;
-#endif
+    std::recursive_mutex _mtx;
 };
 
 #define LOGBUF_SIZE (8 * 1024)

@@ -20,7 +20,7 @@ _DBC_BEGIN
 template<class T>
 class RunCtrlObj	:public	RunBiDirectItem< RunCtrlObj<T> >
 {//	enum{CtrlThrdMax=100,RunObjMax=500,TimePrecision=400};
-	template<class T>friend class RunCtrlThrd;
+	template<class U>friend class RunCtrlThrd;
 protected:
 	RunCtrlObj()
 	{
@@ -49,8 +49,8 @@ private:
 template<class T>
 class RunCtrlThrd	:private RunBiDirectChain< RunCtrlObj<T> >	,public	Task
 {
-	template<class T>friend class RunCtrlObj;
-	template<class T>friend class RunCtrlMgr;
+	template<class U>friend class RunCtrlObj;
+	template<class U>friend class RunCtrlMgr;
 private:
 	RunCtrlThrd(RunCtrlMgr<T> * mgr,short thrdpos):m_mgr(mgr),m_thrdpos(thrdpos),m_timer(false)//ʹ��QueuePerformanceX��ʱ
 	{
@@ -124,7 +124,7 @@ private:
 template<class T>
 class RunCtrlMgr
 {
-	template<class T>friend class RunCtrlObj;
+	template<class U>friend class RunCtrlObj;
 public:
 	RunCtrlMgr():m_CtrlThrdNum(0)
 	{

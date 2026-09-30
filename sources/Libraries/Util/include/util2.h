@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <math.h>
 
+#include <chrono>
 #include <string>
 #include <list>
 #include <vector>
@@ -71,35 +72,19 @@ T* Singleton<T>::Instance()
 #include <direct.h>
 
     #ifndef _MFC
-        #ifndef _WINDOWS_    
-            #include <windows.h>
+        #ifndef _WINDOWS_
+            #include "Portability.h"
         #endif
     #endif
-    
 
 #else
     #define LINUX
-    
-    #include <unistd.h>
-    #include <stdio.h>
-    #include <string.h>
-    
-    #include <sys/io.h>
+
+    #include <sys/dir.h>
     #include <sys/stat.h>
     #include <sys/types.h>
-    #include <sys/time.h>
-    #include <sys/stat.h>
-    #include <sys/dir.h>
-    
-    #define VOID    void
-    #define BYTE    unsigned char
-    #define LPBYTE  unsigned char*
-    #define BOOL    bool
-    #define DWORD   unsigned long
-    #define LPCSTR const char*
-    #define TRUE true
-    #define FALSE false
-    #define HANDLE void*
+
+    #include "Portability.h"
 
 #define _LOG
 #define _LOG_CONSOLE
@@ -225,32 +210,15 @@ std::string GetMacString();
 class   MPTimer
 {
 public:
-    
-    static DWORD dwFrequency;
 
-    MPTimer()
-    {
-        if(dwFrequency==1)
-        {
-            LARGE_INTEGER l; QueryPerformanceFrequency(&l); // current frequency
-            dwFrequency = (DWORD)((double)l.QuadPart / (double)1000);
-            // LG2("init", "CPU Frequency = %d\n", dwFrequency);
-        }
-        _dwTimeCount = 0;
-    }
-
-    
     void  Begin()
     {
-        QueryPerformanceCounter(&_liStartTime);				
+        _startTime = std::chrono::steady_clock::now();
     }
-    
+
     DWORD End()
     {
-        LARGE_INTEGER   liEndTime;
-        QueryPerformanceCounter(&liEndTime);	
-        _dwTimeCount = (DWORD)(liEndTime.QuadPart - _liStartTime.QuadPart);
-        _dwTimeCount = _dwTimeCount / dwFrequency;
+        _dwTimeCount = (DWORD)std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - _startTime).count();
         return _dwTimeCount;
     }
 
@@ -261,8 +229,8 @@ public:
 
 protected:
 
-    LARGE_INTEGER   _liStartTime;
-    DWORD           _dwTimeCount;
+    std::chrono::steady_clock::time_point _startTime;
+    DWORD           _dwTimeCount{};
 };
 
 

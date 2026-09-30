@@ -19,8 +19,8 @@ class RunBiDirectChain;
 template<class T>
 class RunBiDirectItem
 {
-	template<class T>friend class RunBiDirectChain;
-	template<class T>friend class RunCtrlMgr;
+	template<class U>friend class RunBiDirectChain;
+	template<class U>friend class RunCtrlMgr;
 protected:
 	RunBiDirectItem():m_chain(0),m_last(0),m_next(0){}
 	virtual ~RunBiDirectItem()	{_EndRun();}
@@ -49,8 +49,8 @@ private:
 template<class T>
 class RunBiDirectChain
 {
-	template<class T>friend class RunBiDirectItem;
-	template<class T>friend class RunChainGetArmor;
+	template<class U>friend class RunBiDirectItem;
+	template<class U>friend class RunChainGetArmor;
 public:
 	RunBiDirectChain() : m_total(0), m_head(0), m_tail(0), m_getp(0)
 	{

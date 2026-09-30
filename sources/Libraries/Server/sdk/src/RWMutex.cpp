@@ -21,7 +21,7 @@ private:
 	void Initially(){m_rwsync =0;m_RDCount =m_WRCount =0;}
 	void Finally(){nextthread =0;}
 
-	friend class	RWMutex;
+	friend class	dbc::RWMutex;
 	RWMutex		*	m_rwsync;
 	volatile int	m_RDCount;				//读计数
 	volatile int	m_WRCount;				//写计数

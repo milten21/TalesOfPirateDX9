@@ -5,7 +5,6 @@
 #include <math.h>
 #include <time.h>
 #include <assert.h>
-#include <sqlext.h>
 
 using namespace std;
 
@@ -436,23 +435,9 @@ void TDt::SetFormat( int format )
 //
 TDt& TDt::Set()  // Get today's date
 {
-#if _MSC_VER < 1100
-    /*
-    time_t osBinaryTime;     // C run-time time( defined in <time.h> )
-    time( &osBinaryTime ) ;  // Get the current time from the
-    // operating system.
-    CTime time3( osBinaryTime );  // CTime from C run-time time
-    return Set( osBinaryTime.Format( "%m/%d/%y" ) );
-    */
-    dosdate_t ddt;
-    _dos_getdate( &ddt );
-    return Set( ddt.month, ddt.day, ddt.year );
-
-#else
     SYSTEMTIME st;
     GetLocalTime( &st );
     return Set( st.wMonth, st.wDay, st.wYear );
-#endif
 }
 
 // Possible formats--

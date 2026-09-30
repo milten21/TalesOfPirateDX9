@@ -8,13 +8,6 @@
 //=================================================================
 #pragma once
 
-#ifndef	USING_TAO		//使用Win32基本Platform SDK
-#include <winsock2.h>		//确保调用新的WinSock2.2版本
-#include <windows.h>
-#else
-#include "TAOSpecial.h"
-#endif
-
 #include "DataSocket.h"
 #include "Packet.h"
 
