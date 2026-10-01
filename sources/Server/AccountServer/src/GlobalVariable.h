@@ -5,8 +5,8 @@
 
 
 
-#include "tlsindex.h"
-#include "databasectrl.h"
+#include "TLSIndex.h"
+#include "DataBaseCtrl.h"
 #include "MainQueue.h"
 
 #include "i18n.h"							//Add by lark.li 20080307
@@ -25,6 +25,7 @@ extern CDataBaseCtrl	g_MainDBHandle;
 extern MainQueue		g_MainQueue;
 
 
+#ifdef _WIN32
 extern HANDLE hConsole;
 
 #define C_PRINT(s, ...) \
@@ -41,6 +42,10 @@ extern HANDLE hConsole;
 	strConsoleT += "]"; \
 	strConsoleT += s; \
 	SetConsoleTitle(strConsoleT.c_str());
+#else
+#define C_PRINT(s, ...) printf(s, ##__VA_ARGS__);
+#define C_TITLE(s)
+#endif
 
 
 #endif

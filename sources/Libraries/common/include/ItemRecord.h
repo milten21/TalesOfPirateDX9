@@ -8,7 +8,9 @@
 #ifndef	ITEMRECORD_H
 #define ITEMRECORD_H
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
 #include "CompCommand.h"

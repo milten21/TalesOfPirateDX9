@@ -8,10 +8,12 @@
 #ifndef EVENTRECORD_H
 #define EVENTRECORD_H
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
-#include "point.h"
+#include "Point.h"
 
 // 事件触发类型
 enum EEventTouchType

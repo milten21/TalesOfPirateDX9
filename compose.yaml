@@ -1,0 +1,76 @@
+name: tales
+
+x-server: &server
+  image: ${TALES_IMAGE:-tales-servers:dev}
+  platform: linux/386
+  restart: unless-stopped
+  stdin_open: true
+  tty: true
+  ulimits:
+    core: -1
+
+services:
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      ACCOUNT_DB_PASSWORD: ${ACCOUNT_DB_PASSWORD:?set ACCOUNT_DB_PASSWORD in .env}
+      GAME_DB_PASSWORD: ${GAME_DB_PASSWORD:?set GAME_DB_PASSWORD in .env}
+    volumes:
+      - ./postgresql:/opt/tales/postgresql:ro
+      - ./docker/postgres/init-databases.sh:/docker-entrypoint-initdb.d/init-databases.sh:ro
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD", "pg_isready", "--host", "127.0.0.1", "--username", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 60s
+
+  account:
+    <<: *server
+    build:
+      context: .
+    command: ["AccountServer"]
+    stop_grace_period: 30s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ACCOUNT_LISTEN_IP: 0.0.0.0
+      ACCOUNT_PORT: ${ACCOUNT_PORT:-1978}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      ACCOUNT_DB_NAME: ${ACCOUNT_DB_NAME:-AccountServer}
+      ACCOUNT_DB_USER: ${ACCOUNT_DB_USER:-pko_account}
+      ACCOUNT_DB_PASSWORD: ${ACCOUNT_DB_PASSWORD:?set ACCOUNT_DB_PASSWORD in .env}
+    volumes:
+      - account-log:/var/log/tales/AccountServer
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/$${ACCOUNT_PORT}"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+  dev:
+    profiles: ["dev"]
+    image: tales-toolchain:dev
+    platform: linux/386
+    build:
+      context: .
+      target: toolchain
+    working_dir: /src
+    volumes:
+      - .:/src
+      - linux-build:/build
+    command:
+      - sh
+      - -c
+      - cmake -S /src -B /build -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo && cmake --build /build && ctest --test-dir /build --output-on-failure
+
+volumes:
+  pgdata:
+  account-log:
+  linux-build:

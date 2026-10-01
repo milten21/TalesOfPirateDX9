@@ -12,7 +12,6 @@
 #include <cstdint>
 #include <cstring>
 #include <deque>
-#include <format>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -310,7 +309,7 @@ inline char* SkillBagData2String(CSkillBag *pSkillBag, char *szStrBuf, int nLen)
 	};
 
 	const short sSkillNum = pSkillBag->GetSkillNum();
-	if (!append(std::format("{};", sSkillNum))) {
+	if (!append(std::to_string(sSkillNum) + ";")) {
 		return nullptr;
 	}
 
@@ -320,7 +319,7 @@ inline char* SkillBagData2String(CSkillBag *pSkillBag, char *szStrBuf, int nLen)
 			return nullptr;
 		}
 		// Формат DB: "id,lv;"
-		if (!append(std::format("{},{};", pGridCont->sID, static_cast<int>(pGridCont->chLv)))) {
+		if (!append(std::to_string(pGridCont->sID) + "," + std::to_string(static_cast<int>(pGridCont->chLv)) + ";")) {
 			return nullptr;
 		}
 	}

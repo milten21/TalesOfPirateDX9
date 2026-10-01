@@ -8,7 +8,9 @@
 #ifndef LIFELVRECORD_H
 #define LIFELVRECORD_H
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
 

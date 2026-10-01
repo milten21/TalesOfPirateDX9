@@ -6,6 +6,9 @@
 
 #include "Comm.h"
 
+#include <atomic>
+#include <thread>
+
 // 线程基类
 class MyThread
 {
@@ -18,16 +21,15 @@ public:
 	int WaitForExit(int ms); // block calling thread
 
 protected:
-	static DWORD WINAPI ThreadProc(LPVOID);
 	virtual int Run();
 	bool GetExitFlag() const {return m_bExitFlag;}
 	void ExitThread() {m_bExitThrd = true;}
 
 private:
-	bool volatile m_bExitFlag;
-	bool volatile m_bExitThrd;
-	DWORD m_dwThreadId;
-	HANDLE m_hThread;
+	std::atomic<bool> m_bExitFlag;
+	std::atomic<bool> m_bExitThrd;
+	int m_nExitCode;
+	std::thread m_Thread;
 };
 
 #endif

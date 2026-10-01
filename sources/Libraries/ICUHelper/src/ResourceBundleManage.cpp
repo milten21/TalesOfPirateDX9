@@ -1,12 +1,17 @@
-#include "resourcebundlemanage.h"
+#include "ResourceBundleManage.h"
 
 #include "IniFile.h"
 
-#include "windows.h"
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <filesystem>
+#endif
 #include <cstdio>
 #include <cstdlib>
 #include <string>
 #include <memory>
+#include <mutex>
 
 using namespace std;
 
@@ -14,18 +19,37 @@ using namespace std;
 
 #define BUFFER_SIZE 255
 
-class CLogLock
+namespace
 {
-public:
-	CLogLock() { InitializeCriticalSection(&_cs); }
-	~CLogLock() { DeleteCriticalSection(&_cs); }
 
-	void Lock() { EnterCriticalSection(&_cs); }
-	void Unlock() { LeaveCriticalSection(&_cs); }
+std::string ExecutableDirectory()
+{
+#ifdef _WIN32
+	char szPath[MAX_PATH];
+	if( !GetModuleFileName( NULL, szPath, MAX_PATH ) )
+	{
+		throw "GetModuleFileName failed \n";
+	}
+	const char* ret = strrchr(szPath, '\\');
+	return std::string(szPath, ret - szPath);
+#else
+	std::error_code error;
+	const std::filesystem::path path = std::filesystem::read_symlink("/proc/self/exe", error);
+	if (error)
+	{
+		throw "readlink /proc/self/exe failed \n";
+	}
+	return path.parent_path().string();
+#endif
+}
 
-private:
-    CRITICAL_SECTION _cs;
-};
+std::string& ArgumentCodepage()
+{
+	static std::string codepage;
+	return codepage;
+}
+
+}
 
 CFormatParameter::CFormatParameter(int paraNum)
 {
@@ -67,18 +91,16 @@ void CFormatParameter::setString(int index, const icu::UnicodeString &stringToCo
 	m_MsgArgs[index].setString(stringToCopy);
 }
 
+void CFormatParameter::setString(int index, const char* codepageData)
+{
+	const std::string& codepage = ArgumentCodepage();
+	m_MsgArgs[index].setString(icu::UnicodeString(codepageData, -1, codepage.empty() ? NULL : codepage.c_str()));
+}
+
 CResourceBundleManage::CResourceBundleManage(const char* configFileName)
 :  m_pResourceBundle(NULL), m_pConverter(NULL), m_MaxSize(0), m_LogFlag(0), m_LogFile(NULL)
 {
-    char szPath[MAX_PATH]; 
-    
-    if( !GetModuleFileName( NULL, szPath, MAX_PATH ) )
-    {
-        throw "GetModuleFileName failed \n"; 
-    }
-	// 取得入口程序的路径
-	const char* ret = strrchr(szPath, '\\');
-	const std::string exeDir(szPath, ret - szPath);
+	const std::string exeDir = ExecutableDirectory();
 
 	CIniFile ini;
 	ini.Load(exeDir + "/" + configFileName);
@@ -111,7 +133,10 @@ CResourceBundleManage::CResourceBundleManage(const char* configFileName)
 
 	status = U_ZERO_ERROR;
 	if(!codepage.empty())
+	{
 		ucnv_setDefaultName(codepage.c_str());
+		ArgumentCodepage() = codepage;
+	}
 	m_pConverter = ucnv_open(codepage.empty() ? NULL : codepage.c_str(), &status);
 	
 	if(U_SUCCESS(status))
@@ -242,16 +267,17 @@ const char* CResourceBundleManage::LoadResString(const char* key)
 	//printf("key = %s value = %s\n",key, ret);
 #endif
 
-	static CLogLock lock;
-	lock.Lock();
-	if(m_LogFlag)
+	static std::mutex lock;
 	{
-		if(m_LogFile)
+		std::lock_guard<std::mutex> guard(lock);
+		if(m_LogFlag)
 		{
-			fprintf(m_LogFile, "Key = [%s] Value = %s\r\n", key, ret);
+			if(m_LogFile)
+			{
+				fprintf(m_LogFile, "Key = [%s] Value = %s\r\n", key, ret);
+			}
 		}
 	}
-	lock.Unlock();
 
 	return ret;
 }

@@ -8,10 +8,12 @@
 #ifndef SWITCHMAPRECORD_H
 #define SWITCHMAPRECORD_H
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
-#include "point.h"
+#include "Point.h"
 
 const char cchSwitchMapRecordKeyValue = (char)0xff;
 

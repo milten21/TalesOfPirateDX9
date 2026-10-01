@@ -1,7 +1,6 @@
 #pragma once
 
-#include "atltime.h"
-
+#include <ctime>
 #include <map>
 #include <string>
 
@@ -28,7 +27,7 @@ public:
 private:
 	struct sPlayerData
 	{
-		CTime ctLoginTime;
+		std::time_t ctLoginTime;
 	};
 	typedef std::map<std::string, CDataBaseCtrl::sPlayerData> StringMap;
 

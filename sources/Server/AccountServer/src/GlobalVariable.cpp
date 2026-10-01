@@ -1,7 +1,5 @@
-#define _CRTDBG_MAP_ALLOC
 #include "stdafx.h"
 #include <stdlib.h>
-#include <crtdbg.h>
 
 //#include "AccountServer2.h"
 #include <string>

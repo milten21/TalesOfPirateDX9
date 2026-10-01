@@ -2,6 +2,7 @@
 #include "ResourceBundleManage.h"
 
 #include <cstdio>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -32,7 +33,7 @@ std::string ExecutableDir()
 	std::string p = path;
 	return p.substr(0, p.find_last_of("\\/"));
 #else
-	return ".";
+	return std::filesystem::read_symlink("/proc/self/exe").parent_path().string();
 #endif
 }
 

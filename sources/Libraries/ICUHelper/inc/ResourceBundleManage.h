@@ -51,6 +51,7 @@ public:
 	void  setInt64(int index, int64_t ll) ;
 	void  setDate(int index, UDate d) ;
 	void  setString(int index, const icu::UnicodeString &stringToCopy);
+	void  setString(int index, const char* codepageData);
 };
 
 class CResourceBundleManage

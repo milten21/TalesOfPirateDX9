@@ -8,7 +8,9 @@
 #ifndef	SKILLRECORD_H
 #define	SKILLRECORD_H
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
 #include "SkillBag.h"

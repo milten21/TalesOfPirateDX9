@@ -2,6 +2,8 @@
 #include "MapUtil.h"
 #include "TerrainData.h"
 #include "ObjectData.h"
+
+#include <cstdio>
 using namespace std;
 
 // 地图工具函数, 根据文件名, 读入地图数据
@@ -56,7 +58,7 @@ BOOL MU_CreateMapPatch(const char *pszOld, const char *pszNew)
 	header.sSectionCntX = oldmap.GetSectionCntX();
 	header.sSectionCntY = oldmap.GetSectionCntY();
 	
-	fwrite(&header, sizeof SMapPatchHeader, 1, fp);
+	fwrite(&header, sizeof(SMapPatchHeader), 1, fp);
 	DWORD dwCnt = 0;
 	for(int y = 0; y < oldmap.GetSectionCntY(); y++)
 	{
@@ -96,7 +98,7 @@ BOOL MU_CreateMapPatch(const char *pszOld, const char *pszNew)
 	}
 	header.dwUpdateCnt = dwCnt;
 	fseek(fp, SEEK_SET, 0);
-	fwrite(&header, sizeof SMapPatchHeader, 1, fp);
+	fwrite(&header, sizeof(SMapPatchHeader), 1, fp);
 
 	fclose(fp);
 
@@ -104,7 +106,7 @@ BOOL MU_CreateMapPatch(const char *pszOld, const char *pszNew)
 	{
 		//LG("mappatch", "msg此两张地图完全相同, 无需生成补丁文件!\n");
 		LG("mappatch", "msg the two file is the same!\n");
-		DeleteFile(szPatchName);
+		std::remove(szPatchName);
 	}
 	else
 	{
@@ -127,7 +129,7 @@ BOOL MU_PatchMapFile(const char *pszMap, const char *pszPatch)
 	}
 
 	SMapPatchHeader header;
-	fread(&header,sizeof SMapPatchHeader, 1, fp);
+	fread(&header,sizeof(SMapPatchHeader), 1, fp);
 
 	//LG("mappatch", "msg总计需要更新区域[%d]个\n", header.dwUpdateCnt);
 	LG("mappatch", "msg totle update [%d] area\n", header.dwUpdateCnt);

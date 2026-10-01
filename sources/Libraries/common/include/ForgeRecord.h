@@ -5,7 +5,9 @@
 #ifndef _FORGERECORD_H_
 #define _FORGERECORD_H_
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
 

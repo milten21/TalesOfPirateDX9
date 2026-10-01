@@ -2,6 +2,8 @@
 #include "SectionData.h"
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <filesystem>
+#include <system_error>
 
 CSectionDataMgr::CSectionDataMgr()
 :_bEdit(FALSE),
@@ -87,7 +89,8 @@ BOOL CSectionDataMgr::CreateFromFile(const char *pszMapName, BOOL bEdit)
 	FILE *fp = NULL;
 	if(bEdit)
 	{
-		_chmod(pszMapName, _S_IWRITE );
+		std::error_code permissionsError;
+		std::filesystem::permissions(pszMapName, std::filesystem::perms::owner_write, std::filesystem::perm_options::add, permissionsError);
         fp = fopen(pszMapName, "r+b");
 	}
 	else

@@ -3,6 +3,10 @@
 #include "ObjectData.h"
 #include "AttribData.h"
 #include "MPMapDef.h"
+
+#include <filesystem>
+#include <system_error>
+
 using namespace std;
 
 //
@@ -102,9 +106,10 @@ void CheckMapFileVersion(const char *pszMapName)
 
     string strOld = pszMapName;
     strOld+=".old";
-    CopyFile(pszMapName, strOld.c_str(), FALSE);
+    std::error_code copyError;
+    std::filesystem::copy_file(pszMapName, strOld, std::filesystem::copy_options::overwrite_existing, copyError);
     //MessageBox(NULL, "地图格式转化完成, 原地图名添加.old已备份!", strOld.c_str(), 0);
 	printf("Map format convert ok, old file backed up as %s\n", strOld.c_str());
-    CopyFile("map/temp.map", pszMapName, FALSE);
+    std::filesystem::copy_file("map/temp.map", pszMapName, std::filesystem::copy_options::overwrite_existing, copyError);
 }
 

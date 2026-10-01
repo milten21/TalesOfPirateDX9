@@ -1265,7 +1265,7 @@ bool CSQLDatabase::SQLConnect(char const* conn_instr)
 
     //////////////////// end former constructor code ////////////////// 
     _rc = ::SQLDriverConnect(_hdbc, NULL, (SQLCHAR *)conn_instr, SQL_NTS,
-        (SQLCHAR *)conn_outstr, SQL_NTS, &outstr_len, SQL_DRIVER_NOPROMPT);
+        (SQLCHAR *)conn_outstr, sizeof conn_outstr, &outstr_len, SQL_DRIVER_NOPROMPT);
     
     _isOpen = ( _rc == SQL_SUCCESS || _rc == SQL_SUCCESS_WITH_INFO );
     return _isOpen;

@@ -97,7 +97,6 @@ T* Singleton<T>::Instance()
     #define MSGFLOAT(flo)	{ char szNum[6]; sprintf(szNum , "%f" , flo); } 
 #endif
 
-void	  CreateConsole(int width, int height);
 void	  Log(LPCSTR szFormat , ...);
 void	  Error(LPCSTR szFormat , ...);
 void	  StartTimeRecord();
@@ -205,7 +204,9 @@ inline DWORD GetMixValue(DWORD dw1, DWORD dw2, float fProgress)
 
 void   ProcessDirectory(const char *pszDir, std::list<std::string>* pFileList, int nOperateFlag);
 
+#ifdef _WIN32
 std::string GetMacString();
+#endif
 
 class   MPTimer
 {

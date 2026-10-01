@@ -5,7 +5,9 @@
 #ifndef _NPCRECORD_H_
 #define _NPCRECORD_H_
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
 

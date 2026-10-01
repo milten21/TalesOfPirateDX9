@@ -1,9 +1,11 @@
 #include "util2.h"
 #include <time.h>
 #include <list>
-#include "Iphlpapi.h"
+#ifdef _WIN32
+#include <Iphlpapi.h>
 
 #pragma comment(lib, "Iphlpapi.lib")
+#endif
 
 #ifdef _DEBUG
 #ifdef _GAMECORE
@@ -115,9 +117,9 @@ void Error(LPCSTR szFormat , ...)
 	
     fflush( g_fpLog2 );
 
+#ifdef WIN32
 	OutputDebugString(g_szLog);
 
-#ifdef WIN32
     #ifndef _CONSOLE
         if(__hStdOut)
 	    {
@@ -157,16 +159,6 @@ DWORD EndTimeRecord()
 
 	return 0;
 }
-
-void CreateConsole(int width, int height)
-{
-	AllocConsole();
-    SetConsoleTitle("Debug Window");
-    __hStdOut = GetStdHandle(STD_OUTPUT_HANDLE); // ->standard output HANDLE
-    COORD co = {width , height};
-    SetConsoleScreenBufferSize(__hStdOut, co); // set buf size
-}
-
 
 void Util_TrimString(std::string &str)
 {
@@ -483,6 +475,7 @@ const char* Util_CurTime2String(int nFlag)
     return g_szTime;
 }
 
+#ifdef _WIN32
 std::string GetMacString()
 {
 	std::string strRet="";
@@ -509,6 +502,7 @@ std::string GetMacString()
 	}
 	return strRet;
 }
+#endif
 
 void ProcessDirectory(const char *pszDir, std::list<std::string>* pFileList, int nOperateFlag)
 {

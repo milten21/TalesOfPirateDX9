@@ -1,17 +1,13 @@
-#define _CRTDBG_MAP_ALLOC
 #include "stdafx.h"
 #include <stdlib.h>
-#include <crtdbg.h>
 
 #include "MyThread.h"
 
+#include <system_error>
 
-MyThread::MyThread()
+
+MyThread::MyThread() : m_bExitFlag(false), m_bExitThrd(true), m_nExitCode(0)
 {
-	m_hThread = NULL;
-	m_dwThreadId = 0;
-	m_bExitFlag = false;
-	m_bExitThrd = true;
 }
 
 MyThread::~MyThread()
@@ -22,15 +18,19 @@ MyThread::~MyThread()
 
 bool MyThread::Launch()
 {
-	m_hThread = CreateThread(NULL, 0, MyThread::ThreadProc, this, CREATE_SUSPENDED, &m_dwThreadId);
-	if (m_hThread == NULL) return false;
+	if (m_Thread.joinable()) return false;
 
-	// 置信号量状态
 	m_bExitFlag = false;
 	m_bExitThrd = false;
-
-	// 启动线程
-	ResumeThread(m_hThread);
+	try
+	{
+		m_Thread = std::thread([this] { m_nExitCode = Run(); });
+	}
+	catch (const std::system_error&)
+	{
+		m_bExitThrd = true;
+		return false;
+	}
 	return true;
 }
 
@@ -45,17 +45,11 @@ int MyThread::WaitForExit(int ms)
 		Sleep(1000);
 	}
 
-	// 得到线程退出码
-	Sleep(5);
-	DWORD dwThreadExitCode = 0;
-	GetExitCodeThread(m_hThread, &dwThreadExitCode);
-	return (int)dwThreadExitCode;
-}
-
-DWORD WINAPI MyThread::ThreadProc(LPVOID lpParameter)
-{
-	MyThread* This = (MyThread *)lpParameter;
-	return (DWORD)This->Run();
+	if (m_Thread.joinable())
+	{
+		m_Thread.join();
+	}
+	return m_nExitCode;
 }
 
 int MyThread::Run()

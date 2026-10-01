@@ -8,7 +8,6 @@ using namespace std;
 #pragma warning(disable : 4018 4267)
 
 #define INL inline
-#define NKD __declspec(naked)
 
 
 // base64 encode and decode
@@ -206,233 +205,29 @@ unsigned char const* sha1(unsigned char const* msg,unsigned int len, unsigned ch
 
     return md;}
 
-#if 0
-bool NKD encrypt_B(char* src, unsigned int src_len, char* key,
-                   unsigned int key_len, bool en /* = true */)
-    { // 'B' algorithm, src_len < 64K, key_len < 256
-    __asm {
-        push ebp
-        push eax
-        push ebx
-        push ecx
-        push edx
-        push esi
-        push edi
+inline unsigned char rotate_count(unsigned char bits)
+    {return static_cast<unsigned char>((bits & 0x1F) % 8);}
 
-        mov eax, [esp + 36] ;src_len
-        mov edx, [esp + 44] ;key_len
-        div dl
-        mov dx, ax
-        mov eax, [esp + 44] ;key_len
-        mul dl
-        push edx
-        xor ecx, ecx
-        mov cx, ax
-        mov ebx, [esp + 36] ;src
-        xor esi, esi
-        mov edx, [esp + 44] ;key
-        xor edi, edi
-        mov eax, [esp + 52] ;en
-        cmp eax, 0
-        jz DECRYPT
-
-EN_LOOP1:
-        mov ah, byte ptr [ebx + esi]
-        mov al, byte ptr [edx + edi]
-        xor ah, al
-        mov ebp, eax
-        xor ah, ah
-        push edx
-        mov edx, [esp + 52] ;key_len
-        div dl
-        pop edx
-        push ecx
-        mov cl, ah
-        inc cl
-        mov eax, ebp
-        rol ah, cl
-        mov byte ptr [ebx + esi], ah
-        pop ecx
-        inc esi
-        inc edi
-        push edx
-        mov edx, [esp + 52] ;key_len
-        mov eax, edi
-        div dl
-        mov dl, ah
-        xor eax, eax
-        mov al, dl
-        pop edx
-        mov edi, eax
-        loop EN_LOOP1
-
-        pop ecx
-        mov al, ch
-        xor ecx, ecx
-        mov cl, al
-        xor edi, edi
-EN_LOOP2:
-        mov ah, byte ptr [ebx + esi]
-        mov al, byte ptr [edx + edi]
-        xor ah, al
-        mov ebp, eax
-        xor ah, ah
-        push edx
-        mov edx, [esp + 48] ;key_len
-        div dl
-        pop edx
-        push ecx
-        mov cl, ah
-        inc cl
-        mov eax, ebp
-        rol ah, cl
-        mov byte ptr [ebx + esi], ah
-        pop ecx
-        inc esi
-        inc edi
-        loop EN_LOOP2
-        jmp EXIT
-
-DECRYPT:
-DE_LOOP1:
-        mov al, byte ptr [edx + edi]
-        xor ah, ah
-        push edx
-        mov edx, [esp + 52] ;key_len
-        div dl
-        pop edx
-        push ecx
-        mov cl, ah
-        inc cl
-        mov ah, byte ptr [ebx + esi]
-        ror ah, cl
-        mov al, byte ptr [edx + edi]
-        xor ah, al
-        mov byte ptr [ebx + esi], ah
-        pop ecx
-        inc esi
-        inc edi
-        push edx
-        mov edx, [esp + 52] ;key_len
-        mov eax, edi
-        div dl
-        mov dl, ah
-        xor eax, eax
-        mov al, dl
-        pop edx
-        mov edi, eax
-        loop DE_LOOP1
-
-        pop ecx
-        mov al, ch
-        xor ecx, ecx
-        mov cl, al
-        xor edi, edi
-
-DE_LOOP2:
-        mov al, byte ptr [edx + edi]
-        xor ah, ah
-        push edx
-        mov edx, [esp + 48] ;key_len
-        div dl
-        pop edx
-        push ecx
-        mov cl, ah
-        inc cl
-        mov ah, byte ptr [ebx + esi]
-        ror ah, cl
-        mov al, byte ptr [edx + edi]
-        xor ah, al
-        mov byte ptr [ebx + esi], ah
-        pop ecx
-        inc esi
-        inc edi
-        loop DE_LOOP2
-
-EXIT:
-        pop edi
-        pop esi
-        pop edx
-        pop ecx
-        pop ebx
-        pop eax
-        pop ebp
-        mov eax, 1
-        ret}}
-#endif
-
-bool INL NKD rol_byte_off(unsigned char* pb, unsigned int offset, unsigned char bits)
+inline bool rol_byte_off(unsigned char* pb, unsigned int offset, unsigned char bits)
     {
-    __asm {
-        push ebx
-        push ecx
-        push esi
-        mov ecx, [esp + 24] ;bits
-        cmp cl, 8
-        jl L1
-        xor eax, eax
-        jmp EXIT
+    if (static_cast<signed char>(bits) >= 8) return false;
+    unsigned char const count = rotate_count(bits);
+    unsigned char const value = pb[offset];
+    pb[offset] = static_cast<unsigned char>((value << count) | (value >> ((8 - count) % 8)));
+    return true;}
 
-L1:
-        mov ebx, [esp + 16] ;pb
-        mov esi, [esp + 20] ;offset
-        mov al, byte ptr [ebx + esi] ;*(pb + offset)
-        rol al, cl
-        mov byte ptr [ebx + esi], al
-        mov eax, 1
-
-EXIT:
-        pop esi
-        pop ecx
-        pop ebx
-        ret
-        }}
-
-bool INL NKD ror_byte_off(unsigned char* pb, unsigned int offset, unsigned char bits)
+inline bool ror_byte_off(unsigned char* pb, unsigned int offset, unsigned char bits)
     {
-    __asm {
-        push ebx
-        push ecx
-        push esi
-        mov ecx, [esp + 24] ;bits
-        cmp cl, 8
-        jl L1
-        xor eax, eax
-        jmp EXIT
+    if (static_cast<signed char>(bits) >= 8) return false;
+    unsigned char const count = rotate_count(bits);
+    unsigned char const value = pb[offset];
+    pb[offset] = static_cast<unsigned char>((value >> count) | (value << ((8 - count) % 8)));
+    return true;}
 
-L1:
-        mov ebx, [esp + 16] ;pb
-        mov esi, [esp + 20] ;offset
-        mov al, byte ptr [ebx + esi] ;*(pb + offset)
-        ror al, cl
-        mov byte ptr [ebx + esi], al
-        mov eax, 1
-
-EXIT:
-        pop esi
-        pop ecx
-        pop ebx
-        ret
-        }}
-
-bool INL NKD xor_byte_off(unsigned char* pb, unsigned int offset, unsigned char mask)
-    { // xor a byte from a pb and a offset
-    __asm {
-        push ebx
-        push ecx
-        push esi
-        mov ebx, [esp + 16] ;pb
-        mov esi, [esp + 20] ;offset
-        mov al, byte ptr [ebx + esi] ;*(pb + offset)
-        mov ecx, [esp + 24] ;mask
-        xor al, cl
-        mov byte ptr [ebx + esi], al
-        pop esi
-        pop ecx
-        pop ebx
-        mov eax, 1
-        ret
-        }}
+inline bool xor_byte_off(unsigned char* pb, unsigned int offset, unsigned char mask)
+    {
+    pb[offset] ^= mask;
+    return true;}
 
 
 #if 1

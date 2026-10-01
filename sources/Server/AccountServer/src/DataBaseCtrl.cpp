@@ -1,12 +1,10 @@
-#define _CRTDBG_MAP_ALLOC
 #include "stdafx.h"
 #include <stdlib.h>
-#include <crtdbg.h>
 
-#include "commrpc.h"
+#include "CommRPC.h"
 #include "util.h"
-#include "databasectrl.h"
-#include "inifile.h"
+#include "DataBaseCtrl.h"
+#include "IniFile.h"
 #include "GlobalVariable.h"
 #include "AccountServer2.h"
 #include "AccountSql.h"
@@ -288,7 +286,7 @@ bool CDataBaseCtrl::UserLoginMap(std::string strUserName, std::string strPasspor
 	//LG("AccountServer", "CDataBaseCtrl::UserLoginMap: UserName=[%s] login map\n", strUserName.c_str());
 
 	CDataBaseCtrl::sPlayerData sData;
-	sData.ctLoginTime = CTime::GetCurrentTime();
+	sData.ctLoginTime = std::time(nullptr);
 	m_mapUsers[strUserName.c_str()] = sData;
 	return true;
 }
@@ -313,11 +311,9 @@ bool CDataBaseCtrl::UserLogoutMap(std::string strUserName)
 
 	m_mapUsers.erase(strUserName.c_str());
 	
-	CTimeSpan ctSpan=CTime::GetCurrentTime() - sData.ctLoginTime;
-	if (ctSpan > CTimeSpan(5) && ctSpan < CTimeSpan(30, 0, 0, 0))	//记录有效时间5秒到30天
+	const std::time_t ctSpan = std::time(nullptr) - sData.ctLoginTime;
+	if (ctSpan > 5 && ctSpan < 30 * 24 * 60 * 60)	//记录有效时间5秒到30天
 	{
-		char buf[1024];
-		__int64 i64Span = ctSpan.GetTotalSeconds();
 		return true;
 	}
 

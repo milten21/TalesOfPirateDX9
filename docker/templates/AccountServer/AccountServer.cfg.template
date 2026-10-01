@@ -1,0 +1,22 @@
+[net]
+listen_port = ${ACCOUNT_PORT}
+listen_ip = ${ACCOUNT_LISTEN_IP}
+
+[db]
+dbserver	= ${DB_HOST}:${DB_PORT}
+db			= ${ACCOUNT_DB_NAME}
+userid		= ${ACCOUNT_DB_USER}
+passwd		= ${ACCOUNT_DB_PASSWORD}
+client_encoding		= WIN1252
+
+
+[tom]
+enable_tom =0
+
+[gs]
+GroupServerAndor  =GroupServerAndor
+GroupServerAndor1 =GroupServerAndor1
+GroupServerAndor2 =GroupServerAndor2
+GroupServerAndor5 =GroupServerAndor5
+GroupServerAndor6 =GroupServerAndor6
+enable_ping =1

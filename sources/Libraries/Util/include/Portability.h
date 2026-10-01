@@ -33,6 +33,7 @@ using SHORT = short;
 using USHORT = unsigned short;
 using UINT = unsigned int;
 using LONG = std::int32_t;
+using LONG32 = std::int32_t;
 using ULONG = std::uint32_t;
 using LONG64 = std::int64_t;
 using ULONGLONG = std::uint64_t;
@@ -54,6 +55,7 @@ using LPCSTR = const char*;
 using LPBYTE = BYTE*;
 using LPDWORD = DWORD*;
 using TCHAR = char;
+using _TCHAR = char;
 using errno_t = int;
 
 #define __int64 long long

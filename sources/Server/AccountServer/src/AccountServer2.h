@@ -1,15 +1,16 @@
 #pragma once
 #include "time.h"
-#include "commrpc.h"
-#include "threadpool.h"
-#include "packetqueue.h"
-#include "tlsindex.h"
+#include "CommRPC.h"
+#include "ThreadPool.h"
+#include "PacketQueue.h"
+#include "TLSIndex.h"
 #include "util.h"
 
 #include "MyThread.h"
 
-#include <string>
+#include <atomic>
 #include <mutex>
+#include <string>
 
 using namespace dbc;
 
@@ -50,7 +51,7 @@ protected:
     virtual void OnDisconnect(DataSocket* datasock, int reason);
 
 private:
-	static volatile long m_nMembersCount;
+	static std::atomic<long> m_nMembersCount;
 
     // GroupServer ��ش������̺�����
     void Gs_Init();
@@ -103,7 +104,7 @@ public:
     void UnLock();
 
 private:
-    CRITICAL_SECTION    m_cs;
+    std::recursive_mutex m_cs;
     TmpNameList         m_list;
 };
 

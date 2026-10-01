@@ -3,9 +3,11 @@
 // main.cpp : Defines the entry point for the console application.
 //
 
-#define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
+#ifdef _WIN32
+#define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
+#endif
 
 #include "stdafx.h"
 #include "AccountServer2.h"
@@ -15,7 +17,7 @@
 #include <string>
 #include "GlobalVariable.h"
 
-#include "inifile.h"
+#include "IniFile.h"
 
 ThreadPool* comm = NULL;
 ThreadPool* proc = NULL;
@@ -31,7 +33,7 @@ constexpr auto QueueWait = std::chrono::milliseconds(200);
 constexpr auto StatusInterval = std::chrono::seconds(60);
 }
 
-void __cdecl Ctrlc_Dispatch(int sig)
+void Ctrlc_Dispatch(int sig)
 {
 	g_MainQueue.RequestClose();
 	signal(sig, Ctrlc_Dispatch);
@@ -104,11 +106,15 @@ void RunMainQueue()
 	}
 }
 
+#ifdef _WIN32
 HANDLE hConsole = NULL;
+#endif
 
 int main(int argc, char* argv[])
 {
+#ifdef _WIN32
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	C_TITLE("AccountServer.exe")
 	C_PRINT("Loading AccountServer.cfg...\n");
@@ -117,7 +123,9 @@ int main(int argc, char* argv[])
 
 	T_B
 
-	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );		//Add by Arcol (2005-12-2)
+#ifdef _WIN32
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+#endif
 
 	signal(SIGINT, Ctrlc_Dispatch);
 	signal(SIGTERM, Ctrlc_Dispatch);

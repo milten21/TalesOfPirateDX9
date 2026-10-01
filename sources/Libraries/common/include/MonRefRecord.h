@@ -8,10 +8,12 @@
 #ifndef	MONSTERREFRESH_H
 #define	MONSTERREFRESH_H
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
-#include "point.h"
+#include "Point.h"
 using	namespace	GAME;
 
 const char cchMonRefRecordKeyValue = (char)0xff;

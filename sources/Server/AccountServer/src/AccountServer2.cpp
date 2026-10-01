@@ -1,14 +1,13 @@
-#define _CRTDBG_MAP_ALLOC
 #include "stdafx.h"
 
 #include <cstdlib>
-#include <crtdbg.h>
 #include <string_view>
 
 #include "AccountServer2.h"
 #include "AccountSql.h"
-#include "gamecommon.h"
-#include "inifile.h"
+#include "NetCommand.h"
+#include "NetRetCode.h"
+#include "IniFile.h"
 #include "util.h"
 #include "GlobalVariable.h"
 
@@ -24,7 +23,7 @@ LoginTmpList    tmpLogin;       //   µÇÂ½ÁÙÊ±ÁÐ±í
 uLong	NetBuffer[]		= {100, 10, 0};
 bool	g_logautobak	= true;
 
-volatile long AccountServer2::m_nMembersCount=0;
+std::atomic<long> AccountServer2::m_nMembersCount{0};
 
 int isValidMacAddress(const char* mac);
 
@@ -63,17 +62,17 @@ AccountServer2::~AccountServer2()
 
 void AccountServer2::IncreaseMembers(long nCount)
 {
-	InterlockedExchangeAdd(&m_nMembersCount, nCount);
+	m_nMembersCount += nCount;
 }
 
 void AccountServer2::DecreaseMembers(long nCount)
 {
-	InterlockedExchangeAdd(&m_nMembersCount, -nCount);
+	m_nMembersCount -= nCount;
 }
 
 void AccountServer2::ResetMembersCount()
 {
-	InterlockedExchange(&m_nMembersCount, 0);
+	m_nMembersCount = 0;
 }
 
 long AccountServer2::GetMembersCount()
@@ -523,12 +522,10 @@ WPacket AuthQueue::ServeCall(DataSocket* datasock, RPacket& rpkt)
 //  LoginTmpList
 LoginTmpList::LoginTmpList()
 {
-    InitializeCriticalSection(&m_cs);
 }
 
 LoginTmpList::~LoginTmpList()
 {
-    DeleteCriticalSection(&m_cs);
 }
 
 bool LoginTmpList::Insert(const std::string& name)
@@ -587,12 +584,12 @@ bool LoginTmpList::Query(const std::string& name, bool lock/* = true*/)
 
 void LoginTmpList::Lock()
 {
-    EnterCriticalSection(&m_cs);
+    m_cs.lock();
 }
 
 void LoginTmpList::UnLock()
 {
-    LeaveCriticalSection(&m_cs);
+    m_cs.unlock();
 }
 
 
@@ -748,7 +745,7 @@ void AuthThread::QueryAccount(RPacket rpkt)
 	m_AcctInfo.pDat = rpkt.ReadString(); // ¼ÓÃÜÐÅÏ¢
 	m_AcctInfo.strMAC = rpkt.ReadString();
 	in_addr ipAddr;
-	ipAddr.S_un.S_addr = rpkt.ReadLong();
+	ipAddr.s_addr = rpkt.ReadLong();
 	m_AcctInfo.strIP = inet_ntoa(ipAddr);
 
 	if (isValidMacAddress(m_AcctInfo.strMAC.c_str()))

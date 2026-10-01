@@ -110,3 +110,20 @@ codepage = windows-1252
 The bundle sources are the `<locale>.txt` files next to each `.loc` file, in `server/<Name>/`. The CMake target `LocaleBundles` (part of the normal build) regenerates the committed `<locale>.res` files from them with vcpkg's `genrb`. To change a message, edit the `.txt` file and rebuild. `ctest -C Debug` in `build/windows-x86` checks that every server's messages, including formatted ones, still produce the recorded bytes in `tests/ICUHelper/golden/`.
 
 To recover a text source from a compiled bundle, build the `DumpBundle` target and run `DumpBundle <directory-with-trailing-slash> <locale> <output.txt>`. Do not use `derb` for this: it drops trailing characters from strings that contain escaped characters.
+
+### Running the servers on Linux with Docker
+
+The servers also build with GCC for 32-bit Linux. The `Dockerfile` builds them on `i386/debian:bookworm-slim`, runs the tests, and produces a runtime image with the binaries, their locale bundles, unixODBC with the PostgreSQL driver, and nothing else: no game data and no credentials. So far AccountServer is the only server that runs on Linux.
+
+```
+cp .env.example .env              # then set real passwords in .env
+docker compose up --build         # PostgreSQL, seeded from postgresql/, plus AccountServer
+docker attach tales-account-1     # the server console; detach with Ctrl+P Ctrl+Q
+docker compose stop               # graceful stop, the servers exit with code 0
+```
+
+Each server's configuration is rendered at container start from `docker/templates/<Name>/*.template` with values from the environment, so listen addresses, ports, database host and credentials come from `compose.yaml` and `.env`. The file logs of each server go to a named volume mounted at `/var/log/tales/<Name>`. On a crash a Linux server writes a stack trace to the console and to `log/crash.log`, then dumps core where the host's `core_pattern` says (on Docker Desktop for Windows that is `%LOCALAPPDATA%\Temp\wsl-crashes`).
+
+`docker/smoke-test.sh` builds the image, brings up a throwaway stack, checks that AccountServer is healthy, connected to the database and listening, then stops it and checks it exited with code 0.
+
+For incremental Linux builds, `docker compose run --rm dev` configures, builds and tests the bind-mounted source tree in the toolchain image, keeping the build tree in the `linux-build` volume.
