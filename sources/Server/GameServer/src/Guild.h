@@ -3,7 +3,7 @@
 #define GUILD_H
 //#include "stdafx.h"
 
-#include "character.h"
+#include "Character.h"
 
 class Guild
 {

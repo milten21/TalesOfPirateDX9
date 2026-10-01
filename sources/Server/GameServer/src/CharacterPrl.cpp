@@ -10,7 +10,7 @@
 #include "LevelRecord.h"
 #include "CharForge.h"
 #include "HairRecord.h"
-#include "gamedb.h"
+#include "GameDB.h"
 
 #include "Birthplace.h"
 #include "CharBoat.h"

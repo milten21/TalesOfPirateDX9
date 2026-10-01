@@ -1,7 +1,9 @@
 #ifndef XSTRING_H
 #define XSTRING_H
 
-#include "TChar.h"
+#ifdef _WIN32
+#include <tchar.h>
+#endif
 
 // 从给定字符窜(_TCHAR *in)的给定位置(long *in_from)获取字符窜，
 // 直到遇到字符窜列表(_TCHAR *end_list)中的任一字符时结束

@@ -8,6 +8,8 @@
 #include "SubMap.h"
 #include "lua_gamectrl.h"
 
+extern BOOL LoadTable(CRawDataSet *pTable, const char*);
+
 //---------------------------------------------------------
 mission::CCharBoat g_CharBoat;
 
@@ -33,7 +35,6 @@ namespace mission
 	BOOL CCharBoat::Load( const char szBoat[], const char szPart[] )
 	{T_B
 		
-		extern BOOL LoadTable(CRawDataSet *pTable, const char*);
 		m_pShipSet = new xShipSet( 1, 400 );
 		if( !LoadTable(m_pShipSet, szBoat ) )
 		{

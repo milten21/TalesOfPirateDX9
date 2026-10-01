@@ -12,8 +12,7 @@
 #define __LOCK_H__
 
 
-#define  WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <mutex>
 
 
 class Lock
@@ -25,7 +24,7 @@ public:
     virtual void unlock();
 
 protected:
-    CRITICAL_SECTION        m_cs;
+    std::recursive_mutex    m_mutex;
 };
 
 

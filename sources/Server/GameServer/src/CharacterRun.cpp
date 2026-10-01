@@ -10,7 +10,7 @@
 //----------------------------------------------
 
 // 总循环入口
-void CCharacter::Run(DWORD dwCurTime)
+void CCharacter::Run(uLong dwCurTime)
 {
 	T_B
 		MPTimer	t;

@@ -3,7 +3,7 @@
 #include "GameDB.h"
 #include "util.h"
 #include "dstring.h"
-#include "parser.h"
+#include "Parser.h"
 #include "GameCommon.h"
 #include "GameApp.h"
 

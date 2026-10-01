@@ -2201,7 +2201,7 @@ namespace mission
 		OrderInfo.dwTickCount = GetTickCount();
 		
 		m_OrderList.push_back(OrderInfo);
-		LG("Store_order", "PushOrder:[OrderID:%I64i][ChaID:%ld][ChaName:%s][ComID:%ld][Num:%ld][RecDBID:%ld][TickCount:%ld]\n", OrderInfo.lOrderID, OrderInfo.ChaID, OrderInfo.ChaName, OrderInfo.lComID, OrderInfo.lNum, OrderInfo.lRecDBID, OrderInfo.dwTickCount);
+		LG("Store_order", "PushOrder:[OrderID:%lld][ChaID:%ld][ChaName:%s][ComID:%ld][Num:%ld][RecDBID:%ld][TickCount:%ld]\n", OrderInfo.lOrderID, OrderInfo.ChaID, OrderInfo.ChaName, OrderInfo.lComID, OrderInfo.lNum, OrderInfo.lRecDBID, OrderInfo.dwTickCount);
 		return true;
 	T_E}
 
@@ -2224,7 +2224,7 @@ namespace mission
 				OrderInfo.dwTickCount = (*vec_it).dwTickCount;
 				m_OrderList.erase(vec_it);
 				bFound = TRUE;
-				LG("Store_order", "PopOrder:[OrderID:%I64i][ChaID:%ld][ChaName:%s][ComID:%ld][Num:%ld][RecDBID:%ld][TickCount:%ld]\n", OrderInfo.lOrderID, OrderInfo.ChaID, OrderInfo.ChaName, OrderInfo.lComID, OrderInfo.lNum, OrderInfo.lRecDBID, OrderInfo.dwTickCount);
+				LG("Store_order", "PopOrder:[OrderID:%lld][ChaID:%ld][ChaName:%s][ComID:%ld][Num:%ld][RecDBID:%ld][TickCount:%ld]\n", OrderInfo.lOrderID, OrderInfo.ChaID, OrderInfo.ChaName, OrderInfo.lComID, OrderInfo.lNum, OrderInfo.lRecDBID, OrderInfo.dwTickCount);
 				break;
 			}
 		}
@@ -2421,8 +2421,8 @@ namespace mission
 		{
 			SAFE_DELETE(pChaInfo);
 			FreeNetMessage(pNm);
-			//LG("Store_msg", "订单号[ID:%I64i]重复!\n", pNm->msgHead.msgOrder);
-			LG("Store_msg", "order form number [ID:%I64i] repeat!\n", pNm->msgHead.msgOrder);
+			//LG("Store_msg", "订单号[ID:%lld]重复!\n", pNm->msgHead.msgOrder);
+			LG("Store_msg", "order form number [ID:%lld] repeat!\n", pNm->msgHead.msgOrder);
 
 			WPACKET WtPk	= GETWPACKET();
 			WRITE_CMD(WtPk, CMD_MC_STORE_BUY_ASR);
@@ -2499,7 +2499,6 @@ namespace mission
 
     BOOL CStoreSystem::Accept( long long lOrderID, RoleInfo *ChaInfo )
     {T_B
-		extern CGameApp *g_pGameApp;
 
 		BOOL bSucc = false;
 		SOrderData OrderInfo = PopOrder(lOrderID);
@@ -2647,15 +2646,14 @@ namespace mission
 		}
 		else
 		{
-			//LG("Store_msg", "Accept:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "Accept:not find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "Accept:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "Accept:not find order form[ID:%lld]!\n", lOrderID);
 		}
         return true;
     T_E}
 
     BOOL CStoreSystem::Cancel( long long lOrderID )
     {T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 		
@@ -2686,8 +2684,8 @@ namespace mission
 		}
 		else
 		{
-			//LG("Store_msg", "Cancel:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "Cancel:not find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "Cancel:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "Cancel:not find order form[ID:%lld]!\n", lOrderID);
 		}
         return true;
     T_E}
@@ -2712,7 +2710,7 @@ namespace mission
 				if(dwCurTime - (*vec_it).dwTickCount > dwOrderTime)
 				{
 					DWORD dwChaID = (*vec_it).ChaID;
-					LG("Store_order", "timeout:[OrderID:%I64i][ChaID:%ld][ChaName:%s][ComID:%ld][Num:%ld][RecDBID:%ld][TickCount:%ld]\n", (*vec_it).lOrderID, (*vec_it).ChaID, (*vec_it).ChaName, (*vec_it).lComID, (*vec_it).lNum, (*vec_it).lRecDBID, (*vec_it).dwTickCount);
+					LG("Store_order", "timeout:[OrderID:%lld][ChaID:%ld][ChaName:%s][ComID:%ld][Num:%ld][RecDBID:%ld][TickCount:%ld]\n", (*vec_it).lOrderID, (*vec_it).ChaID, (*vec_it).ChaName, (*vec_it).lComID, (*vec_it).lNum, (*vec_it).lRecDBID, (*vec_it).dwTickCount);
 					m_OrderList.erase(vec_it);
 
 					CCharacter *pCha = NULL;
@@ -2857,8 +2855,8 @@ namespace mission
 		{
 			SAFE_DELETE(pChaInfo);
 			FreeNetMessage(pNm);
-			//LG("Store_msg", "订单号[ID:%I64i]重复!\n", pNm->msgHead.msgOrder);
-			LG("Store_msg", "order form number[ID:%I64i]repeat!\n", pNm->msgHead.msgOrder);
+			//LG("Store_msg", "订单号[ID:%lld]重复!\n", pNm->msgHead.msgOrder);
+			LG("Store_msg", "order form number[ID:%lld]repeat!\n", pNm->msgHead.msgOrder);
 
 			WPACKET WtPk	= GETWPACKET();
 			WRITE_CMD(WtPk, CMD_MC_STORE_VIP);
@@ -2892,14 +2890,13 @@ namespace mission
 
 	BOOL CStoreSystem::AcceptVIP(long long lOrderID, RoleInfo *ChaInfo, DWORD dwVipParam)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "AcceptVIP:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "AcceptVIP: cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "AcceptVIP:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "AcceptVIP: cannot find order form[ID:%lld]!\n", lOrderID);
 			return false;
 		}
 
@@ -2935,7 +2932,6 @@ namespace mission
 
 	BOOL CStoreSystem::CancelVIP(long long lOrderID)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 		if(OrderInfo.lOrderID != 0)
@@ -2962,8 +2958,8 @@ namespace mission
 		}
 		else
 		{
-			//LG("Store_msg", "CancelVIP:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "CancelVIP:cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "CancelVIP:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "CancelVIP:cannot find order form[ID:%lld]!\n", lOrderID);
 		}
 		return true;
 	T_E}
@@ -2986,8 +2982,8 @@ namespace mission
 		{
 			SAFE_DELETE(pChaInfo);
 			FreeNetMessage(pNm);
-			//LG("Store_msg", "订单号[ID:%I64i]重复!\n", pNm->msgHead.msgOrder);
-			LG("Store_msg", "order form number [ID:%I64i] repeat!\n", pNm->msgHead.msgOrder);
+			//LG("Store_msg", "订单号[ID:%lld]重复!\n", pNm->msgHead.msgOrder);
+			LG("Store_msg", "order form number [ID:%lld] repeat!\n", pNm->msgHead.msgOrder);
 
 			WPACKET WtPk	= GETWPACKET();
 			WRITE_CMD(WtPk, CMD_MC_STORE_CHANGE_ASR);
@@ -3021,14 +3017,13 @@ namespace mission
 
 	BOOL CStoreSystem::AcceptChange(long long lOrderID, RoleInfo *ChaInfo)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "AcceptChange:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "AcceptChange:cannot find order form [ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "AcceptChange:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "AcceptChange:cannot find order form [ID:%lld]!\n", lOrderID);
 			return false;
 		}
 
@@ -3060,7 +3055,6 @@ namespace mission
 
 	BOOL CStoreSystem::CancelChange(long long lOrderID)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 		if(OrderInfo.lOrderID != 0)
@@ -3086,7 +3080,7 @@ namespace mission
 		}
 		else
 		{
-			LG("Store_msg", "CancelChange:cannot find order form[ID:%I64i]!\n", lOrderID);
+			LG("Store_msg", "CancelChange:cannot find order form[ID:%lld]!\n", lOrderID);
 		}
 		return true;
 	T_E}
@@ -3106,8 +3100,8 @@ namespace mission
 		{
 			SAFE_DELETE(pChaInfo);
 			FreeNetMessage(pNm);
-			//LG("Store_msg", "订单号[ID:%I64i]重复!\n", pNm->msgHead.msgOrder);
-			LG("Store_msg", "order form number[ID:%I64i]repeat!\n", pNm->msgHead.msgOrder);
+			//LG("Store_msg", "订单号[ID:%lld]重复!\n", pNm->msgHead.msgOrder);
+			LG("Store_msg", "order form number[ID:%lld]repeat!\n", pNm->msgHead.msgOrder);
 			//pCha->SystemNotice("商城操作失败, 订单号重复!");
 			pCha->SystemNotice(RES_STRING(GM_CHARTRADE_CPP_00083));
 
@@ -3147,14 +3141,13 @@ namespace mission
 
 	BOOL CStoreSystem::AcceptRoleInfo(long long lOrderID, RoleInfo *ChaInfo)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "AcceptRoleInfo:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "AcceptRoleInfo:cannot find order form [ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "AcceptRoleInfo:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "AcceptRoleInfo:cannot find order form [ID:%lld]!\n", lOrderID);
 			return false;
 		}
 
@@ -3185,13 +3178,12 @@ namespace mission
 
 	BOOL CStoreSystem::CancelRoleInfo(long long lOrderID)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "CancelRoleInfo:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "CancelRoleInfo:cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "CancelRoleInfo:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "CancelRoleInfo:cannot find order form[ID:%lld]!\n", lOrderID);
 			return false;
 		}
 
@@ -3236,8 +3228,8 @@ namespace mission
 		{
 			SAFE_DELETE(pChaInfo);
 			FreeNetMessage(pNm);
-			//LG("Store_msg", "订单号[ID:%I64i]重复!\n", pNm->msgHead.msgOrder);
-			LG("Store_msg", "order form number[ID:%I64i]repeat!\n", pNm->msgHead.msgOrder);
+			//LG("Store_msg", "订单号[ID:%lld]重复!\n", pNm->msgHead.msgOrder);
+			LG("Store_msg", "order form number[ID:%lld]repeat!\n", pNm->msgHead.msgOrder);
 
 			WPACKET WtPk	= GETWPACKET();
 			WRITE_CMD(WtPk, CMD_MC_STORE_QUERY);
@@ -3271,13 +3263,12 @@ namespace mission
 
 	BOOL CStoreSystem::AcceptRecord(long long lOrderID, HistoryInfo *pRecord)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "AcceptRecord:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "AcceptRecord:cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "AcceptRecord:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "AcceptRecord:cannot find order form[ID:%lld]!\n", lOrderID);
 			return false;
 		}
 
@@ -3313,14 +3304,13 @@ namespace mission
 
 	BOOL CStoreSystem::CancelRecord(long long lOrderID)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "CancelRecord:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "CancelRecord:cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "CancelRecord:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "CancelRecord:cannot find order form[ID:%lld]!\n", lOrderID);
 			return false;
 		}
 		
@@ -3361,8 +3351,8 @@ namespace mission
 		{
 			SAFE_DELETE(pMi);
 			FreeNetMessage(pNm);
-			//LG("Store_msg", "订单号[ID:%I64i]重复!\n", pNm->msgHead.msgOrder);
-			LG("Store_msg", "order form number[ID:%I64i]repeat!\n", pNm->msgHead.msgOrder);
+			//LG("Store_msg", "订单号[ID:%lld]重复!\n", pNm->msgHead.msgOrder);
+			LG("Store_msg", "order form number[ID:%lld]repeat!\n", pNm->msgHead.msgOrder);
 			//pCha->SystemNotice("邮件操作失败, 订单号重复!");
 			pCha->SystemNotice(RES_STRING(GM_CHARTRADE_CPP_00089));
 
@@ -3388,14 +3378,13 @@ namespace mission
 
 	BOOL CStoreSystem::AcceptGMSend(long long lOrderID, long lMailID)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "AcceptGMSend:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "AcceptGMSend:cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "AcceptGMSend:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "AcceptGMSend:cannot find order form[ID:%lld]!\n", lOrderID);
 			return false;
 		}
 
@@ -3419,14 +3408,13 @@ namespace mission
 
 	BOOL CStoreSystem::CancelGMSend(long long lOrderID)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "CancelGMSend:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "CancelGMSend:cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "CancelGMSend:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "CancelGMSend:cannot find order form[ID:%lld]!\n", lOrderID);
 			return false;
 		}
 
@@ -3466,8 +3454,8 @@ namespace mission
 		{
 			SAFE_DELETE(pChaInfo);
 			FreeNetMessage(pNm);
-			//LG("Store_msg", "订单号[ID:%I64i]重复!\n", pNm->msgHead.msgOrder);
-			LG("Store_msg", "order form number [ID:%I64i]repeat!\n", pNm->msgHead.msgOrder);
+			//LG("Store_msg", "订单号[ID:%lld]重复!\n", pNm->msgHead.msgOrder);
+			LG("Store_msg", "order form number [ID:%lld]repeat!\n", pNm->msgHead.msgOrder);
 			//pCha->SystemNotice("邮件操作失败, 订单号重复!");
 			pCha->SystemNotice(RES_STRING(GM_CHARTRADE_CPP_00089));
 
@@ -3493,14 +3481,13 @@ namespace mission
 
 	BOOL CStoreSystem::AcceptGMRecv(long long lOrderID, MailInfo *pMi)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "AcceptGMRecv:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "AcceptGMRecv:cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "AcceptGMRecv:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "AcceptGMRecv:cannot find order form[ID:%lld]!\n", lOrderID);
 			return false;
 		}
 
@@ -3530,14 +3517,13 @@ namespace mission
 
 	BOOL CStoreSystem::CancelGMRecv(long long lOrderID)
 	{T_B
-		extern CGameApp *g_pGameApp;
 
 		SOrderData OrderInfo = PopOrder(lOrderID);
 
 		if(OrderInfo.lOrderID == 0)
 		{
-			//LG("Store_msg", "CancelGMRecv:找不到订单[ID:%I64i]!\n", lOrderID);
-			LG("Store_msg", "CancelGMRecv:cannot find order form[ID:%I64i]!\n", lOrderID);
+			//LG("Store_msg", "CancelGMRecv:找不到订单[ID:%lld]!\n", lOrderID);
+			LG("Store_msg", "CancelGMRecv:cannot find order form[ID:%lld]!\n", lOrderID);
 			return false;
 		}
 

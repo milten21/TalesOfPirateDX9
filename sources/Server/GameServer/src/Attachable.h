@@ -11,6 +11,8 @@
 #include "Entity.h"
 
 class	CPlayer;
+class	CConjureMgr;
+class	CPassengerMgr;
 
 /*
 *	设置实体的所有者等信息

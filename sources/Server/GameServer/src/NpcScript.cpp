@@ -2,7 +2,7 @@
 //---------------------------------------------------------
 #include "stdafx.h"
 #include "NpcScript.h"
-#include "Npc.h"
+#include "NPC.h"
 #include "WorldEudemon.h"
 #include "SubMap.h"
 #include "GameAppNet.h"
@@ -1109,7 +1109,7 @@ BOOL lua_ChaPlayEffect(lua_State* L)
 	return 1;
 }
 
-inline int RegisterNpcScript()
+BOOL RegisterNpcScript()
 {T_B
 	lua_State* L = g_pLuaState;
 

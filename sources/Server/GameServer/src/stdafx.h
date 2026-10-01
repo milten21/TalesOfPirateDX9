@@ -8,14 +8,16 @@
 
 #include <span>
 #include <iostream>
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include <math.h>
 #include "stdio.h"
 #include "stdlib.h"
 
-#include "dbccommon.h"
+#include "DBCCommon.h"
 #include "util.h"
-#include "tryutil.h"
+#include "TryUtil.h"
 
 #include "i18n.h"
 

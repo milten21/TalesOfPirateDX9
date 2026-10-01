@@ -131,7 +131,7 @@ const char* g_GetAreaName( int nValue )
     }
 }
 
-inline bool g_IsRealItemID(int nItemID)
+bool g_IsRealItemID(int nItemID)
 {
 	if (nItemID > 0 && nItemID != enumEQUIP_BOTH_HAND && nItemID != enumEQUIP_TOTEM)
 		return true;

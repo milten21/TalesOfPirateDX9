@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+#include "stdafx.h"
 #include "GameApp.h"
 #include "GameAppNet.h"
 #include "SubMap.h"
@@ -113,8 +113,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]succeed to obtain account information!\n", lOrderID);
+					//LG("Store_data", "[%lld]????????????!\n", lOrderID);
+					LG("Store_data", "[%lld]succeed to obtain account information!\n", lOrderID);
 
 					RoleInfo* ChaInfo = (RoleInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.AcceptRoleInfo(lOrderID, ChaInfo);
@@ -122,8 +122,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]obtain account information failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]????????????!\n", lOrderID);
+					LG("Store_data", "[%lld]obtain account information failed!\n", lOrderID);
 
 					g_StoreSystem.CancelRoleInfo(lOrderID);
 				}
@@ -202,8 +202,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS) // ??????
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]?????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]succeed to buy item!\n", lOrderID);
+					//LG("Store_data", "[%lld]?????????!\n", lOrderID);
+					LG("Store_data", "[%lld]succeed to buy item!\n", lOrderID);
 
 					RoleInfo* ChaInfo = (RoleInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.Accept(lOrderID, ChaInfo);
@@ -211,8 +211,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED) // ???????
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]??????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]buy item failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]??????????!\n", lOrderID);
+					LG("Store_data", "[%lld]buy item failed!\n", lOrderID);
 
 					g_StoreSystem.Cancel(lOrderID);
 				}
@@ -229,8 +229,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????VIP???!\n", lOrderID);
-					LG("Store_data", "[%I64i] buy VIP succeed !\n", lOrderID);
+					//LG("Store_data", "[%lld]????VIP???!\n", lOrderID);
+					LG("Store_data", "[%lld] buy VIP succeed !\n", lOrderID);
 
 					RoleInfo* ChaInfo = (RoleInfo*)((char*)msg->msgBody + sizeof(long long));
 
@@ -239,8 +239,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????VIP???!\n", lOrderID);
-					LG("Store_data", "[%I64i] buy VIP failed !\n", lOrderID);
+					//LG("Store_data", "[%lld]????VIP???!\n", lOrderID);
+					LG("Store_data", "[%lld] buy VIP failed !\n", lOrderID);
 
 					g_StoreSystem.CancelVIP(lOrderID);
 				}
@@ -257,8 +257,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]?????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]change token succeed !\n", lOrderID);
+					//LG("Store_data", "[%lld]?????????!\n", lOrderID);
+					LG("Store_data", "[%lld]change token succeed !\n", lOrderID);
 
 					RoleInfo* ChaInfo = (RoleInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.AcceptChange(lOrderID, ChaInfo);
@@ -266,8 +266,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]??????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]change token failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]??????????!\n", lOrderID);
+					LG("Store_data", "[%lld]change token failed!\n", lOrderID);
 
 					g_StoreSystem.CancelChange(lOrderID);
 				}
@@ -284,8 +284,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]succeed to query trade note!\n", lOrderID);
+					//LG("Store_data", "[%lld]????????????!\n", lOrderID);
+					LG("Store_data", "[%lld]succeed to query trade note!\n", lOrderID);
 
 					HistoryInfo* pRecord = (HistoryInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.AcceptRecord(lOrderID, pRecord);
@@ -293,8 +293,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]query trade note failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]????????????!\n", lOrderID);
+					LG("Store_data", "[%lld]query trade note failed!\n", lOrderID);
 
 					g_StoreSystem.CancelRecord(lOrderID);
 				}
@@ -311,8 +311,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????GM??????!\n", lOrderID);
-					LG("Store_data", "[%I64i]send GM mail success!\n", lOrderID);
+					//LG("Store_data", "[%lld]????GM??????!\n", lOrderID);
+					LG("Store_data", "[%lld]send GM mail success!\n", lOrderID);
 
 					long lMailID = msg->msgHead.msgExtend;
 					g_StoreSystem.AcceptGMSend(lOrderID, lMailID);
@@ -320,8 +320,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????GM??????!\n", lOrderID);
-					LG("Store_data", "[%I64i]send GM mail failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]????GM??????!\n", lOrderID);
+					LG("Store_data", "[%lld]send GM mail failed!\n", lOrderID);
 
 					g_StoreSystem.CancelGMSend(lOrderID);
 				}
@@ -338,8 +338,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????GM??????!\n", lOrderID);
-					LG("Store_data", "[%I64i]receive GM mail success!\n", lOrderID);
+					//LG("Store_data", "[%lld]????GM??????!\n", lOrderID);
+					LG("Store_data", "[%lld]receive GM mail success!\n", lOrderID);
 
 					MailInfo* pMi = (MailInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.AcceptGMRecv(lOrderID, pMi);
@@ -347,8 +347,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????GM??????!\n", lOrderID);
-					LG("Store_data", "[%I64i]reciveGMmail failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]????GM??????!\n", lOrderID);
+					LG("Store_data", "[%lld]reciveGMmail failed!\n", lOrderID);
 
 					g_StoreSystem.CancelGMRecv(lOrderID);
 				}

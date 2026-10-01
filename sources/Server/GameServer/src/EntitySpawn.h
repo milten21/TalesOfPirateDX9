@@ -13,7 +13,7 @@
 #include "SwitchMapRecord.h"
 #include "EventRecord.h"
 #include <NpcRecord.h>
-#include "Npc.h"
+#include "NPC.h"
 
 class SubMap;
 

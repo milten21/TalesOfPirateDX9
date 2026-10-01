@@ -25,14 +25,17 @@ RUN apt-get update \
 COPY --from=build /opt/tales /opt/tales
 COPY docker/entrypoint.sh /opt/tales/entrypoint.sh
 COPY docker/listening.sh /opt/tales/listening.sh
+COPY docker/connected.sh /opt/tales/connected.sh
 COPY docker/templates /opt/tales/templates
-RUN chmod 0755 /opt/tales/entrypoint.sh /opt/tales/listening.sh \
+RUN chmod 0755 /opt/tales/entrypoint.sh /opt/tales/listening.sh /opt/tales/connected.sh \
     && for dir in /opt/tales/*Server; do \
         logs="/var/log/tales/$(basename "$dir")"; \
         mkdir -p "$logs/log" "$logs/logfile"; \
         ln -s "$logs/log" "$dir/log"; \
         ln -s "$logs/logfile" "$dir/logfile"; \
     done \
+    && mkdir -p /var/log/tales/GameServer/LOG \
+    && ln -s /var/log/tales/GameServer/LOG /opt/tales/GameServer/LOG \
     && chown -R tales:tales /opt/tales /var/log/tales
 USER tales
 STOPSIGNAL SIGINT

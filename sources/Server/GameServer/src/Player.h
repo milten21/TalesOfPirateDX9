@@ -251,27 +251,21 @@ public:
 	dbc::Char	m_szGuildMotto[defGUILD_MOTTO_LEN];
 	dbc::Char	m_szStallName[ROLE_MAXNUM_STALL_NUM];
 	bool		m_bIsGuildLeader;	//0-非会长;1-会长
-	struct
-	{
-		BitMaskStatus m_GuildState;	//客户交互期间公会相关状态位屏蔽码字段,值参照定义:enum EGuildState
+	BitMaskStatus m_GuildState;	//客户交互期间公会相关状态位屏蔽码字段,值参照定义:enum EGuildState
 
-		uLong m_GuildStatus;	//公会状态
-		uLong m_lGuildID;		//玩家申请公会成员期间要求玩家确认是否覆盖先前的申请时先前选择的公会ID.
-		uLong m_lTempGuildID;	//玩家申请公会临时记录信息
-		dbc::Char m_szTempGuildName[defGUILD_NAME_LEN];	//玩家申请公会成员期间要求玩家确认是否覆盖先前的申请时先前选择的公会名字.
-	};
+	uLong m_GuildStatus;	//公会状态
+	uLong m_lGuildID;		//玩家申请公会成员期间要求玩家确认是否覆盖先前的申请时先前选择的公会ID.
+	uLong m_lTempGuildID;	//玩家申请公会临时记录信息
+	dbc::Char m_szTempGuildName[defGUILD_NAME_LEN];	//玩家申请公会成员期间要求玩家确认是否覆盖先前的申请时先前选择的公会名字.
 protected:
 	int         _nTeamMemberCnt;
 	DWORD		_dwTeamLeaderID;
 
 private:
-	struct // 对应实体数组的索引（由CEntityAlloc类来配置）
-	{
 
-		dbc::Long	m_lID;
-		dbc::Long	m_lHandle;
-		dbc::Long	m_lHoldID;
-	};
+	dbc::Long	m_lID;
+	dbc::Long	m_lHandle;
+	dbc::Long	m_lHoldID;
 	bool	bReceiveRequests{ true };
 	bool	bIsValid;
 	char	m_szPassword[ROLE_MAXSIZE_PASSWORD2+1];
@@ -296,32 +290,23 @@ private:
 	dbc::uLong	m_ulLoginCha[2];	// 登陆角色（类型，数据库ID.0 原始角色，1 船）
 
 	// 临时数据
-	struct
-	{
-		USHORT		m_sBerthID;	// 出海船只出海数据存储
-		USHORT		m_sxPos;
-		USHORT		m_syPos;
-		USHORT		m_sDir;			
-	};
+	USHORT		m_sBerthID;	// 出海船只出海数据存储
+	USHORT		m_sxPos;
+	USHORT		m_syPos;
+	USHORT		m_sDir;			
 
 	// 大地图
-	struct
-	{
-		long		m_lLightSize;
-		CMaskData	m_CMapMask;
-		char		m_szMaskMapName[MAX_MAPNAME_LENGTH];
-		char		m_chMapMaskChange;
-	};
+	long		m_lLightSize;
+	CMaskData	m_CMapMask;
+	char		m_szMaskMapName[MAX_MAPNAME_LENGTH];
+	char		m_chMapMaskChange;
 
 	// 银行
-	struct
-	{
-		CCharacter	*m_pCBankNpc;
-		char		m_chBankNum;
-		long		m_lBankDBID[MAX_BANK_NUM];
-		CKitbag		m_CBank[MAX_BANK_NUM];
-		bool		m_bBankChange[MAX_BANK_NUM];
-	};
+	CCharacter	*m_pCBankNpc;
+	char		m_chBankNum;
+	long		m_lBankDBID[MAX_BANK_NUM];
+	CKitbag		m_CBank[MAX_BANK_NUM];
+	bool		m_bBankChange[MAX_BANK_NUM];
 
 	// 建造的船只
 	CCharacter*		m_pMakingBoat;
@@ -330,51 +315,33 @@ private:
 	mission::CStallData* m_pStallData;
 
 	// 队伍挑战
-	struct
-	{
-		dbc::Char	m_chChallengeType;		// 挑战类型
-		dbc::Long	m_lChallengeParam[2 + MAX_TEAM_MEMBER * 2 * 2];	// 挑战的对象信息
-		CTimer		m_timerChallenge;		// 挑战邀请计时器
-	};
+	dbc::Char	m_chChallengeType;		// 挑战类型
+	dbc::Long	m_lChallengeParam[2 + MAX_TEAM_MEMBER * 2 * 2];	// 挑战的对象信息
+	CTimer		m_timerChallenge;		// 挑战邀请计时器
 
 	// 道具修理
-	struct
-	{
-		bool		m_bInRepair;
-		dbc::Char	m_chRepairPosType;
-		dbc::Char	m_chRepairPosID;
-		SItemGrid	m_SRepairItem;
-		SItemGrid*	m_pSRepairItem;
-		CCharacter*	m_pCRepairman;
-	};
+	bool		m_bInRepair;
+	dbc::Char	m_chRepairPosType;
+	dbc::Char	m_chRepairPosID;
+	SItemGrid	m_SRepairItem;
+	SItemGrid*	m_pSRepairItem;
+	CCharacter*	m_pCRepairman;
 
 	// 道具精炼/合成
-	struct
-	{
-		bool		m_bInForge;
-		dbc::Char	m_chForgeType;
-		SForgeItem	m_SForgeItem;
-		CCharacter*	m_pCForgeman;
-	};
+	bool		m_bInForge;
+	dbc::Char	m_chForgeType;
+	SForgeItem	m_SForgeItem;
+	CCharacter*	m_pCForgeman;
 
 	//彩票设置
-	struct
-	{
-		CCharacter*	m_pCLotteryman;
-	};
+	CCharacter*	m_pCLotteryman;
 	//竞技场设置Add by sunny.sun20080716
-	struct
-	{
-		CCharacter * m_pCAmphitheaterman;
-	};
+	CCharacter * m_pCAmphitheaterman;
 
-	struct
-	{
-		bool			m_bInLiftSkill;
-		dbc::Long		m_lLifeSkillType;
-		SLifeSkillItem	m_pSLifeSkillItem;
-		std::string			m_strLifeSkillinfo;
-	};
+	bool			m_bInLiftSkill;
+	dbc::Long		m_lLifeSkillType;
+	SLifeSkillItem	m_pSLifeSkillItem;
+	std::string			m_strLifeSkillinfo;
 
 	dbc::Short		m_sGetTeamPlyCount;
 

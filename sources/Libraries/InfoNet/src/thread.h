@@ -1,4 +1,3 @@
-
 /* * * * * * * * * * * * * * * * * * * *
 
     线程封装
@@ -11,8 +10,9 @@
 #if !defined __THREAD_H__
 #define __THREAD_H__
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 
 class Thread
 {
@@ -20,18 +20,19 @@ public:
     Thread();
     virtual ~Thread();
 
-    virtual bool Begin(int flag = 0);  //  开始线程
-    virtual bool Resume();  //  恢复线程
-    virtual bool Suspend(); //  挂起线程
-    virtual bool Terminate();   //  强制终止线程
-    virtual bool SetPriority(int priority);     //  设置优先级
-    virtual int GetPriority();  //  获取优先级
-    virtual int Wait(int time = INFINITE);  //  等待时间
+    virtual bool Begin();  //  开始线程
+    virtual bool Terminate();
     virtual unsigned Run() = 0;
 
-public:
-    HANDLE          m_thread;
-    unsigned        m_threadid;
+protected:
+    bool Stopping();
+    bool Pause(unsigned milliseconds);
+
+private:
+    std::thread             m_thread;
+    std::mutex              m_mutex;
+    std::condition_variable m_wake;
+    bool                    m_stop;
 };
 
 

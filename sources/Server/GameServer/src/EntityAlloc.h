@@ -10,7 +10,7 @@
 #ifndef ENTITYALLOC_H
 #define ENTITYALLOC_H
 
-#include "Npc.h"
+#include "NPC.h"
 #include "Item.h"
 #include "EventEntity.h"
 #include "Player.h"

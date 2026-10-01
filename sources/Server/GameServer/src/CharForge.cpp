@@ -6,6 +6,8 @@
 #include "GameAppNet.h"
 #include "Player.h"
 
+extern BOOL LoadTable(CRawDataSet *pTable, const char*);
+
 //---------------------------------------------------------
 
 mission::CForgeSystem g_ForgeSystem;
@@ -32,7 +34,6 @@ namespace mission
 	{
 		Clear();
 		
-		extern BOOL LoadTable(CRawDataSet *pTable, const char*);
 		m_pRecordSet = new CForgeRecordSet( 1, ROLE_MAXNUM_FORGE );
 		return LoadTable(m_pRecordSet, szName);
 	}

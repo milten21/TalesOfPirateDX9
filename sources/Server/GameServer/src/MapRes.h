@@ -8,12 +8,14 @@
 #ifndef MAPRES_H
 #define MAPRES_H
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include <stdio.h>
 #include "TerrainAttrib.h"
-#include "dbccommon.h"
+#include "DBCCommon.h"
 #include "dstring.h"
-#include "point.h"
+#include "Point.h"
 #include "util2.h"
 #include "Timer.h"
 #include "Config.h"
@@ -182,66 +184,49 @@ public:
 	mission::CNpc*		FindNpc( const char szName[] );
 
 	// 视野单元
-	struct
-	{
-		dbc::cShort		m_csEyeshotCellWidth;
-		dbc::cShort		m_csEyeshotCellHeight;
-		dbc::Short		m_sEyeshotCellLin;
-		dbc::Short		m_sEyeshotCellCol;
-	};
+	dbc::cShort		m_csEyeshotCellWidth;
+	dbc::cShort		m_csEyeshotCellHeight;
+	dbc::Short		m_sEyeshotCellLin;
+	dbc::Short		m_sEyeshotCellCol;
 	// 状态单元
-	struct
-	{
-		dbc::cShort		m_csStateCellWidth;
-		dbc::cShort		m_csStateCellHeight;
-		dbc::Short		m_sStateCellLin;
-		dbc::Short		m_sStateCellCol;
-	};
+	dbc::cShort		m_csStateCellWidth;
+	dbc::cShort		m_csStateCellHeight;
+	dbc::Short		m_sStateCellLin;
+	dbc::Short		m_sStateCellCol;
 
 	CAreaData			m_CTerrain;
-	struct
-	{
-		CBlockData		m_CBlock;
-		dbc::cShort		m_csBlockUnitWidth;
-		dbc::cShort		m_csBlockUnitHeight;
-	};
+	CBlockData		m_CBlock;
+	dbc::cShort		m_csBlockUnitWidth;
+	dbc::cShort		m_csBlockUnitHeight;
 
-	struct
-	{
-		dbc::dstring	m_strMapName;
-		Rect			m_SRange;
-		CMapRes			*m_pCLeftMap, *m_pCTopMap, *m_pCRightMap, *m_pCBelowMap;
-	};
+	dbc::dstring	m_strMapName;
+	Rect			m_SRange;
+	CMapRes			*m_pCLeftMap, *m_pCTopMap, *m_pCRightMap, *m_pCBelowMap;
 
 	CChaSpawn				*m_pCMonsterSpawn;
 	CMapSwitchEntitySpawn	*m_pCMapSwitchEntitySpawn;
 	CNpcSpawn*				m_pNpcSpawn;
 
 	// 入口信息
-	struct
-	{
-		dbc::Char	m_szEntryMapName[MAX_MAPNAME_LENGTH];
-		Point		m_SEntryPos;
-		dbc::Char	m_chEntryState;		// 入口状态：EMapEntryState
+	dbc::Char	m_szEntryMapName[MAX_MAPNAME_LENGTH];
+	Point		m_SEntryPos;
+	dbc::Char	m_chEntryState;		// 入口状态：EMapEntryState
 
-		time_t		m_tEntryFirstTm;	// 入口第一次执行的时间
-		time_t		m_tEntryTmDis;		// 入口第一次执行后，以后各次执行的时间间隔
-		time_t		m_tEntryOutTmDis;	// 入口每次执行后，到消失的时间间隔
-		time_t		m_tMapClsTmDis;		// 入口每次执行后，到地图关闭的时间间隔
+	time_t		m_tEntryFirstTm;	// 入口第一次执行的时间
+	time_t		m_tEntryTmDis;		// 入口第一次执行后，以后各次执行的时间间隔
+	time_t		m_tEntryOutTmDis;	// 入口每次执行后，到消失的时间间隔
+	time_t		m_tMapClsTmDis;		// 入口每次执行后，到地图关闭的时间间隔
 
-		FILE		*m_pfEntryFile;			// 入口文件
-	};
+	FILE		*m_pfEntryFile;			// 入口文件
 
-	struct{
-		char m_szObstacleFile[_MAX_PATH + _MAX_FNAME];
-		char m_szSectionFile[_MAX_PATH + _MAX_FNAME];
-		char m_szMonsterSpawnFile[_MAX_PATH + _MAX_FNAME];
-		char m_szNpcSpawnFile[_MAX_PATH + _MAX_FNAME];
-		char m_szMapSwitchFile[_MAX_PATH + _MAX_FNAME];
-		char m_szMonsterCofFile[_MAX_PATH + _MAX_FNAME];
-		char m_szCtrlFile[_MAX_PATH + _MAX_FNAME];
-		char m_szEntryFile[_MAX_PATH + _MAX_FNAME];
-	};
+	char m_szObstacleFile[_MAX_PATH + _MAX_FNAME];
+	char m_szSectionFile[_MAX_PATH + _MAX_FNAME];
+	char m_szMonsterSpawnFile[_MAX_PATH + _MAX_FNAME];
+	char m_szNpcSpawnFile[_MAX_PATH + _MAX_FNAME];
+	char m_szMapSwitchFile[_MAX_PATH + _MAX_FNAME];
+	char m_szMonsterCofFile[_MAX_PATH + _MAX_FNAME];
+	char m_szCtrlFile[_MAX_PATH + _MAX_FNAME];
+	char m_szEntryFile[_MAX_PATH + _MAX_FNAME];
 
 protected:
 
@@ -251,14 +236,11 @@ private:
 
 	BYTE	m_byMapID; // 地图ID
 
-	struct
-	{
-		bool	m_bCanSavePos;	// 角色在该地图上是否可以保存位置
-		bool	m_bCanPK;		// 角色在该地图上是否可以PK
-		bool	m_bCanTeam;		// 角色在该地图上是否可以操作队伍
-		bool	m_bCanStall;	// 角色在该地图是否可以摆摊
-		bool	m_bCanGuild;
-	};
+	bool	m_bCanSavePos;	// 角色在该地图上是否可以保存位置
+	bool	m_bCanPK;		// 角色在该地图上是否可以PK
+	bool	m_bCanTeam;		// 角色在该地图上是否可以操作队伍
+	bool	m_bCanStall;	// 角色在该地图是否可以摆摊
+	bool	m_bCanGuild;
 
 	CTimer	m_timeMgr;
 	CTimer	m_timeRun;
@@ -268,12 +250,9 @@ private:
 	dbc::Short	m_sCopyPlyNum;
 	dbc::Char	m_chType;
 
-	struct
-	{
-		dbc::Char	m_chCopyStartType;		// 副本开始类型 EMapCopyStartType
-		dbc::Char	m_chCopyStartCdtType;	// 副本开始条件类型
-		dbc::Long	m_lCopyStartCdtVal;	// 副本开始条件值
-	};
+	dbc::Char	m_chCopyStartType;		// 副本开始类型 EMapCopyStartType
+	dbc::Char	m_chCopyStartCdtType;	// 副本开始条件类型
+	dbc::Long	m_lCopyStartCdtVal;	// 副本开始条件值
 
 	bool	m_bRepatriateDie;	// 是否要遣返死亡角色
 

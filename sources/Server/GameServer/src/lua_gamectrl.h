@@ -1,5 +1,5 @@
 #include "Character.h"
-#include "script.h"
+#include "Script.h"
 #include "GameApp.h"
 #include "HarmRec.h"
 #include "GameAppNet.h"
@@ -2043,6 +2043,7 @@ inline int lua_SetMonsterAttr(lua_State* L)
 		//g_CParser.DoString("ALLExAttrSet", enumSCRIPT_RETURN_NONE, 0, enumSCRIPT_PARAM_LIGHTUSERDATA, 1, pCha, DOSTRING_PARAM_END);
 		pCha->SynAttr(enumATTRSYN_TASK);
 	}
+	return 0;
 }
 
 

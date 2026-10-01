@@ -25,12 +25,9 @@ public:
 	struct STarget
 	{
 		// 此结构及含义同SFightInit的对应结构
-		struct
-		{
-			dbc::Char		chType;	// 0，无目标。1，目标是实体。2，目标是坐标
-			dbc::Long		lInfo1;
-			dbc::Long		lInfo2;
-		};
+		dbc::Char		chType;	// 0，无目标。1，目标是实体。2，目标是坐标
+		dbc::Long		lInfo1;
+		dbc::Long		lInfo2;
 		//
 		dbc::uLong	ulDist;		// 对目标的距离（厘米）
 	};

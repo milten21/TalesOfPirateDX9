@@ -11,9 +11,7 @@
 #include <ostream>
 // #include <fstream>
 #include <stdio.h>
-#include "io.h"
 #include <string>
-#include "windows.h"
 #include "TryUtil.h"
 
 CAttachable::CAttachable()

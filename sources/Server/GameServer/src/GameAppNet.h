@@ -8,7 +8,7 @@
 
 #include "NetRetCode.h"
 #include "PreAlloc.h"
-#include "point.h"
+#include "Point.h"
 #include "gtplayer.h"
 
 #define NETMSG_INVALID_MSG      0

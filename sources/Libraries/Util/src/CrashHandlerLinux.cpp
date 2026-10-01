@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <cstring>
 #include <ctime>
+#include <memory>
+#include <mutex>
 #include <string>
 
 #include <execinfo.h>
@@ -21,11 +23,14 @@ namespace
 
 constexpr int FatalSignals[] = { SIGSEGV, SIGBUS, SIGFPE, SIGILL, SIGABRT };
 constexpr int MaxFrames = 128;
+constexpr size_t AlternateStackSize = 64 * 1024;
 
 char g_crashLogPath[4096];
 std::atomic<pid_t> g_handlingThread{0};
+std::mutex g_translatorsMutex;
+int g_translators = 0;
 sigjmp_buf g_unwindFault;
-alignas(16) char g_alternateStack[64 * 1024];
+thread_local std::unique_ptr<char[]> t_alternateStack;
 
 const char* SignalName(int sig)
 {
@@ -163,10 +168,16 @@ SEHTranslator::SEHTranslator()
 
 	EnableCoreDumps();
 
+	if (!t_alternateStack)
+		t_alternateStack = std::make_unique<char[]>(AlternateStackSize);
 	stack_t stack{};
-	stack.ss_sp = g_alternateStack;
-	stack.ss_size = sizeof g_alternateStack;
+	stack.ss_sp = t_alternateStack.get();
+	stack.ss_size = AlternateStackSize;
 	sigaltstack(&stack, nullptr);
+
+	const std::lock_guard<std::mutex> lock(g_translatorsMutex);
+	if (g_translators++ != 0)
+		return;
 
 	struct sigaction action{};
 	action.sa_sigaction = OnFatalSignal;
@@ -178,6 +189,14 @@ SEHTranslator::SEHTranslator()
 
 SEHTranslator::~SEHTranslator()
 {
+	stack_t stack{};
+	stack.ss_flags = SS_DISABLE;
+	sigaltstack(&stack, nullptr);
+
+	const std::lock_guard<std::mutex> lock(g_translatorsMutex);
+	if (--g_translators != 0)
+		return;
+
 	for (const int sig : FatalSignals)
 		signal(sig, SIG_DFL);
 }

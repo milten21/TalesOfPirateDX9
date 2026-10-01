@@ -8,6 +8,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <thread>
 
 #include <signal.h>
 #include <sys/resource.h>
@@ -24,6 +25,27 @@
 {
 	volatile std::uintptr_t target = 0x244;
 	reinterpret_cast<void (*)()>(target)();
+}
+
+[[gnu::noinline]] void TalesCrashTestFaultAfterThreadTranslator()
+{
+	std::thread([] { SEHTranslator translator; }).join();
+	TalesCrashTestFault();
+}
+
+[[gnu::noinline]] int TalesCrashTestRecurse(int depth)
+{
+	volatile char frame[1024];
+	frame[0] = static_cast<char>(depth);
+	return TalesCrashTestRecurse(depth + 1) + frame[0];
+}
+
+[[gnu::noinline]] void TalesCrashTestOverflowOnThread()
+{
+	std::thread([] {
+		SEHTranslator translator;
+		TalesCrashTestRecurse(0);
+	}).join();
 }
 
 namespace
@@ -135,6 +157,14 @@ int main()
 	const CrashResult garbageJump = Crash(TalesCrashTestJumpToGarbage);
 	CheckFatalSegv(garbageJump, "jump to garbage");
 	Check(Contains(garbageJump.stderrText, "fault address 0x244"), "jump to garbage", "stderr names the fault address");
+
+	const CrashResult afterThread = Crash(TalesCrashTestFaultAfterThreadTranslator);
+	CheckFatalSegv(afterThread, "fault after a thread's translator ended");
+	Check(Contains(afterThread.stderrText, "TalesCrashTestFault"), "fault after a thread's translator ended", "stderr holds a stack trace through the faulting function");
+
+	const CrashResult overflow = Crash(TalesCrashTestOverflowOnThread);
+	CheckFatalSegv(overflow, "stack overflow on a thread with its own translator");
+	Check(Contains(overflow.stderrText, "TalesCrashTestRecurse"), "stack overflow on a thread with its own translator", "stderr holds a stack trace through the recursing function");
 
 	if (failures != 0)
 		return 1;

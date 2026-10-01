@@ -821,11 +821,8 @@ public:
 	//SSkillGrid			*m_pSkillGridTemp;
 
 	// ������Ϣ
-	struct
-	{
-		Char	m_chSelRelive;	// ѡ�񸴻ʽ
-		Char	m_chReliveLv;	// ����ȼ����������0�����ʾ���ڷ���Ȼ����Ŀ���.
-	};
+	Char	m_chSelRelive;	// ѡ�񸴻ʽ
+	Char	m_chReliveLv;	// ����ȼ����������0�����ʾ���ڷ���Ȼ����Ŀ���.
 
 	CActionCache		m_CActCache;
 
@@ -843,10 +840,7 @@ private:
     bool m_expFlag;
     DWORD m_ExpScale;       //  �����ԣ��������
 
-	struct
-	{
-		short m_sPoseState; // 0��վ.1���п�
-	};
+	short m_sPoseState; // 0��վ.1���п�
 	//add by jilinlee 2007/4/20
 	struct SReadBook
 	{
@@ -885,28 +879,19 @@ private:
 	CTimer				m_timerMission;			// ����ϵͳ���Ӽ�ʱ�������¼�
     CTimer				m_timerSkillState;		// ����״̬��ʱ��
 	CTimer              m_timerTeam;			// Team��Ϣ��ʱ֪ͨ�ͻ���
-	struct
-	{
-		CTimer			m_timerPing;
-		dbc::uLong		m_ulPingDataLen;
-	};
+	CTimer			m_timerPing;
+	dbc::uLong		m_ulPingDataLen;
 
 	std::bitset<8>		m_chPKCtrl;
 
 	dbc::Long			m_lSideID;				// �ֱ߱��
 	bool				m_bInOutMapQueue;
-	struct // Ping
-	{
-		DWORD	m_dwPing;
-		DWORD	m_dwPingRec[defPING_RECORD_NUM];
-		DWORD	m_dwPingSendTick;
-	};
+	DWORD	m_dwPing;
+	DWORD	m_dwPingRec[defPING_RECORD_NUM];
+	DWORD	m_dwPingSendTick;
 
-	struct // for test net state
-	{
-		dbc::uLong	m_ulNetSendLen;
-		CTimer		m_timerNetSendFreq;
-	};
+	dbc::uLong	m_ulNetSendLen;
+	CTimer		m_timerNetSendFreq;
 
 	dbc::Long	m_lScriptParam[defCHA_SCRIPT_PARAM_NUM];
 

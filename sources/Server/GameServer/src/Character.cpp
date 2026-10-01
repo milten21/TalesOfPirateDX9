@@ -307,7 +307,7 @@ bool CCharacter::IsGMCha2()
 	return false;
 }
 
-inline bool CCharacter::IsPlayerFocusCha(void)
+bool CCharacter::IsPlayerFocusCha(void)
 {
 	return IsPlayerCha() && (m_pCPlayer->GetCtrlCha() == this);
 }
@@ -7389,7 +7389,7 @@ void CCharacter::CheatCheck(cChar *answer)
 	if(m_sCheatX.Xtype != 2)
 		return;
 
-	if(!m_sCheatX.Xnum.empty() && !lstrcmpi(answer, m_sCheatX.Xnum.c_str()))
+	if(!m_sCheatX.Xnum.empty() && !_stricmp(answer, m_sCheatX.Xnum.c_str()))
 	{
 		m_sCheatX.dwLastTime = GetTickCount();
 		m_sCheatX.Xerror = 0;
@@ -7862,7 +7862,7 @@ float CCharacter::GetExpRate() {
 	case 1: return ampBonus * fairyBonus * globalRate * 0.9;
 	case 2: return ampBonus * fairyBonus * globalRate * 0.85;
 	case 3: return ampBonus * fairyBonus * globalRate * 0.80;
-	case 4: return ampBonus * fairyBonus * globalRate * 0.75;
+	default: return ampBonus * fairyBonus * globalRate * 0.75;
 	}
 }
 

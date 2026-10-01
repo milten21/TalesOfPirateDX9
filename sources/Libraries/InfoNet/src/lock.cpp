@@ -4,24 +4,22 @@
 
 Lock::Lock()
 {
-    InitializeCriticalSection(&m_cs);
 }
 
 
 Lock::~Lock()
 {
-    DeleteCriticalSection(&m_cs);
 }
 
 
 void Lock::lock()
 {
-    EnterCriticalSection(&m_cs);
+    m_mutex.lock();
 }
 
 
 void Lock::unlock()
 {
-    LeaveCriticalSection(&m_cs);
+    m_mutex.unlock();
 }
 

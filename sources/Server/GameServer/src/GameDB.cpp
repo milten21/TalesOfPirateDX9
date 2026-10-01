@@ -198,8 +198,8 @@ bool CTableCha::ShowExpRank(CCharacter* pCha, int count)
 		}
 
 		sqlret = SQLNumResultCols(hstmt, &col_num);
-		col_num = min(col_num, MAX_COL);
-		col_num = min(col_num, _max_col);
+		col_num = std::min<SQLSMALLINT>(col_num, MAX_COL);
+		col_num = std::min<SQLSMALLINT>(col_num, _max_col);
 
 		// Bind Column
 		for (int i = 0; i < col_num; ++i)
@@ -462,7 +462,7 @@ bool CTableCha::SaveAllData(CPlayer *pPlayer, char chSaveType)
 	CCharacter *pCCtrlCha = pPlayer->GetCtrlCha();
 	if (pPlayer->GetLoginChaType() == enumLOGIN_CHA_BOAT) // �Դ�����̬��½
 	{
-		CCharacter *pCLogCha = pPlayer->GetBoat(pPlayer->GetLoginChaID());
+		CCharacter *pCLogCha = pPlayer->GetBoat((DWORD)pPlayer->GetLoginChaID());
 		if (pCLogCha != pCCtrlCha) // ��Ӧ�ó��ֵ����
 		{
 			pCCtrlCha->SetToMainCha();
@@ -1122,8 +1122,8 @@ BOOL CTableCha::IsChaOnline(DWORD atorID, BOOL &bOnline)
 		}
 
 		sqlret = SQLNumResultCols(hstmt, &col_num);
-		col_num = min(col_num, MAX_COL);
-		col_num = min(col_num, _max_col);
+		col_num = std::min<SQLSMALLINT>(col_num, MAX_COL);
+		col_num = std::min<SQLSMALLINT>(col_num, _max_col);
 
 		// Bind Column
 		for (int i = 0; i < col_num; ++ i)
@@ -1202,8 +1202,8 @@ Long CTableCha::GetChaAddr(DWORD atorID)
 				throw 2;
 		}
 		sqlret = SQLNumResultCols(hstmt, &col_num);
-		col_num = min(col_num, MAX_COL);
-		col_num = min(col_num, _max_col);
+		col_num = std::min<SQLSMALLINT>(col_num, MAX_COL);
+		col_num = std::min<SQLSMALLINT>(col_num, _max_col);
 		for (int i = 0; i < col_num; ++ i)
 		{
 			SQLBindCol(hstmt, UWORD(i + 1), SQL_C_CHAR, _buf[i], MAX_DATALEN, &_buf_len[i]);
@@ -2555,8 +2555,8 @@ bool CTableResource::ReadKitbagTmpData(long lRecDBID, string& strData)
 		}
 
 		sqlret = SQLNumResultCols(hstmt, &col_num);
-		col_num = min(col_num, MAX_COL);
-		col_num = min(col_num, _max_col);
+		col_num = std::min<SQLSMALLINT>(col_num, MAX_COL);
+		col_num = std::min<SQLSMALLINT>(col_num, _max_col);
 
 		// Bind Column
 		for (int i = 0; i < col_num; ++ i)
@@ -4124,8 +4124,8 @@ bool CTableGuild::ListAll(CCharacter* pCha ,char disband_days)
 		}
 
 		sqlret = SQLNumResultCols(hstmt, &col_num);
-		col_num = min(col_num, MAX_COL);
-		col_num = min(col_num, _max_col);
+		col_num = std::min<SQLSMALLINT>(col_num, MAX_COL);
+		col_num = std::min<SQLSMALLINT>(col_num, _max_col);
 
 		// Bind Column
 		for (int i = 0; i < col_num; ++ i)
@@ -4559,8 +4559,8 @@ bool CTableGuild::ListTryPlayer(CCharacter* pCha, char disband_days)
 		}
 
 		sqlret = SQLNumResultCols(hstmt, &col_num);
-		col_num = min(col_num, MAX_COL);
-		col_num = min(col_num, _max_col);
+		col_num = std::min<SQLSMALLINT>(col_num, MAX_COL);
+		col_num = std::min<SQLSMALLINT>(col_num, _max_col);
 
 		// Bind Column
 		for (int i = 0; i < col_num; ++ i)

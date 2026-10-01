@@ -185,7 +185,7 @@ typedef struct _NetMessageHead_
     unsigned char msgChk[4];    //  有效网络消息标识码为 0x4A, 0x4D, 0x50, 0x53
     long msgID;                 //  消息编号
     long subID;                 //  消息子编号
-    long long msgOrder;         //  消息握手
+    alignas(8) long long msgOrder;       //  消息握手
     long msgSection;            //  小区编号
     long msgExtend;             //  扩展字段
     long msgSize;               //  消息体长度
@@ -258,9 +258,5 @@ protected:
     char        m_ip[260];
     short       m_port;
 };
-
-#ifndef __INFO_NET__
-    #pragma comment(lib, "InfoNet.lib")
-#endif
 
 #endif

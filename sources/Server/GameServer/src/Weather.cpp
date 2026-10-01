@@ -1,6 +1,6 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "Weather.h"
-#include "Submap.h"
+#include "SubMap.h"
 
 
 // 天气预报计时, 记录每一种天气上一次预报的时间

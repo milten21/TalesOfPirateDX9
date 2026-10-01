@@ -194,7 +194,7 @@ GameServerApp::GameServerApp(ThreadPool *proc,ThreadPool *comm)
     m_strGameName = g_Config.m_szName;
 
     // 初始化 GateServer 数组
-    m_gtnum = min(MAX_GATE, g_Config.m_nGateCnt);
+    m_gtnum = std::min<int>(MAX_GATE, g_Config.m_nGateCnt);
     for (int i = 0; i < m_gtnum; ++ i)
         {
         m_gtarray[i].GetIP() = g_Config.m_szGateIP[i];

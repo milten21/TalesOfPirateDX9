@@ -13,7 +13,7 @@
 
 
 #include "GameAppNet.h"
-#include "point.h"
+#include "Point.h"
 #include "RoleData.h"
 #include "Config.h"
 #include "Identity.h"
@@ -98,7 +98,7 @@ public:
 	void FlushLogList();  // GameServer关闭的时候, 保证剩下的log都写入DB
 	
 	int	GetLogLeft()				{ return _nLogLeft;		} // 还剩下的没有处理的log数量, 可以输出到监控界面
-	int	SetPerLogCnt(int nCnt)		{ _nPerLogCnt = nCnt;	} // 设置每次写入的数量, 可以动态调整
+	int	SetPerLogCnt(int nCnt)		{ _nPerLogCnt = nCnt; return _nPerLogCnt; } // 设置每次写入的数量, 可以动态调整
 	int GetPerLogCnt()				{ return _nPerLogCnt;   } // 用来监控输出
 
 protected:
@@ -270,11 +270,8 @@ public:
 	Identity			m_Ident;
 	Identity			m_ItemIdent;
 
-	struct // GameServer结束
-	{
-		unsigned long	m_ulLeftSec;
-	    CTimer			m_CTimerReset;
-	};
+	unsigned long	m_ulLeftSec;
+    CTimer			m_CTimerReset;
 
 	CEntityAlloc		*m_pCEntSpace;
 	CPlayerAlloc		*m_pCPlySpace;
@@ -322,12 +319,9 @@ private:
 	float   m_fGlobalDropRate;
 	float   m_fGlobalExpRate;
 	// 纪录不同等级不同技能的相关数值
-	struct
-	{
-		CSkillTempData	*m_pCSkillTData[defMAX_SKILL_NO + 1][defMAX_SKILL_LV + 1];
-		short			m_sSkillSetNo;
-		char			m_chSkillSetLv;
-	};
+	CSkillTempData	*m_pCSkillTData[defMAX_SKILL_NO + 1][defMAX_SKILL_LV + 1];
+	short			m_sSkillSetNo;
+	char			m_chSkillSetLv;
 
 	long	m_lSStateTraOnTime[AREA_STATE_MAXID + 1][SKILL_STATE_LEVEL + 1];	// 从地表转移到角色身上的状态的持续时间
 
@@ -768,6 +762,7 @@ extern long				g_lDeftMMaskLight;	// 大地图默认照亮范围
 extern std::string			g_strChaState[2];	// 0，存放主角色的技能状态。1，存放船的技能状态
 extern uLong			g_ulCurID;
 extern Long				g_lCurHandle;
+#ifdef _WIN32
 extern HANDLE			hConsole;
 
 #define C_PRINT(s, ...) \
@@ -784,6 +779,10 @@ extern HANDLE			hConsole;
 	strConsoleT += "]"; \
 	strConsoleT += s; \
 	SetConsoleTitle(strConsoleT.c_str());
+#else
+#define C_PRINT(s, ...) printf(s, ##__VA_ARGS__);
+#define C_TITLE(s)
+#endif
 
 #define defINVALID_CHA_ID		0
 #define defINVALID_CHA_HANDLE	-1

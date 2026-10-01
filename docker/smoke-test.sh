@@ -37,9 +37,11 @@ wait_for() {
 
 gate_port="${GATE_PUBLISHED_PORT:-1973}"
 group_name="${GROUP_NAME:-GroupServerAndor2}"
+game_log=/var/log/tales/GameServer/log
+game00_maps=$(sed -n 's/^map *= *\([^ ]*\).*/\1;/p' docker/templates/GameServer/GameServer00.cfg.template | tr -d '\r\n')
 
-"${compose[@]}" up --detach --build --wait --wait-timeout 600 account group gate || fail "postgres, account, group and gate become healthy"
-pass "postgres, account, group and gate are healthy"
+"${compose[@]}" up --detach --build --wait --wait-timeout 600 account group gate game00 || fail "postgres, account, group, gate and game00 become healthy"
+pass "postgres, account, group, gate and game00 are healthy"
 
 account_logs=$("${compose[@]}" logs --no-color account)
 grep -Eq 'Connecting database \[postgres:5432 : AccountServer\]\.\.\. success!' <<<"$account_logs" \
@@ -65,6 +67,13 @@ group_has_gate() {
 wait_for 60 group_has_gate || fail "GateServer logs in to GroupServer"
 pass "GateServer is logged in to GroupServer"
 
+game00_registered() {
+    "${compose[@]}" exec -T game00 grep -qF "success [MapName:$game00_maps]" "$game_log/GameServer00/GameLogin.log"
+}
+
+wait_for 120 game00_registered || fail "GameServer00 registers with GateServer with maps [$game00_maps]"
+pass "GameServer00 is registered with GateServer with maps [$game00_maps]"
+
 received=$(timeout 30 bash -c 'exec 3<>/dev/tcp/127.0.0.1/"$1"; head -c 2 <&3 | wc -c | tr -d " "' _ "$gate_port") || received=0
 [ "$received" = 2 ] || fail "GateServer accepts a client on published port $gate_port and sends its first packet"
 pass "GateServer accepts a client on published port $gate_port"
@@ -79,5 +88,10 @@ for container in $containers; do
     pass "$name stopped cleanly with exit code 0"
 done
 pass "the stack stopped in $((stopped - started))s"
+
+game00_container=$("${compose[@]}" ps --all --quiet game00)
+docker cp "$game00_container:$game_log/GameServer00/enter_map.log" - 2>/dev/null | tar -xO | grep -q 'End SaveAllPlayer' \
+    || fail "GameServer00 saves all players when stopped"
+pass "GameServer00 saved all players when stopped"
 
 echo "smoke test passed"

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "FindPath.h"
 
 struct NODE_SHARED   //寻路时公用的路径信息

@@ -10,9 +10,11 @@
 !sources/Libraries/Cryptopp/
 !sources/Libraries/LuaJIT/
 !sources/Libraries/Status/
+!sources/Libraries/InfoNet/
 !sources/Server/AccountServer/
 !sources/Server/GroupServer/
 !sources/Server/GateServer/
+!sources/Server/GameServer/
 !server/*/*.loc
 !server/*/*.txt
 !tests/

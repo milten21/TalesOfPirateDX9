@@ -3,7 +3,9 @@
 #ifndef SUBMAP_H
 #define SUBMAP_H
 #include "GameAppNet.h"
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include <stdio.h>
 #include "EntitySpawn.h"
 #include "SwitchMapRecord.h"
@@ -338,21 +340,18 @@ private:
 	}
 
 	// 范围内搜索
-	struct
-	{
-		bool				m_bIncludeHideEnti;							// 是否搜索隐身的实体
-		dbc::Short			m_sRangeMgrUnitNum;							// 范围内管理单元的数目
-		dbc::Long			m_lRangeMgrUnit[defRANGE_MGRUNIU_NUM][2];	// 范围内的管理单元编号列表（x,y）
-		dbc::Long			m_lRangeCentUnit[2];						// 范围中心单元;
-		dbc::Short			m_sRangeCurMgrUnit;							// 搜索过程中，当前的管理单元
-		CChaListNode*		m_pRangeCurEntiNode;						// 搜索过程中，当前的实体
-		CRangeBase			*m_pCBaseRange;
+	bool				m_bIncludeHideEnti;							// 是否搜索隐身的实体
+	dbc::Short			m_sRangeMgrUnitNum;							// 范围内管理单元的数目
+	dbc::Long			m_lRangeMgrUnit[defRANGE_MGRUNIU_NUM][2];	// 范围内的管理单元编号列表（x,y）
+	dbc::Long			m_lRangeCentUnit[2];						// 范围中心单元;
+	dbc::Short			m_sRangeCurMgrUnit;							// 搜索过程中，当前的管理单元
+	CChaListNode*		m_pRangeCurEntiNode;						// 搜索过程中，当前的实体
+	CRangeBase			*m_pCBaseRange;
 
-		CRangeStick		m_CStickRange;
-		CRangeFan		m_CFanRange;
-		CRangeSquare	m_CSquareCRange;
-		CRangeCircle	m_CCircleRange;
-	};
+	CRangeStick		m_CStickRange;
+	CRangeFan		m_CFanRange;
+	CRangeSquare	m_CSquareCRange;
+	CRangeCircle	m_CCircleRange;
 
 	dbc::Short	m_sCopyNO;
 	CTimer		m_timeScriptRun;

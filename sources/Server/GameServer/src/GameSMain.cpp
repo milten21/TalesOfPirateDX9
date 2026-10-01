@@ -8,6 +8,8 @@
 #include "GameConsole.h"
 #include "Config.h"
 #include "GameDB.h"
+#include <sstream>
+#include <thread>
 
 
 // #pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" ) // 设置入口地址 
@@ -17,26 +19,31 @@ extern void GameServer_End();
 BOOL       g_bGameEnd = FALSE;
 CGameApp*  g_pGameApp = NULL;
 std::string g_strLogName = "GameServerLog";
-HANDLE     hGameT;
+std::thread g_gameThread;
+#ifdef _WIN32
 HANDLE hConsole = NULL;
 
 void DisableCloseButton();
+#endif
 void AppExit(void);
 
 
 //#pragma init_seg(user)
-#pragma init_seg( lib )
 pi_LeakReporter pi_leakReporter("gamememleak.log");
 CResourceBundleManage g_ResourceBundleManage("GameServer.loc"); //Add by lark.li 20080304
 
 int main(int argc, char* argv[])
 {
+#ifdef _WIN32
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	C_TITLE("GameServer.exe")
 	C_PRINT("Loading %s\n", szConfigFileN);
 
+#ifdef _WIN32
 	DisableCloseButton();
+#endif
 	LG_EnableMsgBox(false);
 	EnableMsgBox(false);
 
@@ -121,9 +128,10 @@ LG("init", "game map server [%s] startup...\n", g_Config.m_szName);
 	// 创建游戏线程
 	//LG("init", "启动游戏线程...\n");
 	LG("init", "startup game thread...\n");
-	DWORD	dwThreadID;
-	hGameT = CreateThread(NULL, 0, g_GameLogicProcess, 0, 0, &dwThreadID);
-	LG("init", "Game Thread ID = %d\n", dwThreadID);
+	g_gameThread = std::thread(g_GameLogicProcess, nullptr);
+	std::ostringstream threadID;
+	threadID << g_gameThread.get_id();
+	LG("init", "Game Thread ID = %s\n", threadID.str().c_str());
 	//
 
 	//Log("重启", "GameServer重启", g_Config.m_szMapList[0], "", "", "");
@@ -137,8 +145,10 @@ void GameServer_End()
 {T_B
 	//LG("init", "开始结束游戏地图服务器\n");
 	LG("init", "start to exit game map server\n");
-	WaitForSingleObject(hGameT, INFINITE);
-	CloseHandle(hGameT);
+	if (g_gameThread.joinable())
+	{
+		g_gameThread.join();
+	}
 
 	SAFE_DELETE(g_pGameApp);
 
@@ -151,6 +161,7 @@ void GameServer_End()
 
 T_E}
 
+#ifdef _WIN32
 typedef HWND (*LPGETCONSOLEWINDOW)(void);
 void DisableCloseButton()
 {
@@ -168,6 +179,7 @@ void DisableCloseButton()
 
 	FreeLibrary(hMod);
 }
+#endif
 
 void AppExit(void)
 {

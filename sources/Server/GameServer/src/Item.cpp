@@ -9,7 +9,7 @@
 #include "GameCommon.h"
 #include "GameAppNet.h"
 #include "SubMap.h"
-#include "gamedb.h"
+#include "GameDB.h"
 
 _DBC_USING
 

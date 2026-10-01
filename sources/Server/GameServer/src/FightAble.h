@@ -58,12 +58,9 @@ struct SFightInit
 	SSkillGrid		*pSSkillGrid;
 	CSkillTempData	*pCSkillTData;
 	// lInfo1,lInfo2 若目标是实体,则分别是WorldID,Handle 否则分别是坐标的x,y
-	struct
-	{
-		dbc::Char		chTarType;	// 0，无目标。1，目标是实体。2，目标是坐标
-		dbc::Long		lTarInfo1;
-		dbc::Long		lTarInfo2;
-	};
+	dbc::Char		chTarType;	// 0，无目标。1，目标是实体。2，目标是坐标
+	dbc::Long		lTarInfo1;
+	dbc::Long		lTarInfo2;
 
 	dbc::Short		sStopState;		// 技能停止后的状态（enumEXISTS_WAITING, enumEXISTS_SLEEPING）
 };

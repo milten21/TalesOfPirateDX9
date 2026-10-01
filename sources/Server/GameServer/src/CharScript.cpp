@@ -6119,7 +6119,7 @@ inline int lua_SendDailyBuffInfo(lua_State* L) {
 	WRITE_STRING(l_wpk, imgName);
 	WRITE_STRING(l_wpk, LabelInfo);
 	pChar->ReflectINFof(pChar, l_wpk);
-
+	return 0;
 }
 
 // 

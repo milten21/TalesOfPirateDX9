@@ -33,6 +33,8 @@ using SHORT = short;
 using USHORT = unsigned short;
 using UINT = unsigned int;
 using LONG = std::int32_t;
+using INT32 = std::int32_t;
+using UINT32 = std::uint32_t;
 using LONG32 = std::int32_t;
 using ULONG = std::uint32_t;
 using LONG64 = std::int64_t;
@@ -57,6 +59,7 @@ using LPDWORD = DWORD*;
 using TCHAR = char;
 using _TCHAR = char;
 using errno_t = int;
+using HRESULT = LONG;
 
 #define __int64 long long
 
@@ -69,6 +72,7 @@ using errno_t = int;
 
 #define MAX_PATH 260
 #define _MAX_PATH 260
+#define _MAX_FNAME 256
 #define INFINITE 0xFFFFFFFF
 #define WAIT_OBJECT_0 0x00000000L
 #define WAIT_TIMEOUT 0x00000102L
@@ -86,8 +90,10 @@ using errno_t = int;
 #define HIBYTE(w) (static_cast<BYTE>((static_cast<std::uintptr_t>(w) >> 8) & 0xff))
 #define LOWORD(l) (static_cast<WORD>(static_cast<std::uintptr_t>(l) & 0xffff))
 #define HIWORD(l) (static_cast<WORD>((static_cast<std::uintptr_t>(l) >> 16) & 0xffff))
+#define RGB(r, g, b) (static_cast<DWORD>(LOBYTE(r) | (static_cast<WORD>(LOBYTE(g)) << 8) | (static_cast<DWORD>(LOBYTE(b)) << 16)))
 #define MAKEWORD(a, b) (static_cast<WORD>(LOBYTE(a) | (static_cast<WORD>(LOBYTE(b)) << 8)))
 
+#define _countof(array) (sizeof(array) / sizeof((array)[0]))
 #define ZeroMemory(destination, length) std::memset((destination), 0, (length))
 #define CONTAINING_RECORD(address, type, field) \
 	(reinterpret_cast<type*>(reinterpret_cast<char*>(address) - reinterpret_cast<ULONG_PTR>(&reinterpret_cast<type*>(0)->field)))
@@ -198,6 +204,11 @@ inline void Sleep(DWORD milliseconds)
 	std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }
 
+inline DWORD GetCurrentThreadId()
+{
+	return static_cast<DWORD>(gettid());
+}
+
 inline DWORD GetLastError()
 {
 	return static_cast<DWORD>(errno);
@@ -244,7 +255,7 @@ inline errno_t strncpy_s(char* destination, std::size_t size, const char* source
 	{
 		return EINVAL;
 	}
-	std::size_t length = strnlen(source, count);
+	std::size_t length = count == _TRUNCATE ? std::strlen(source) : strnlen(source, count);
 	errno_t result = 0;
 	if (length >= size)
 	{
@@ -313,6 +324,15 @@ inline int _vsnprintf(char* buffer, std::size_t count, const char* format, va_li
 {
 	const int length = std::vsnprintf(buffer, count, format, args);
 	return (length < 0 || static_cast<std::size_t>(length) > count) ? -1 : length;
+}
+
+inline int _vscprintf(const char* format, va_list args)
+{
+	va_list copy;
+	va_copy(copy, args);
+	const int length = std::vsnprintf(nullptr, 0, format, copy);
+	va_end(copy);
+	return length;
 }
 
 inline int _snprintf(char* buffer, std::size_t count, const char* format, ...)

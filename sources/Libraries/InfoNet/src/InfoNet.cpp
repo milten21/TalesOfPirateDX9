@@ -1,12 +1,12 @@
 
 
-#include <winsock2.h>
+#include "SocketApi.h"
 #include "InfoNet.h"
 #include "thread.h"
 #include "lock.h"
 #include "log.h"
-#include <memory.h>
-#include <sys/timeb.h>
+#include <chrono>
+#include <cstring>
 #include <deque>
 
 using std::deque;
@@ -296,12 +296,9 @@ __BEGIN_TRY
 
     ++g_count;
     g_count %= 1000;
-    _timeb tb;
-    _ftime(&tb);
 
-    nm->msgHead.msgOrder = tb.time;
-    nm->msgHead.msgOrder *= 1000;
-    nm->msgHead.msgOrder += tb.millitm;
+    nm->msgHead.msgOrder = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
     nm->msgHead.msgOrder *= 1000;
     nm->msgHead.msgOrder += g_count;
 
@@ -340,28 +337,26 @@ unsigned InfoThread::Run()
     NetSndList* sndLst = (NetSndList*)inb->m_list;
     pNetMessage pNM = 0;
     int ret = 0;
-    fd_set fdread;
-    timeval tv = {0, 0};        //  立即返回(不阻塞select)，用闲置系统资源进行发送队列重发
-    clock_t sndTime = 0;
-    clock_t chkTime = clock();
+    pollfd fdread;
+    DWORD sndTime = 0;
+    DWORD chkTime = GetTickCount();
 
-    for(;;)
+    while(!Stopping())
     {
 __BEGIN_TRY
         inb->m_state = INFO_RESTING;
         if(!inb->IsConnect())
         {
             inb->Connect();
-            Sleep(10000);   //  避免重连占用太多cpu资源。10秒重连一次
+            Pause(10000);   //  避免重连占用太多cpu资源。10秒重连一次
             continue;
         }
 
-        //  Select轮询开始
-        FD_ZERO(&fdread);
-        FD_SET(cli->sock, &fdread);
+        fdread.fd = cli->sock;
+        fdread.events = POLLIN;
+        fdread.revents = 0;
 
-        ret = select(0, &fdread, 0, 0, &tv);
-        //ret = select(0, &fdread, 0, 0, 0);    //  阻塞select
+        ret = dbc::net::Poll(&fdread, 1, 0);
 
         if(SOCKET_ERROR == ret)
         {
@@ -374,7 +369,7 @@ __BEGIN_TRY
 
         if(ret > 0)
         {
-            if(FD_ISSET(cli->sock, &fdread))
+            if(fdread.revents & (POLLIN | POLLHUP | POLLERR))
             {
                 if(!inb->PostInfoRecv())
                 {
@@ -388,9 +383,9 @@ __BEGIN_TRY
         //  Select轮询结束
 
         //  检测服务器是否存活(是否异常断线检测)
-        if((clock() - chkTime) > 300000)    //  5分钟检测一次
+        if((GetTickCount() - chkTime) > 300000)    //  5分钟检测一次
         {
-            chkTime = clock();
+            chkTime = GetTickCount();
             LG("InfoNet", "Ping: Timestamp: %li...\n", time(0));
             if(!inb->PostInfoSend(INFO_CHECK_LIVE, 0, 0, 0, 0, 0))
             {
@@ -402,7 +397,7 @@ __BEGIN_TRY
         }
 
         //  开始重发
-        sndTime = clock();
+        sndTime = GetTickCount();
         for(;;)
         {
             if(!sndLst->Size())
@@ -424,7 +419,7 @@ __BEGIN_TRY
                 inb->OnResend(pNM);
                 FreeNetMessage(pNM);
             }
-            if((clock() - sndTime) > 50)    //  重发占用50毫秒以上时，释放资源
+            if((GetTickCount() - sndTime) > 50)    //  重发占用50毫秒以上时，释放资源
             {
                 Sleep(1);
                 break;
@@ -506,8 +501,10 @@ bool InfoNetBase::StopInfoService()
     //    }
         __cli->thread.Terminate();
         ((NetSndList*)m_list)->Clear();
-        SAFE_DELETE(m_client);
-        SAFE_DELETE(m_list);
+        delete (pInfoClient)m_client;
+        delete (NetSndList*)m_list;
+        m_client = 0;
+        m_list = 0;
     //    break;
     //}
     LG("InfoNet", "End Stopped Info Service...\n");
@@ -552,9 +549,9 @@ __BEGIN_TRY
 
     bool ret = true;
 
-    if(SOCKET_ERROR == send(__cli->sock, buf, size, 0))
+    if(SOCKET_ERROR == dbc::net::Send(__cli->sock, buf, size))
     {
-        LG("InfoNet", "Send Failed, Socket: %li, ErrorID: %li\n", __cli->sock, WSAGetLastError());
+        LG("InfoNet", "Send Failed, Socket: %li, ErrorID: %li\n", (long)__cli->sock, (long)dbc::net::LastError());
         Disconnect();
         if(resnd)
         {
@@ -603,20 +600,12 @@ __BEGIN_TRY
 
     __cli->sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    SOCKADDR_IN addr;
+    sockaddr_in addr{};
     addr.sin_family         = AF_INET;
-    addr.sin_addr.s_addr    = inet_addr(m_ip);
     addr.sin_port           = htons(m_port);
-
-    if (INADDR_NONE == addr.sin_addr.s_addr)
+    if(!dbc::net::ResolveIPv4(m_ip, addr.sin_addr))
     {
-        LPHOSTENT lphost;
-        lphost = gethostbyname(m_ip);
-
-        if (lphost != NULL)
-        {
-            addr.sin_addr.s_addr = ((LPIN_ADDR)lphost->h_addr)->s_addr;
-        }
+        addr.sin_addr.s_addr = INADDR_NONE;
     }
 
     bool ret = (0 == connect(__cli->sock, (struct sockaddr *)&addr, sizeof(addr)));
@@ -649,7 +638,7 @@ __BEGIN_TRY
         return true;
     }
     pInfoClient __cli = (pInfoClient)m_client;
-    bool ret = (0 == closesocket(__cli->sock));
+    bool ret = (0 == dbc::net::CloseSocket(__cli->sock));
     __cli->sock = INVALID_SOCKET;
     LG("InfoNet", "Call Back 'OnDisconnect'...\n");
     OnDisconnect();
@@ -670,12 +659,12 @@ __BEGIN_TRY
 
     if(rsbytes <= 0)
     {
-        if(WSAEWOULDBLOCK == WSAGetLastError())
+        if(rsbytes < 0 && dbc::net::WouldBlock(dbc::net::LastError()))
         {
             Sleep(1);
             return true;
         }
-        LG("InfoNet", "Recv Failed, Socket: %li, ErrorID: %li\n", __cli->sock, WSAGetLastError());
+        LG("InfoNet", "Recv Failed, Socket: %li, ErrorID: %li\n", (long)__cli->sock, (long)dbc::net::LastError());
         Disconnect();
         return false;
     }

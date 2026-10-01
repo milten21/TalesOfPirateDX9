@@ -5,7 +5,7 @@
 #ifndef _WORLD_EUDEMON_H_
 #define _WORLD_EUDEMON_H_
 
-#include "Npc.h"
+#include "NPC.h"
 //---------------------------------------------------------
 
 namespace mission

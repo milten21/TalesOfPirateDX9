@@ -16,7 +16,7 @@ void print_error(lua_State* state);
 		print_error(L); \
 	}
 
-#include "dbccommon.h"
+#include "DBCCommon.h"
 #include "Character.h"
 
 extern lua_State* g_pLuaState;

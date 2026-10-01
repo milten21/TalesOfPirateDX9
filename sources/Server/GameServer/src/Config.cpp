@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Config.h"
 #include <fstream>
-#include "Util.h"
+#include "util.h"
 
 using namespace std;
 
@@ -76,7 +76,7 @@ void CGameConfig::SetDefault()
 	m_bInstantIGS = FALSE;
 	m_lWeather = 120;
 	m_dwStallTime = 48;
-	m_cSaveState[32] = {0};
+	memset(m_cSaveState, 0, sizeof(m_cSaveState));
 }
 
 bool CGameConfig::Load(char *pszFileName)

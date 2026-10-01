@@ -110,6 +110,36 @@ services:
       retries: 12
       start_period: 10s
 
+  game00:
+    <<: *server
+    command: ["GameServer", "GameServer00.cfg"]
+    stop_grace_period: 90s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      GATE_HOST: gate
+      GATE_GAME_PORT: ${GATE_GAME_PORT:-1971}
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_PORT: ${DB_PORT:-5432}
+      GAME_DB_NAME: ${GAME_DB_NAME:-GameDB}
+      GAME_DB_USER: ${GAME_DB_USER:-pko_game}
+      GAME_DB_PASSWORD: ${GAME_DB_PASSWORD:?set GAME_DB_PASSWORD in .env}
+      INFO_HOST: ${INFO_HOST:-127.0.0.1}
+      INFO_PORT: ${INFO_PORT:-11985}
+      GAME00_INFO_PASSWORD: ${GAME00_INFO_PASSWORD:?set GAME00_INFO_PASSWORD in .env}
+    volumes:
+      - game00-log:/var/log/tales/GameServer
+      - ./server/GameServer/resource:/opt/tales/GameServer/resource
+      - ./server/GameServer/addons:/opt/tales/GameServer/addons
+      - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/tales/connected.sh \"$${GATE_GAME_PORT}\""]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 180s
+
   dev:
     profiles: ["dev"]
     image: tales-toolchain:dev
@@ -131,4 +161,5 @@ volumes:
   account-log:
   group-log:
   gate-log:
+  game00-log:
   linux-build:

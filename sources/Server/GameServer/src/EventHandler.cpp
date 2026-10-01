@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "EventHandler.h"
 #include "GameAppNet.h"
 #include "Character.h"

@@ -6,7 +6,7 @@
 //=============================================================================
 #include "stdafx.h"
 #include "FightAble.h"
-#include "Util.h"
+#include "util.h"
 #include "GameApp.h"
 #include "GameAppNet.h"
 #include "SubMap.h"
@@ -1824,7 +1824,7 @@ inline bool CFightAble::IsTeammate(CFightAble *pCTar)
 		return false;
 }
 
-inline bool CFightAble::IsFriend(CFightAble *pCTar)
+bool CFightAble::IsFriend(CFightAble *pCTar)
 {
 	CPlayer	*pCPly1 = GetPlayer();
 	CPlayer	*pCPly2 = 0;

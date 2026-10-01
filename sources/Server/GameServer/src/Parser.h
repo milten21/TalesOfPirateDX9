@@ -8,7 +8,9 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "tchar.h"
+#ifdef _WIN32
+#include <tchar.h>
+#endif
 
 #include "lua.hpp"
 

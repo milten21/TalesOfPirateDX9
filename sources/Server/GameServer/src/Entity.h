@@ -19,6 +19,7 @@ class CStateCellNode;
 class CStateCell;
 class CChaListNode;
 class CEyeshotCell;
+class SubMap;
 struct SSkillStateUnit;
 
 //using	namespace	GAME;
@@ -161,11 +162,8 @@ private:
 public:
 	bool		m_bValid;
 
-	struct // 对应实体数组的索引（由CEntityAlloc类来配置）
-	{
-		dbc::Long	m_lHandle;
-		dbc::Long	m_lHoldID;
-	};
+	dbc::Long	m_lHandle;
+	dbc::Long	m_lHoldID;
 
 	short		m_cat;
 	
@@ -178,12 +176,9 @@ public:
 	 * @labelDirection forward*/
 	SubMap		*m_submap;
 	CStateCellNode	*m_pCStateCellHead, *m_pCStateCellTail;	// 记录所在的管理单元，首节点是中心点所在的管理单元
-	struct
-	{
-		Entity	*m_pCEyeshotCellNext;
-		Entity	*m_pCEyeshotCellLast;
-		CEyeshotCell	*m_pCEyeshotHost;
-	};
+	Entity	*m_pCEyeshotCellNext;
+	Entity	*m_pCEyeshotCellLast;
+	CEyeshotCell	*m_pCEyeshotHost;
 
 	dbc::Char	m_szBirthMap[MAX_MAPNAME_LENGTH];
 	dbc::Char	m_szBirthCity[MAX_MAPNAME_LENGTH];

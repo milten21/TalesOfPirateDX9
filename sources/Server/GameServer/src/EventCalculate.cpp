@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "EventHandler.h"
 #include "Character.h"
 #include "Player.h"

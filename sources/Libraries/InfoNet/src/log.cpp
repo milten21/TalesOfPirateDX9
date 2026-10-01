@@ -1,9 +1,10 @@
 
 
 #include "log.h"
-#include <sys/timeb.h>
+#include <chrono>
+#include <cstdarg>
+#include <filesystem>
 #include <time.h>
-#include <direct.h>
 
 
 #define LOG_FOLDER          "LOG"
@@ -59,14 +60,12 @@ void Log::WriteLog(const char* buf)
 {
 __BEGIN_TRY
     m_lock.lock();
-    _timeb  tmb;
-    tm*     ttm;
-    _ftime(&tmb);
-    ttm = localtime(&tmb.time);
+    SYSTEMTIME  now;
+    GetLocalTime(&now);
 
     char tmfuf[64] = {0};
     sprintf(tmfuf, "%04i-%02i-%02i %02i:%02i:%02i.%03i ", 
-        ttm->tm_year + 1900, ttm->tm_mon + 1, ttm->tm_mday, ttm->tm_hour, ttm->tm_min, ttm->tm_sec, tmb.millitm);
+        now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds);
 
     fprintf(m_file, "%s %s", tmfuf, buf);
     fflush(m_file);
@@ -78,8 +77,10 @@ __END_TRY
 
 LogMgr::LogMgr()
 {
-    mkdir(LOG_FOLDER);                  //  创建log目录
-    getcwd(m_path, 260);   //  获取工作目录
+    std::error_code error;
+    std::filesystem::create_directory(LOG_FOLDER, error);                  //  创建log目录
+    strncpy(m_path, std::filesystem::current_path(error).string().c_str(), sizeof(m_path) - 1);   //  获取工作目录
+    m_path[sizeof(m_path) - 1] = 0;
 }
 
 

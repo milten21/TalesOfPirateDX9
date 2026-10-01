@@ -12,15 +12,21 @@ extern const char* GetResPath(const char *pszRes);
 CCharacter* g_pNoticeChar = NULL;
 lua_State* g_pLuaState = NULL;
 
+#ifdef _WIN32
 HANDLE lConsole = NULL;
+#endif
 
 void print_error(lua_State* state) {
 	// The error message is on top of the stack.
 	// Fetch it, print it and then pop it off the stack.
+#ifdef _WIN32
 	SetConsoleTextAttribute(lConsole, 14);
+#endif
 	const char* message = lua_tostring(state, -1);
 	puts(message);
+#ifdef _WIN32
 	SetConsoleTextAttribute(lConsole, 10);
+#endif
 	lua_pop(state, 1);
 }
 
@@ -32,8 +38,10 @@ BOOL InitLuaScript()
 
 	luaL_openlibs(g_pLuaState);
 
+#ifdef _WIN32
 	if (lConsole == NULL)
 		lConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	if( !RegisterScript() )
 		return FALSE;

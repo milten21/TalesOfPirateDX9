@@ -8,7 +8,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include "dbccommon.h"
+#include "DBCCommon.h"
 
 #define defMAX_EVENT_NAME_LEN	256
 
