@@ -9,6 +9,33 @@ x-server: &server
   ulimits:
     core: -1
 
+x-game: &game
+  <<: *server
+  stop_grace_period: 90s
+  depends_on:
+    postgres:
+      condition: service_healthy
+  environment:
+    GATE_HOST: ${GATE_HOST:-gate}
+    GATE_GAME_PORT: ${GATE_GAME_PORT:-1971}
+    DB_HOST: ${DB_HOST:-postgres}
+    DB_PORT: ${DB_PORT:-5432}
+    GAME_DB_NAME: ${GAME_DB_NAME:-GameDB}
+    GAME_DB_USER: ${GAME_DB_USER:-pko_game}
+    GAME_DB_PASSWORD: ${GAME_DB_PASSWORD:?set GAME_DB_PASSWORD in .env}
+    INFO_HOST: ${INFO_HOST:-127.0.0.1}
+    INFO_PORT: ${INFO_PORT:-11985}
+    GAME00_INFO_PASSWORD: ${GAME00_INFO_PASSWORD:?set GAME00_INFO_PASSWORD in .env}
+    GAME01_INFO_PASSWORD: ${GAME01_INFO_PASSWORD:?set GAME01_INFO_PASSWORD in .env}
+    GAME02_INFO_PASSWORD: ${GAME02_INFO_PASSWORD:?set GAME02_INFO_PASSWORD in .env}
+    GAME03_INFO_PASSWORD: ${GAME03_INFO_PASSWORD:?set GAME03_INFO_PASSWORD in .env}
+  healthcheck:
+    test: ["CMD-SHELL", "/opt/tales/connected.sh \"$${GATE_GAME_PORT}\""]
+    interval: 5s
+    timeout: 3s
+    retries: 12
+    start_period: 180s
+
 services:
   postgres:
     image: postgres:18
@@ -38,7 +65,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      ACCOUNT_LISTEN_IP: 0.0.0.0
+      ACCOUNT_LISTEN_IP: ${ACCOUNT_LISTEN_IP:-0.0.0.0}
       ACCOUNT_PORT: ${ACCOUNT_PORT:-1978}
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
@@ -65,10 +92,10 @@ services:
         condition: service_healthy
     environment:
       GROUP_NAME: ${GROUP_NAME:-GroupServerAndor2}
-      GROUP_LISTEN_IP: 0.0.0.0
+      GROUP_LISTEN_IP: ${GROUP_LISTEN_IP:-0.0.0.0}
       GROUP_PORT: ${GROUP_PORT:-1975}
       GROUP_ACCOUNT_PASSWORD: ${GROUP_ACCOUNT_PASSWORD:?set GROUP_ACCOUNT_PASSWORD in .env}
-      ACCOUNT_HOST: account
+      ACCOUNT_HOST: ${ACCOUNT_HOST:-account}
       ACCOUNT_PORT: ${ACCOUNT_PORT:-1978}
       DB_HOST: ${DB_HOST:-postgres}
       DB_PORT: ${DB_PORT:-5432}
@@ -91,11 +118,11 @@ services:
     command: ["GateServer"]
     stop_grace_period: 30s
     environment:
-      GROUP_HOST: group
+      GROUP_HOST: ${GROUP_HOST:-group}
       GROUP_PORT: ${GROUP_PORT:-1975}
-      GATE_CLIENT_LISTEN_IP: 0.0.0.0
+      GATE_CLIENT_LISTEN_IP: ${GATE_CLIENT_LISTEN_IP:-0.0.0.0}
       GATE_CLIENT_PORT: ${GATE_CLIENT_PORT:-1973}
-      GATE_GAME_LISTEN_IP: 0.0.0.0
+      GATE_GAME_LISTEN_IP: ${GATE_GAME_LISTEN_IP:-0.0.0.0}
       GATE_GAME_PORT: ${GATE_GAME_PORT:-1971}
       GATE_SHOWRANGE: ${GATE_SHOWRANGE:-1}
     ports:
@@ -111,34 +138,43 @@ services:
       start_period: 10s
 
   game00:
-    <<: *server
+    <<: *game
     command: ["GameServer", "GameServer00.cfg"]
-    stop_grace_period: 90s
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      GATE_HOST: gate
-      GATE_GAME_PORT: ${GATE_GAME_PORT:-1971}
-      DB_HOST: ${DB_HOST:-postgres}
-      DB_PORT: ${DB_PORT:-5432}
-      GAME_DB_NAME: ${GAME_DB_NAME:-GameDB}
-      GAME_DB_USER: ${GAME_DB_USER:-pko_game}
-      GAME_DB_PASSWORD: ${GAME_DB_PASSWORD:?set GAME_DB_PASSWORD in .env}
-      INFO_HOST: ${INFO_HOST:-127.0.0.1}
-      INFO_PORT: ${INFO_PORT:-11985}
-      GAME00_INFO_PASSWORD: ${GAME00_INFO_PASSWORD:?set GAME00_INFO_PASSWORD in .env}
     volumes:
       - game00-log:/var/log/tales/GameServer
       - ./server/GameServer/resource:/opt/tales/GameServer/resource
       - ./server/GameServer/addons:/opt/tales/GameServer/addons
       - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/tales/connected.sh \"$${GATE_GAME_PORT}\""]
-      interval: 5s
-      timeout: 3s
-      retries: 12
-      start_period: 180s
+
+  game01:
+    <<: *game
+    profiles: ["full"]
+    command: ["GameServer", "GameServer01.cfg"]
+    volumes:
+      - game01-log:/var/log/tales/GameServer
+      - ./server/GameServer/resource:/opt/tales/GameServer/resource
+      - ./server/GameServer/addons:/opt/tales/GameServer/addons
+      - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
+
+  game02:
+    <<: *game
+    profiles: ["full"]
+    command: ["GameServer", "GameServer02.cfg"]
+    volumes:
+      - game02-log:/var/log/tales/GameServer
+      - ./server/GameServer/resource:/opt/tales/GameServer/resource
+      - ./server/GameServer/addons:/opt/tales/GameServer/addons
+      - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
+
+  game03:
+    <<: *game
+    profiles: ["full"]
+    command: ["GameServer", "GameServer03.cfg"]
+    volumes:
+      - game03-log:/var/log/tales/GameServer
+      - ./server/GameServer/resource:/opt/tales/GameServer/resource
+      - ./server/GameServer/addons:/opt/tales/GameServer/addons
+      - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
 
   dev:
     profiles: ["dev"]
@@ -162,4 +198,7 @@ volumes:
   group-log:
   gate-log:
   game00-log:
+  game01-log:
+  game02-log:
+  game03-log:
   linux-build:
