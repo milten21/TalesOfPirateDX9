@@ -1,5 +1,5 @@
 
-#include "gateserver.h"
+#include "GateServer.h"
 using namespace std;
 using namespace dbc;
 
@@ -495,7 +495,7 @@ void ToGameServer::MC_ENTERMAP(dbc::DataSocket* datasock, dbc::RPacket& recvbuf)
 	auto l_ply = ToPointer<ClientConnection>(l_rpk.ReverseReadLong());
 	if (!l_ply)
 	{
-		LG("Error", "l_ply nullptr in " __FUNCTION__ );
+		LG("Error", "l_ply nullptr in %s", __FUNCTION__ );
 		return;
 	}
 

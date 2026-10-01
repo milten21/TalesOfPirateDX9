@@ -1,7 +1,7 @@
 // LuaFunc.cpp Created by knight-gongjian 2006.9.20.
 //---------------------------------------------------------
 #include "stdafx.h"
-#include "luafunc.h"
+#include "LuaFunc.h"
 #include "Parser.h"
 #include <strstream>
 #include <algorithm>

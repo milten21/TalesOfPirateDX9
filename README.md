@@ -113,17 +113,19 @@ To recover a text source from a compiled bundle, build the `DumpBundle` target a
 
 ### Running the servers on Linux with Docker
 
-The servers also build with GCC for 32-bit Linux. The `Dockerfile` builds them on `i386/debian:bookworm-slim`, runs the tests, and produces a runtime image with the binaries, their locale bundles, unixODBC with the PostgreSQL driver, and nothing else: no game data and no credentials. So far AccountServer is the only server that runs on Linux.
+The servers also build with GCC for 32-bit Linux. The `Dockerfile` builds them on `i386/debian:bookworm-slim`, runs the tests, and produces a runtime image with the binaries, their locale bundles, unixODBC with the PostgreSQL driver, and nothing else: no game data and no credentials. AccountServer, GroupServer and GateServer run on Linux so far.
 
 ```
 cp .env.example .env              # then set real passwords in .env
-docker compose up --build         # PostgreSQL, seeded from postgresql/, plus AccountServer
-docker attach tales-account-1     # the server console; detach with Ctrl+P Ctrl+Q
+docker compose up --build         # PostgreSQL, seeded from postgresql/, plus account, group and gate
+docker attach tales-gate-1        # a server console; detach with Ctrl+P Ctrl+Q
 docker compose stop               # graceful stop, the servers exit with code 0
 ```
 
+Only GateServer is reachable from the host: its client port (`GATE_PUBLISHED_PORT`, default 1973) and the ShowRange UDP port (`GATE_SHOWRANGE_PUBLISHED_PORT`, default 1976; set `GATE_SHOWRANGE=0` to turn the listener off). Point the client at the host's address and that port. The servers find each other by compose service name and start in any order; each one retries its upstream link until it comes up. GroupServer logs in to AccountServer with `GROUP_NAME` and `GROUP_ACCOUNT_PASSWORD`, which both services read from the environment. GroupServer's Lua scripts and `ChaNameFilter.txt` are bind-mounted read-only from `server/GroupServer`.
+
 Each server's configuration is rendered at container start from `docker/templates/<Name>/*.template` with values from the environment, so listen addresses, ports, database host and credentials come from `compose.yaml` and `.env`. The file logs of each server go to a named volume mounted at `/var/log/tales/<Name>`. On a crash a Linux server writes a stack trace to the console and to `log/crash.log`, then dumps core where the host's `core_pattern` says (on Docker Desktop for Windows that is `%LOCALAPPDATA%\Temp\wsl-crashes`).
 
-`docker/smoke-test.sh` builds the image, brings up a throwaway stack, checks that AccountServer is healthy, connected to the database and listening, then stops it and checks it exited with code 0.
+`docker/smoke-test.sh` builds the image and brings up a throwaway stack. It checks that AccountServer is connected to the database, that GroupServer is logged in to AccountServer and GateServer to GroupServer, and that the published Gate port accepts a client. It then stops the stack and checks every server exited with code 0. If port 1973 is taken on the host, run it as `GATE_PUBLISHED_PORT=21973 docker/smoke-test.sh`.
 
 For incremental Linux builds, `docker compose run --rm dev` configures, builds and tests the bind-mounted source tree in the toolchain image, keeping the build tree in the `linux-build` volume.

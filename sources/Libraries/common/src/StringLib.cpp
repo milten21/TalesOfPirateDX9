@@ -9,7 +9,9 @@
 //------------------------------------------------------------------------
 
 #include "StringLib.h"
+#ifdef _WIN32
 #include <mbstring.h>
+#endif
 
 #include "LanguageRecord.h"
 extern CLanguageRecord g_oLangRec;

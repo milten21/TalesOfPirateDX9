@@ -4,7 +4,7 @@
 #define FRIEND_H
 #include "Invitation.h"
 //cChar	gc_standard_group[]="我的好友";
-extern const cChar*	gc_standard_group;
+const cChar*	StandardFriendGroup();
 
 class Friend : public Invitation
 {

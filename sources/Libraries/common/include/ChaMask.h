@@ -4,7 +4,7 @@
 #define SHOWRANGE	80
 
 #define defBASE54_CONV_SIZE	100 * 1024
-char	szBase64[];
+extern char	szBase64[];
 
 #define MAX_MAP_COUNT	10
 class CMaskData

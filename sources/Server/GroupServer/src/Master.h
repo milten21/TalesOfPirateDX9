@@ -5,8 +5,8 @@
 #include "Invitation.h"
 #include "i18n.h"
 
-extern const cChar*	gc_master_group;
-extern const cChar*	gc_prentice_group;
+const cChar*	MasterGroupName();
+const cChar*	PrenticeGroupName();
 
 class Master : public Invitation
 {

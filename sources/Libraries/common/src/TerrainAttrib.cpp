@@ -1,6 +1,7 @@
 
-#include "terrainattrib.h"
+#include "TerrainAttrib.h"
 #include "util.h"
+#include <filesystem>
 #include <iostream>
 #include <memory>
 
@@ -88,8 +89,8 @@ CTerrainAttrib::CTerrainAttrib(void)
 	_width = 0;
 	_height = 0;
 
-	memset(&_header, 0, sizeof _header);
-	memset(&_tile_attrib, 0, sizeof _tile_attrib);
+	memset(&_header, 0, sizeof(_header));
+	memset(&_tile_attrib, 0, sizeof(_tile_attrib));
 
 	m_bInitFlag = false;
 	}
@@ -128,8 +129,8 @@ inline bool CTerrainAttrib::_validateTileIsland(unsigned char btIsland)
 
 inline int CTerrainAttrib::_seekTile(int nX, int nY)
 	{
-	int offset = sizeof SAttribFileHeader + 
-		(sizeof STILE_ATTRIB) * (nY * _width + nX);
+	int offset = sizeof(SAttribFileHeader) + 
+		(sizeof(STILE_ATTRIB)) * (nY * _width + nX);
     fseek(_fp, offset, SEEK_SET);
 	return offset;
 	}
@@ -148,7 +149,7 @@ bool CTerrainAttrib::_getMapInfo(char const* filename, int& width, int& height)
 		return false;
 		}
 
-	fread(&header, sizeof MPMapFileHeader, 1, fp);
+	fread(&header, sizeof(MPMapFileHeader), 1, fp);
 	fclose(fp);
 
 	width = header.nHeight;
@@ -205,12 +206,12 @@ bool CTerrainAttrib::createFile(char const* filename, int width, int height,
 	_tile_attrib.island = TILE_ISLAND_DEFAULT_VALUE;
 
 	// 写入文件头和tile属性数据
-	fwrite(&_header, sizeof _header, 1, _fp);
+	fwrite(&_header, sizeof(_header), 1, _fp);
 	for (int i = 0; i < cnt; ++ i)
-		fwrite(&_tile_attrib, sizeof _tile_attrib, 1, _fp);
+		fwrite(&_tile_attrib, sizeof(_tile_attrib), 1, _fp);
 
 	// fwrite不能一次写超过4K的字节
-	//fwrite(&_tile_attrib, sizeof _tile_attrib, cnt, _fp);
+	//fwrite(&_tile_attrib, sizeof(_tile_attrib), cnt, _fp);
 
 	fclose(_fp);
 	_fp = NULL;
@@ -225,10 +226,8 @@ bool CTerrainAttrib::openFile(char const* fname)
 	if (_fp != NULL) {fclose(_fp); _fp = NULL;}
 
     // 去掉只读属性
-    DWORD file_atr = ::GetFileAttributes(atr_fname);
-    if (file_atr & FILE_ATTRIBUTE_READONLY)
-        SetFileAttributes(atr_fname,
-                FILE_ATTRIBUTE_ARCHIVE | FILE_ATTRIBUTE_NORMAL);
+    std::error_code ec;
+    std::filesystem::permissions(atr_fname, std::filesystem::perms::owner_write, std::filesystem::perm_options::add, ec);
 	_fp = fopen(atr_fname, "r+b");
 	if (_fp == NULL)
 		{
@@ -238,7 +237,7 @@ bool CTerrainAttrib::openFile(char const* fname)
 		}
 
 	// 读取文件头
-	fread(&_header, sizeof _header, 1, _fp);
+	fread(&_header, sizeof(_header), 1, _fp);
 	_width = _header.width;
 	_height = _header.height;
 	return true;
@@ -264,7 +263,7 @@ void CTerrainAttrib::Init(char const* pszTerrainName)
 		}
 
 	MPMapFileHeader header;
-	fread(&header, sizeof MPMapFileHeader, 1, fp);
+	fread(&header, sizeof(MPMapFileHeader), 1, fp);
 	fclose(fp);
 
 	_height = header.nWidth;
@@ -286,14 +285,14 @@ void CTerrainAttrib::Init(char const* pszTerrainName)
 #if 0
 		for(int i = 0; i < nTileCnt; ++ i)
 			{
-			fwrite(&_tile_attrib, sizeof _tile_attrib, 1, _fp);
+			fwrite(&_tile_attrib, sizeof(_tile_attrib), 1, _fp);
 			}
 #endif
 		// 写入文件头
-		fwrite(&_header, sizeof _header, 1, _fp);
+		fwrite(&_header, sizeof(_header), 1, _fp);
 
 		// 写入数据
-		fwrite(&_tile_attrib, sizeof _tile_attrib, nTileCnt, _fp);
+		fwrite(&_tile_attrib, sizeof(_tile_attrib), nTileCnt, _fp);
 
 		fclose(_fp);
 		}
@@ -310,7 +309,7 @@ unsigned short CTerrainAttrib::getTileAttrib(int nX, int nY)
 	if (_validateFilePointer() &&_validateTile(nX, nY))
 		{
 		_seekTile(nX, nY);
-		fread(&_tile_attrib.attrib, sizeof _tile_attrib.attrib, 1, _fp);
+		fread(&_tile_attrib.attrib, sizeof(_tile_attrib.attrib), 1, _fp);
 		attrib = _tile_attrib.attrib;
 		}
 
@@ -329,7 +328,7 @@ void CTerrainAttrib::setTileAttrib(int nX, int nY, unsigned char btAttrib, bool 
 		unsigned short i = 1;
 
 		_seekTile(nX, nY);
-		long offset = sizeof _tile_attrib.attrib;
+		long offset = sizeof(_tile_attrib.attrib);
 		fread(&_tile_attrib.attrib, offset, 1, _fp);
 		sAttrib = _tile_attrib.attrib;
 
@@ -347,7 +346,7 @@ void CTerrainAttrib::setTileAttrib(int nX, int nY, unsigned char btAttrib, bool 
 		//_seekTile(nX, nY);
         _tile_attrib.attrib = sAttrib;
 		fseek(_fp, - offset, SEEK_CUR);
-		fwrite(&_tile_attrib.attrib, sizeof _tile_attrib.attrib, 1, _fp);
+		fwrite(&_tile_attrib.attrib, sizeof(_tile_attrib.attrib), 1, _fp);
 		}
 	}
 
@@ -362,7 +361,7 @@ bool CTerrainAttrib::hasTileAttrib(int nX, int nY, unsigned char btAttrib)
 		unsigned short j = 0;
 
 		_seekTile(nX, nY);
-		fread(&_tile_attrib.attrib, sizeof _tile_attrib.attrib, 1, _fp);
+		fread(&_tile_attrib.attrib, sizeof(_tile_attrib.attrib), 1, _fp);
 
 		j = _tile_attrib.attrib & (i << (btAttrib - 1));
 		return (j == 0) ? false : true;
@@ -381,7 +380,7 @@ bool CTerrainAttrib::delTileAttrib(int nX, int nY, unsigned char btAttrib)
         unsigned short i = 1;
 
         _seekTile(nX, nY);
-        long offset = sizeof _tile_attrib.attrib;
+        long offset = sizeof(_tile_attrib.attrib);
         fread(&_tile_attrib.attrib, offset, 1, _fp);
         sAttrib = _tile_attrib.attrib;
 
@@ -390,7 +389,7 @@ bool CTerrainAttrib::delTileAttrib(int nX, int nY, unsigned char btAttrib)
 
         _tile_attrib.attrib = sAttrib;
         fseek(_fp, - offset, SEEK_CUR);
-        fwrite(&_tile_attrib.attrib, sizeof _tile_attrib.attrib, 1, _fp);}
+        fwrite(&_tile_attrib.attrib, sizeof(_tile_attrib.attrib), 1, _fp);}
     return false;}
 
 
@@ -406,8 +405,8 @@ void CTerrainAttrib::setTileIsland(int nX, int nY, unsigned char btIsland)
 
 		// 定位到island
 		_tile_attrib.island = btIsland;
-		fseek(_fp, sizeof _tile_attrib.attrib, SEEK_CUR);
-		fwrite(&_tile_attrib.island, sizeof _tile_attrib.island, 1, _fp);
+		fseek(_fp, sizeof(_tile_attrib.attrib), SEEK_CUR);
+		fwrite(&_tile_attrib.island, sizeof(_tile_attrib.island), 1, _fp);
 		}
 	}
 
@@ -421,8 +420,8 @@ unsigned char CTerrainAttrib::getTileIsland(int nX, int nY)
 		_seekTile(nX, nY);
 
 		// 定位到island
-		fseek(_fp, sizeof _tile_attrib.attrib, SEEK_CUR);
-		fread(&_tile_attrib.island, sizeof _tile_attrib.island, 1, _fp);
+		fseek(_fp, sizeof(_tile_attrib.attrib), SEEK_CUR);
+		fread(&_tile_attrib.island, sizeof(_tile_attrib.island), 1, _fp);
 		btIsland = _tile_attrib.island;
 		}
 
@@ -683,8 +682,8 @@ inline bool terrain_attr_mem::get_attr(unsigned int x, unsigned int y, unsigned 
     {
     if (_dat == NULL || x >= _hdr->width || y >= _hdr->height) return false;
 
-    int offset = sizeof terrain_attr_hdr +
-        (sizeof terrain_attr_dat) * (y * _hdr->width + x);
+    int offset = sizeof(terrain_attr_hdr) +
+        (sizeof(terrain_attr_dat)) * (y * _hdr->width + x);
     attrib = ((terrain_attr_dat *)(_dat + offset))->attrib;
     return true;}
 
@@ -694,8 +693,8 @@ inline bool terrain_attr_mem::has_attr(unsigned int x, unsigned int y, unsigned 
         || attrib_mask < 1 || attrib_mask > 16) return false;
 
     unsigned short i = 1;
-    int offset = sizeof terrain_attr_hdr +
-        (sizeof terrain_attr_dat) * (y * _hdr->width + x);
+    int offset = sizeof(terrain_attr_hdr) +
+        (sizeof(terrain_attr_dat)) * (y * _hdr->width + x);
     unsigned short j = ((terrain_attr_dat *)(_dat + offset))->attrib &
         (i << (attrib_mask - 1));
     return (j == 0) ? false : true;}
@@ -704,8 +703,8 @@ inline bool terrain_attr_mem::get_island(unsigned int x, unsigned int y, unsigne
     {
     if (_dat == NULL || x >= _hdr->width || y >= _hdr->height) return false;
 
-    int offset = sizeof terrain_attr_hdr +
-        (sizeof terrain_attr_dat) * (y * _hdr->width + x);
+    int offset = sizeof(terrain_attr_hdr) +
+        (sizeof(terrain_attr_dat)) * (y * _hdr->width + x);
     island = ((terrain_attr_dat *)(_dat + offset))->island;
     return true;}
 
@@ -727,7 +726,7 @@ private:
 public:
 	tamem_mgr() : _ta_map()
 	{
-		memset(_ta, NULL, sizeof _ta); _ta_cnt = 0;
+		memset(_ta, NULL, sizeof(_ta)); _ta_cnt = 0;
 	}
 	~tamem_mgr()
 	{

@@ -9,7 +9,11 @@
 
 #include <stdio.h>
 #include <memory.h>
+#ifdef _WIN32
 #include <io.h>
+#else
+#include "Portability.h"
+#endif
 
 
 #define ATTRIB_FILE_DEFAULT_WIDTH 4096

@@ -2,7 +2,7 @@
 
 #ifndef PLAYER_H
 #define PLAYER_H
-#include <xstring>
+#include <string>
 #include "PreAlloc.h"
 #include "RunBiDirectChain.h"
 #include "TeamMember.h"
@@ -40,60 +40,48 @@ public:
 	Chat_Session *FindSessByID(uLong sessid);
 	bool	IsEstop();
 	void	CheckEstop();
-	struct
-	{
-		uLong				m_acctLoginID;				// Account server account DB id
-		uLong				m_acctid;
-		uLong				m_sessid;
-		std::string			m_acctname;					//account name
-		std::string			m_passport;					//
-		std::string			m_password;					//Secondary password
-		char				m_gm;
-		char				m_clientip[16];				//Client IP address
-		char				m_lastip[16];				//Last IP
-		char				m_lastreason[50];			//Last disconnected Reason
-		char				m_lastleavetime[21];
-		Player			*	m_pingply;
-	};
-	struct
-	{
-		std::recursive_mutex				m_mtxCha;
-		//TODO(Ogge): could use uint8_t?
-		char				m_chanum;					//Number of roles
-		char				m_bp_currcha;				//Currcha determined at BeginPlay
-		char				m_currcha;					//Current role index
-		long				m_chaid[emMaxCharacters];	//List of role IDs
-		std::string			m_chaname[emMaxCharacters];	//List of role names
-		std::string			m_motto[emMaxCharacters];	//Role motto
-		short				m_icon[emMaxCharacters];	//Small role icon
-		uLong				m_guild[emMaxCharacters];	//Guild ID
-		bool				m_estop[emMaxCharacters];	//Chat to be banned
-		unsigned long 				m_guildPermission[emMaxCharacters];
-		unsigned int		m_chatColour[emMaxCharacters];
-		bool volatile		m_bWG;						//Whether a plug-in is used
-		bool				m_bRefreshFlag;				// Refresh flag
-	};
-	struct
-	{
-		InterLockedLong			m_chatnum;				//Number of current session chat windows		
-		bool		 volatile	m_refuse_tome{ false };
-		bool		 volatile	m_refuse_sess{ false };
-		std::recursive_mutex	m_mtxChat;
-		uLong		 volatile	m_chatarranum;
-		Chat_Player	*volatile	m_chat[emMaxSessChat];
-	};
-	struct
-	{
-		InterLockedLong			m_worldtick;
-		InterLockedLong			m_worldticktemp;
-		InterLockedLong			m_tradetick;
-		InterLockedLong			m_tradeticktemp;
-		InterLockedLong			m_toyoutick;
-		//guild cooldown
-		InterLockedLong			m_GuildColorTemp;
-		InterLockedLong			CHangePasswordCol;	//change password cooldown client function 
+	uLong				m_acctLoginID;				// Account server account DB id
+	uLong				m_acctid;
+	uLong				m_sessid;
+	std::string			m_acctname;					//account name
+	std::string			m_passport;					//
+	std::string			m_password;					//Secondary password
+	char				m_gm;
+	char				m_clientip[16];				//Client IP address
+	char				m_lastip[16];				//Last IP
+	char				m_lastreason[50];			//Last disconnected Reason
+	char				m_lastleavetime[21];
+	Player			*	m_pingply;
+	std::recursive_mutex				m_mtxCha;
+	//TODO(Ogge): could use uint8_t?
+	char				m_chanum;					//Number of roles
+	char				m_bp_currcha;				//Currcha determined at BeginPlay
+	char				m_currcha;					//Current role index
+	long				m_chaid[emMaxCharacters];	//List of role IDs
+	std::string			m_chaname[emMaxCharacters];	//List of role names
+	std::string			m_motto[emMaxCharacters];	//Role motto
+	short				m_icon[emMaxCharacters];	//Small role icon
+	uLong				m_guild[emMaxCharacters];	//Guild ID
+	bool				m_estop[emMaxCharacters];	//Chat to be banned
+	unsigned long 				m_guildPermission[emMaxCharacters];
+	unsigned int		m_chatColour[emMaxCharacters];
+	bool volatile		m_bWG;						//Whether a plug-in is used
+	bool				m_bRefreshFlag;				// Refresh flag
+	InterLockedLong			m_chatnum;				//Number of current session chat windows		
+	bool		 volatile	m_refuse_tome{ false };
+	bool		 volatile	m_refuse_sess{ false };
+	std::recursive_mutex	m_mtxChat;
+	uLong		 volatile	m_chatarranum;
+	Chat_Player	*volatile	m_chat[emMaxSessChat];
+	InterLockedLong			m_worldtick;
+	InterLockedLong			m_worldticktemp;
+	InterLockedLong			m_tradetick;
+	InterLockedLong			m_tradeticktemp;
+	InterLockedLong			m_toyoutick;
+	//guild cooldown
+	InterLockedLong			m_GuildColorTemp;
+	InterLockedLong			CHangePasswordCol;	//change password cooldown client function 
 
-	};
 	/**
 	 * @supplierCardinality 1..* 
 	 */

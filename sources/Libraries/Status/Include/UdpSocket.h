@@ -1,6 +1,10 @@
 #pragma once
 
+#ifdef _WIN32
 #include <winsock.h>
+#else
+#include "SocketTypes.h"
+#endif
 
 class CUdpSocket
 {
@@ -11,8 +15,10 @@ public:
 
 	bool	IsCreate();			// 是否已经创建
 
+#ifdef _WIN32
 	bool	RegeditReadEvent( HWND hWnd, DWORD dwMessage );
 	bool	OnNetworkEvent( WPARAM wParam, LPARAM lParam );
+#endif
 
 	SOCKET	GetSocket()		{ return m_Socket;		}
 
@@ -39,6 +45,7 @@ protected:
 
 };
 
+#ifdef _WIN32
 class CUdpClient : public CUdpSocket
 {
 public:
@@ -54,3 +61,4 @@ protected:
 	int				m_nAddrLen;
 
 };
+#endif

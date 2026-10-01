@@ -16,6 +16,9 @@ _DBC_BEGIN
 #pragma pack(push)
 #pragma pack(4)
 
+template<class T> class RunCtrlThrd;
+template<class T> class RunCtrlMgr;
+
 //============================================================================================
 template<class T>
 class RunCtrlObj	:public	RunBiDirectItem< RunCtrlObj<T> >
@@ -112,13 +115,10 @@ public:
 private:
 	cShort			volatile			m_thrdpos;
 	RunCtrlMgr<T>	*volatile	const	m_mgr;
-	struct
-	{
-		mutable std::recursive_mutex m_mtxcpu;
-		long volatile m_count;
-		mutable uLong volatile m_cpusage;
-		mutable Timekeeper m_timer;
-	};
+	mutable std::recursive_mutex m_mtxcpu;
+	long volatile m_count;
+	mutable uLong volatile m_cpusage;
+	mutable Timekeeper m_timer;
 };
 //============================================================================================
 template<class T>

@@ -50,12 +50,12 @@ void GroupServerApp::Initialize()
 	uShort		l_port	= std::stoi(l_is["Listen_Port"]);
 /*
 	const_cha.MaxChaNum			=atoi(m_cfg["角色"]["每帐号最大角色数"]);
-	const_cha.MaxChaNum			=min(const_cha.MaxChaNum,Player::emMaxCharacters);
+	const_cha.MaxChaNum			=std::min<int>(const_cha.MaxChaNum,Player::emMaxCharacters);
 	const_cha.MaxIconVal		=atoi(m_cfg["角色"]["个性化图标的最大值"]);
 	const_cha.MaxLoginUsr		=atoi(m_cfg["角色"]["最大登录人数"]);
 */
 	const_cha.MaxChaNum			= std::stoi(m_cfg["character"]["MaxCharacterNum"]);
-	const_cha.MaxChaNum			=min(const_cha.MaxChaNum,Player::emMaxCharacters);
+	const_cha.MaxChaNum			=std::min<int>(const_cha.MaxChaNum,Player::emMaxCharacters);
 	const_cha.MaxIconVal		= std::stoi(m_cfg["character"]["MaxValue"]);
 	const_cha.MaxLoginUsr		= std::stoi(m_cfg["character"]["MaxPerson"]);
 
@@ -89,14 +89,14 @@ void GroupServerApp::Initialize()
 
 	/*
 	const_chat.MaxSession		=atoi(m_cfg["聊天"]["每玩家最多会话数"]);
-	const_chat.MaxSession		=min(const_chat.MaxSession,Player::emMaxSessChat);
+	const_chat.MaxSession		=std::min<int>(const_chat.MaxSession,Player::emMaxSessChat);
 	const_chat.MaxPlayer		=atoi(m_cfg["聊天"]["每会话最多玩家数"]);
-	const_chat.MaxPlayer		=min(const_chat.MaxPlayer,Player::emMaxSessPlayer);
+	const_chat.MaxPlayer		=std::min<int>(const_chat.MaxPlayer,Player::emMaxSessPlayer);
 	*/
 	const_chat.MaxSession		= std::stoi(m_cfg["chat"]["MaxChatNumPerPlayer"]);
-	const_chat.MaxSession		=min(const_chat.MaxSession,Player::emMaxSessChat);
+	const_chat.MaxSession		=std::min<int>(const_chat.MaxSession,Player::emMaxSessChat);
 	const_chat.MaxPlayer		= std::stoi(m_cfg["chat"]["maxPlayerPerChat"]);
-	const_chat.MaxPlayer		=min(const_chat.MaxPlayer,Player::emMaxSessPlayer);
+	const_chat.MaxPlayer		=std::min<int>(const_chat.MaxPlayer,Player::emMaxSessPlayer);
 
 
 	/*

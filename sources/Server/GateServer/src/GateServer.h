@@ -2,13 +2,13 @@
 
 #include <time.h>
 #include <dstring.h>
-#include <datasocket.h>
-#include <threadpool.h>
-#include <commrpc.h>
-#include <point.h>
-#include <inifile.h>
-#include <gamecommon.h>
-#include <prealloc.h>
+#include <DataSocket.h>
+#include <ThreadPool.h>
+#include <CommRPC.h>
+#include <Point.h>
+#include <IniFile.h>
+#include <GameCommon.h>
+#include <PreAlloc.h>
 #include <LogStream.h>
 #include <algo.h>
 
@@ -280,12 +280,9 @@ public:
 	bool	volatile m_estop{};
 	short	volatile m_sGarnerWiner{};
 
-	struct
-	{
-		std::recursive_mutex				m_mtxstat;					//0:锁定m_status;
-		Status		m_status{Status::Invalid};					//0:无效;1.选角色期间;2.玩游戏中.
-		Status		m_exit{Status::Invalid };
-	};
+	std::recursive_mutex				m_mtxstat;					//0:锁定m_status;
+	Status		m_status{Status::Invalid};					//0:无效;1.选角色期间;2.玩游戏中.
+	Status		m_exit{Status::Invalid };
 
 	dbc::dstring m_chamap;
 	void		SetMapName(dbc::cChar* cszName) { m_chamap = cszName; }
@@ -379,8 +376,10 @@ extern BYTE g_ddos;
 extern BYTE g_rsaaes;
 extern dbc::uShort g_wpeversion;
 
-extern HANDLE hConsole;
 extern dbc::InterLockedLong g_exit;
+
+#ifdef _WIN32
+extern HANDLE hConsole;
 
 #define C_PRINT(s, ...) \
 	SetConsoleTextAttribute(hConsole, 14); \
@@ -396,6 +395,10 @@ extern dbc::InterLockedLong g_exit;
 	strConsoleT += "]"; \
 	strConsoleT += s; \
 	SetConsoleTitle(strConsoleT.c_str());
+#else
+#define C_PRINT(s, ...) printf(s, ##__VA_ARGS__);
+#define C_TITLE(s)
+#endif
 
 extern CResourceBundleManage g_ResourceBundleManage; //Add by lark.li 20080130
 

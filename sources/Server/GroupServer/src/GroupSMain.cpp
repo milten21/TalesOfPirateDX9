@@ -5,17 +5,19 @@
 #include "GroupServerApp.h"
 #include "ConsoleInput.h"
 
+#ifdef _WIN32
 HANDLE hConsole = NULL;
+#endif
 
-// 初始化顺序
-#pragma init_seg( lib )
 pi_LeakReporter pi_leakReporter("groupememleak.log");
 CResourceBundleManage g_ResourceBundleManage("GroupServer.loc"); //Add by alfred.shi 20080130
 
 // binary compatible
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
+#ifdef _WIN32
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	C_TITLE("GroupServer.exe")
 	C_PRINT("Loading GroupServer.cfg...\n");

@@ -631,25 +631,33 @@ int TcpServerApp::OpenListenSocket(uShort port,cChar *cp)
 	}
 
 	if(__socket !=INVALID_SOCKET){return -1;}
-	__socket	=socket(PF_INET,SOCK_STREAM,0);
-	if(__socket ==INVALID_SOCKET){return -1;}
-	net::AllowAddressReuse(__socket);
-
-	sockaddr_in my_addr;
-	MemSet((char*)&my_addr,0,sizeof(my_addr));
 
 	uLong l_inaddr	=__localaddr[0]?inet_addr(__localaddr):INADDR_ANY;
 	if(l_inaddr ==INADDR_NONE){return -1;}
+
+	SOCKET l_sock	=socket(PF_INET,SOCK_STREAM,0);
+	if(l_sock ==INVALID_SOCKET){return -1;}
+	net::AllowAddressReuse(l_sock);
+
+	sockaddr_in my_addr;
+	MemSet((char*)&my_addr,0,sizeof(my_addr));
 
 	my_addr.sin_family				=AF_INET;
 	my_addr.sin_addr.s_addr			=l_inaddr;
 	my_addr.sin_port					=htons(__port);
 
-	if(bind(__socket,(sockaddr*)&my_addr,sizeof(my_addr))){return -2;}
-	if(listen(__socket,5)){return -3;}
+	int l_ret	=0;
+	if(bind(l_sock,(sockaddr*)&my_addr,sizeof(my_addr))){l_ret	=-2;}
+	else if(listen(l_sock,5)){l_ret	=-3;}
+	else if(net::SetNonBlocking(l_sock)){l_ret	=-4;}
+	if(l_ret)
+	{
+		net::CloseSocket(l_sock);
+		return l_ret;
+	}
 
-	if(net::SetNonBlocking(__socket)){return -4;}
 	__acceptflag	=false;
+	__socket	=l_sock;
 
 	return 0;
 };

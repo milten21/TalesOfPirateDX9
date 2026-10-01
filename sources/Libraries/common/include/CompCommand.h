@@ -12,6 +12,7 @@
 #include "ChaAttrType.h"
 #include "ItemContent.h"
 #include <algorithm>
+#include <cstddef>
 
 #define defPROTOCOL_HAVE_PACKETID // ����Э�����Ƿ��������ID
 
@@ -349,6 +350,22 @@ enum EFightType // ��ս���ͣ�������Ҳ���ڽű��
 //#pragma pack(push)
 //#pragma pack(1)
 
+template <class T, std::size_t N>
+struct UnionArray
+{
+	alignas(T) unsigned char bytes[sizeof(T) * N];
+
+	T* data() { return reinterpret_cast<T*>(bytes); }
+	const T* data() const { return reinterpret_cast<const T*>(bytes); }
+	T& operator[](std::size_t i) { return data()[i]; }
+	const T& operator[](std::size_t i) const { return data()[i]; }
+	T* begin() { return data(); }
+	const T* begin() const { return data(); }
+	T* end() { return data() + N; }
+	const T* end() const { return data() + N; }
+	static constexpr std::size_t size() { return N; }
+};
+
 typedef struct stNetChangeChaPart		// �ı��ɫ���,ע:�ͻ���-��������Ĭ��Ƥ����Լ��:�ͻ��˽��յ�0��Ƥ��ʱ,�Զ�����CharacterRecord�е�Ƥ��
 {
 	stNetChangeChaPart() {sVer = 0; sTypeID = 0;}
@@ -359,7 +376,7 @@ typedef struct stNetChangeChaPart		// �ı��ɫ���,ע:�ͻ���-�
 	{
 		struct
 		{
-			std::array<SItemGrid, enumEQUIP_NUM> SLink;
+			UnionArray<SItemGrid, enumEQUIP_NUM> SLink;
 			short       sHairID;        // Ĭ�ϵ�ͷ��������
 		};
 

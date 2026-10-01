@@ -60,6 +60,8 @@ else()
     add_compile_options(-fno-strict-aliasing -finput-charset=UTF-8 -fexec-charset=UTF-8)
     add_link_options(-rdynamic)
 
+    enable_language(ASM)
+
     set(THREADS_PREFER_PTHREAD_FLAG ON)
     find_package(Threads REQUIRED)
     find_package(ODBC REQUIRED)
@@ -83,17 +85,17 @@ add_subdirectory(sources/Libraries/Server/sdk)
 add_subdirectory(sources/Libraries/Util)
 add_subdirectory(sources/Libraries/ICUHelper)
 
+add_subdirectory(sources/Libraries/Cryptopp)
+add_subdirectory(sources/Libraries/LuaJIT)
+add_subdirectory(sources/Libraries/common)
+add_subdirectory(sources/Libraries/Status)
+
 add_subdirectory(sources/Server/AccountServer)
+add_subdirectory(sources/Server/GroupServer)
+add_subdirectory(sources/Server/GateServer)
 
 if(TALES_PLATFORM_WINDOWS)
-    add_subdirectory(sources/Libraries/Cryptopp)
-    add_subdirectory(sources/Libraries/LuaJIT)
-    add_subdirectory(sources/Libraries/common)
-    add_subdirectory(sources/Libraries/Status)
     add_subdirectory(sources/Libraries/InfoNet)
-
-    add_subdirectory(sources/Server/GroupServer)
-    add_subdirectory(sources/Server/GateServer)
     add_subdirectory(sources/Server/GameServer)
 endif()
 

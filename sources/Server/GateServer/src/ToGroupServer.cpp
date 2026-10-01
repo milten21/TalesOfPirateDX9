@@ -1,5 +1,5 @@
 
-#include "gateserver.h"
+#include "GateServer.h"
 
 using namespace dbc;
 using namespace std;

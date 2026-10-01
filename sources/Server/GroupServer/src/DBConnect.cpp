@@ -550,12 +550,12 @@ bool TBLFriends::AddFriend(long cha_id1,long cha_id2)
 {
 	char sql[SQL_MAXLEN];
 
-	strcpy(sql, group_sql::add_friend(cha_id1, cha_id2, gc_standard_group).c_str());
+	strcpy(sql, group_sql::add_friend(cha_id1, cha_id2, StandardFriendGroup()).c_str());
 	SQLRETURN l_ret =Exec_sql_direct(sql, this);
 
 	if(DBOK(l_ret) && get_affected_rows() ==1)
 	{
-		strcpy(sql, group_sql::add_friend(cha_id2, cha_id1, gc_standard_group).c_str());
+		strcpy(sql, group_sql::add_friend(cha_id2, cha_id1, StandardFriendGroup()).c_str());
 		SQLRETURN l_ret =Exec_sql_direct(sql, this);
 		return (DBOK(l_ret))?true:false;
 	}
@@ -669,8 +669,8 @@ bool TBLMaster::InitMasterRelation(map<uLong, uLong> &mapMasterRelation)
 			}
 
 			sqlret = SQLNumResultCols(hstmt, &col_num);
-			col_num = min(col_num, MAX_COL);
-			col_num = min(col_num, _max_col);
+			col_num = std::min<int>(col_num, MAX_COL);
+			col_num = std::min<int>(col_num, _max_col);
 
 			// Bind Column
 			for (int i = 0; i < col_num; ++ i)
@@ -749,8 +749,8 @@ bool TBLMaster::GetMasterData(master_dat* farray, int& array_num, unsigned int a
 			}
 
 			sqlret = SQLNumResultCols(hstmt, &col_num);
-			col_num = min(col_num, MAX_COL);
-			col_num = min(col_num, _max_col);
+			col_num = std::min<int>(col_num, MAX_COL);
+			col_num = std::min<int>(col_num, _max_col);
 
 			// Bind Column
 			for (int i = 0; i < col_num; ++ i)
@@ -841,8 +841,8 @@ bool TBLMaster::GetPrenticeData(master_dat* farray, int& array_num, unsigned int
 			}
 
 			sqlret = SQLNumResultCols(hstmt, &col_num);
-			col_num = min(col_num, MAX_COL);
-			col_num = min(col_num, _max_col);
+			col_num = std::min<int>(col_num, MAX_COL);
+			col_num = std::min<int>(col_num, _max_col);
 
 			// Bind Column
 			for (int i = 0; i < col_num; ++ i)
@@ -996,8 +996,8 @@ bool TBLGuilds::InitAllGuilds(char disband_days)
 		}
 
 		sqlret = SQLNumResultCols(hstmt, &col_num);
-		col_num = min(col_num, MAX_COL);
-		col_num = min(col_num, _max_col);
+		col_num = std::min<int>(col_num, MAX_COL);
+		col_num = std::min<int>(col_num, _max_col);
 
 		// Bind Column
 		for (int i = 0; i < col_num; ++ i)
@@ -1099,8 +1099,8 @@ bool TBLGuilds::InitGuildMember(Player *ply,uLong chaid,uLong gldid,int mode)
 			}
 
 			sqlret = SQLNumResultCols(hstmt, &col_num);
-			col_num = min(col_num, MAX_COL);
-			col_num = min(col_num, _max_col);
+			col_num = std::min<int>(col_num, MAX_COL);
+			col_num = std::min<int>(col_num, _max_col);
 
 			// Bind Column
 			for (int i = 0; i < col_num; ++ i)

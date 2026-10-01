@@ -5,10 +5,14 @@
 !sources/Libraries/Server/
 !sources/Libraries/Util/
 !sources/Libraries/ICUHelper/
-!sources/Libraries/common/include/
+!sources/Libraries/common/
 !sources/Libraries/EncLib/include/
-!sources/Libraries/Cryptopp/*.h
+!sources/Libraries/Cryptopp/
+!sources/Libraries/LuaJIT/
+!sources/Libraries/Status/
 !sources/Server/AccountServer/
+!sources/Server/GroupServer/
+!sources/Server/GateServer/
 !server/*/*.loc
 !server/*/*.txt
 !tests/
@@ -25,3 +29,5 @@
 **/*.obj
 **/*.vcxproj*
 **/*.vcproj
+**/Win32/
+**/*.rar

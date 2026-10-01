@@ -1,4 +1,4 @@
-#include ".\chamask.h"
+#include "ChaMask.h"
 
 char	szBase64[defBASE54_CONV_SIZE];
 
@@ -13,7 +13,7 @@ void	CMaskData::AddMap(const char* pszName, int w,int h)
 	pMapData[iMapNum] = new BYTE[ len ];
 
 	pMapMask = (sMapMask*)pMapData[iMapNum];
-	lstrcpy(pMapMask->pszName,pszName);
+	strcpy(pMapMask->pszName,pszName);
 
 	pMapMask->lenx = lenx;
 	pMapMask->leny = leny; 
@@ -39,7 +39,7 @@ bool CMaskData::InitMaskData(char* pszMapName, const char* szBase64Data, long ll
 		for ( int n = 0; n < iMapNum; n++)
 		{
 			pMask = (sMapMask*)pMapData[n];
-			if(!lstrcmp(pMask->pszName, pszMapName) == 0)
+			if(!strcmp(pMask->pszName, pszMapName) == 0)
 				continue;
 
 			p = pMapData[n];
@@ -54,7 +54,7 @@ bool CMaskData::InitMaskData(char* pszMapName, const char* szBase64Data, long ll
 	{
 		pMask = (sMapMask*)pMapData[n];
 
-		if(lstrcmp(pMask->pszName, pszMapName) == 0)
+		if(strcmp(pMask->pszName, pszMapName) == 0)
 		{
 			break;
 		}
@@ -138,7 +138,7 @@ BYTE*	CMaskData::GetMapMask(const char* pszMapName, long& size)
 	{
 		pMask = (sMapMask*)pMapData[n];
 
-		if(lstrcmp(pMask->pszName, pszMapName) == 0)
+		if(strcmp(pMask->pszName, pszMapName) == 0)
 		{
 			//pmap = &pMapMask[n];
 			size = pMask->llen;
@@ -189,7 +189,7 @@ bool	CMaskData::UpdateMapMask(char* pszMapName, int x, int y, int cha_range)
 	{
 		pmap = (sMapMask*)pMapData[n];
 
-		if(lstrcmp(pmap->pszName, pszMapName) == 0)
+		if(strcmp(pmap->pszName, pszMapName) == 0)
 		{
 			pData = pMapData[n];
 			break;

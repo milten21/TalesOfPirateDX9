@@ -14,9 +14,5 @@ client_encoding		= WIN1252
 enable_tom =0
 
 [gs]
-GroupServerAndor  =GroupServerAndor
-GroupServerAndor1 =GroupServerAndor1
-GroupServerAndor2 =GroupServerAndor2
-GroupServerAndor5 =GroupServerAndor5
-GroupServerAndor6 =GroupServerAndor6
+${GROUP_NAME} = ${GROUP_ACCOUNT_PASSWORD}
 enable_ping =1

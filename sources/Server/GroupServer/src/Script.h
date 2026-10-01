@@ -7,7 +7,7 @@
 
 #include "lua.hpp"
 
-#include <dbccommon.h>
+#include <DBCCommon.h>
 //---------------------------------------------------------
 
 extern BOOL	InitLuaScript();

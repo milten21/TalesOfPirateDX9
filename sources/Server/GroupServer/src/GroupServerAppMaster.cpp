@@ -5,8 +5,17 @@
 
 using namespace std;
 
-const cChar*	gc_master_group = RES_STRING(GP_GROUPSERVERAPPMASTER_CPP_00018);
-const cChar*	gc_prentice_group = RES_STRING(GP_GROUPSERVERAPPMASTER_CPP_00017);
+const cChar* MasterGroupName()
+{
+	static const cChar* const name = RES_STRING(GP_GROUPSERVERAPPMASTER_CPP_00018);
+	return name;
+}
+
+const cChar* PrenticeGroupName()
+{
+	static const cChar* const name = RES_STRING(GP_GROUPSERVERAPPMASTER_CPP_00017);
+	return name;
+}
 
 void GroupServerApp::CP_MASTER_REFRESH_INFO(Player *ply,DataSocket *datasock,RPacket &pk)
 {
@@ -183,14 +192,14 @@ void GroupServerApp::MP_MASTER_CREATE(Player *ply,DataSocket *datasock,RPacket &
 				l_wpk.WriteCmd(CMD_PC_MASTER_REFRESH);
 				WPacket l_wpk2=l_wpk;
 				l_wpk.WriteChar(MSG_MASTER_REFRESH_ADD);
-				l_wpk.WriteString(gc_master_group);
+				l_wpk.WriteString(MasterGroupName());
 				l_wpk.WriteLong(pMaster->m_chaid[pMaster->m_currcha]);
 				l_wpk.WriteString(pMaster->m_chaname[pMaster->m_currcha].c_str());
 				l_wpk.WriteString(pMaster->m_motto[pMaster->m_currcha].c_str());
 				l_wpk.WriteShort(pMaster->m_icon[pMaster->m_currcha]);
 				SendToClient(l_inviter.m_ply,l_wpk);
 				l_wpk2.WriteChar(MSG_PRENTICE_REFRESH_ADD);
-				l_wpk2.WriteString(gc_prentice_group);
+				l_wpk2.WriteString(PrenticeGroupName());
 				l_wpk2.WriteLong(l_inviter->m_chaid[l_inviter->m_currcha]);
 				l_wpk2.WriteString(l_inviter->m_chaname[l_inviter->m_currcha].c_str());
 				l_wpk2.WriteString(l_inviter->m_motto[l_inviter->m_currcha].c_str());

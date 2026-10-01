@@ -378,7 +378,10 @@ inline char* _strdup(const char* text) { return strdup(text); }
 inline int _access(const char* path, int mode) { return access(path, mode); }
 inline int _setmaxstdio(int count) { return count; }
 
+inline int _ismbslead(const unsigned char*, const unsigned char*) { return 0; }
+
 #define _T(text) text
+#define _TEXT(text) text
 #define _tcsncpy std::strncpy
 #define _tcscat std::strcat
 #define _ftprintf std::fprintf

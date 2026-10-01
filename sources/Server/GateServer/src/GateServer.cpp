@@ -1,9 +1,9 @@
 #include <iostream>
 #include <signal.h>
 #include "ConsoleInput.h"
-#include "timer.h"
-#include "gateserver.h"
-#include "udpmanage.h"
+#include "Timer.h"
+#include "GateServer.h"
+#include "UdpManage.h"
 
 using namespace std;
 
@@ -22,6 +22,7 @@ dbc::InterLockedLong		g_ref	=0;
 
 dbc::TimerMgr			g_timermgr;
 //=========Timer==============
+#ifdef _WIN32
 extern "C"{WINBASEAPI HWND APIENTRY GetConsoleWindow(VOID);}
 class DisableCloseButton: public dbc::Timer
 {
@@ -45,6 +46,7 @@ private:
 	}
 	HMENU m_hMenu;
 };
+#endif
 class DelayLogout: public dbc::Timer, public dbc::RunBiDirectChain<ClientConnection>
 {
 public:
@@ -70,7 +72,7 @@ private:
 	}
 };
 
-void __cdecl ctrlc_dispatch(int sig)
+void ctrlc_dispatch(int sig)
 {
 	if (sig == SIGINT || sig == SIGTERM)
 	{
@@ -104,7 +106,9 @@ GateServer::GateServer(char const* fname)
 		cli_conn = new ToClient(fname, m_clproc, m_clcomm);
 		m_gpproc->AddTask(new ConnectGroupServer(gp_conn));
 		m_clproc->AddTask(&g_timermgr);
+#ifdef _WIN32
 		g_timermgr.AddTimer(new DisableCloseButton(200));
+#endif
 		signal(SIGINT, ctrlc_dispatch);
 		signal(SIGTERM, ctrlc_dispatch);
 	}catch (...)

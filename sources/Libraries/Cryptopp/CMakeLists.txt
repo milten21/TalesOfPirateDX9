@@ -17,12 +17,31 @@ set(CRYPTOPP_SOURCES
     strciphr.cpp tea.cpp tftables.cpp threefish.cpp tiger.cpp tigertab.cpp ttmac.cpp tweetnacl.cpp twofish.cpp
     vmac.cpp wake.cpp whrlpool.cpp xed25519.cpp xtr.cpp xtrcrypt.cpp xts.cpp zdeflate.cpp zinflate.cpp zlib.cpp)
 
-set(CRYPTOPP_ASM_SOURCES rdrand.asm rdseed.asm)
-set_source_files_properties(${CRYPTOPP_ASM_SOURCES} PROPERTIES COMPILE_OPTIONS "/W3;/Cx;/safeseh" COMPILE_DEFINITIONS _M_X86)
-set_source_files_properties(chacha_avx.cpp PROPERTIES COMPILE_OPTIONS /arch:AVX2)
+if(TALES_PLATFORM_WINDOWS)
+    set(CRYPTOPP_ASM_SOURCES rdrand.asm rdseed.asm)
+    set_source_files_properties(${CRYPTOPP_ASM_SOURCES} PROPERTIES COMPILE_OPTIONS "/W3;/Cx;/safeseh" COMPILE_DEFINITIONS _M_X86)
+    set_source_files_properties(chacha_avx.cpp PROPERTIES COMPILE_OPTIONS /arch:AVX2)
+else()
+    set(CRYPTOPP_ASM_SOURCES)
+    set_source_files_properties(chacha_simd.cpp donna_sse.cpp sse_simd.cpp PROPERTIES COMPILE_OPTIONS -msse2)
+    set_source_files_properties(aria_simd.cpp cham_simd.cpp keccak_simd.cpp lea_simd.cpp simon128_simd.cpp speck128_simd.cpp
+        PROPERTIES COMPILE_OPTIONS -mssse3)
+    set_source_files_properties(blake2b_simd.cpp blake2s_simd.cpp PROPERTIES COMPILE_OPTIONS -msse4.1)
+    set_source_files_properties(crc_simd.cpp PROPERTIES COMPILE_OPTIONS -msse4.2)
+    set_source_files_properties(gcm_simd.cpp PROPERTIES COMPILE_OPTIONS "-mssse3;-mpclmul")
+    set_source_files_properties(gf2n_simd.cpp PROPERTIES COMPILE_OPTIONS -mpclmul)
+    set_source_files_properties(rijndael_simd.cpp PROPERTIES COMPILE_OPTIONS "-msse4.1;-maes")
+    set_source_files_properties(sm4_simd.cpp PROPERTIES COMPILE_OPTIONS "-mssse3;-maes")
+    set_source_files_properties(chacha_avx.cpp PROPERTIES COMPILE_OPTIONS -mavx2)
+    set_source_files_properties(sha_simd.cpp shacal2_simd.cpp PROPERTIES COMPILE_OPTIONS "-msse4.2;-msha")
+endif()
 
 add_library(cryptlib STATIC ${CRYPTOPP_SOURCES} ${CRYPTOPP_ASM_SOURCES})
 target_include_directories(cryptlib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_compile_options(cryptlib PRIVATE
-    "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:Release>>:/Oi;/GF;/Gy;/Oy>")
+if(TALES_PLATFORM_WINDOWS)
+    target_compile_options(cryptlib PRIVATE
+        "$<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CONFIG:Release>>:/Oi;/GF;/Gy;/Oy>")
+else()
+    target_link_libraries(cryptlib PUBLIC Threads::Threads)
+endif()
 set_target_properties(cryptlib PROPERTIES FOLDER Libraries/ThirdParty)

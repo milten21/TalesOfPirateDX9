@@ -12,9 +12,9 @@ tales_add_server(GroupServer
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${TALES_LIBRARIES_DIR}/Util/include
         ${TALES_LIBRARIES_DIR}/Server/sdk/include
-        ${TALES_LIBRARIES_DIR}/Common/include
+        ${TALES_LIBRARIES_DIR}/common/include
         ${TALES_LIBRARIES_DIR}/LuaJIT/src
         ${TALES_LIBRARIES_DIR}/ICUHelper/inc
         ${TALES_LIBRARIES_DIR}/Cryptopp
     LIBRARIES
-        luajit LIBDBC util Common ICUHelper Ws2_32 winmm)
+        luajit LIBDBC util Common ICUHelper)

@@ -1,14 +1,16 @@
 // main.cpp : Defines the entry point for the console application.
 //
 
-#include "gateserver.h"
+#include "GateServer.h"
 _DBC_USING;
 
 BYTE g_wpe = 0;
 BYTE g_ddos = 0;
 BYTE g_rsaaes = 0;
 uShort g_wpeversion = NULL;
+#ifdef _WIN32
 HANDLE hConsole = NULL;
+#endif
 
 //#pragma init_seg( lib )
 pi_LeakReporter pi_leakReporter("gatememleak.log");
@@ -18,7 +20,9 @@ CResourceBundleManage g_ResourceBundleManage("GateServer.loc"); //Add by lark.li
 
 int main(int argc, char* argv[])
 {
+#ifdef _WIN32
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	C_TITLE("GateServer.exe")
 	C_PRINT("Loading GateServer.cfg...\n");
