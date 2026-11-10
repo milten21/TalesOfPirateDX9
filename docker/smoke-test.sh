@@ -144,7 +144,7 @@ pass "the stack stopped in $((stopped - started))s"
 
 for game in "${game_servers[@]}"; do
     container=$("${compose[@]}" ps --all --quiet "$game")
-    docker cp "$container:$game_log/GameServer${game#game}/enter_map.log" - 2>/dev/null | tar -xO | grep -q 'End SaveAllPlayer' \
+    docker cp "$container:$game_log/GameServer${game#game}/enter_map.log" - 2>/dev/null | tar -xO | grep -F 'End SaveAllPlayer' >/dev/null \
         || fail "$game saves all players when stopped"
     pass "$game saved all players when stopped"
 done
@@ -176,7 +176,7 @@ group_sql=$("${compose[@]}" exec -T group cat /var/log/tales/GroupServer/log/gro
 [ "$(grep -cF 'connect database ok' <<<"$group_sql")" = 2 ] && ! grep -qF 'connect database failed' <<<"$group_sql" \
     || fail "group connects to GameDB with the changed password"
 for game in "${game_servers[@]}"; do
-    "${compose[@]}" logs --no-color "$game" | grep -qF 'Connecting database [postgres:5432 : GameDB]... sucess!' \
+    "${compose[@]}" logs --no-color "$game" | grep -F 'Connecting database [postgres:5432 : GameDB]... sucess!' >/dev/null \
         || fail "$game connects to GameDB with the changed password"
 done
 pass "group and ${game_servers[*]} connected to GameDB with the changed password"
