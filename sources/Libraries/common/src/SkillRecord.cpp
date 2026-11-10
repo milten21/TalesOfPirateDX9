@@ -33,7 +33,7 @@ void CSkillRecord::Refresh( int nJob )
 
 	if(chPhase == enumSKILL_NOT_MANUAL_ADD)
 	{
-		// ¼¼ÄÜ²»ÔÊĞíÍæ¼ÒÊÖ¶¯Éı¼¶
+		// æŠ€èƒ½ä¸å…è®¸ç©å®¶æ‰‹åŠ¨å‡çº§
 		return;
 	}
 
@@ -121,10 +121,10 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
     string strList[80], strSub[10];
 	string strLine;
 
-	// Õ½¶·ÀàĞÍ£¬Éú»îÀàĞÍ
+	// æˆ˜æ–—ç±»å‹ï¼Œç”Ÿæ´»ç±»å‹
 	pInfo->chFightType = Str2Int(ParamList[m++]);
 
-	// ¿ÉÒÔÑ§Ï°¸Ã¼¼ÄÜµÄÖ°Òµ
+	// å¯ä»¥å­¦ä¹ è¯¥æŠ€èƒ½çš„èŒä¸š
 	memset(pInfo->chJobSelect, cchSkillRecordKeyValue, sizeof(char) * defSKILL_JOB_SELECT_NUM);
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ';');
@@ -136,7 +136,7 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		pInfo->chJobSelect[i][1] = Str2Int(strSub[1]);
 	}
 
-	// ×óÊÖÉÏ±ØĞë×°±¸ÏàÓ¦µÄµÀ¾ß²Å¿ÉÊ¹ÓÃ¼¼ÄÜ
+	// å·¦æ‰‹ä¸Šå¿…é¡»è£…å¤‡ç›¸åº”çš„é“å…·æ‰å¯ä½¿ç”¨æŠ€èƒ½
 	for( int i=0; i<3; i++ )
 	{
 		for( int j=0; j<defSKILL_ITEM_NEED_NUM; j++ )
@@ -157,7 +157,7 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		pInfo->sItemNeed[0][i][1] = Str2Int(strSub[1]);
 	}
 
-	// ÓÒÊÖÉÏ±ØĞë×°±¸ÏàÓ¦µÄµÀ¾ß²Å¿ÉÊ¹ÓÃ¼¼ÄÜ
+	// å³æ‰‹ä¸Šå¿…é¡»è£…å¤‡ç›¸åº”çš„é“å…·æ‰å¯ä½¿ç”¨æŠ€èƒ½
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ';');
 	n = n > defSKILL_ITEM_NEED_NUM ? defSKILL_ITEM_NEED_NUM : n;
@@ -168,7 +168,7 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		pInfo->sItemNeed[1][i][1] = Str2Int(strSub[1]);
 	}
 
-	// ÉíÌåÉÏ±ØĞë×°±¸ÏàÓ¦µÄµÀ¾ß²Å¿ÉÊ¹ÓÃ¼¼ÄÜ
+	// èº«ä½“ä¸Šå¿…é¡»è£…å¤‡ç›¸åº”çš„é“å…·æ‰å¯ä½¿ç”¨æŠ€èƒ½
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ';');
 	n = n > defSKILL_ITEM_NEED_NUM ? defSKILL_ITEM_NEED_NUM : n;
@@ -179,7 +179,7 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		pInfo->sItemNeed[2][i][1] = Str2Int(strSub[1]);
 	}
 
-	// ±´¿ÇĞèÇó£¨×°±¸²¿Î»£¬ÀàĞÍ£¬±àºÅ£»×°±¸²¿Î»£¬ÀàĞÍ£¬±àºÅ£»¡£¡£¡££©
+	// è´å£³éœ€æ±‚ï¼ˆè£…å¤‡éƒ¨ä½ï¼Œç±»å‹ï¼Œç¼–å·ï¼›è£…å¤‡éƒ¨ä½ï¼Œç±»å‹ï¼Œç¼–å·ï¼›ã€‚ã€‚ã€‚ï¼‰
 	pInfo->sConchNeed[0][0] = cchSkillRecordKeyValue;
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ';');
@@ -200,19 +200,19 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		}
 	}
 
-	// ¼¼ÄÜ½×¶Î
+	// æŠ€èƒ½é˜¶æ®µ
 	pInfo->chPhase = Str2Int(ParamList[m++]);
 
-	// ¼¼ÄÜÀàĞÍ
+	// æŠ€èƒ½ç±»å‹
 	pInfo->chType = Str2Int(ParamList[m++]);
 
-	// ÓĞÒæÓĞº¦
+	// æœ‰ç›Šæœ‰å®³
 	pInfo->chHelpful = Str2Int(ParamList[m++]);
 
-	// Ñ§Ï°¸Ã¼¼ÄÜĞèÒªµÄµÈ¼¶
+	// å­¦ä¹ è¯¥æŠ€èƒ½éœ€è¦çš„ç­‰çº§
 	pInfo->sLevelDemand = Str2Int(ParamList[m++]);
 
-	//ĞèÒªµÄÇ°Ìá¼¼ÄÜ£¨¼¼ÄÜ±àºÅ£¬µÈ¼¶£©
+	//éœ€è¦çš„å‰ææŠ€èƒ½ï¼ˆæŠ€èƒ½ç¼–å·ï¼Œç­‰çº§ï¼‰
 	for (int i = 0; i < defSKILL_PRE_SKILL_NUM; i++)
 	{
 		pInfo->sPremissSkill[i][0] = cchSkillRecordKeyValue;
@@ -229,119 +229,119 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		pInfo->sPremissSkill[i][1] = Str2Int(strSub[1]);
 	}
 
-	// ÏûºÄµÄ¼¼ÄÜµã
+	// æ¶ˆè€—çš„æŠ€èƒ½ç‚¹
 	pInfo->chPointExpend = Str2Int(ParamList[m++]);
 
-	// Ê©·ÅÕßĞÎÌ¬£¨ÈË£¬´¬£©
+	// æ–½æ”¾è€…å½¢æ€ï¼ˆäººï¼Œèˆ¹ï¼‰
 	pInfo->chSrcType = Str2Int(ParamList[m++]);
 
-	// Ä¿±êÀàĞÍ£¨Â½µØÉúÎï£¬º£ÉÏÉúÎï£©
+	// ç›®æ ‡ç±»å‹ï¼ˆé™†åœ°ç”Ÿç‰©ï¼Œæµ·ä¸Šç”Ÿç‰©ï¼‰
 	pInfo->chTarType = Str2Int(ParamList[m++]);
 
-	// Ê¹ÓÃ¾àÀë
+	// ä½¿ç”¨è·ç¦»
 	pInfo->sApplyDistance = Str2Int(ParamList[m++]);
 
-	// Ê¹ÓÃµÄÄ¿±ê
+	// ä½¿ç”¨çš„ç›®æ ‡
 	pInfo->chApplyTarget = Str2Int(ParamList[m++]);
 
-	// ×÷ÓÃÀàĞÍ
+	// ä½œç”¨ç±»å‹
 	pInfo->chApplyType = Str2Int(ParamList[m++]);
 
-	// ½Ç¶È
+	// è§’åº¦
 	pInfo->sAngle = Str2Int(ParamList[m++]);
 
-	// °ë¾¶
+	// åŠå¾„
 	pInfo->sRadii = Str2Int(ParamList[m++]);
 
-	// ¼¼ÄÜÇøÓòĞÎ×´±àºÅ
+	// æŠ€èƒ½åŒºåŸŸå½¢çŠ¶ç¼–å·
 	pInfo->chRange = Str2Int(ParamList[m++]);
 
-	// ×¼±¸¼¼ÄÜ
+	// å‡†å¤‡æŠ€èƒ½
 	strncpy(pInfo->szPrepare, ParamList[m++].c_str(), defSKILL_RANGE_SET_SCRIPT);
 	pInfo->szPrepare[defSKILL_RANGE_SET_SCRIPT - 1] = _TEXT('\0');
 
-	//// µØ±í×´Ì¬Éè¶¨
+	//// åœ°è¡¨çŠ¶æ€è®¾å®š
 	strncpy(pInfo->szRangeState, ParamList[m++].c_str(), defSKILL_EFFECT_SCRIPT_LEN);
 	pInfo->szRangeState[defSKILL_EFFECT_SCRIPT_LEN - 1] = _TEXT('\0');
 
-	// ÏûºÄSP¹«Ê½
+	// æ¶ˆè€—SPå…¬å¼
 	strncpy(pInfo->szUseSP, ParamList[m++].c_str(), defSKILL_EFFECT_SCRIPT_LEN);
 	pInfo->szUseSP[defSKILL_EFFECT_SCRIPT_LEN - 1] = _TEXT('\0');
 
-	// ÏûºÄ¡°ÄÍ¾Ã¶È¡°¹«Ê½
+	// æ¶ˆè€—â€œè€ä¹…åº¦â€œå…¬å¼
 	strncpy(pInfo->szUseEndure, ParamList[m++].c_str(), defSKILL_EFFECT_SCRIPT_LEN);
 	pInfo->szUseEndure[defSKILL_EFFECT_SCRIPT_LEN - 1] = _TEXT('\0');
 
-	// ÏûºÄ¡°ÄÜÁ¿¡°¹«Ê½
+	// æ¶ˆè€—â€œèƒ½é‡â€œå…¬å¼
 	strncpy(pInfo->szUseEnergy, ParamList[m++].c_str(), defSKILL_EFFECT_SCRIPT_LEN);
 	pInfo->szUseEnergy[defSKILL_EFFECT_SCRIPT_LEN - 1] = _TEXT('\0');
 
-	// ¼¼ÄÜÇøÓòÉè¶¨
+	// æŠ€èƒ½åŒºåŸŸè®¾å®š
 	strncpy(pInfo->szSetRange, ParamList[m++].c_str(), defSKILL_EFFECT_SCRIPT_LEN);
 	pInfo->szSetRange[defSKILL_EFFECT_SCRIPT_LEN - 1] = _TEXT('\0');
 
-	// Ê©·Å½×¶Î¹«Ê½
+	// æ–½æ”¾é˜¶æ®µå…¬å¼
 	strncpy(pInfo->szUse, ParamList[m++].c_str(), defSKILL_RANGE_SET_SCRIPT);
 	pInfo->szUse[defSKILL_RANGE_SET_SCRIPT - 1] = _TEXT('\0');
 
-	// Ğ§¹û½×¶Î¹«Ê½
+	// æ•ˆæœé˜¶æ®µå…¬å¼
 	strncpy(pInfo->szEffect, ParamList[m++].c_str(), defSKILL_RANGE_SET_SCRIPT);
 	pInfo->szEffect[defSKILL_RANGE_SET_SCRIPT - 1] = _TEXT('\0');
 
-	// ÕıĞ§¹û¹«Ê½
+	// æ­£æ•ˆæœå…¬å¼
 	strncpy(pInfo->szActive, ParamList[m++].c_str(), defSKILL_RANGE_SET_SCRIPT);
 	pInfo->szActive[defSKILL_RANGE_SET_SCRIPT - 1] = _TEXT('\0');
 
-	// ·´Ğ§¹û¹«Ê½
+	// åæ•ˆæœå…¬å¼
 	strncpy(pInfo->szInactive, ParamList[m++].c_str(), defSKILL_RANGE_SET_SCRIPT);
 	pInfo->szInactive[defSKILL_RANGE_SET_SCRIPT - 1] = _TEXT('\0');
 
-	// °ó¶¨µÄ¿ÉÊÖ¶¯ÒÆ³ı×´Ì¬±àºÅ
+	// ç»‘å®šçš„å¯æ‰‹åŠ¨ç§»é™¤çŠ¶æ€ç¼–å·
 	pInfo->nStateID = Str2Int(ParamList[m++]);
 
-	// ×ÔÉíÊôĞÔÊıÖµµÄ±ä»¯
+	// è‡ªèº«å±æ€§æ•°å€¼çš„å˜åŒ–
 	strLine = ParamList[m++];
 
-	// ×ÔÉíĞ§¹û
+	// è‡ªèº«æ•ˆæœ
 	strLine = ParamList[m++];
 
-	// ÏûºÄµÄÎïÆ·
+	// æ¶ˆè€—çš„ç‰©å“
 	strLine = ParamList[m++];
 
-	// ³ÖĞøÊ±¼ä
+	// æŒç»­æ—¶é—´
 	strLine = ParamList[m++];
 
-	// Ä¿±êÊôĞÔÊıÖµµÄ±ä»¯
+	// ç›®æ ‡å±æ€§æ•°å€¼çš„å˜åŒ–
 	strLine = ParamList[m++];
 
-	// ½¦Éä²ÎÊı
+	// æº…å°„å‚æ•°
 	pInfo->sSplashPara = Str2Int(ParamList[m++]);
 
-	// Ä¿±ê³ÖĞøĞ§¹û
+	// ç›®æ ‡æŒç»­æ•ˆæœ
 	pInfo->sTargetEffect = Str2Int(ParamList[m++]);
 
-	// ½¦Éä³ÖĞøĞ§¹û
+	// æº…å°„æŒç»­æ•ˆæœ
 	pInfo->sSplashEffect = Str2Int(ParamList[m++]);
 
-	// ±äÉí±àºÅ
+	// å˜èº«ç¼–å·
 	pInfo->sVariation = Str2Int(ParamList[m++]);
 
-	// ÕÙ»½±àºÅ
+	// å¬å”¤ç¼–å·
 	pInfo->sSummon = Str2Int(ParamList[m++]);
 
-	// ÊÍ·ÅÊ±¼ä
+	// é‡Šæ”¾æ—¶é—´
 	strLine = ParamList[m++];
 
-	// ÔÙÊ©·ÅËÙ¶È¹«Ê½
+	// å†æ–½æ”¾é€Ÿåº¦å…¬å¼
 	strncpy(pInfo->szFireSpeed, ParamList[m++].c_str(), defSKILL_EFFECT_SCRIPT_LEN);
 	pInfo->szFireSpeed[defSKILL_EFFECT_SCRIPT_LEN - 1] = _TEXT('\0');
 
-	// ¿Í»§¶ËÏÂÊ¹ÓÃ
+	// å®¢æˆ·ç«¯ä¸‹ä½¿ç”¨
 	pInfo->sActionHarm = Str2Int(ParamList[m++]);
 
 	pInfo->chActionPlayType = Str2Int(ParamList[m++]);
 
-    // ÊÍ·Å¸Ã¼¼ÄÜÖ÷½ÇµÄ¶¯×÷
+    // é‡Šæ”¾è¯¥æŠ€èƒ½ä¸»è§’çš„åŠ¨ä½œ
     strLine = ParamList[m++];
     memset( pInfo->sActionPose, 0, sizeof(pInfo->sActionPose) );
     n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');
@@ -353,10 +353,10 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 
 	pInfo->sActionKeyFrme = Str2Int(ParamList[m++]);
 
-	// ¹¥»÷ÒôĞ§
+	// æ”»å‡»éŸ³æ•ˆ
 	pInfo->sWhop = Str2Int(ParamList[m++]);
 
-	// ÊÍ·ÅÕßÈËÎïlinkµã
+	// é‡Šæ”¾è€…äººç‰©linkç‚¹
 	memset(pInfo->sActionDummyLink, 0, sizeof(pInfo->sActionDummyLink));
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');
@@ -366,7 +366,7 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		pInfo->sActionDummyLink[i] = Str2Int(strList[i]);
 	}
 
-	// ÊÍ·Å¸Ã¼¼ÄÜÖ÷½ÇµÄÌØĞ§
+	// é‡Šæ”¾è¯¥æŠ€èƒ½ä¸»è§’çš„ç‰¹æ•ˆ
 	memset(pInfo->sActionEffect, 0, sizeof(pInfo->sActionEffect));
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');
@@ -376,7 +376,7 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		pInfo->sActionEffect[i] = Str2Int(strList[i]);
 	}
 
-	// ÊÍ·Å¸Ã¼¼ÄÜµÄ·½Ê½:0-ÎŞ±ä»¯,1-ÄÜ×Ô¶¯Ëõ·Å
+	// é‡Šæ”¾è¯¥æŠ€èƒ½çš„æ–¹å¼:0-æ— å˜åŒ–,1-èƒ½è‡ªåŠ¨ç¼©æ”¾
 	memset(pInfo->sActionEffectType, 0, sizeof(pInfo->sActionEffectType));
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');
@@ -416,7 +416,7 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 
 	pInfo->sSkySpd = Str2Int(ParamList[m++]);
 
-	// ÊÜ»÷ÒôĞ§
+	// å—å‡»éŸ³æ•ˆ
 	pInfo->sWhoped = Str2Int(ParamList[m++]);
 
 	pInfo->sTargetDummyLink = Str2Int(ParamList[m++]);
@@ -429,14 +429,14 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
     
 	pInfo->sWaterEffectID = Str2Int(ParamList[m++]);
 
-	//short	sICON;												// ¸Ã¼¼ÄÜÔÚÓÎÏ·½çÃæ±íÏÖµÄÍ¼±ê
+	//short	sICON;												// è¯¥æŠ€èƒ½åœ¨æ¸¸æˆç•Œé¢è¡¨ç°çš„å›¾æ ‡
 	_tcsncpy(pInfo->szICON, ParamList[m++].c_str(), defSKILL_ICON_NAME_LEN);
 	pInfo->szICON[defSKILL_ICON_NAME_LEN - 1] = _TEXT('\0');
 
-	// ²¥·Å´ÎÊı
+	// æ’­æ”¾æ¬¡æ•°
 	pInfo->chPlayTime = Str2Int(ParamList[m++]);
 
-	// ÌØÊâ²Ù×÷
+	// ç‰¹æ®Šæ“ä½œ
 	memset(pInfo->chOperate, 0, sizeof(char) * defSKILL_OPERATE_NUM);
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');
@@ -446,15 +446,15 @@ BOOL CSkillRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string
 		pInfo->chOperate[i] = Str2Int(strList[i]);
 	}
 
-	// ÃèÊö
+	// æè¿°
 	_tcsncpy(pInfo->szDescribeHint, ParamList[m++].c_str(), sizeof(pInfo->szDescribeHint) );
 	pInfo->szDescribeHint[sizeof(pInfo->szDescribeHint)-1] = '\0';
 
-	// Ğ§¹û
+	// æ•ˆæœ
 	_tcsncpy(pInfo->szEffectHint, ParamList[m++].c_str(), sizeof(pInfo->szEffectHint) );
 	pInfo->szEffectHint[sizeof(pInfo->szEffectHint)-1] = '\0';
 
-	// ÏûºÄ
+	// æ¶ˆè€—
 	_tcsncpy(pInfo->szExpendHint, ParamList[m++].c_str(), sizeof(pInfo->szExpendHint) );
 	pInfo->szExpendHint[sizeof(pInfo->szExpendHint)-1] = '\0';
 	return TRUE;
@@ -464,6 +464,6 @@ void CSkillRecordSet::_ProcessRawDataInfo(CRawDataInfo *pInfo)
 {
 	CSkillRecord *pSkill = (CSkillRecord*)pInfo;
 
-    // ¸üĞÂ¶¯Ì¬ÊôĞÔ
+    // æ›´æ–°åŠ¨æ€å±æ€§
 	pSkill->RefreshPrivateData();	
 }

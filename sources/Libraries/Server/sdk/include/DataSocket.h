@@ -8,14 +8,6 @@
 //=================================================================
 #pragma once
 
-#ifndef USING_TAO			//Ê¹ÓÃWin32»ù±¾Platform SDK
-#include <winsock2.h>	
-#include <windows.h>
-	//È·±£µ÷ÓÃĞÂµÄWinSock2.2°æ±¾
-#else
-#include "TAOSpecial.h"
-#endif
-
 #include "DBCCommon.h"
 #include "Packet.h"
 #include "PreAlloc.h"
@@ -93,9 +85,9 @@ public:
 	
 	void* volatile	m_appinfo{};
 
-	volatile uLong		m_cmdNum;					// ¼ÇÂ¼Ò»ÃëÖÓÄÚÃüÁîµÄ¸öÊı£¬·ÖÎöÍøÂç×´¿ö	
-	volatile uLong		m_lashTick;					// ÉÏÒ»´Î¼ÇÂ¼Ê±¼ä
-	volatile uLong		m_waringNum;				// ¼ÇÂ¼Ò»ÃëÖÓÄÚÃüÁîµÄ¸öÊı£¬·ÖÎöÍøÂç×´¿ö	
+	volatile uLong		m_cmdNum;					// è®°å½•ä¸€ç§’é’Ÿå†…å‘½ä»¤çš„ä¸ªæ•°ï¼Œåˆ†æç½‘ç»œçŠ¶å†µ	
+	volatile uLong		m_lashTick;					// ä¸Šä¸€æ¬¡è®°å½•æ—¶é—´
+	volatile uLong		m_waringNum;				// è®°å½•ä¸€ç§’é’Ÿå†…å‘½ä»¤çš„ä¸ªæ•°ï¼Œåˆ†æç½‘ç»œçŠ¶å†µ	
 
 	short				m_gsCheck;
 

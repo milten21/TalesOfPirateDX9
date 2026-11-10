@@ -749,7 +749,7 @@ function SQLiteCacheSkillInfo(First, Last)
 	local ret	= {}
 	local ItemList	= {}
 
-	local fp = assert(io.open (GetResPath("/skillinfo.txt") ) )
+	local fp = assert(io.open (GetResPath("/SkillInfo.txt") ) )
 	for line in fp:lines() do
 	local position = string.find(line, "[ \t]*//")
 		if (position ~= 1) then
@@ -799,7 +799,7 @@ function SQLiteCacheItemInfo(First, Last)
 	local ret	= {}
 	local ItemList	= {}
 
-	local fp = assert(io.open (GetResPath("/iteminfo.txt") ) )
+	local fp = assert(io.open (GetResPath("/ItemInfo.txt") ) )
 	for line in fp:lines() do
 	local position = string.find(line, "[ \t]*//")
 		if (position ~= 1) then

@@ -1,6 +1,6 @@
 
 //
-//	¶àÓïÑÔ×Ö·û´®¼ÇÂ¼Àà
+//	å¤šè¯­è¨€å­—ç¬¦ä¸²è®°å½•ç±»
 //
 //	add by Philip.Wu  2006-07-18
 //
@@ -22,33 +22,33 @@ public:
 
 	~CLanguageRecord(void);
 
-	// »ñµÃ×Ö·û´®
+	// è·å¾—å­—ç¬¦ä¸²
 	const char* GetString(int nID);
 
-	// ´ÓÎÄ¼şÖĞ¶ÁÈ¡
+	// ä»æ–‡ä»¶ä¸­è¯»å–
 	bool LoadFromBinFile(const char* szBinFile);
 
-	// ´ÓÎÄ¼şÖĞ¶ÁÈ¡
+	// ä»æ–‡ä»¶ä¸­è¯»å–
 	bool LoadFromTxtFile(const char* szTxtFile);
 
-	// »ñµÃ×Ö·û´®¸öÊı
+	// è·å¾—å­—ç¬¦ä¸²ä¸ªæ•°
 	int GetRecordCount(void);
 
-	// ¼ÓÃÜ²¢Éú³É¶ş½øÖÆ
+	// åŠ å¯†å¹¶ç”ŸæˆäºŒè¿›åˆ¶
 	bool MadeBinFile(const char* szBinFile, const char* szTxtFile);
 
 private:
 
-	// ×Ö·û´® map
+	// å­—ç¬¦ä¸² map
 	std::map<int, std::string> m_mapString;
 
-	// Ìí¼ÓÒ»ĞĞ
+	// æ·»åŠ ä¸€è¡Œ
 	void Add(char* szLine);
 
-	// Ìæ»»
+	// æ›¿æ¢
 	int ReplaceString(char* _str, const char* _old, const char* _new);
 
-	// ²éÕÒ
+	// æŸ¥æ‰¾
 	int Find(const char* _str, const char* _find);
 };
 

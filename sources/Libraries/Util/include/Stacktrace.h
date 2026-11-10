@@ -35,6 +35,20 @@
 #include <iostream>
 #include <string>
 
+#ifndef _WIN32
+
+class SEHTranslator
+{
+public:
+	SEHTranslator();
+	~SEHTranslator();
+
+	SEHTranslator(const SEHTranslator&) = delete;
+	SEHTranslator& operator=(const SEHTranslator&) = delete;
+};
+
+#else
+
 #include <windows.h>
 
 // Only valid in the following environment: Intel platform, MS VC++ 5/6/7
@@ -209,5 +223,7 @@ typedef DetailedSystemException<EXCEPTION_STACK_OVERFLOW> StackOverflowException
 typedef DetailedSystemException<EXCEPTION_INVALID_DISPOSITION> InvalidDispositionException;
 typedef DetailedSystemException<EXCEPTION_GUARD_PAGE> GuardPageException;
 typedef DetailedSystemException<EXCEPTION_INVALID_HANDLE> InvalidHandleException;
+
+#endif
 
 #endif

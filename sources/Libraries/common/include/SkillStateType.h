@@ -8,36 +8,36 @@
 #ifndef SKILLSTATETYPE_H
 #define SKILLSTATETYPE_H
 
-const unsigned char	SSTATE_NONE			= 0;	// ¿Õ×´Ì¬
+const unsigned char	SSTATE_NONE			= 0;	// ç©ºçŠ¶æ€
 
-// Ç°°ËÖÖÒ²ÓÃÓÚµØÃæµÄ×´Ì¬
-const unsigned char	SSTATE_CUT			= 1;	// ÁÒÑæÕ¶
-const unsigned char	SSTATE_FERVOR_ARROR	= 2;	// ³ãÈÈÖ®¼ı
-const unsigned char	SSTATE_FROST_ARROR	= 3;	// Ëª¶³Ö®¼ı
-const unsigned char	SSTATE_SKYROCKET	= 4;	// Ñæ»ğ±íÑİ
-const unsigned char	SSTATE_MURRAIN		= 5;	// ÎÁÉñ
-const unsigned char	SSTATE_GIDDY		= 6;	// Ñ£ÔÎ
-const unsigned char	SSTATE_FREEZE		= 7;	// ½©Ó²
-const unsigned char	SSTATE_SLEEP		= 8;	// »èË¯
-const unsigned char	SSTATE_BIND			= 9;	// Êø¸¿
-const unsigned char	SSTATE_FROST		= 10;	// ±ù¶³
-const unsigned char	SSTATE_BEAT_BACK	= 11;	// »÷ÍË
-const unsigned char	SSTATE_UNBEATABLE	= 12;	// ÎŞµĞ
-const unsigned char	SSTATE_TOXIN		= 13;	// Î×¶¾
-const unsigned char	SSTATE_REBOUND		= 14;	// ·´µ¯
-const unsigned char	SSTATE_AVATAR		= 15;	// ±äÉí
-const unsigned char	SSTATE_TITAN		= 16;	// ¾ŞÈË
-const unsigned char	SSTATE_BLINDNESS	= 17;	// Ê§Ã÷
-const unsigned char	SSTATE_HAIR			= 18;	// Àí·¢
-const unsigned char	SSTATE_FLOAT		= 19;	// ¸¡¿Õ
-const unsigned char	SSTATE_CALL			= 20;	// ÕÙ»½
-const unsigned char	SSTATE_SHIELD		= 21;	// ¶ÜÅÆÊìÁ·
-const unsigned char	SSTATE_TIGER		= 22;	// »¢Ğ¥
-const unsigned char	SSTATE_HIDE			= 43;	// ÒşÉí
-const unsigned char	SSTATE_TRADE		= 85;	// ½»Ò×
-const unsigned char	SSTATE_STALL		= 99;	// °ÚÌ¯
-const unsigned char	SSTATE_REPAIR		= 100;	// ĞŞÀí
-const unsigned char	SSTATE_FORGE		= 101;	// ¾«Á¶
+// å‰å…«ç§ä¹Ÿç”¨äºåœ°é¢çš„çŠ¶æ€
+const unsigned char	SSTATE_CUT			= 1;	// çƒˆç„°æ–©
+const unsigned char	SSTATE_FERVOR_ARROR	= 2;	// ç‚½çƒ­ä¹‹ç®­
+const unsigned char	SSTATE_FROST_ARROR	= 3;	// éœœå†»ä¹‹ç®­
+const unsigned char	SSTATE_SKYROCKET	= 4;	// ç„°ç«è¡¨æ¼”
+const unsigned char	SSTATE_MURRAIN		= 5;	// ç˜Ÿç¥
+const unsigned char	SSTATE_GIDDY		= 6;	// çœ©æ™•
+const unsigned char	SSTATE_FREEZE		= 7;	// åƒµç¡¬
+const unsigned char	SSTATE_SLEEP		= 8;	// æ˜ç¡
+const unsigned char	SSTATE_BIND			= 9;	// æŸç¼š
+const unsigned char	SSTATE_FROST		= 10;	// å†°å†»
+const unsigned char	SSTATE_BEAT_BACK	= 11;	// å‡»é€€
+const unsigned char	SSTATE_UNBEATABLE	= 12;	// æ— æ•Œ
+const unsigned char	SSTATE_TOXIN		= 13;	// å·«æ¯’
+const unsigned char	SSTATE_REBOUND		= 14;	// åå¼¹
+const unsigned char	SSTATE_AVATAR		= 15;	// å˜èº«
+const unsigned char	SSTATE_TITAN		= 16;	// å·¨äºº
+const unsigned char	SSTATE_BLINDNESS	= 17;	// å¤±æ˜
+const unsigned char	SSTATE_HAIR			= 18;	// ç†å‘
+const unsigned char	SSTATE_FLOAT		= 19;	// æµ®ç©º
+const unsigned char	SSTATE_CALL			= 20;	// å¬å”¤
+const unsigned char	SSTATE_SHIELD		= 21;	// ç›¾ç‰Œç†Ÿç»ƒ
+const unsigned char	SSTATE_TIGER		= 22;	// è™å•¸
+const unsigned char	SSTATE_HIDE			= 43;	// éšèº«
+const unsigned char	SSTATE_TRADE		= 85;	// äº¤æ˜“
+const unsigned char	SSTATE_STALL		= 99;	// æ‘†æ‘Š
+const unsigned char	SSTATE_REPAIR		= 100;	// ä¿®ç†
+const unsigned char	SSTATE_FORGE		= 101;	// ç²¾ç‚¼
 
 
 const unsigned char	AREA_STATE_MAXID	= 255;

@@ -3,8 +3,6 @@
 
 _DBC_USING
 
-uLong Timekeeper::dwFrequency	=1;
-
 Timer::Timer(uLong interval):m_interval(interval?interval:1),m_starttick(0),m_lasttick(0)
 {
 }

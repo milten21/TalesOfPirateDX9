@@ -2,8 +2,7 @@
 #ifndef DB3_H_
 #define DB3_H_
 
-#include <windows.h>
-#include <sql.h>
+#include "OdbcApi.h"
 #include <string>
 // Display Format
 

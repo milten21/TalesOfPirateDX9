@@ -115,11 +115,6 @@ inline std::string update_password(const char* name, const char* password)
 	return format("update account_login set password= '%s' where name = '%s'", password, name);
 }
 
-inline std::string select_user_state(const char* name)
-{
-	return format("select id, login_group, last_logout_time from account_login where name='%s'", name);
-}
-
 inline std::string set_ban(const char* name, int ban)
 {
 	return format("update account_login set ban = %d where name = '%s'", ban, name);

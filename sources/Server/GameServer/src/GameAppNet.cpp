@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+#include "stdafx.h"
 #include "GameApp.h"
 #include "GameAppNet.h"
 #include "SubMap.h"
@@ -61,7 +61,7 @@ void CGameApp::ProcessInfoMsg(pNetMessage msg, short sType, InfoServer* pInfo)
 void CGameApp::OnInfoConnected(InfoServer* pInfo)
 {
 	T_B
-		//??¼InfoServer
+		//??ç³nfoServer
 		pInfo->Login();
 	T_E
 }
@@ -82,7 +82,7 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 		{
 			switch (msg->msgHead.msgID)
 			{
-			case INFO_LOGIN:		// ??¼InfoServer
+			case INFO_LOGIN:		// ??ç³nfoServer
 			{
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
@@ -102,7 +102,7 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				}
 				else
 				{
-					//LG("Store_data", "??¼InfoServer???????????!\n");
+					//LG("Store_data", "??ç³nfoServer???????????!\n");
 					LG("Store_data", "enter InfoServer message data error!\n");
 				}
 			}
@@ -113,8 +113,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]succeed to obtain account information!\n", lOrderID);
+					//LG("Store_data", "[%lld]????????????!\n", lOrderID);
+					LG("Store_data", "[%lld]succeed to obtain account information!\n", lOrderID);
 
 					RoleInfo* ChaInfo = (RoleInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.AcceptRoleInfo(lOrderID, ChaInfo);
@@ -122,8 +122,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]obtain account information failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]????????????!\n", lOrderID);
+					LG("Store_data", "[%lld]obtain account information failed!\n", lOrderID);
 
 					g_StoreSystem.CancelRoleInfo(lOrderID);
 				}
@@ -145,7 +145,7 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 					short lComNum = LOWORD(msg->msgHead.msgExtend);
 					//???????
 					short lClassNum = HIWORD(msg->msgHead.msgExtend);
-					//???÷??????
+					//??????????
 					g_StoreSystem.SetItemClass((ClassInfo*)(msg->msgBody), lClassNum);
 					//??????????
 					g_StoreSystem.SetItemList((StoreStruct*)((char*)msg->msgBody + lClassNum * sizeof(ClassInfo)), lComNum);
@@ -158,7 +158,7 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 					short lComNum = LOWORD(msg->msgHead.msgExtend);
 					//???????
 					short lClassNum = HIWORD(msg->msgHead.msgExtend);
-					//???÷??????
+					//??????????
 					g_StoreSystem.SetItemClass((ClassInfo*)(msg->msgBody), lClassNum);
 					//??????????
 					g_StoreSystem.SetItemList((StoreStruct*)((char*)msg->msgBody + lClassNum * sizeof(ClassInfo)), lComNum);
@@ -173,20 +173,20 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 
 			case INFO_REQUEST_AFFICHE:		// ??????????
 			{
-				//LG("Store_data", "??ù??????!\n");
+				//LG("Store_data", "?????????!\n");
 				LG("Store_data", "get offiche information!\n");
 				if (msg->msgHead.subID == INFO_SUCCESS) // ???????????
 				{
 					//???????
 					long lAfficheNum = msg->msgHead.msgExtend;
-					//???ù??????
+					//??????????
 					g_StoreSystem.SetAfficheList((AfficheInfo*)msg->msgBody, lAfficheNum);
 				}
 				else if (msg->msgHead.subID == INFO_FAILED) // ???????????
 				{
 					//???????
 					long lAfficheNum = msg->msgHead.msgExtend;
-					//???ù??????
+					//??????????
 					g_StoreSystem.SetAfficheList((AfficheInfo*)msg->msgBody, lAfficheNum);
 				}
 				else
@@ -202,8 +202,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS) // ??????
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]?????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]succeed to buy item!\n", lOrderID);
+					//LG("Store_data", "[%lld]?????????!\n", lOrderID);
+					LG("Store_data", "[%lld]succeed to buy item!\n", lOrderID);
 
 					RoleInfo* ChaInfo = (RoleInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.Accept(lOrderID, ChaInfo);
@@ -211,8 +211,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED) // ???????
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]??????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]buy item failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]??????????!\n", lOrderID);
+					LG("Store_data", "[%lld]buy item failed!\n", lOrderID);
 
 					g_StoreSystem.Cancel(lOrderID);
 				}
@@ -229,8 +229,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????VIP???!\n", lOrderID);
-					LG("Store_data", "[%I64i] buy VIP succeed !\n", lOrderID);
+					//LG("Store_data", "[%lld]????VIP???!\n", lOrderID);
+					LG("Store_data", "[%lld] buy VIP succeed !\n", lOrderID);
 
 					RoleInfo* ChaInfo = (RoleInfo*)((char*)msg->msgBody + sizeof(long long));
 
@@ -239,8 +239,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????VIP???!\n", lOrderID);
-					LG("Store_data", "[%I64i] buy VIP failed !\n", lOrderID);
+					//LG("Store_data", "[%lld]????VIP???!\n", lOrderID);
+					LG("Store_data", "[%lld] buy VIP failed !\n", lOrderID);
 
 					g_StoreSystem.CancelVIP(lOrderID);
 				}
@@ -257,8 +257,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]?????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]change token succeed !\n", lOrderID);
+					//LG("Store_data", "[%lld]?????????!\n", lOrderID);
+					LG("Store_data", "[%lld]change token succeed !\n", lOrderID);
 
 					RoleInfo* ChaInfo = (RoleInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.AcceptChange(lOrderID, ChaInfo);
@@ -266,8 +266,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]??????????!\n", lOrderID);
-					LG("Store_data", "[%I64i]change token failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]??????????!\n", lOrderID);
+					LG("Store_data", "[%lld]change token failed!\n", lOrderID);
 
 					g_StoreSystem.CancelChange(lOrderID);
 				}
@@ -279,13 +279,13 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 			}
 			break;
 
-			case INFO_REQUEST_HISTORY:		// ????????¼
+			case INFO_REQUEST_HISTORY:		// ?????????
 			{
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????????¼???!\n", lOrderID);
-					LG("Store_data", "[%I64i]succeed to query trade note!\n", lOrderID);
+					//LG("Store_data", "[%lld]????????????!\n", lOrderID);
+					LG("Store_data", "[%lld]succeed to query trade note!\n", lOrderID);
 
 					HistoryInfo* pRecord = (HistoryInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.AcceptRecord(lOrderID, pRecord);
@@ -293,14 +293,14 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????????¼???!\n", lOrderID);
-					LG("Store_data", "[%I64i]query trade note failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]????????????!\n", lOrderID);
+					LG("Store_data", "[%lld]query trade note failed!\n", lOrderID);
 
 					g_StoreSystem.CancelRecord(lOrderID);
 				}
 				else
 				{
-					//LG("Store_data", "?????¼????????????????????!\n");
+					//LG("Store_data", "??????????????????????????!\n");
 					LG("Store_data", "trade note query resoibsuib nessage data error!\n");
 				}
 			}
@@ -311,8 +311,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????GM??????!\n", lOrderID);
-					LG("Store_data", "[%I64i]send GM mail success!\n", lOrderID);
+					//LG("Store_data", "[%lld]????GM??????!\n", lOrderID);
+					LG("Store_data", "[%lld]send GM mail success!\n", lOrderID);
 
 					long lMailID = msg->msgHead.msgExtend;
 					g_StoreSystem.AcceptGMSend(lOrderID, lMailID);
@@ -320,8 +320,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????GM??????!\n", lOrderID);
-					LG("Store_data", "[%I64i]send GM mail failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]????GM??????!\n", lOrderID);
+					LG("Store_data", "[%lld]send GM mail failed!\n", lOrderID);
 
 					g_StoreSystem.CancelGMSend(lOrderID);
 				}
@@ -338,8 +338,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				if (msg->msgHead.subID == INFO_SUCCESS)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????GM??????!\n", lOrderID);
-					LG("Store_data", "[%I64i]receive GM mail success!\n", lOrderID);
+					//LG("Store_data", "[%lld]????GM??????!\n", lOrderID);
+					LG("Store_data", "[%lld]receive GM mail success!\n", lOrderID);
 
 					MailInfo* pMi = (MailInfo*)((char*)msg->msgBody + sizeof(long long));
 					g_StoreSystem.AcceptGMRecv(lOrderID, pMi);
@@ -347,8 +347,8 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 				else if (msg->msgHead.subID == INFO_FAILED)
 				{
 					long long lOrderID = *(long long*)msg->msgBody;
-					//LG("Store_data", "[%I64i]????GM??????!\n", lOrderID);
-					LG("Store_data", "[%I64i]reciveGMmail failed!\n", lOrderID);
+					//LG("Store_data", "[%lld]????GM??????!\n", lOrderID);
+					LG("Store_data", "[%lld]reciveGMmail failed!\n", lOrderID);
 
 					g_StoreSystem.CancelGMRecv(lOrderID);
 				}
@@ -371,7 +371,7 @@ void CGameApp::ProcessMsg(pNetMessage msg, InfoServer* pInfo)
 
 			default:
 			{
-				//LG("Store_data", "??õ???????????!\n");
+				//LG("Store_data", "??????????????!\n");
 				LG("Store_data", "get unknown information type!\n");
 			}
 			break;
@@ -439,7 +439,7 @@ void CGameApp::ProcessPacket(GateServer* pGate, RPACKET pkt)
 		short	sErrCode;
 		if (sErrCode = READ_SHORT(pkt))
 		{
-			/*LG("GameLogin", "??¼ GateServer: %s:%d???[%s], ?????[%s]\n",
+			/*LG("GameLogin", "??? GateServer: %s:%d???[%s], ?????[%s]\n",
 				pGate->GetIP().c_str(), pGate->GetPort(), g_GameGateConnError(sErrCode),
 				g_pGameApp->m_strMapNameList.c_str());*/
 			LG("GameLogin", "enter GateServer: %s:%d failed [%s], register map[%s]\n",
@@ -452,7 +452,7 @@ void CGameApp::ProcessPacket(GateServer* pGate, RPACKET pkt)
 			pGate->GetName() = READ_STRING(pkt);
 			if (!strcmp(pGate->GetName().c_str(), ""))
 			{
-				/*LG("GameLogin", "??¼ GateServer: [%s:%d]??? ??û???õ???????????????????????\n",
+				/*LG("GameLogin", "??? GateServer: [%s:%d]??? ??????????????????????????????\n",
 					pGate->GetName().c_str(), pGate->GetIP().c_str(), pGate->GetPort(),
 					g_pGameApp->m_strMapNameList.c_str());*/
 				LG("GameLogin", "entry GateServer: [%s:%d]success but do not get his name??so disconnection and entry again\n",
@@ -463,7 +463,7 @@ void CGameApp::ProcessPacket(GateServer* pGate, RPACKET pkt)
 			}
 			else
 			{
-				/*LG("GameLogin", "??¼ GateServer: %s [%s:%d]??? [MapName:%s]\n",
+				/*LG("GameLogin", "??? GateServer: %s [%s:%d]??? [MapName:%s]\n",
 					pGate->GetName().c_str(), pGate->GetIP().c_str(), pGate->GetPort(),
 					g_pGameApp->m_strMapNameList.c_str());*/
 				LG("GameLogin", "entry GateServer: %s [%s:%d]success [MapName:%s]\n",
@@ -974,8 +974,8 @@ void CGameApp::ProcessGuildChallPrizeMoney(GateServer* pGate, RPACKET pkt)
 	{
 		CCharacter* pCha = pPlayer->GetMainCha();
 		pCha->AddMoney("??", dwMoney);
-		/*pCha->SystemNotice( "????????????%s????????????????????ý?????%u????", pCha->GetGuildName(), dwMoney );
-		LG( "?????????", "????????????%s????????????????????ý?????%u????", pCha->GetGuildName(), dwMoney );*/
+		/*pCha->SystemNotice( "????????????%s??????????????????????????%u????", pCha->GetGuildName(), dwMoney );
+		LG( "?????????", "????????????%s??????????????????????????%u????", pCha->GetGuildName(), dwMoney );*/
 		pCha->SystemNotice(RES_STRING(GM_GAMEAPPNET_CPP_00010), pCha->GetGuildName(), dwMoney);
 		LG("challenge consortia result", "congratulate you have leading the consortia??%s??get win in consortia battle??gain bounty??%u????", pCha->GetGuildName(), dwMoney);
 	}
@@ -1017,7 +1017,7 @@ void CGameApp::ProcessTeamMsg(GateServer* pGate, RPACKET pkt)
 
 	switch (cTeamMsgType)
 	{
-	case TEAM_MSG_ADD: {	/*LG("team", "?????? [?¼???] ???\n");*/ break; }
+	case TEAM_MSG_ADD: {	/*LG("team", "?????? [?????] ???\n");*/ break; }
 	case TEAM_MSG_LEAVE: {	/*LG("team", "?????? [??????] ???\n");*/ break; }
 	case TEAM_MSG_UPDATE: {	/*LG("team", "?????? [??????] ???\n");*/ break; }
 	default:
@@ -1122,7 +1122,7 @@ void CGameApp::ProcessTeamMsg(GateServer* pGate, RPACKET pkt)
 
 				CSkillState& leader_states = leaderCha->m_CSkillState;
 
-				//if (ulCurTick - pSStateUnit->ulStartTick >= (unsigned long)pSStateUnit->lOnTick * 1000) // ×´Ì¬¼ÆÊ±Íê³É
+				//if (ulCurTick - pSStateUnit->ulStartTick >= (unsigned long)pSStateUnit->lOnTick * 1000) // çŠ¶æ€è®¡æ—¶å®Œæˆ
 				if (leader_states.HasState(217))
 				{
 					const auto& state = leader_states.GetSStateByID(217);
@@ -1550,7 +1550,7 @@ void CGameApp::ProcessInterGameMsg(unsigned short usCmd, GateServer* pGate, RPAC
 			pCha->SetGuildName("");
 			cChar* l_gldname = READ_STRING(pkt);
 			pCha->guildPermission = 0;
-			pCha->SetGuildID(0);			//???ù???ID
+			pCha->SetGuildID(0);			//???????ID
 			pCha->SetGuildState(0);
 			pCha->SetGuildName("");
 			pCha->SetGuildMotto("");
@@ -1566,8 +1566,8 @@ void CGameApp::ProcessInterGameMsg(unsigned short usCmd, GateServer* pGate, RPAC
 		CCharacter* pCha = FindMainPlayerChaByID(l_chaid);
 		if (pCha)
 		{
-			pCha->SetGuildID(READ_LONG(pkt));				//???ù???ID
-			pCha->SetGuildState(0);	//???ù???Type
+			pCha->SetGuildID(READ_LONG(pkt));				//???????ID
+			pCha->SetGuildState(0);	//???????Type
 			cChar* l_gldname = READ_STRING(pkt);
 			pCha->SetGuildName(l_gldname);
 			cChar* l_gldmotto = READ_STRING(pkt);
@@ -1781,8 +1781,8 @@ void CGameApp::ProcessInterGameMsg(unsigned short usCmd, GateServer* pGate, RPAC
 		{
 			CCharacter* pCha = pPlayer->GetMainCha();
 			/*pCha->AddMoney( "??", dwMoney );
-			pCha->SystemNotice( "????????????%s????????????????????ý?????%u????", pCha->GetGuildName(), dwMoney );
-			LG( "?????????", "????????????%s??ID??%u????????????????????ý?????%u????\n", pCha->GetGuildName(),
+			pCha->SystemNotice( "????????????%s??????????????????????????%u????", pCha->GetGuildName(), dwMoney );
+			LG( "?????????", "????????????%s??ID??%u??????????????????????????%u????\n", pCha->GetGuildName(),
 				pCha->GetGuildID(), dwMoney );*/
 			pCha->AddMoney(RES_STRING(GM_GAMEAPPNET_CPP_00017), dwMoney);
 			pCha->SystemNotice(RES_STRING(GM_GAMEAPPNET_CPP_00010), pCha->GetGuildName(), dwMoney);

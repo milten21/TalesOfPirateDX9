@@ -12,13 +12,6 @@
 */
 #pragma once
 
-#ifndef USING_TAO		//ʹ��Win32����Platform SDK
-#include <winsock2.h>		//ȷ�������µ�WinSock2.2�汾
-#include <windows.h>
-#else
-#include "TAOSpecial.h"
-#endif
-
 #include "DBCCommon.h"
 #include "PreAlloc.h"
 

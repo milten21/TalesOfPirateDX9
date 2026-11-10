@@ -8,7 +8,9 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "tchar.h"
+#ifdef _WIN32
+#include <tchar.h>
+#endif
 
 #include "lua.hpp"
 
@@ -54,7 +56,7 @@ private:
 		return true;
 	}
 
-	lua_State	*m_pSLua; // lua½Å±¾½âÊÍÆ÷
+	lua_State	*m_pSLua; // luaè„šæœ¬è§£é‡Šå™¨
 
 	int			m_nDoStringRet[DOSTRING_RETURN_NUM];
 	char		m_szDoStringRet[DOSTRING_RETURN_NUM][DOSTRING_RETURN_STRING_LEN];

@@ -18,43 +18,43 @@ public:
     ~fifo() {_head = _tail = NULL;}
 
     void push(T* t)
-        { // ÍùÎ²²¿Ñ¹ÈëÒ»¸öÔªËØ
+        { // å¾€å°¾éƒ¨åŽ‹å…¥ä¸€ä¸ªå…ƒç´ 
         if (t == NULL) return;
         if (_head == NULL)
-            { // fifoÎª¿Õ
+            { // fifoä¸ºç©º
             _head = t;
             _head->prev = NULL;
             _head->next = NULL;
             _tail = _head;}
-        else{ // fifo·Ç¿Õ
+        else{ // fifoéžç©º
             _tail->next = t;
             t->prev = _tail;
             t->next = NULL;
             _tail = t;}}
 
     T* pop()
-        { // ´ÓÍ·²¿È¡³öÒ»¸öÔªËØ
+        { // ä»Žå¤´éƒ¨å–å‡ºä¸€ä¸ªå…ƒç´ 
         T* tmp;
         if (_head == _tail)
             {
-            if (_head == NULL) return NULL; // fifoÎª¿Õ
-            else{ // fifoÊ£ÓàÒ»¸öÔªËØ
+            if (_head == NULL) return NULL; // fifoä¸ºç©º
+            else{ // fifoå‰©ä½™ä¸€ä¸ªå…ƒç´ 
                 tmp = _head;
                 _head = _tail = NULL;
                 return tmp;}}
-        else{ // fifoÖÐÊ£Óà¶àÓÚÒ»¸öÔªËØ£¬È¡³öÒ»¸ö
+        else{ // fifoä¸­å‰©ä½™å¤šäºŽä¸€ä¸ªå…ƒç´ ï¼Œå–å‡ºä¸€ä¸ª
             tmp = _head;
             _head = (T *)_head->next;
             _head->prev = NULL;
             return tmp;}}
 
     int size() const
-        { // È¡µÃfifoµÄ³¤¶È
+        { // å–å¾—fifoçš„é•¿åº¦
         int sz = 0;
         T* curr = _head;
-        if (curr == NULL) return sz; // fifoÎª¿Õ
+        if (curr == NULL) return sz; // fifoä¸ºç©º
         while (curr != _tail)
-            { // fifo·Ç¿Õ
+            { // fifoéžç©º
             ++ sz; curr = (T *)curr->next;}
         return (sz + 1);}
 

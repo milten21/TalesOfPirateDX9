@@ -5,11 +5,11 @@
 
 #include <mutex>
 
-class dbc::DataSocket;
-
 _DBC_BEGIN
 #pragma pack(push)
 #pragma pack(4)
+
+class DataSocket;
 
 struct PKItem:public PreAllocStru {
 	PKItem(uLong size)

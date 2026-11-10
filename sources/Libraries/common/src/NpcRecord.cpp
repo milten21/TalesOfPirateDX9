@@ -16,20 +16,20 @@ BOOL CNpcRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string> 
 	string strList[8];
 	string strLine;
 
-	// npcÏÔÊ¾Ãû³Æ
+	// npcæ˜¾ç¤ºåç§°
 	_tcsncpy(pInfo->szName, pInfo->szDataName, NPC_MAXSIZE_NAME);
 	pInfo->szName[NPC_MAXSIZE_NAME - 1] = _TEXT('\0');
 
-	// npcÀàÐÍÐÅÏ¢
+	// npcç±»åž‹ä¿¡æ¯
 	pInfo->sNpcType = Str2Int(ParamList[m++]);
 	
-	// npc½ÇÉ«ÐÅÏ¢
+	// npcè§’è‰²ä¿¡æ¯
 	pInfo->sCharID = Str2Int(ParamList[m++]);
 
-	// ¿Í»§¶ËÏÔÊ¾ÑÕÉ«ÀàÐÍ
+	// å®¢æˆ·ç«¯æ˜¾ç¤ºé¢œè‰²ç±»åž‹
 	pInfo->byShowType = (BYTE)Str2Int(ParamList[m++]);
 
-	// npcÎ»ÖÃÐÅÏ¢
+	// npcä½ç½®ä¿¡æ¯
 	Util_ResolveTextLine( ParamList[m++].c_str(), strList, 8, ',' ); 
 	pInfo->dwxPos0 = Str2Int(strList[0]);
 	pInfo->dwyPos0 = Str2Int(strList[1]);
@@ -42,15 +42,15 @@ BOOL CNpcRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<string> 
 	pInfo->sParam1 = Str2Int(ParamList[m++]);
 	pInfo->sParam2 = Str2Int(ParamList[m++]);
 
-	// npcÎÄ¼þÃû³Æ
+	// npcæ–‡ä»¶åç§°
 	_tcsncpy(pInfo->szNpc, ParamList[m++].c_str(), NPC_MAXSIZE_NAME);
 	pInfo->szNpc[NPC_MAXSIZE_NAME - 1] = _TEXT('\0');
 
-	// npc¶Ô»°´¦Àí
+	// npcå¯¹è¯å¤„ç†
 	_tcsncpy(pInfo->szMsgProc, ParamList[m++].c_str(), NPC_MAXSIZE_MSGPROC);
 	pInfo->szMsgProc[NPC_MAXSIZE_MSGPROC - 1] = _TEXT('\0');
 	
-	// npc¶Ô»°´¦Àí
+	// npcå¯¹è¯å¤„ç†
 	_tcsncpy(pInfo->szMisProc, ParamList[m++].c_str(), NPC_MAXSIZE_MSGPROC);
 	pInfo->szMisProc[NPC_MAXSIZE_MSGPROC - 1] = _TEXT('\0');
 

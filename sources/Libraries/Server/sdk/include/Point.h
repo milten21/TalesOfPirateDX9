@@ -31,16 +31,16 @@ struct Circle
 };
 struct Rect
 {
-	Point	ltop;	//×óÉÏ½Ç
-	Point	rbtm;	//ÓÒÏÂ½Ç
+	Point	ltop;	//å·¦ä¸Šè§’
+	Point	rbtm;	//å³ä¸‹è§’
 	long width()const{return rbtm.x -ltop.x;}
 	long height()const{return rbtm.y -ltop.y;}
 };
 void  eddy(long x,long y,short dir,long radius,long &retx,long &rety);
-short arctan(const Point &src,const Point &dest);//´Ósrcµ½destµÃ·½Ïò¼Ğ½Ç
-bool operator^(const Square &S1,const Square &S2);//Ïà½»º¯Êı
-bool operator^(const Circle &C1,const Circle &C2);//Ïà½»º¯Êı
-bool operator^(const Rect &R1,const Rect &R2);	  //Ïà½»º¯Êı
+short arctan(const Point &src,const Point &dest);//ä»srcåˆ°destå¾—æ–¹å‘å¤¹è§’
+bool operator^(const Square &S1,const Square &S2);//ç›¸äº¤å‡½æ•°
+bool operator^(const Circle &C1,const Circle &C2);//ç›¸äº¤å‡½æ•°
+bool operator^(const Rect &R1,const Rect &R2);	  //ç›¸äº¤å‡½æ•°
 
 inline bool operator==(const Point &P1,const Point &P2)
 {

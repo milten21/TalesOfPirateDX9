@@ -60,7 +60,7 @@ inline DWORD CAttribData::_ReadSectionIdx(DWORD dwSectionNo)
     DWORD dwOffset = 0; fread(&dwOffset, sizeof(DWORD), 1, _fp);
     if(_bDebug)
     {
-        //LG(GetDataName(), "读取索引区数据[%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
+        //LG(GetDataName(), "璇诲彇绱㈠紩鍖烘暟鎹甗%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
 		LG(GetDataName(), "read index data [%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
     }
     return dwOffset;
@@ -72,7 +72,7 @@ inline void CAttribData::_WriteSectionIdx(DWORD dwSectionNo, DWORD dwOffset)
     fwrite(&dwOffset, sizeof(DWORD), 1, _fp);
     if(_bDebug)
     {
-        //LG(GetDataName(), "写入索引区数据[%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
+        //LG(GetDataName(), "鍐欏叆绱㈠紩鍖烘暟鎹甗%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
 		LG(GetDataName(), "write index data [%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
     }
 }

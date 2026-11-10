@@ -860,6 +860,7 @@ bool GroupServerApp::CanCreateBonusChar(Player* player) {
 		default: return false;
 		}
 	}
+	return false;
 }
 
 
@@ -1012,7 +1013,7 @@ WPacket	GroupServerApp::TP_USER_LOGIN(DataSocket* datasock, RPacket& pk)
 	l_ply->m_gate = static_cast<GateServer*>(datasock->GetPointer());
 	l_ply->m_gtAddr = pk.ReverseReadLong();
 	in_addr		l_ina;
-	l_ina.S_un.S_addr = pk.ReverseReadLong();
+	l_ina.s_addr = pk.ReverseReadLong();
 	strcpy(l_ply->m_clientip, inet_ntoa(l_ina));
 
 	pk.DiscardLast(static_cast<uLong>(sizeof(uShort)));
@@ -1276,7 +1277,7 @@ void GroupServerApp::TP_DISC(DataSocket *datasock,RPacket &pk)
 {
 	uLong	l_actid	=pk.ReadLong();
 	in_addr		l_ina;
-	l_ina.S_un.S_addr	=pk.ReadLong();
+	l_ina.s_addr	=pk.ReadLong();
 	cChar	*l_reason	=pk.ReadString();
 	auto const l_lockDB = std::lock_guard{m_mtxDB};
 	m_tblaccounts->SetDiscInfo(l_actid,inet_ntoa(l_ina),l_reason);

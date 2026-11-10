@@ -1,5 +1,7 @@
 #include "pi_Alloc.h"
 
+#include <cstring>
+
 #include <iostream>
 #include <fstream>
 

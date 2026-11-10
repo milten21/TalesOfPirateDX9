@@ -25,7 +25,7 @@
 					\
 					std::string	strfile;\
 					LG_GetDir(strfile);\
-					strfile += "\\exception.txt";\
+					strfile += "/exception.txt";\
 					FILE * fp = fopen(strfile.c_str(),"a+");\
 					\
 					if(fp) \
@@ -46,7 +46,7 @@
 				{ \
 					std::string	strfile;\
 					LG_GetDir(strfile);\
-					strfile += "\\exception.txt";\
+					strfile += "/exception.txt";\
 					FILE * fp = fopen(strfile.c_str(),"a+");\
 					\
 					if(fp) \
@@ -71,7 +71,7 @@
 				{ \
 					std::string	strfile;\
 					LG_GetDir(strfile);\
-					strfile += "\\exception.txt";\
+					strfile += "/exception.txt";\
 					FILE * fp = fopen(strfile.c_str(),"a+");\
 					\
 					if(fp) \
@@ -95,7 +95,7 @@
 				try {\
 					std::string	strfile;\
 					LG_GetDir(strfile);\
-					strfile += "\\exception.txt";\
+					strfile += "/exception.txt";\
 					FILE * fp = fopen(strfile.c_str(),"a+");\
 					\
 					if(fp) \
@@ -121,7 +121,7 @@
 				{ \
 					std::string	strfile;\
 					LG_GetDir(strfile);\
-					strfile += "\\exception.txt";\
+					strfile += "/exception.txt";\
 					FILE * fp = fopen(strfile.c_str(),"a+");\
 					\
 					if(fp) \

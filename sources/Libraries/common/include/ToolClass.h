@@ -146,7 +146,7 @@ T* CListArray<T>::Add(T* pCObj)
 	long	lPosID = pCObj->GetPosID();
 	if (lPosID < 0 || lPosID >= m_lCapacity)
 		lPosID = m_ppArray[m_lUsed]->lPosID;
-	if (m_pArray[lPosID].lPosReverse < m_lUsed) // ¸ÃÎ»ÖÃÒÑ¾­ÓĞÄÚÈİ
+	if (m_pArray[lPosID].lPosReverse < m_lUsed) // è¯¥ä½ç½®å·²ç»æœ‰å†…å®¹
 		return NULL;
 
 	pCObj->SetPosID(lPosID);
@@ -182,7 +182,7 @@ bool CListArray<T>::Del(long lPosID)
 		return false;
 	if (lPosID < 0 || lPosID >= m_lCapacity)
 		return false;
-	if (m_pArray[lPosID].lPosReverse >= m_lUsed) // ¸ÃÎ»ÖÃÒÑ¾­Îª¿Õ
+	if (m_pArray[lPosID].lPosReverse >= m_lUsed) // è¯¥ä½ç½®å·²ç»ä¸ºç©º
 		return true;
 
 	m_lUsed--;
@@ -201,7 +201,7 @@ T* CListArray<T>::Get(long lPosID)
 {
 	if (lPosID < 0 || lPosID >= m_lCapacity)
 		return NULL;
-	if (m_pArray[lPosID].lPosReverse >= m_lUsed) // ¸ÃÎ»ÖÃÒÑ¾­Îª¿Õ
+	if (m_pArray[lPosID].lPosReverse >= m_lUsed) // è¯¥ä½ç½®å·²ç»ä¸ºç©º
 		return NULL;
 	return &m_pArray[lPosID].CContent;
 }
@@ -316,14 +316,14 @@ T* CResidentList<T>::Add(T* pCObj)
 		return NULL;
 
 	SUnit	*pSCarrier;
-	if (m_pSFreeQueue) // ÓĞ¿ÕÏĞµÄÔØÌå
+	if (m_pSFreeQueue) // æœ‰ç©ºé—²çš„è½½ä½“
 	{
 		pSCarrier = m_pSFreeQueue;
 		m_pSFreeQueue = pSCarrier->pSNext;
 		if (m_pSFreeQueue)
 			m_pSFreeQueue->pSLast = 0;
 	}
-	else // ·ÖÅäĞÂµÄÔØÌå
+	else // åˆ†é…æ–°çš„è½½ä½“
 	{
 		pSCarrier = new SUnit;
 		if (!pSCarrier)

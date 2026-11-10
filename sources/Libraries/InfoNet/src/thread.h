@@ -1,7 +1,6 @@
-
 /* * * * * * * * * * * * * * * * * * * *
 
-    œﬂ≥Ã∑‚◊∞
+    Á∫øÁ®ãÂ∞ÅË£Ö
     Jampe
     2006/3/27
 
@@ -11,8 +10,9 @@
 #if !defined __THREAD_H__
 #define __THREAD_H__
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <condition_variable>
+#include <mutex>
+#include <thread>
 
 class Thread
 {
@@ -20,18 +20,19 @@ public:
     Thread();
     virtual ~Thread();
 
-    virtual bool Begin(int flag = 0);  //  ø™ ºœﬂ≥Ã
-    virtual bool Resume();  //  ª÷∏¥œﬂ≥Ã
-    virtual bool Suspend(); //  π“∆œﬂ≥Ã
-    virtual bool Terminate();   //  «ø÷∆÷’÷πœﬂ≥Ã
-    virtual bool SetPriority(int priority);     //  …Ë÷√”≈œ»º∂
-    virtual int GetPriority();  //  ªÒ»°”≈œ»º∂
-    virtual int Wait(int time = INFINITE);  //  µ»¥˝ ±º‰
+    virtual bool Begin();  //  ÂºÄÂßãÁ∫øÁ®ã
+    virtual bool Terminate();
     virtual unsigned Run() = 0;
 
-public:
-    HANDLE          m_thread;
-    unsigned        m_threadid;
+protected:
+    bool Stopping();
+    bool Pause(unsigned milliseconds);
+
+private:
+    std::thread             m_thread;
+    std::mutex              m_mutex;
+    std::condition_variable m_wake;
+    bool                    m_stop;
 };
 
 

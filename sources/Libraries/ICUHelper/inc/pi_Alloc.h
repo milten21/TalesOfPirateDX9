@@ -5,7 +5,7 @@
 #endif
 
 #ifndef _INC_STDLIB
-#include <cstdlib>	// declares _MAX_PATH
+#include <cstdlib>
 #endif
 
 #include <list>
@@ -25,15 +25,15 @@
 #define cnew new(pi_Alloc::allocate,  __FILE__, __LINE__)
 
 #define cdelete(pointer) (pi_Alloc::deallocate((void*)pointer))
-#define cdestroy(classname, pointer) (##classname::destroy##classname(pointer))
+#define cdestroy(classname, pointer) (classname::destroy##classname(pointer))
 
 #define IMPLEMENT_CDELETE(classname)\
 	public:\
-		static inline void destroy##classname(##classname* p##classname)\
+		static inline void destroy##classname(classname* p##classname)\
 		{\
 			if(pi_Alloc::isAllocated(p##classname))\
 			{\
-				p##classname->~##classname();\
+				p##classname->~classname();\
 			}\
 			pi_Alloc::deallocate(p##classname);\
 		}
@@ -87,10 +87,10 @@ inline void *operator new[](size_t size, void *(*f)(int, pi_Alloc*))
 class pi_LeakReporter
 {
 public:
-	typedef struct pi_LeakItem
+	struct pi_LeakItem
 	{
 		int addr;
-		char fileName[_MAX_PATH];
+		char fileName[260];
 		int d_lineNo;
 		size_t d_size;
 	};

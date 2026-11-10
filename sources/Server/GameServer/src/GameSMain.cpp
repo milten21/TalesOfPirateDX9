@@ -5,49 +5,47 @@
 
 #include "GameAppNet.h"
 #include "GameApp.h"
-#include "SystemDialog.h"
+#include "GameConsole.h"
 #include "Config.h"
 #include "GameDB.h"
+#include <sstream>
+#include <thread>
 
 
-// #pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" ) // ÉèÖÃÈë¿ÚµØÖ· 
+// #pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" ) // è®¾ç½®å…¥å£åœ°å€ 
 
 extern BOOL GameServer_Begin();
 extern void GameServer_End();
 BOOL       g_bGameEnd = FALSE;
 CGameApp*  g_pGameApp = NULL;
 std::string g_strLogName = "GameServerLog";
-HANDLE     hGameT;
+std::thread g_gameThread;
+#ifdef _WIN32
 HANDLE hConsole = NULL;
 
 void DisableCloseButton();
+#endif
 void AppExit(void);
 
 
 //#pragma init_seg(user)
-#pragma init_seg( lib )
 pi_LeakReporter pi_leakReporter("gamememleak.log");
 CResourceBundleManage g_ResourceBundleManage("GameServer.loc"); //Add by lark.li 20080304
 
-#include <signal.h>
-
-void sigintHandler(int sig_num)
-{
-	signal(SIGINT, sigintHandler);
-	C_PRINT("Notify Logout to GameServer...\n");
-	g_pGameApp->m_CTimerReset.Begin(1000);
-	g_pGameApp->m_ulLeftSec = 3;
-	fflush(stdout);
-}
-
 int main(int argc, char* argv[])
 {
+#ifdef _WIN32
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	C_TITLE("GameServer.exe")
 	C_PRINT("Loading %s\n", szConfigFileN);
 
+#ifdef _WIN32
 	DisableCloseButton();
+#endif
+	LG_EnableMsgBox(false);
+	EnableMsgBox(false);
 
 	SEHTranslator translator;
 
@@ -60,7 +58,7 @@ int main(int argc, char* argv[])
 	if (!g_Config.Load(szConfigFileN))
 	{
 		LG("init", "config init...Fail!\n");
-		return FALSE;		
+		return -1;
 	}
 	if (!g_Command.Load("cmd.cfg"))
 	{
@@ -72,33 +70,14 @@ int main(int argc, char* argv[])
 #endif
 
 	atexit(AppExit);
-	if(!GameServer_Begin()) 
+	InstallStopHandlers();
+	if(!GameServer_Begin())
 	{
-		return 0;
+		C_PRINT("GameServer startup failed\n");
+		return -1;
 	}
-	signal(SIGINT, sigintHandler);
 
-	MSG msg;
-	while(!g_bGameEnd)
-	{
-		if( PeekMessage( &msg, NULL, 0U, 0U, PM_REMOVE ) )
-		{
-			TranslateMessage( &msg );
-			DispatchMessage( &msg );
-			if(msg.message==WM_QUIT)
-			{
-				if (!g_bGameEnd)
-					g_pGameApp->SaveAllPlayer();
-				g_bGameEnd = TRUE;
-				break;
-			}
-		}
-		else
-		{
-			SystemReport(GetTickCount());
-			Sleep(50);
-		}
-	}
+	RunConsole();
 	GameServer_End();
 	LG("init", "game map server succeed to exit\n"); 
 	T_FINAL
@@ -110,12 +89,8 @@ int main(int argc, char* argv[])
 
 //_DBC_USING
 
-#ifdef USE_IOCP
-
-#else
 ThreadPool	*l_proc = NULL;
 ThreadPool	*l_comm = NULL;
-#endif
 
 
 extern DWORD WINAPI g_GameLogicProcess(LPVOID lpParameter);
@@ -123,55 +98,43 @@ BOOL GameServer_Begin()
 {T_B
 	_setmaxstdio(2048);
 
-	//LG("init", "ÓÎÏ·µØÍ¼·şÎñÆ÷[%s]Æô¶¯...\n", g_Config.m_szName);
+	//LG("init", "æ¸¸æˆåœ°å›¾æœåŠ¡å™¨[%s]å¯åŠ¨...\n", g_Config.m_szName);
 LG("init", "game map server [%s] startup...\n", g_Config.m_szName);
 
 	g_pGameApp = new CGameApp();
 	if(!g_pGameApp->Init())
 	{
-		//LG("init", "GameApp ³õÊ¼»¯Ê§°Ü, ÍË³ö!\n");
+		//LG("init", "GameApp åˆå§‹åŒ–å¤±è´¥, é€€å‡º!\n");
 		LG("init", "GameApp initialization failed, exit!\n");
 		return FALSE;
 	}
 	
-#ifdef USE_IOCP
-    cfl_iocpapp::startup();
-
-    g_mygmsvr = new myiocpclt();
-    g_mygmsvr->init_gtconn(&g_Config);
-
-#else
     TcpCommApp::WSAStartup();
     //l_proc = ThreadPool::CreatePool(1, 60, 512);
     l_comm = ThreadPool::CreatePool(8, 8, 512);//,THREAD_PRIORITY_ABOVE_NORMAL);
 
 	g_gmsvr	= new GameServerApp(0, l_comm);
 
-    // Æô¶¯ GateServer Á¬½ÓÏß³Ì
-   // LG("init", "Æô¶¯Gate·şÎñÆ÷Á¬½ÓÏß³Ì...\n");
+    // å¯åŠ¨ GateServer è¿æ¥çº¿ç¨‹
+   // LG("init", "å¯åŠ¨GateæœåŠ¡å™¨è¿æ¥çº¿ç¨‹...\n");
 	 LG("init", "startup Gate server connect thread...\n");
     l_comm->AddTask(new ConnectGateServer(g_gmsvr));
-#endif
 
-    //Á¬½Ó²¢¼àÌıInfoServer
-	//LG("init", "Æô¶¯ĞÅÏ¢·şÎñÆ÷Á¬½ÓÏß³Ì...\n");
+    //è¿æ¥å¹¶ç›‘å¬InfoServer
+	//LG("init", "å¯åŠ¨ä¿¡æ¯æœåŠ¡å™¨è¿æ¥çº¿ç¨‹...\n");
 	//LG("init", "startup information server connect thread...\n");
     //l_comm->AddTask(new ToInfoServer(g_gmsvr));
 	
-	// ´´½¨ÓÎÏ·Ïß³Ì
-	//LG("init", "Æô¶¯ÓÎÏ·Ïß³Ì...\n");
+	// åˆ›å»ºæ¸¸æˆçº¿ç¨‹
+	//LG("init", "å¯åŠ¨æ¸¸æˆçº¿ç¨‹...\n");
 	LG("init", "startup game thread...\n");
-	DWORD	dwThreadID;
-	hGameT = CreateThread(NULL, 0, g_GameLogicProcess, 0, 0, &dwThreadID);
-	LG("init", "Game Thread ID = %d\n", dwThreadID);
+	g_gameThread = std::thread(g_GameLogicProcess, nullptr);
+	std::ostringstream threadID;
+	threadID << g_gameThread.get_id();
+	LG("init", "Game Thread ID = %s\n", threadID.str().c_str());
 	//
 
-	//LG("init",  "¿ªÊ¼´´½¨Win32 ¿ØÖÆ¶Ô»°¿ò\n");
-	LG("init",  "start create Win32 control dialog box\n");
-	HINSTANCE hInst = GetModuleHandle(0);
-	CreateMainDialog(hInst, NULL);
-
-	//Log("ÖØÆô", "GameServerÖØÆô", g_Config.m_szMapList[0], "", "", "");
+	//Log("é‡å¯", "GameServeré‡å¯", g_Config.m_szMapList[0], "", "", "");
 	Log("restart", "GameServer restart", g_Config.m_szMapList[0], "", "", "");
 	
 	return TRUE;
@@ -180,40 +143,25 @@ T_E}
 
 void GameServer_End()
 {T_B
-	//LG("init", "¿ªÊ¼½áÊøÓÎÏ·µØÍ¼·şÎñÆ÷\n");
+	//LG("init", "å¼€å§‹ç»“æŸæ¸¸æˆåœ°å›¾æœåŠ¡å™¨\n");
 	LG("init", "start to exit game map server\n");
-	CloseHandle(hGameT);
-
-	HWND hConsole = GetConsoleWindow();
-	if(hConsole)
+	if (g_gameThread.joinable())
 	{
-		SendMessage(hConsole, WM_CLOSE, 0, 0);
+		g_gameThread.join();
 	}
-	
-	Sleep(400);
 
 	SAFE_DELETE(g_pGameApp);
 
-#ifdef USE_IOCP
-    if (g_mygmsvr != NULL)
-    {
-        g_mygmsvr->exit();
-        Sleep(3000);
-        delete g_mygmsvr;
-    }
-
-    cfl_iocpapp::cleanup();
-#else
 	delete g_gmsvr;
 
 	// l_comm->DestroyPool();
 	// l_proc->DestroyPool();
 
 	TcpCommApp::WSACleanup();
-#endif
 
 T_E}
 
+#ifdef _WIN32
 typedef HWND (*LPGETCONSOLEWINDOW)(void);
 void DisableCloseButton()
 {
@@ -231,6 +179,7 @@ void DisableCloseButton()
 
 	FreeLibrary(hMod);
 }
+#endif
 
 void AppExit(void)
 {
@@ -239,46 +188,46 @@ void AppExit(void)
 }
 
 /*
- GameServerÉè¼Æ
+ GameServerè®¾è®¡
 
- GameServer¸ºÔğÓÎÏ·Âß¼­µÄ´¦Àí
+ GameServerè´Ÿè´£æ¸¸æˆé€»è¾‘çš„å¤„ç†
 
- °üº¬µÄÖ÷ÒªÄ£¿éÓĞ 
+ åŒ…å«çš„ä¸»è¦æ¨¡å—æœ‰ 
  
 [GameData]
-×ÓÊı¾İÀàĞÍÓĞ 
-Map        µØÍ¼ 
-MgrUnit    µØÍ¼¹ÜÀíµ¥Ôª
-Player     Íæ¼Ò
-Character  ½ÇÉ«
-Item       µÀ¾ß
-Skill      ¼¼ÄÜ
-SkillState ¼¼ÄÜ×´Ì¬
-Mission    ÈÎÎñ
+å­æ•°æ®ç±»å‹æœ‰ 
+Map        åœ°å›¾ 
+MgrUnit    åœ°å›¾ç®¡ç†å•å…ƒ
+Player     ç©å®¶
+Character  è§’è‰²
+Item       é“å…·
+Skill      æŠ€èƒ½
+SkillState æŠ€èƒ½çŠ¶æ€
+Mission    ä»»åŠ¡
 
  
-GameDataÓ¦¸Ãµ¥´¿µÄ×öÎªÊı¾İÈİÆ÷
+GameDataåº”è¯¥å•çº¯çš„åšä¸ºæ•°æ®å®¹å™¨
 
 [GameControl]
-App       Ó¦ÓÃ³ÌĞò¿ò¼Ü 
-TimerMgr  ¶¨Ê±Æ÷¹ÜÀí
-AI        AI¿ØÖÆ
+App       åº”ç”¨ç¨‹åºæ¡†æ¶ 
+TimerMgr  å®šæ—¶å™¨ç®¡ç†
+AI        AIæ§åˆ¶
 
-[EventHandler] ÊÂ¼ş´¦ÀíÆ÷
+[EventHandler] äº‹ä»¶å¤„ç†å™¨
 
-GameServerµÄÔË×÷·½Ê½Îª 
+GameServerçš„è¿ä½œæ–¹å¼ä¸º 
 
-ÓÉGameControlÆô¶¯Ó¦ÓÃ³ÌĞò, Æô¶¯AI¶¨Ê±Æ÷, Æô¶¯Åö×²¼ì²â¶¨Ê±Æ÷
+ç”±GameControlå¯åŠ¨åº”ç”¨ç¨‹åº, å¯åŠ¨AIå®šæ—¶å™¨, å¯åŠ¨ç¢°æ’æ£€æµ‹å®šæ—¶å™¨
 
-GameControl Ïò EventHandler ²úÉúEvent, ±ÈÈçAIÊÂ¼ş, ÓëÌø×ªµãÅö×²
-¿Í»§¶Ë Ïò EventHandler ²úÉúEvent, ±ÈÈçÇëÇóĞĞ×ß, ÇëÇóÊ¹ÓÃ¼¼ÄÜ, ÇëÇóÊ¹ÓÃµÀ¾ß
+GameControl å‘ EventHandler äº§ç”ŸEvent, æ¯”å¦‚AIäº‹ä»¶, ä¸è·³è½¬ç‚¹ç¢°æ’
+å®¢æˆ·ç«¯ å‘ EventHandler äº§ç”ŸEvent, æ¯”å¦‚è¯·æ±‚è¡Œèµ°, è¯·æ±‚ä½¿ç”¨æŠ€èƒ½, è¯·æ±‚ä½¿ç”¨é“å…·
 
-EventHandler¶ÔEventµÄ´¦ÀíÎªÓ¦´ğÊ½, ¼´µ±Ê±·µ»Ø½á¹û, ÎŞÈÎºÎÖĞ¼ä×´Ì¬
+EventHandlerå¯¹Eventçš„å¤„ç†ä¸ºåº”ç­”å¼, å³å½“æ—¶è¿”å›ç»“æœ, æ— ä»»ä½•ä¸­é—´çŠ¶æ€
 
-EventHandlerÔÚ¶ÔEventµÄ´¦Àí¹ı³ÌÖĞ, ²úÉúModify GameDataµÄ²Ù×÷
+EventHandleråœ¨å¯¹Eventçš„å¤„ç†è¿‡ç¨‹ä¸­, äº§ç”ŸModify GameDataçš„æ“ä½œ
 
-´ËÊ±EventHandler¶ÔÓÚ·şÎñÆ÷ÄÚ²¿Âß¼­ºÍÀ´×Ô¿Í»§¶ËµÄÇëÇó£¬ ±íÏÖÎªÒ»¸öË«Ïò²åÍ·, ²¢²úÉú
-Î¨Ò»µÄ½á¹ûModify GameData
+æ­¤æ—¶EventHandlerå¯¹äºæœåŠ¡å™¨å†…éƒ¨é€»è¾‘å’Œæ¥è‡ªå®¢æˆ·ç«¯çš„è¯·æ±‚ï¼Œ è¡¨ç°ä¸ºä¸€ä¸ªåŒå‘æ’å¤´, å¹¶äº§ç”Ÿ
+å”¯ä¸€çš„ç»“æœModify GameData
 
 
 Control -> Event 

@@ -12,15 +12,21 @@ extern const char* GetResPath(const char *pszRes);
 CCharacter* g_pNoticeChar = NULL;
 lua_State* g_pLuaState = NULL;
 
+#ifdef _WIN32
 HANDLE lConsole = NULL;
+#endif
 
 void print_error(lua_State* state) {
 	// The error message is on top of the stack.
 	// Fetch it, print it and then pop it off the stack.
+#ifdef _WIN32
 	SetConsoleTextAttribute(lConsole, 14);
+#endif
 	const char* message = lua_tostring(state, -1);
 	puts(message);
+#ifdef _WIN32
 	SetConsoleTextAttribute(lConsole, 10);
+#endif
 	lua_pop(state, 1);
 }
 
@@ -32,8 +38,10 @@ BOOL InitLuaScript()
 
 	luaL_openlibs(g_pLuaState);
 
+#ifdef _WIN32
 	if (lConsole == NULL)
 		lConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	if( !RegisterScript() )
 		return FALSE;
@@ -71,12 +79,12 @@ void ReloadLuaSdk()
 {	
 	luaL_dofile( g_pLuaState, GetResPath("script/MisSdk/NpcSdk.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/MisSdk/MissionSdk.lua") );
-	luaL_dofile( g_pLuaState, GetResPath("script/MisSdk/scriptsdk.lua") );
+	luaL_dofile( g_pLuaState, GetResPath("script/MisSdk/ScriptSdk.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/ScriptDefine.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/NpcDefine.lua") );
-	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/templatesdk.lua") );
+	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/TemplateSDK.lua") );
 
-	// 由updateall会触发ai_sdk更新
+	// 鐢眜pdateall浼氳Е鍙慳i_sdk鏇存柊
 	luaL_dofile( g_pLuaState, GetResPath("script/birth/birth_conf.lua"));
 	luaL_dofile( g_pLuaState, GetResPath("script/ai/ai.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/calculate/skilleffect.lua"));
@@ -84,7 +92,7 @@ void ReloadLuaSdk()
 
 void ReloadNpcScript()
 {
-	// 装载NPC任务数据信息
+	// 瑁呰浇NPC浠诲姟鏁版嵁淇℃伅
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/MissionScript01.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/MissionScript02.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/MissionScript03.lua") );
@@ -97,7 +105,7 @@ void ReloadNpcScript()
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/EudemonScript.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/CharBornScript.lua") );
 
-	// 装载NPC对话数据信息
+	// 瑁呰浇NPC瀵硅瘽鏁版嵁淇℃伅
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/NpcScript01.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/NpcScript02.lua") );
 	luaL_dofile( g_pLuaState, GetResPath("script/MisScript/NpcScript03.lua") );

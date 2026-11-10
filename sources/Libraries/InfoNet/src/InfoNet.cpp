@@ -1,12 +1,12 @@
 
 
-#include <winsock2.h>
+#include "SocketApi.h"
 #include "InfoNet.h"
 #include "thread.h"
 #include "lock.h"
 #include "log.h"
-#include <memory.h>
-#include <sys/timeb.h>
+#include <chrono>
+#include <cstring>
 #include <deque>
 
 using std::deque;
@@ -17,7 +17,7 @@ using std::deque;
 #define INFO_STOPPED        3
 
 
-#define MAX_NET_SIZE        1048576     //  ·â°ü´óÓÚÕâ¸öÊıÔòÎŞĞ§
+#define MAX_NET_SIZE        1048576     //  å°åŒ…å¤§äºè¿™ä¸ªæ•°åˆ™æ— æ•ˆ
 
 
 template <class T>
@@ -83,7 +83,7 @@ public:
 };
 
 
-//  ¿Í»§¶ËĞÅÏ¢
+//  å®¢æˆ·ç«¯ä¿¡æ¯
 typedef struct _InfoClient_
 {
     SOCKET              sock;
@@ -97,7 +97,7 @@ typedef struct _InfoClient_
 typedef _AnyQueue<pNetMessage>  NetSndList;
 
 
-//  »ñÈ¡ÏûÏ¢Í·
+//  è·å–æ¶ˆæ¯å¤´
 int GetMessageHead(pNetMessageHead mh, unsigned char* msg, int size)
 {
 __BEGIN_TRY
@@ -106,10 +106,10 @@ __BEGIN_TRY
         return PNM_FAILED;
     }
 
-    //  ¶ÁÈ¡ÏûÏ¢Í·
+    //  è¯»å–æ¶ˆæ¯å¤´
     memcpy(mh, msg, sizeof(NetMessageHead));
 
-    //  ÑéÖ¤Ğ­Òé±¨Í·
+    //  éªŒè¯åè®®æŠ¥å¤´
     if((0x4A != mh->msgChk[0]) || (0x4D != mh->msgChk[1]) || (0x50 != mh->msgChk[2]) || (0x53 != mh->msgChk[3]))
     {
         return PNM_UNKNOWN;
@@ -130,34 +130,34 @@ __BEGIN_TRY
 
     int     bdSize;
 
-    if(tmpsize)  //  ²ğ°ü´¦Àí
+    if(tmpsize)  //  æ‹†åŒ…å¤„ç†
     {
         (*nm) = ((pNetMessage)(*tmpbuf));
-        if(tmpsize < (int)sizeof(NetMessageHead))        //  ÏûÏ¢Í·±»½Ø¶Ï
+        if(tmpsize < (int)sizeof(NetMessageHead))        //  æ¶ˆæ¯å¤´è¢«æˆªæ–­
         {
-            memcpy((((unsigned char*)(*tmpbuf)) + tmpsize), (*buf), ((int)sizeof(NetMessageHead) - tmpsize));   //  ¶ÁÈ¡Î´¶ÁÈ¡µÄÏûÏ¢Í·
-            (*buf) += (sizeof(NetMessageHead) - tmpsize);     //  Ö¸ÕëºóÒÆ
-            bufsize -= (sizeof(NetMessageHead) - tmpsize);    //  ³¤¶È¼õÈ¥ÒÆ¶¯³¤¶È
-            bdSize = ((*nm)->msgHead.msgSize > (*nm)->msgHead.msgEncSize) ? ((*nm)->msgHead.msgSize) : ((*nm)->msgHead.msgEncSize);   //  ¼ÆËã»º´æ³¤¶È
+            memcpy((((unsigned char*)(*tmpbuf)) + tmpsize), (*buf), ((int)sizeof(NetMessageHead) - tmpsize));   //  è¯»å–æœªè¯»å–çš„æ¶ˆæ¯å¤´
+            (*buf) += (sizeof(NetMessageHead) - tmpsize);     //  æŒ‡é’ˆåç§»
+            bufsize -= (sizeof(NetMessageHead) - tmpsize);    //  é•¿åº¦å‡å»ç§»åŠ¨é•¿åº¦
+            bdSize = ((*nm)->msgHead.msgSize > (*nm)->msgHead.msgEncSize) ? ((*nm)->msgHead.msgSize) : ((*nm)->msgHead.msgEncSize);   //  è®¡ç®—ç¼“å­˜é•¿åº¦
             if(bdSize)
             {
-                if(bdSize > MAX_NET_SIZE)    //  ´óÓÚ1mÔòÈÏÎªÊÇ´íÎóµÄ·â°ü
+                if(bdSize > MAX_NET_SIZE)    //  å¤§äº1måˆ™è®¤ä¸ºæ˜¯é”™è¯¯çš„å°åŒ…
                 {
                     return PNM_EXCEPTION;
                 }
-                (*nm)->msgBody = new unsigned char[bdSize];    //  ·ÖÅä¿Õ¼ä
+                (*nm)->msgBody = new unsigned char[bdSize];    //  åˆ†é…ç©ºé—´
                 memset((*nm)->msgBody, 0, bdSize);
-                memcpy((*nm)->msgBody, (*buf), (*nm)->msgHead.msgEncSize);    //  ¶ÁÈ¡ÏûÏ¢Ìå
-                (*buf) += (*nm)->msgHead.msgEncSize;   //  Ö¸ÕëºóÒÆ
-                bufsize -= (*nm)->msgHead.msgEncSize;  //  ³¤¶È¼õÈ¥ÒÆ¶¯³¤¶È
+                memcpy((*nm)->msgBody, (*buf), (*nm)->msgHead.msgEncSize);    //  è¯»å–æ¶ˆæ¯ä½“
+                (*buf) += (*nm)->msgHead.msgEncSize;   //  æŒ‡é’ˆåç§»
+                bufsize -= (*nm)->msgHead.msgEncSize;  //  é•¿åº¦å‡å»ç§»åŠ¨é•¿åº¦
             }
         }
-        else        //  ÏûÏ¢Ìå±»½Ø¶Ï
+        else        //  æ¶ˆæ¯ä½“è¢«æˆªæ–­
         {
             unsigned char* tmpPtr = (unsigned char*)(*nm)->msgBody;
             int bodySize = tmpsize - sizeof(NetMessageHead);
-            tmpPtr += bodySize;   //  Ö¸ÕëÌø¹ıÒÑ¶ÁÈ¡²¿·Ö
-            if(((*nm)->msgHead.msgEncSize - bodySize) > bufsize)    //  ÏûÏ¢ÌåÈç¹ûÓÖ±»½Ø¶Ï
+            tmpPtr += bodySize;   //  æŒ‡é’ˆè·³è¿‡å·²è¯»å–éƒ¨åˆ†
+            if(((*nm)->msgHead.msgEncSize - bodySize) > bufsize)    //  æ¶ˆæ¯ä½“å¦‚æœåˆè¢«æˆªæ–­
             {
                 memcpy(tmpPtr, (*buf), bufsize);
                 tmpsize += bufsize;
@@ -165,7 +165,7 @@ __BEGIN_TRY
             }
             memcpy(tmpPtr, (*buf), ((*nm)->msgHead.msgEncSize - bodySize));
             //
-            //  ÕâÀï±àĞ´½âÃÜ´úÂë
+            //  è¿™é‡Œç¼–å†™è§£å¯†ä»£ç 
             //
             (*buf) += (*nm)->msgHead.msgEncSize - bodySize;
             bufsize -= (*nm)->msgHead.msgEncSize - bodySize;
@@ -177,7 +177,7 @@ __BEGIN_TRY
 
     int ret;
 
-    for(;;) //  Êı¾İ°ü½âÎö
+    for(;;) //  æ•°æ®åŒ…è§£æ
     {
         if(bufsize <= 0)
         {
@@ -194,7 +194,7 @@ __BEGIN_TRY
             return PNM_UNKNOWN;
         }
 
-        if(PNM_FAILED == ret)   //  ÏûÏ¢Í·±»½Ø¶Ï
+        if(PNM_FAILED == ret)   //  æ¶ˆæ¯å¤´è¢«æˆªæ–­
         {
             (*tmpbuf) = (*nm);
             tmpsize = bufsize;
@@ -205,17 +205,17 @@ __BEGIN_TRY
         (*buf) += sizeof(NetMessageHead);
         bufsize -= sizeof(NetMessageHead);
 
-        bdSize = ((*nm)->msgHead.msgSize > (*nm)->msgHead.msgEncSize) ? ((*nm)->msgHead.msgSize) : ((*nm)->msgHead.msgEncSize);   //  ¼ÆËã»º´æ³¤¶È
+        bdSize = ((*nm)->msgHead.msgSize > (*nm)->msgHead.msgEncSize) ? ((*nm)->msgHead.msgSize) : ((*nm)->msgHead.msgEncSize);   //  è®¡ç®—ç¼“å­˜é•¿åº¦
 
         if(bdSize)
         {
-            if(bdSize > MAX_NET_SIZE)    //  ´óÓÚ1mÔòÈÏÎªÊÇ´íÎóµÄ·â°ü
+            if(bdSize > MAX_NET_SIZE)    //  å¤§äº1måˆ™è®¤ä¸ºæ˜¯é”™è¯¯çš„å°åŒ…
             {
                 return PNM_EXCEPTION;
             }
             (*nm)->msgBody = new unsigned char[bdSize];
             memset((*nm)->msgBody, 0, bdSize);
-            if(bdSize > bufsize)    //  Õ³°ü´¦Àí
+            if(bdSize > bufsize)    //  ç²˜åŒ…å¤„ç†
             {
                 memcpy((*nm)->msgBody, (*buf), bufsize);
                 (*tmpbuf) = (*nm);
@@ -224,14 +224,14 @@ __BEGIN_TRY
             }
             memcpy((*nm)->msgBody, (*buf), (*nm)->msgHead.msgEncSize);
             //
-            //  ÕâÀï±àĞ´½âÃÜ´úÂë
+            //  è¿™é‡Œç¼–å†™è§£å¯†ä»£ç 
             //
-            (*buf) += (*nm)->msgHead.msgEncSize;   //  Ö¸ÕëºóÒÆ
-            bufsize -= (*nm)->msgHead.msgEncSize;  //  ³¤¶È¼õÈ¥ÒÆ¶¯³¤¶È
+            (*buf) += (*nm)->msgHead.msgEncSize;   //  æŒ‡é’ˆåç§»
+            bufsize -= (*nm)->msgHead.msgEncSize;  //  é•¿åº¦å‡å»ç§»åŠ¨é•¿åº¦
         }
         else
         {
-            (*nm)->msgBody = 0;    //  ÏûÏ¢ÖÃ¿Õ
+            (*nm)->msgBody = 0;    //  æ¶ˆæ¯ç½®ç©º
         }
         return PNM_SUCCESS;
     }
@@ -241,7 +241,7 @@ __END_TRY
 }
 
 
-//  ÊÍ·ÅÏûÏ¢
+//  é‡Šæ”¾æ¶ˆæ¯
 void FreeNetMessage(pNetMessage msg)
 {
 __BEGIN_TRY
@@ -258,7 +258,7 @@ __END_TRY
 
 
 int g_count = 0;
-//  Éú³ÉÏûÏ¢
+//  ç”Ÿæˆæ¶ˆæ¯
 bool BuildNetMessage(pNetMessage nm, long msgID, long subID, long extend, long section, unsigned char* body, long size)
 {
 __BEGIN_TRY
@@ -267,7 +267,7 @@ __BEGIN_TRY
         return false;
     }
 
-    //  ÏûÏ¢±êÊ¶Âë
+    //  æ¶ˆæ¯æ ‡è¯†ç 
     nm->msgHead.msgChk[0] = 0x4A;
     nm->msgHead.msgChk[1] = 0x4D;
     nm->msgHead.msgChk[2] = 0x50;
@@ -283,7 +283,7 @@ __BEGIN_TRY
     if(size)
     {
         //
-        //  ÕâÀï±àĞ´¼ÓÃÜ´úÂë
+        //  è¿™é‡Œç¼–å†™åŠ å¯†ä»£ç 
         //
         nm->msgBody = new unsigned char[size];
         memset(nm->msgBody, 0, size);
@@ -296,12 +296,9 @@ __BEGIN_TRY
 
     ++g_count;
     g_count %= 1000;
-    _timeb tb;
-    _ftime(&tb);
 
-    nm->msgHead.msgOrder = tb.time;
-    nm->msgHead.msgOrder *= 1000;
-    nm->msgHead.msgOrder += tb.millitm;
+    nm->msgHead.msgOrder = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
     nm->msgHead.msgOrder *= 1000;
     nm->msgHead.msgOrder += g_count;
 
@@ -340,28 +337,26 @@ unsigned InfoThread::Run()
     NetSndList* sndLst = (NetSndList*)inb->m_list;
     pNetMessage pNM = 0;
     int ret = 0;
-    fd_set fdread;
-    timeval tv = {0, 0};        //  Á¢¼´·µ»Ø(²»×èÈûselect)£¬ÓÃÏĞÖÃÏµÍ³×ÊÔ´½øĞĞ·¢ËÍ¶ÓÁĞÖØ·¢
-    clock_t sndTime = 0;
-    clock_t chkTime = clock();
+    pollfd fdread;
+    DWORD sndTime = 0;
+    DWORD chkTime = GetTickCount();
 
-    for(;;)
+    while(!Stopping())
     {
 __BEGIN_TRY
         inb->m_state = INFO_RESTING;
         if(!inb->IsConnect())
         {
             inb->Connect();
-            Sleep(10000);   //  ±ÜÃâÖØÁ¬Õ¼ÓÃÌ«¶àcpu×ÊÔ´¡£10ÃëÖØÁ¬Ò»´Î
+            Pause(10000);   //  é¿å…é‡è¿å ç”¨å¤ªå¤šcpuèµ„æºã€‚10ç§’é‡è¿ä¸€æ¬¡
             continue;
         }
 
-        //  SelectÂÖÑ¯¿ªÊ¼
-        FD_ZERO(&fdread);
-        FD_SET(cli->sock, &fdread);
+        fdread.fd = cli->sock;
+        fdread.events = POLLIN;
+        fdread.revents = 0;
 
-        ret = select(0, &fdread, 0, 0, &tv);
-        //ret = select(0, &fdread, 0, 0, 0);    //  ×èÈûselect
+        ret = dbc::net::Poll(&fdread, 1, 0);
 
         if(SOCKET_ERROR == ret)
         {
@@ -374,7 +369,7 @@ __BEGIN_TRY
 
         if(ret > 0)
         {
-            if(FD_ISSET(cli->sock, &fdread))
+            if(fdread.revents & (POLLIN | POLLHUP | POLLERR))
             {
                 if(!inb->PostInfoRecv())
                 {
@@ -385,12 +380,12 @@ __BEGIN_TRY
                 }
             }
         }
-        //  SelectÂÖÑ¯½áÊø
+        //  Selectè½®è¯¢ç»“æŸ
 
-        //  ¼ì²â·şÎñÆ÷ÊÇ·ñ´æ»î(ÊÇ·ñÒì³£¶ÏÏß¼ì²â)
-        if((clock() - chkTime) > 300000)    //  5·ÖÖÓ¼ì²âÒ»´Î
+        //  æ£€æµ‹æœåŠ¡å™¨æ˜¯å¦å­˜æ´»(æ˜¯å¦å¼‚å¸¸æ–­çº¿æ£€æµ‹)
+        if((GetTickCount() - chkTime) > 300000)    //  5åˆ†é’Ÿæ£€æµ‹ä¸€æ¬¡
         {
-            chkTime = clock();
+            chkTime = GetTickCount();
             LG("InfoNet", "Ping: Timestamp: %li...\n", time(0));
             if(!inb->PostInfoSend(INFO_CHECK_LIVE, 0, 0, 0, 0, 0))
             {
@@ -401,8 +396,8 @@ __BEGIN_TRY
             }
         }
 
-        //  ¿ªÊ¼ÖØ·¢
-        sndTime = clock();
+        //  å¼€å§‹é‡å‘
+        sndTime = GetTickCount();
         for(;;)
         {
             if(!sndLst->Size())
@@ -424,7 +419,7 @@ __BEGIN_TRY
                 inb->OnResend(pNM);
                 FreeNetMessage(pNM);
             }
-            if((clock() - sndTime) > 50)    //  ÖØ·¢Õ¼ÓÃ50ºÁÃëÒÔÉÏÊ±£¬ÊÍ·Å×ÊÔ´
+            if((GetTickCount() - sndTime) > 50)    //  é‡å‘å ç”¨50æ¯«ç§’ä»¥ä¸Šæ—¶ï¼Œé‡Šæ”¾èµ„æº
             {
                 Sleep(1);
                 break;
@@ -438,7 +433,7 @@ __END_TRY
 
 
 
-//  ¿Í»§¶Ë½Ó¿Ú
+//  å®¢æˆ·ç«¯æ¥å£
 InfoNetBase::InfoNetBase()
 :   m_state(INFO_INIT), m_client(0), m_list(0)
 {
@@ -506,8 +501,10 @@ bool InfoNetBase::StopInfoService()
     //    }
         __cli->thread.Terminate();
         ((NetSndList*)m_list)->Clear();
-        SAFE_DELETE(m_client);
-        SAFE_DELETE(m_list);
+        delete (pInfoClient)m_client;
+        delete (NetSndList*)m_list;
+        m_client = 0;
+        m_list = 0;
     //    break;
     //}
     LG("InfoNet", "End Stopped Info Service...\n");
@@ -519,7 +516,7 @@ bool InfoNetBase::StopInfoService()
 bool InfoNetBase::PostInfoSend(long msgID, long subID, long extend, long section, unsigned char* body, long size, bool resnd /* = false */)
 {
 __BEGIN_TRY
-    pNetMessage pNM = new NetMessage;   //  ĞÂÏûÏ¢
+    pNetMessage pNM = new NetMessage;   //  æ–°æ¶ˆæ¯
     BuildNetMessage(pNM, msgID, subID, extend, section, body, size);
     bool ret = PostInfoSend(pNM, resnd);
     FreeNetMessage(pNM);
@@ -552,14 +549,14 @@ __BEGIN_TRY
 
     bool ret = true;
 
-    if(SOCKET_ERROR == send(__cli->sock, buf, size, 0))
+    if(SOCKET_ERROR == dbc::net::Send(__cli->sock, buf, size))
     {
-        LG("InfoNet", "Send Failed, Socket: %li, ErrorID: %li\n", __cli->sock, WSAGetLastError());
+        LG("InfoNet", "Send Failed, Socket: %li, ErrorID: %li\n", (long)__cli->sock, (long)dbc::net::LastError());
         Disconnect();
         if(resnd)
         {
             LG("InfoNet", "Ready For Resend...\n");
-            pNetMessage newNM = new NetMessage;     //  ĞÂ½¨Ò»·İcopy·ÅÈë·¢ËÍ¶ÓÁĞ£¬µÈ´ıÖØ·¢
+            pNetMessage newNM = new NetMessage;     //  æ–°å»ºä¸€ä»½copyæ”¾å…¥å‘é€é˜Ÿåˆ—ï¼Œç­‰å¾…é‡å‘
             memcpy(&newNM->msgHead, &msg->msgHead, sizeof(NetMessageHead));
             if(msg->msgHead.msgEncSize)
             {
@@ -603,20 +600,12 @@ __BEGIN_TRY
 
     __cli->sock = socket(AF_INET, SOCK_STREAM, 0);
 
-    SOCKADDR_IN addr;
+    sockaddr_in addr{};
     addr.sin_family         = AF_INET;
-    addr.sin_addr.s_addr    = inet_addr(m_ip);
     addr.sin_port           = htons(m_port);
-
-    if (INADDR_NONE == addr.sin_addr.s_addr)
+    if(!dbc::net::ResolveIPv4(m_ip, addr.sin_addr))
     {
-        LPHOSTENT lphost;
-        lphost = gethostbyname(m_ip);
-
-        if (lphost != NULL)
-        {
-            addr.sin_addr.s_addr = ((LPIN_ADDR)lphost->h_addr)->s_addr;
-        }
+        addr.sin_addr.s_addr = INADDR_NONE;
     }
 
     bool ret = (0 == connect(__cli->sock, (struct sockaddr *)&addr, sizeof(addr)));
@@ -649,7 +638,7 @@ __BEGIN_TRY
         return true;
     }
     pInfoClient __cli = (pInfoClient)m_client;
-    bool ret = (0 == closesocket(__cli->sock));
+    bool ret = (0 == dbc::net::CloseSocket(__cli->sock));
     __cli->sock = INVALID_SOCKET;
     LG("InfoNet", "Call Back 'OnDisconnect'...\n");
     OnDisconnect();
@@ -670,12 +659,12 @@ __BEGIN_TRY
 
     if(rsbytes <= 0)
     {
-        if(WSAEWOULDBLOCK == WSAGetLastError())
+        if(rsbytes < 0 && dbc::net::WouldBlock(dbc::net::LastError()))
         {
             Sleep(1);
             return true;
         }
-        LG("InfoNet", "Recv Failed, Socket: %li, ErrorID: %li\n", __cli->sock, WSAGetLastError());
+        LG("InfoNet", "Recv Failed, Socket: %li, ErrorID: %li\n", (long)__cli->sock, (long)dbc::net::LastError());
         Disconnect();
         return false;
     }
@@ -689,15 +678,15 @@ __BEGIN_TRY
     {
         ret = PeekNetMessage(&nm, &bufPtr, bufSize, &__cli->tmpbuf, __cli->tmpsize);
 
-        if(PNM_SUCCESS == ret)             //  ³É¹¦
+        if(PNM_SUCCESS == ret)             //  æˆåŠŸ
         {
             OnNetMessage(nm);
         }
-        else if(PNM_FAILED == ret)         //  ±»²ğ°ü
+        else if(PNM_FAILED == ret)         //  è¢«æ‹†åŒ…
         {
             break;
         }
-        else if(PNM_UNKNOWN == ret)        //  ½âÎöÏûÏ¢Í·Ê§°Ü
+        else if(PNM_UNKNOWN == ret)        //  è§£ææ¶ˆæ¯å¤´å¤±è´¥
         {
             LG("InfoNet", "Bad Packet Head...\n");
             if(__cli->tmpbuf)
@@ -707,7 +696,7 @@ __BEGIN_TRY
             }
             break;
         }
-        else if(PNM_EXCEPTION ==ret)      //  Òì³££¨¶àÊıÇé¿öÊÇÒò¿ÕÖ¸ÕëÒıÆğ£©
+        else if(PNM_EXCEPTION ==ret)      //  å¼‚å¸¸ï¼ˆå¤šæ•°æƒ…å†µæ˜¯å› ç©ºæŒ‡é’ˆå¼•èµ·ï¼‰
         {
             LG("InfoNet", "Bad Packet...\n");
             if(__cli->tmpbuf)
@@ -717,7 +706,7 @@ __BEGIN_TRY
             }
             break;
         }
-        else    //  Î´ÖªÇé¿ö
+        else    //  æœªçŸ¥æƒ…å†µ
         {
             LG("InfoNet", "Unknown Packet...\n");
             if(__cli->tmpbuf)

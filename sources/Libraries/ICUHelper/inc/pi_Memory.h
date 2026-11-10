@@ -1,12 +1,10 @@
 #pragma once
 
-#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
-#include <windows.h>
-
-#include "psapi.h"
-
-#include <iostream>
+#include <condition_variable>
 #include <fstream>
+#include <mutex>
+#include <string>
+#include <thread>
 
 class pi_Memory
 {
@@ -15,20 +13,20 @@ public:
 	~pi_Memory(void);
 
 public:
-	bool startMonitor(int minuteInterval, DWORD processID = ::GetCurrentProcessId());
+	bool startMonitor(int minuteInterval);
 	bool stopMonitor();
 	bool wait();
 
 private:
-	static DWORD WINAPI ThreadProc( LPVOID lpParam );
-	
+	void Run();
+
 private:
 	int m_minuteInterval;
 	bool m_bStop;
 
+	std::mutex m_mutex;
+	std::condition_variable m_stopChanged;
 	std::fstream m_outputFile;
-	DWORD m_processID;
-	DWORD m_dwThreadId;
-	HANDLE m_hThread; 
+	std::thread m_thread;
 	std::string m_szfileName;
 };

@@ -1,4 +1,4 @@
-#include "Stdafx.h"
+#include "stdafx.h"
 #include "Character.h"
 #include "SubMap.h"
 #include "GameApp.h"
@@ -60,7 +60,7 @@ bool CCharacter::Cmd_EnterMap(cChar* l_map, Long lMapCopyNO, uLong l_x, uLong l_
 
 		if (pCPlayer->GetLoginChaType() == enumLOGIN_CHA_BOAT) // �Դ�����̬��½
 		{
-			CCharacter* pBoat = pCPlayer->GetBoat(pCPlayer->GetLoginChaID());
+			CCharacter* pBoat = pCPlayer->GetBoat((DWORD)pCPlayer->GetLoginChaID());
 			if (!pBoat)
 			{
 				//LG("enter_map", "��� %s�Դ�ֻ��ID %u����̬��½ʱʧ�ܣ���ֻ�����ڣ������ж�����!\n", GetLogName(), pCPlayer->GetLoginChaID());
@@ -1255,7 +1255,7 @@ T_E}
 //=================================================================================================
 // �����
 // ���ߵ�WorldID��Handle
-#include "item.h"
+#include "Item.h"
 //=================================================================================================
 Short CCharacter::Cmd_PickupItem(uLong ulID, Long lHandle)
 {T_B

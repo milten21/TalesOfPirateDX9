@@ -81,6 +81,7 @@ private:
 		}
 	}
 };
+#ifdef _WIN32
 extern "C"{WINBASEAPI HWND APIENTRY GetConsoleWindow(VOID);}
 class DisableCloseButton: public Timer
 {
@@ -104,6 +105,7 @@ private:
 	}
 	HMENU m_hMenu;
 };
+#endif
 GMBBS::GMBBS(uLong interval):Timer(interval),m_dwCount(0)
 {
 	for(uLong i=0;i<em_words;i++)
@@ -162,12 +164,12 @@ void GMBBS::Process()
 		}
 	}
 }
-void __cdecl ctrlc_dispatch(int sig)
+void ctrlc_dispatch(int sig)
 {
-	if (sig == SIGINT)
+	if (sig == SIGINT || sig == SIGTERM)
 	{
 		g_exit	=1;
-		signal(SIGINT, ctrlc_dispatch);
+		signal(sig, ctrlc_dispatch);
 		//while(g_ref)
 		//{
 		//	Sleep(1);
@@ -219,12 +221,15 @@ GroupServerApp::GroupServerApp(ThreadPool *proc,ThreadPool *comm)
 	srand( (unsigned int)time( NULL ) );	//��ʼ�����������
 	try
 	{
+		signal(SIGINT, ctrlc_dispatch);
+		signal(SIGTERM, ctrlc_dispatch);
 		Initialize();
 		(proc?proc:comm)->AddTask(&g_timermgr);
 		g_timermgr.AddTimer(new AddStatLog(10*1000));
+#ifdef _WIN32
 		g_timermgr.AddTimer(new DisableCloseButton(200));
+#endif
 		g_timermgr.AddTimer(new GMBBS(1000));
-		signal(SIGINT, ctrlc_dispatch);
 
 		// 1.3x incompatible (ignored)
 		m_mapBirthplace[RES_STRING(GP_GROUPSERVERAPP_CPP_00001)] = "garner";
@@ -237,18 +242,23 @@ GroupServerApp::GroupServerApp(ThreadPool *proc,ThreadPool *comm)
 		std::cout<<e.what()<<std::endl;
 		LogLine l_line(g_LogConnect);
 		l_line<<newln<<e.what()<<endln;
-		try{GroupServerApp::~GroupServerApp();}catch(...){}
+		try{Finalize();}catch(...){}
 		throw e;
 	}
 	catch(...)
 	{
 		std::cout<<"GroupServer init unkonwn exception, please contact developer"<<std::endl;
-		try{GroupServerApp::~GroupServerApp();}catch(...){}
+		try{Finalize();}catch(...){}
 		throw;
 	}
 }
 
 GroupServerApp::~GroupServerApp()
+{
+	Finalize();
+}
+
+void GroupServerApp::Finalize()
 {
 	ShutDown(12*1000);
 

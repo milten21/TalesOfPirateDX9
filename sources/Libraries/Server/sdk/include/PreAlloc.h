@@ -8,13 +8,6 @@
 //=================================================================
 #pragma once
 
-#ifndef USING_TAO			//ʹ��Win32����Platform SDK
-#include <winsock2.h>		//ȷ�������µ�WinSock2.2�汾
-#include <windows.h>
-#else
-#include "TAOSpecial.h"
-#endif
-
 #include "DBCCommon.h"
 #include "excp.h"
 
@@ -67,7 +60,7 @@ template <class T>
 class PreAllocHeap
 {
 	friend class PreAllocStru;
-	template <class T> friend class PreAllocHeapPtr;
+	template <class U> friend class PreAllocHeapPtr;
 public:
 	PreAllocHeap(uLong unitsize)
 		:m_unitsize(unitsize?unitsize:1),m_initnum(0)
@@ -289,12 +282,9 @@ private:
 private:
 	cuLong				m_initnum;
 	cuLong				m_unitsize,m_unitflag;
-	struct
-	{
-		std::recursive_mutex					m_mtxfreeacc;
-		uLong		 volatile	m_numptr;
-		__FIFOQu_	*volatile	m_freestru;
-	};
+	std::recursive_mutex		m_mtxfreeacc;
+	uLong		 volatile	m_numptr;
+	__FIFOQu_	*volatile	m_freestru;
 	InterLockedLong				m_usednum;
 };
 //=======PreAllocHeapPtr=======================================================================

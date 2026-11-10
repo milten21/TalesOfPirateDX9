@@ -8,279 +8,279 @@
 //---------------------------------------------------------
 
 // 
-#define ROLE_MAXNUM_DESCPAGE				12		// ÃèÊöÐÅÏ¢×î´óÒ³Êý
-#define ROLE_MAXNUM_FUNCPAGE				4		// ¹¦ÄÜÃèÊöÐÅÏ¢×î´óÒ³Êý
-#define ROLE_MAXNUM_FLAGSIZE				16		// ±ê¼Ç³ß´ç£¨µ¥Î»1×Ö½Ú)¿ÉÖ´ÐÐ128²½
-#define ROLE_MAXNUM_RECORDSIZE				256     // ÀúÊ·ÈÎÎñ±ê¼Ç¼ÇÂ¼³ß´ç£¨µ¥Î»1×Ö½Ú£©¹²¼Æ1024¸ö
-#define ROLE_MAXSIZE_DBMISSION				2048 	// Êý¾Ý¿â±£´æÈÎÎñÊý¾Ý×Ö½Ú¿Õ¼ä
-#define ROLE_MAXSIZE_DBTRIGGER				2048	// Êý¾Ý¿â±£´æÈÎÎñ´¥·¢Æ÷Êý¾Ý×Ö½Ú³ß´ç
-#define ROLE_MAXSIZE_DBMISCOUNT				512		// Êý¾Ý¿â±£´æÈÎÎñÍê³É¼ÆÊý×Ö½Ú³ß´ç
-#define ROLE_MAXSIZE_DBRECORD				1024	// Êý¾Ý¿â±£´æÈÎÎñÀúÊ·¼ÇÂ¼Êý¾Ý×Ö½Ú³ß´ç
-#define ROLE_MAXNUM_INDEXSIZE				8		// Ã¿¸ö×Ö½Ú½¨Á¢8¸öÈÎÎñ¼ÇÂ¼Ë÷Òý
-#define ROLE_MAXNUM_FUNCITEM				8		// Ã¿¸ö¹¦ÄÜÒ³×î´óÓÐ8¸ö¹¦ÄÜÏî
-#define ROLE_MAXNUM_DESPSIZE				1024    // ×î´ó¶Ô»°Ò³ÃèÊöÐÅÏ¢×Ö½Ú³¤¶È
-#define ROLE_MAXNUM_NEEDDESPSIZE			256     // ×î´ó¶Ô»°Ò³ÐèÇóÃèÊöÐÅÏ¢×Ö½Ú³¤¶È
-#define ROLE_MAXNUM_FUNCITEMSIZE			64      // ×î´ó¹¦ÄÜÒ³Ã¿¸öÏîÄ¿ÃèÊöÐÅÏ¢×Ö½Ú³¤¶È
-#define ROLE_MAXNUM_CAPACITY				64		// Ã¿¸önpc×î´óÐ¯´øÈÎÎñÊý¾ÝË÷Òý³ß´ç
-#define ROLE_MAXNUM_TRADEITEM				120     // Ã¿¸önpc×î´óÐ¯´øµ¥¸öÀàÐÍÎïÆ·Ë÷Òý³ß´ç
-#define ROLE_MAXNUM_TRADEDATA				18      // ½ÇÉ«½»Ò×Ê±Ã¿¸ö½ÇÉ«¿ÉÒÔ·ÅÖÃµÄÎïÆ·×î´óÀ¸Î»
-#define ROLE_MAXNUM_ITEMTRADE				99		// Ã¿´ÎÔÊÐíµÄÒ»¸ö½»Ò×¶ÑµþÎïÆ·×î´ó¼ÆÊý
-#define ROLE_MAXNUM_CHARTRIGGER				64      // Ã¿¸ö½ÇÉ«×î´óÐ¯´øµÄÈÎÎñ´¥·¢Æ÷ÊýÁ¿
-#define ROLE_MAXNUM_NPCTRIGGER				4		// Ã¿¸öNPC×î´óÐ¯´øµÄÈÎÎñ´¥·¢Æ÷ÊýÁ¿
-#define ROLE_MAXNUM_FLAG					16		// Ã¿¸ö½ÇÉ«¿ÉÒÔÐ¯´ø20¸öÈÎÎñ
-#define ROLE_MAXNUM_MISSIONSTATE			32		// Ã¿¸öNPC½ÇÉ«¿É´øµÄ×î´óÈÎÎñÊýÁ¿
-#define ROLE_MAXNUM_MISSION_STEP			16		// Ã¿¸öNPC´øµÄÃ¿¸öÈÎÎñµÄ×î´ó²½Öè
-#define ROLE_MAXNUM_RANDMISSION				10		// Ã¿¸ö½ÇÉ«×î´ó¿ÉÒÔÐ¯´ø4¸öËæ»úÈÎÎñ
-#define ROLE_MAXNUM_INSIDE_NPCCOUNT			24		// ½ÇÉ«Í¬²½ÊÓÒ°ÄÚ×î´óÈÎÎñNPCEÊýÁ¿
-#define ROLE_MAXSIZE_TRADEDATA				2000	// Ã¿¸ö·þÎñÆ÷Í¬Ê±×î´ó¿ÉÔËÐÐ×î´óÊýÁ¿µÄ½»Ò×
-#define ROLE_MAXSIZE_STALLDATA				2000	// Ã¿¸ö·þÎñÆ÷Í¬Ê±×î´ó¿ÉÔËÐÐ×î´óÊýÁ¿µÄ°ÚÌ¯½»Ò×
-#define ROLE_MAXSIZE_MSGPROC				16		// npcÏûÏ¢´¦Àíº¯ÊýÃû³Æ³¤¶È
-#define ROLE_MAXVALUE_PARAM					16      // Ã¿¸ö±ê¼ÇÐ¯´øµÄ×î´ó²ÎÊýÖµ
-#define ROLE_MAXNUM_MISNEED					8		// ÈÎÎñ×î´óµÄÐèÇóÊýÁ¿
-#define ROLE_MAXNUM_MISPRIZE				8		// ÈÎÎñ×î´óµÄ½±ÀøÊýÁ¿
-#define ROLE_MAXSIZE_MISNAME				32		// ÈÎÎñÃû³Æ×î´ó³ß´ç
-#define ROLE_MAXNUM_FORGE					12		// ×î´ó¾«Á·Êý¾ÝÐÅÏ¢ÊýÁ¿
-#define ROLE_MAXNUM_MISSION					10		// Ã¿¸ö½ÇÉ«¿ÉÒÔ½ÓÊÜ×î´ó10¸öÈÎÎñ
-#define ROLE_MAXNUM_RAND_DATA				4		// Ëæ»úÈÎÎñ×î´óËÄ¸öÖ´ÐÐÄÚÈÝÐÅÏ¢
-#define ROLE_MAXNUM_MISSIONCOUNT			32		// Ëæ»úÈÎÎñÍê³É´ÎÊý¼ÇÂ¼×î´óÊýÁ¿
-#define ROLE_MAXNUM_EUDEMON					4		// ÓÎÏ·ÊÀ½çÖÐ×î´óÊØ»¤ÉñÊýÁ¿
-#define ROLE_MAXNUM_MAPNPC					512		// Ã¿¸öµØÍ¼×î´óNPCÊýÁ¿
-#define ROLE_MAXNUM_STALL_GOODS				24		// ×î´ó°ÚÌ¯½»Ò×»õÎï
-#define ROLE_MAXNUM_STALL_NUM				64		// ×î´ó°ÚÌ¯Ãû³Æ×Ö½Ú³¤¶È
-#define ROLE_MAXSIZE_PASSWORD2				32		// ¶þ´ÎÃÜÂë×î´ó³¤¶È
+#define ROLE_MAXNUM_DESCPAGE				12		// æè¿°ä¿¡æ¯æœ€å¤§é¡µæ•°
+#define ROLE_MAXNUM_FUNCPAGE				4		// åŠŸèƒ½æè¿°ä¿¡æ¯æœ€å¤§é¡µæ•°
+#define ROLE_MAXNUM_FLAGSIZE				16		// æ ‡è®°å°ºå¯¸ï¼ˆå•ä½1å­—èŠ‚)å¯æ‰§è¡Œ128æ­¥
+#define ROLE_MAXNUM_RECORDSIZE				256     // åŽ†å²ä»»åŠ¡æ ‡è®°è®°å½•å°ºå¯¸ï¼ˆå•ä½1å­—èŠ‚ï¼‰å…±è®¡1024ä¸ª
+#define ROLE_MAXSIZE_DBMISSION				2048 	// æ•°æ®åº“ä¿å­˜ä»»åŠ¡æ•°æ®å­—èŠ‚ç©ºé—´
+#define ROLE_MAXSIZE_DBTRIGGER				2048	// æ•°æ®åº“ä¿å­˜ä»»åŠ¡è§¦å‘å™¨æ•°æ®å­—èŠ‚å°ºå¯¸
+#define ROLE_MAXSIZE_DBMISCOUNT				512		// æ•°æ®åº“ä¿å­˜ä»»åŠ¡å®Œæˆè®¡æ•°å­—èŠ‚å°ºå¯¸
+#define ROLE_MAXSIZE_DBRECORD				1024	// æ•°æ®åº“ä¿å­˜ä»»åŠ¡åŽ†å²è®°å½•æ•°æ®å­—èŠ‚å°ºå¯¸
+#define ROLE_MAXNUM_INDEXSIZE				8		// æ¯ä¸ªå­—èŠ‚å»ºç«‹8ä¸ªä»»åŠ¡è®°å½•ç´¢å¼•
+#define ROLE_MAXNUM_FUNCITEM				8		// æ¯ä¸ªåŠŸèƒ½é¡µæœ€å¤§æœ‰8ä¸ªåŠŸèƒ½é¡¹
+#define ROLE_MAXNUM_DESPSIZE				1024    // æœ€å¤§å¯¹è¯é¡µæè¿°ä¿¡æ¯å­—èŠ‚é•¿åº¦
+#define ROLE_MAXNUM_NEEDDESPSIZE			256     // æœ€å¤§å¯¹è¯é¡µéœ€æ±‚æè¿°ä¿¡æ¯å­—èŠ‚é•¿åº¦
+#define ROLE_MAXNUM_FUNCITEMSIZE			64      // æœ€å¤§åŠŸèƒ½é¡µæ¯ä¸ªé¡¹ç›®æè¿°ä¿¡æ¯å­—èŠ‚é•¿åº¦
+#define ROLE_MAXNUM_CAPACITY				64		// æ¯ä¸ªnpcæœ€å¤§æºå¸¦ä»»åŠ¡æ•°æ®ç´¢å¼•å°ºå¯¸
+#define ROLE_MAXNUM_TRADEITEM				120     // æ¯ä¸ªnpcæœ€å¤§æºå¸¦å•ä¸ªç±»åž‹ç‰©å“ç´¢å¼•å°ºå¯¸
+#define ROLE_MAXNUM_TRADEDATA				18      // è§’è‰²äº¤æ˜“æ—¶æ¯ä¸ªè§’è‰²å¯ä»¥æ”¾ç½®çš„ç‰©å“æœ€å¤§æ ä½
+#define ROLE_MAXNUM_ITEMTRADE				99		// æ¯æ¬¡å…è®¸çš„ä¸€ä¸ªäº¤æ˜“å †å ç‰©å“æœ€å¤§è®¡æ•°
+#define ROLE_MAXNUM_CHARTRIGGER				64      // æ¯ä¸ªè§’è‰²æœ€å¤§æºå¸¦çš„ä»»åŠ¡è§¦å‘å™¨æ•°é‡
+#define ROLE_MAXNUM_NPCTRIGGER				4		// æ¯ä¸ªNPCæœ€å¤§æºå¸¦çš„ä»»åŠ¡è§¦å‘å™¨æ•°é‡
+#define ROLE_MAXNUM_FLAG					16		// æ¯ä¸ªè§’è‰²å¯ä»¥æºå¸¦20ä¸ªä»»åŠ¡
+#define ROLE_MAXNUM_MISSIONSTATE			32		// æ¯ä¸ªNPCè§’è‰²å¯å¸¦çš„æœ€å¤§ä»»åŠ¡æ•°é‡
+#define ROLE_MAXNUM_MISSION_STEP			16		// æ¯ä¸ªNPCå¸¦çš„æ¯ä¸ªä»»åŠ¡çš„æœ€å¤§æ­¥éª¤
+#define ROLE_MAXNUM_RANDMISSION				10		// æ¯ä¸ªè§’è‰²æœ€å¤§å¯ä»¥æºå¸¦4ä¸ªéšæœºä»»åŠ¡
+#define ROLE_MAXNUM_INSIDE_NPCCOUNT			24		// è§’è‰²åŒæ­¥è§†é‡Žå†…æœ€å¤§ä»»åŠ¡NPCEæ•°é‡
+#define ROLE_MAXSIZE_TRADEDATA				2000	// æ¯ä¸ªæœåŠ¡å™¨åŒæ—¶æœ€å¤§å¯è¿è¡Œæœ€å¤§æ•°é‡çš„äº¤æ˜“
+#define ROLE_MAXSIZE_STALLDATA				2000	// æ¯ä¸ªæœåŠ¡å™¨åŒæ—¶æœ€å¤§å¯è¿è¡Œæœ€å¤§æ•°é‡çš„æ‘†æ‘Šäº¤æ˜“
+#define ROLE_MAXSIZE_MSGPROC				16		// npcæ¶ˆæ¯å¤„ç†å‡½æ•°åç§°é•¿åº¦
+#define ROLE_MAXVALUE_PARAM					16      // æ¯ä¸ªæ ‡è®°æºå¸¦çš„æœ€å¤§å‚æ•°å€¼
+#define ROLE_MAXNUM_MISNEED					8		// ä»»åŠ¡æœ€å¤§çš„éœ€æ±‚æ•°é‡
+#define ROLE_MAXNUM_MISPRIZE				8		// ä»»åŠ¡æœ€å¤§çš„å¥–åŠ±æ•°é‡
+#define ROLE_MAXSIZE_MISNAME				32		// ä»»åŠ¡åç§°æœ€å¤§å°ºå¯¸
+#define ROLE_MAXNUM_FORGE					12		// æœ€å¤§ç²¾ç»ƒæ•°æ®ä¿¡æ¯æ•°é‡
+#define ROLE_MAXNUM_MISSION					10		// æ¯ä¸ªè§’è‰²å¯ä»¥æŽ¥å—æœ€å¤§10ä¸ªä»»åŠ¡
+#define ROLE_MAXNUM_RAND_DATA				4		// éšæœºä»»åŠ¡æœ€å¤§å››ä¸ªæ‰§è¡Œå†…å®¹ä¿¡æ¯
+#define ROLE_MAXNUM_MISSIONCOUNT			32		// éšæœºä»»åŠ¡å®Œæˆæ¬¡æ•°è®°å½•æœ€å¤§æ•°é‡
+#define ROLE_MAXNUM_EUDEMON					4		// æ¸¸æˆä¸–ç•Œä¸­æœ€å¤§å®ˆæŠ¤ç¥žæ•°é‡
+#define ROLE_MAXNUM_MAPNPC					512		// æ¯ä¸ªåœ°å›¾æœ€å¤§NPCæ•°é‡
+#define ROLE_MAXNUM_STALL_GOODS				24		// æœ€å¤§æ‘†æ‘Šäº¤æ˜“è´§ç‰©
+#define ROLE_MAXNUM_STALL_NUM				64		// æœ€å¤§æ‘†æ‘Šåç§°å­—èŠ‚é•¿åº¦
+#define ROLE_MAXSIZE_PASSWORD2				32		// äºŒæ¬¡å¯†ç æœ€å¤§é•¿åº¦
 
-// npc¶Ô»°ÐÅÏ¢
-#define ROLE_CLOSE_DESC						"ÄúÏÖÔÚÃ»ÓÐ·ûºÏÌõ¼þ¿ÉÒÔ½ÓÊÜµÄÈÎÎñ£¡"
+// npcå¯¹è¯ä¿¡æ¯
+#define ROLE_CLOSE_DESC						"\xc4\xfa\xcf\xd6\xd4\xda\xc3\xbb\xd3\xd0\xb7\xfb\xba\xcf\xcc\xf5\xbc\xfe\xbf\xc9\xd2\xd4\xbd\xd3\xca\xdc\xb5\xc4\xc8\xce\xce\xf1\xa3\xa1"
 
-// ¶Ô»°ÐÅÏ¢ÃüÁî
-#define ROLE_FIRSTPAGE						0		// ÇëÇó³õ´Î¶Ô»°ÐÅÏ¢
-#define ROLE_CLOSEPAGE						-1		// ÇëÇó¹Ø±Õ¶Ô»°Ò³ÃüÁî
+// å¯¹è¯ä¿¡æ¯å‘½ä»¤
+#define ROLE_FIRSTPAGE						0		// è¯·æ±‚åˆæ¬¡å¯¹è¯ä¿¡æ¯
+#define ROLE_CLOSEPAGE						-1		// è¯·æ±‚å…³é—­å¯¹è¯é¡µå‘½ä»¤
 
-// npc½»Ò×ÐÅÏ¢
-#define ROLE_TRADE_SALE						0		// ÇëÇó³öÊÛÎïÆ·
-#define ROLE_TRADE_BUY						1		// ÇëÇó¹ºÂòÎïÆ·
-#define ROLE_TRADE_SALE_GOODS				2		// ÇëÇó³öÊÛ»õ²ÕÎïÆ·
-#define ROLE_TRADE_BUY_GOODS				3		// ÇëÇó¹ºÂò»õ²ÕÎïÆ·
-#define ROLE_TRADE_SELECT_BOAT				4		// Ñ¡Ôñ½»Ò×µÄ´¬Ö»
+// npcäº¤æ˜“ä¿¡æ¯
+#define ROLE_TRADE_SALE						0		// è¯·æ±‚å‡ºå”®ç‰©å“
+#define ROLE_TRADE_BUY						1		// è¯·æ±‚è´­ä¹°ç‰©å“
+#define ROLE_TRADE_SALE_GOODS				2		// è¯·æ±‚å‡ºå”®è´§èˆ±ç‰©å“
+#define ROLE_TRADE_BUY_GOODS				3		// è¯·æ±‚è´­ä¹°è´§èˆ±ç‰©å“
+#define ROLE_TRADE_SELECT_BOAT				4		// é€‰æ‹©äº¤æ˜“çš„èˆ¹åª
 
-// ½»Ò×Ê±¼äÐÅÏ¢¶¨Òå
-#define ROLE_TRADE_START					1		// ½»Ò×¿ªÊ¼
-#define ROLE_MAXNUM_TRADETIME				50000	// ×î´ó½»Ò×Ê±¼ä
-#define ROLE_MAXSIZE_TRADEDIST				80*80	// ×î´ó½»Ò×¾àÀë
+// äº¤æ˜“æ—¶é—´ä¿¡æ¯å®šä¹‰
+#define ROLE_TRADE_START					1		// äº¤æ˜“å¼€å§‹
+#define ROLE_MAXNUM_TRADETIME				50000	// æœ€å¤§äº¤æ˜“æ—¶é—´
+#define ROLE_MAXSIZE_TRADEDIST				80*80	// æœ€å¤§äº¤æ˜“è·ç¦»
 
-//npcÈÎÎñ×´Ì¬ÐÅÏ¢¶¨Òå
-#define ROLE_MIS_ACCEPT						1<<0	// ÓÐ·ûºÏÌõ¼þ¿ÉÒÔ½ÓµÄÈÎÎñ
-#define ROLE_MIS_DELIVERY					1<<1	// ÒÑÍê³É¿É½»¸¶µÄÈÎÎñ
-#define ROLE_MIS_PENDING					1<<2	// Î´Íê³É²»¿É½»¸¶µÄÈÎÎñ
-#define ROLE_MIS_IGNORE						1<<3	// ²»·ûºÏÌõ¼þ¿ÉÒÔ½ÓµÄÈÎÎñ
+//npcä»»åŠ¡çŠ¶æ€ä¿¡æ¯å®šä¹‰
+#define ROLE_MIS_ACCEPT						1<<0	// æœ‰ç¬¦åˆæ¡ä»¶å¯ä»¥æŽ¥çš„ä»»åŠ¡
+#define ROLE_MIS_DELIVERY					1<<1	// å·²å®Œæˆå¯äº¤ä»˜çš„ä»»åŠ¡
+#define ROLE_MIS_PENDING					1<<2	// æœªå®Œæˆä¸å¯äº¤ä»˜çš„ä»»åŠ¡
+#define ROLE_MIS_IGNORE						1<<3	// ä¸ç¬¦åˆæ¡ä»¶å¯ä»¥æŽ¥çš„ä»»åŠ¡
 
-// ÈÎÎñ¶Ô»°ÐÅÏ¢ÃüÁî
-#define ROLE_MIS_PREV						0		// ÇëÇóÈÎÎñÁÐ±íµÄÉÏÒ»Ò³ÐÅÏ¢
-#define ROLE_MIS_NEXT						1		// ÇëÇóÈÎÎñÁÐ±íµÄÏÂÒ»Ò³ÐÅÏ¢
-#define ROLE_MIS_PREV_END					2		// ÈÎÎñÁÐ±íÃ»ÓÐÉÏÒ»Ò³ÐÅÏ¢
-#define ROLE_MIS_NEXT_END					3		// ÈÎÎñÁÐ±íÃ»ÓÐÏÂÒ»Ò³ÐÅÏ¢
-#define ROLE_MIS_SEL						4		// ÇëÇóÑ¡ÔñÈÎÎñÁÐ±íÏîÄ¿
-#define ROLE_MIS_TALK						5		// ÇëÇóÈÎÎñ¶Ô»°ÐÅÏ¢
-#define ROLE_MIS_BTNACCEPT					6		// ÇëÇó½ÓÊÜÈÎÎñ
-#define ROLE_MIS_BTNDELIVERY				7		// ÇëÇó½»¸¶ÈÎÎñ
-#define ROLE_MIS_BTNPENDING					8		// Î´¾öÈÎÎñÇëÇó£¨¿Í»§¶Ë½ûÖ¹°´Å¥£©
-#define ROLE_MIS_LOG						9		// ÇëÇóÈÎÎñÈÕÖ¾ÐÅÏ¢
+// ä»»åŠ¡å¯¹è¯ä¿¡æ¯å‘½ä»¤
+#define ROLE_MIS_PREV						0		// è¯·æ±‚ä»»åŠ¡åˆ—è¡¨çš„ä¸Šä¸€é¡µä¿¡æ¯
+#define ROLE_MIS_NEXT						1		// è¯·æ±‚ä»»åŠ¡åˆ—è¡¨çš„ä¸‹ä¸€é¡µä¿¡æ¯
+#define ROLE_MIS_PREV_END					2		// ä»»åŠ¡åˆ—è¡¨æ²¡æœ‰ä¸Šä¸€é¡µä¿¡æ¯
+#define ROLE_MIS_NEXT_END					3		// ä»»åŠ¡åˆ—è¡¨æ²¡æœ‰ä¸‹ä¸€é¡µä¿¡æ¯
+#define ROLE_MIS_SEL						4		// è¯·æ±‚é€‰æ‹©ä»»åŠ¡åˆ—è¡¨é¡¹ç›®
+#define ROLE_MIS_TALK						5		// è¯·æ±‚ä»»åŠ¡å¯¹è¯ä¿¡æ¯
+#define ROLE_MIS_BTNACCEPT					6		// è¯·æ±‚æŽ¥å—ä»»åŠ¡
+#define ROLE_MIS_BTNDELIVERY				7		// è¯·æ±‚äº¤ä»˜ä»»åŠ¡
+#define ROLE_MIS_BTNPENDING					8		// æœªå†³ä»»åŠ¡è¯·æ±‚ï¼ˆå®¢æˆ·ç«¯ç¦æ­¢æŒ‰é’®ï¼‰
+#define ROLE_MIS_LOG						9		// è¯·æ±‚ä»»åŠ¡æ—¥å¿—ä¿¡æ¯
 
-#define ROLE_MIS_PENDING_FLAG				0		// ÈÎÎñÕýÔÚ½øÐÐÖÐ
-#define ROLE_MIS_COMPLETE_FLAG				1		// ÈÎÎñÒÑ¾­´¦ÓÚÍê³É×´Ì¬±ê¼Ç
-#define ROLE_MIS_FAILURE_FALG				2		// ÈÎÎñÊ§°Ü
+#define ROLE_MIS_PENDING_FLAG				0		// ä»»åŠ¡æ­£åœ¨è¿›è¡Œä¸­
+#define ROLE_MIS_COMPLETE_FLAG				1		// ä»»åŠ¡å·²ç»å¤„äºŽå®ŒæˆçŠ¶æ€æ ‡è®°
+#define ROLE_MIS_FAILURE_FALG				2		// ä»»åŠ¡å¤±è´¥
 
-#define	EM_OK								0		// ÕýÈ·
-#define EM_FAILER							-1		// ´íÎó
+#define	EM_OK								0		// æ­£ç¡®
+#define EM_FAILER							-1		// é”™è¯¯
 
-// ½ÇÉ«ÈÎÎñÐÅÏ¢´æ´¢Í·±êÊ¶ºÍ°æ±¾ºÅ£¬ÓÃÓÚÊ¶±ð·ÖÎö´æ´¢ÐÅÏ¢
+// è§’è‰²ä»»åŠ¡ä¿¡æ¯å­˜å‚¨å¤´æ ‡è¯†å’Œç‰ˆæœ¬å·ï¼Œç”¨äºŽè¯†åˆ«åˆ†æžå­˜å‚¨ä¿¡æ¯
 #define ROLE_MIS_TRIGGER_HEADER				DWORD(*(LPDWORD)"trig")
 #define ROLE_MIS_MISINFO_HEADER				DWORD(*(LPDWORD)"misn")
 
-#define ROLE_MIS_RECORD_EDITION				0x0003	// ÈÎÎñÏµÍ³ÀúÊ·±ê¼Ç¼ÇÂ¼	
-#define ROLE_MIS_TRIGGER_EDITION			0x0003	// ÈÎÎñÏµÍ³µ±Ç°´¥·¢Æ÷´æ´¢°æ±¾ºÅ
-#define ROLE_MIS_MISINFO_EDITION			0x0003	// ÈÎÎñÏµÍ³µ±Ç°ÈÎÎñÐÅÏ¢´æ´¢°æ±¾ºÅ
-#define ROLE_MIS_MISCOUNT_EDITION			0x0003  // Ëæ»úÈÎÎñÍê³É¼ÆÊýÐÅÏ¢´æ´¢°æ±¾ºÅ
+#define ROLE_MIS_RECORD_EDITION				0x0003	// ä»»åŠ¡ç³»ç»ŸåŽ†å²æ ‡è®°è®°å½•	
+#define ROLE_MIS_TRIGGER_EDITION			0x0003	// ä»»åŠ¡ç³»ç»Ÿå½“å‰è§¦å‘å™¨å­˜å‚¨ç‰ˆæœ¬å·
+#define ROLE_MIS_MISINFO_EDITION			0x0003	// ä»»åŠ¡ç³»ç»Ÿå½“å‰ä»»åŠ¡ä¿¡æ¯å­˜å‚¨ç‰ˆæœ¬å·
+#define ROLE_MIS_MISCOUNT_EDITION			0x0003  // éšæœºä»»åŠ¡å®Œæˆè®¡æ•°ä¿¡æ¯å­˜å‚¨ç‰ˆæœ¬å·
 
 namespace mission
 {
-	// ½»Ò×²Ù×÷ÀàÐÍ
+	// äº¤æ˜“æ“ä½œç±»åž‹
 	enum TRADE_OPTYPE	
 	{ 
-		TRADE_SALE				= 0,     // ³öÊÛÎïÆ·²Ù×÷
-		TRADE_BUY				= 1,     // ¹ºÂòÎïÆ·²Ù×÷
-		TRADE_GOODS				= 2,	 // ½»Ò×´¬²Õ»õÎï
-		TRADE_DRAGTO_ITEM		= 3,     // ÍÏ¶¯ÎïÆ·´ÓµÀ¾ßÀ¸µ½½»Ò×À¸
-		TRADE_DRAGTO_TRADE		= 4,     // ÍÏ¶¯ÎïÆ·´Ó½»Ò×À¸µ½ÎïÆ·À¸
-		TRADE_DRAGMONEY_ITEM	= 5,	 // ÍÏ¶¯½ðÇ®´ÓµÀ¾ßÀ¸µ½½»Ò×À¸
-		TRADE_DRAGMONEY_TRADE	= 6,	 // ÍÏ¶¯½ðÇ®´Ó½»Ò×À¸µ½ÎïÆ·À¸
-		TRADE_SUCCESS			= 7,	 // µ±Ç°½»Ò×³É¹¦
-		TRADE_FAILER			= 8,	 // µ±Ç°½»Ò×Ê§°Ü
+		TRADE_SALE				= 0,     // å‡ºå”®ç‰©å“æ“ä½œ
+		TRADE_BUY				= 1,     // è´­ä¹°ç‰©å“æ“ä½œ
+		TRADE_GOODS				= 2,	 // äº¤æ˜“èˆ¹èˆ±è´§ç‰©
+		TRADE_DRAGTO_ITEM		= 3,     // æ‹–åŠ¨ç‰©å“ä»Žé“å…·æ åˆ°äº¤æ˜“æ 
+		TRADE_DRAGTO_TRADE		= 4,     // æ‹–åŠ¨ç‰©å“ä»Žäº¤æ˜“æ åˆ°ç‰©å“æ 
+		TRADE_DRAGMONEY_ITEM	= 5,	 // æ‹–åŠ¨é‡‘é’±ä»Žé“å…·æ åˆ°äº¤æ˜“æ 
+		TRADE_DRAGMONEY_TRADE	= 6,	 // æ‹–åŠ¨é‡‘é’±ä»Žäº¤æ˜“æ åˆ°ç‰©å“æ 
+		TRADE_SUCCESS			= 7,	 // å½“å‰äº¤æ˜“æˆåŠŸ
+		TRADE_FAILER			= 8,	 // å½“å‰äº¤æ˜“å¤±è´¥
 	};
 
-	// ½»Ò×µÄÎïÆ·ÀàÐÍ
+	// äº¤æ˜“çš„ç‰©å“ç±»åž‹
 	enum TRADE_ITEMTYPE 
 	{ 
-		TI_WEAPON 					= 0,	// ÎäÆ÷ÀàÐÍ
-		TI_DEFENCE 					= 1,	// ·À¾ßÀàÐÍ
-		TI_OTHER    				= 2,	// ÔÓÏîÀàÐÍ
-		TI_SYNTHESIS 				= 3,	// ºÏ³ÉÎïÆ·ÀàÐÍ
+		TI_WEAPON 					= 0,	// æ­¦å™¨ç±»åž‹
+		TI_DEFENCE 					= 1,	// é˜²å…·ç±»åž‹
+		TI_OTHER    				= 2,	// æ‚é¡¹ç±»åž‹
+		TI_SYNTHESIS 				= 3,	// åˆæˆç‰©å“ç±»åž‹
 		MAXTRADE_ITEMTYPE			= 4,
 	};
 
-	// ½ÇÉ«½»Ò×ÀàÐÍ
+	// è§’è‰²äº¤æ˜“ç±»åž‹
 	enum TRADE_CHAR_TYPE
 	{
-		TRADE_CHAR					= 0,	// ½ÇÉ«Ö®¼ä½»Ò×
-		TRADE_BOAT					= 1,	// ´¬Ö»Ö®¼ä½»Ò×
+		TRADE_CHAR					= 0,	// è§’è‰²ä¹‹é—´äº¤æ˜“
+		TRADE_BOAT					= 1,	// èˆ¹åªä¹‹é—´äº¤æ˜“
 	};
 
-	// Ê±¼ä´¥·¢Æ÷Ê±¼äÀàÐÍ
+	// æ—¶é—´è§¦å‘å™¨æ—¶é—´ç±»åž‹
 	enum TRIGGER_TIME_TYPE
 	{
-		TT_CYCLETIME	= 0,			// Ê±¼äÑ­»·
-		TT_MULTITIME	= 1,			// Ñ­»·ÔËÐÐn´Î
+		TT_CYCLETIME	= 0,			// æ—¶é—´å¾ªçŽ¯
+		TT_MULTITIME	= 1,			// å¾ªçŽ¯è¿è¡Œnæ¬¡
 	};
 
-	// ´¥·¢Æ÷ÊÂ¼þÀàÐÍ
+	// è§¦å‘å™¨äº‹ä»¶ç±»åž‹
 	enum TRIGGER_EVENT 
 	{
-		TE_MAP_INIT		= 0,			// ½ÇÉ«³öÉú		£¨ÓÎÏ··þÎñÆ÷¹«¹²´¥·¢Æ÷´æ´¢£©
-		TE_NPC			= 1,			// npcÐ¯´ø		£¨²»ÐèÒª´¥·¢Æ÷´æ´¢£©
-		TE_KILL			= 2,			// ´Ý»ÙÎï¼þ		£¨½ÇÉ«´¥·¢Æ÷´æ´¢£©²ÎÊý1£¬´Ý»ÙÊýÁ¿£¬ ²ÎÊý2£¬Ö¸¶¨Îï¼þÀàÐÍID, ²ÎÊý3£¬´Ý»ÙÎï¼þÊýÁ¿¼ÆÊý
-		TE_GAME_TIME	= 3,			// ÓÎÏ·Ê±¼ä		£¨½ÇÉ«´¥·¢Æ÷´æ´¢£©²ÎÊý1£¬Ê±¼äÀàÐÍ£¬ ²ÎÊý2£¬ÔËÐÐ´ÎÊý£¬ ²ÎÊý3£¬Ê±¼ä¼ä¸ô£¬²ÎÊý4£¬Ê±¼ä¼ÆÊý
-		TE_CHAT			= 4,			// ÁÄÌì¹Ø¼ü×Ö	£¨½ÇÉ«´¥·¢Æ÷´æ´¢£©²ÎÊý1£¬½ÇÉ«ÊäÈëÁÄÌì¹Ø¼ü×Ö´ÎÊý¼ÆÊý£¬²ÎÊý2£¬ÁÄÌì¹Ø¼ü×ÖID£¬ ²ÎÊý3£¬ÓÐÐ§ÁÄÌì´ÎÊý¼ÆÊý
-		TE_GET_ITEM		= 5,			// »ñµÃÎïÆ·		£¨½ÇÉ«´¥·¢Æ÷´æ´¢£©²ÎÊý1£¬ÎïÆ·ÊýÁ¿£¬ ²ÎÊý2£¬ÎïÆ·ID£¬ ²ÎÊý3£¬Ê°È¡ÎïÆ·¼ÆÊý
-		TE_EQUIP_ITEM	= 6,			// ×°±¸ÎïÆ·		£¨½ÇÉ«´¥·¢Æ÷´æ´¢£©²ÎÊý1£¬ÎïÆ·ID£¬ ²ÎÊý2£¬±£Áô£¬ ²ÎÊý3£¬±£Áô£¬
-		TE_GOTO_MAP     = 7,			// µ½´ïÄ¿±êµã	£¨½ÇÉ«´¥·¢Æ÷´æ´¢£©²ÎÊý1£¬µØÍ¼ID£¬ ²ÎÊý2£¬µØÍ¼×ø±êx£¬²ÎÊý3, µØÍ¼×ø±êy, ²ÎÊý4£¬×ø±ê·¶Î§£¬²ÎÊý5£¬ÊÇ·ñÖ÷¶¯¹Ø±Õ´¥·¢Æ÷
-		TE_LEVEL_UP     = 8,			// Éý¼¶			£¨½ÇÉ«´¥·¢Æ÷´æ´¢£©²ÎÊý1£¬ÊÇ·ñÖ÷¶¯¹Ø±Õ£¨·ÇÖ÷¶¯¹Ø±ÕÀàÐÍ±íÃ÷ËùÓÐµÈ¼¶¶¼´¥·¢Ö´ÐÐ¶¯×÷£¬Ö÷¶¯ÐÎ´¥·¢Æ÷¶¯×÷ºó¹Ø±Õ£©£¬²ÎÊý2£¬Ö¸¶¨µÈ¼¶´¥·¢
-		TE_MAXNUM_TYPE,					// ×î´óÊÂ¼þÀàÐÍÊý
+		TE_MAP_INIT		= 0,			// è§’è‰²å‡ºç”Ÿ		ï¼ˆæ¸¸æˆæœåŠ¡å™¨å…¬å…±è§¦å‘å™¨å­˜å‚¨ï¼‰
+		TE_NPC			= 1,			// npcæºå¸¦		ï¼ˆä¸éœ€è¦è§¦å‘å™¨å­˜å‚¨ï¼‰
+		TE_KILL			= 2,			// æ‘§æ¯ç‰©ä»¶		ï¼ˆè§’è‰²è§¦å‘å™¨å­˜å‚¨ï¼‰å‚æ•°1ï¼Œæ‘§æ¯æ•°é‡ï¼Œ å‚æ•°2ï¼ŒæŒ‡å®šç‰©ä»¶ç±»åž‹ID, å‚æ•°3ï¼Œæ‘§æ¯ç‰©ä»¶æ•°é‡è®¡æ•°
+		TE_GAME_TIME	= 3,			// æ¸¸æˆæ—¶é—´		ï¼ˆè§’è‰²è§¦å‘å™¨å­˜å‚¨ï¼‰å‚æ•°1ï¼Œæ—¶é—´ç±»åž‹ï¼Œ å‚æ•°2ï¼Œè¿è¡Œæ¬¡æ•°ï¼Œ å‚æ•°3ï¼Œæ—¶é—´é—´éš”ï¼Œå‚æ•°4ï¼Œæ—¶é—´è®¡æ•°
+		TE_CHAT			= 4,			// èŠå¤©å…³é”®å­—	ï¼ˆè§’è‰²è§¦å‘å™¨å­˜å‚¨ï¼‰å‚æ•°1ï¼Œè§’è‰²è¾“å…¥èŠå¤©å…³é”®å­—æ¬¡æ•°è®¡æ•°ï¼Œå‚æ•°2ï¼ŒèŠå¤©å…³é”®å­—IDï¼Œ å‚æ•°3ï¼Œæœ‰æ•ˆèŠå¤©æ¬¡æ•°è®¡æ•°
+		TE_GET_ITEM		= 5,			// èŽ·å¾—ç‰©å“		ï¼ˆè§’è‰²è§¦å‘å™¨å­˜å‚¨ï¼‰å‚æ•°1ï¼Œç‰©å“æ•°é‡ï¼Œ å‚æ•°2ï¼Œç‰©å“IDï¼Œ å‚æ•°3ï¼Œæ‹¾å–ç‰©å“è®¡æ•°
+		TE_EQUIP_ITEM	= 6,			// è£…å¤‡ç‰©å“		ï¼ˆè§’è‰²è§¦å‘å™¨å­˜å‚¨ï¼‰å‚æ•°1ï¼Œç‰©å“IDï¼Œ å‚æ•°2ï¼Œä¿ç•™ï¼Œ å‚æ•°3ï¼Œä¿ç•™ï¼Œ
+		TE_GOTO_MAP     = 7,			// åˆ°è¾¾ç›®æ ‡ç‚¹	ï¼ˆè§’è‰²è§¦å‘å™¨å­˜å‚¨ï¼‰å‚æ•°1ï¼Œåœ°å›¾IDï¼Œ å‚æ•°2ï¼Œåœ°å›¾åæ ‡xï¼Œå‚æ•°3, åœ°å›¾åæ ‡y, å‚æ•°4ï¼Œåæ ‡èŒƒå›´ï¼Œå‚æ•°5ï¼Œæ˜¯å¦ä¸»åŠ¨å…³é—­è§¦å‘å™¨
+		TE_LEVEL_UP     = 8,			// å‡çº§			ï¼ˆè§’è‰²è§¦å‘å™¨å­˜å‚¨ï¼‰å‚æ•°1ï¼Œæ˜¯å¦ä¸»åŠ¨å…³é—­ï¼ˆéžä¸»åŠ¨å…³é—­ç±»åž‹è¡¨æ˜Žæ‰€æœ‰ç­‰çº§éƒ½è§¦å‘æ‰§è¡ŒåŠ¨ä½œï¼Œä¸»åŠ¨å½¢è§¦å‘å™¨åŠ¨ä½œåŽå…³é—­ï¼‰ï¼Œå‚æ•°2ï¼ŒæŒ‡å®šç­‰çº§è§¦å‘
+		TE_MAXNUM_TYPE,					// æœ€å¤§äº‹ä»¶ç±»åž‹æ•°
 	};
 
-	// ÈÎÎñÀàÐÍ
+	// ä»»åŠ¡ç±»åž‹
 	enum MIS_TYPE
 	{
-		MIS_TYPE_NOMAL  = 0,			// ÆÕÍ¨ÈÎÎñÀàÐÍ
-		MIS_TYPE_RAND	= 1,			// Ëæ»úÈÎÎñÀàÐÍ
-		MIS_TYPE_WORLD	= 2,			// ÊÀ½çÈÎÎñÀàÐÍ
+		MIS_TYPE_NOMAL  = 0,			// æ™®é€šä»»åŠ¡ç±»åž‹
+		MIS_TYPE_RAND	= 1,			// éšæœºä»»åŠ¡ç±»åž‹
+		MIS_TYPE_WORLD	= 2,			// ä¸–ç•Œä»»åŠ¡ç±»åž‹
 	};
 
-	// ÈÎÎñÏÔÊ¾²Ù×÷ÀàÐÍ
+	// ä»»åŠ¡æ˜¾ç¤ºæ“ä½œç±»åž‹
 	enum MIS_SHOW_TYPE
 	{
-		MIS_ALLWAYS_SHOW	= 0, 	 	// ×ÜÊÇÏÔÊ¾ÈÎÎñ×´Ì¬
-		MIS_COMPLETE_SHOW	= 1, 		// Íê³ÉÈÎÎñÌõ¼þÊ±²ÅÏÔÊ¾ÈÎÎñ×´Ì¬£¬£¨Ö»ÓÐ½ÇÉ«Âú×ãÍê³ÉÌõ¼þ£¬½ÇÉ«²Å»á¿´µ½ÈÎÎñ£©
+		MIS_ALLWAYS_SHOW	= 0, 	 	// æ€»æ˜¯æ˜¾ç¤ºä»»åŠ¡çŠ¶æ€
+		MIS_COMPLETE_SHOW	= 1, 		// å®Œæˆä»»åŠ¡æ¡ä»¶æ—¶æ‰æ˜¾ç¤ºä»»åŠ¡çŠ¶æ€ï¼Œï¼ˆåªæœ‰è§’è‰²æ»¡è¶³å®Œæˆæ¡ä»¶ï¼Œè§’è‰²æ‰ä¼šçœ‹åˆ°ä»»åŠ¡ï¼‰
 	};
 
-	// ÈÎÎñÐèÇóÀàÐÍ
+	// ä»»åŠ¡éœ€æ±‚ç±»åž‹
 	enum MIS_NEED_TYPE
 	{
-		MIS_NEED_ITEM		= 0,		// ÐèÒª»ñµÃÎïÆ· (²ÎÊý1£¬ÎïÆ·ID£¬²ÎÊý2£¬ÊýÁ¿)
-		MIS_NEED_KILL		= 1,		// ÐèÒª´Ý»ÙÎï¼þ (²ÎÊý1£¬Îï¼þÀàÐÍID£¬²ÎÊý2£¬ÊýÁ¿)
-		MIS_NEED_SEND		= 2,        // ÐèÒªËÍ¸øÄ³ÈË (²ÎÊý1£¬npcid)
-		MIS_NEED_CONVOY		= 3, 		// ÐèÒª»¤ËÍµ½Ä³µÄ (²ÎÊý1£¬µØÍ¼ID£¬²ÎÊý2£¬x×ø±ê£¬²ÎÊý3£¬y×ø±ê)
-		MIS_NEED_EXPLORE	= 4,		// ÐèÒªÌ½Ë÷Ä³µÄ (²ÎÊý1£¬µØÍ¼ID£¬²ÎÊý2£¬x×ø±ê£¬²ÎÊý3£¬y×ø±ê)
-		MIS_NEED_DESP		= 5,		// ÎÄ×Ö±íÊöµÄÈÎÎñÄ¿±ê
+		MIS_NEED_ITEM		= 0,		// éœ€è¦èŽ·å¾—ç‰©å“ (å‚æ•°1ï¼Œç‰©å“IDï¼Œå‚æ•°2ï¼Œæ•°é‡)
+		MIS_NEED_KILL		= 1,		// éœ€è¦æ‘§æ¯ç‰©ä»¶ (å‚æ•°1ï¼Œç‰©ä»¶ç±»åž‹IDï¼Œå‚æ•°2ï¼Œæ•°é‡)
+		MIS_NEED_SEND		= 2,        // éœ€è¦é€ç»™æŸäºº (å‚æ•°1ï¼Œnpcid)
+		MIS_NEED_CONVOY		= 3, 		// éœ€è¦æŠ¤é€åˆ°æŸçš„ (å‚æ•°1ï¼Œåœ°å›¾IDï¼Œå‚æ•°2ï¼Œxåæ ‡ï¼Œå‚æ•°3ï¼Œyåæ ‡)
+		MIS_NEED_EXPLORE	= 4,		// éœ€è¦æŽ¢ç´¢æŸçš„ (å‚æ•°1ï¼Œåœ°å›¾IDï¼Œå‚æ•°2ï¼Œxåæ ‡ï¼Œå‚æ•°3ï¼Œyåæ ‡)
+		MIS_NEED_DESP		= 5,		// æ–‡å­—è¡¨è¿°çš„ä»»åŠ¡ç›®æ ‡
 	};
 
-	// ÈÎÎñ½±ÀøÀàÐÍ
+	// ä»»åŠ¡å¥–åŠ±ç±»åž‹
 	enum MIS_PRIZE_TYPE
 	{
-		MIS_PRIZE_ITEM		= 0,		// ½±ÀøÎïÆ· (²ÎÊý1£¬ÎïÆ·ID£¬²ÎÊý2£¬ÊýÁ¿)
-		MIS_PRIZE_MONEY		= 1,		// ½±Àø½ðÇ® (²ÎÊý1£¬ÊýÁ¿)
-		MIS_PRIZE_FAME		= 2,		// ½±ÀøÉùÍû (²ÎÊý1£¬ÉùÍûÖµ)
-		MIS_PRIZE_CESS		= 3,		// ½±ÀøÃ³Ò×Ë°ÂÊ (²ÎÊý1£¬Ë°ÂÊÖµ)
+		MIS_PRIZE_ITEM		= 0,		// å¥–åŠ±ç‰©å“ (å‚æ•°1ï¼Œç‰©å“IDï¼Œå‚æ•°2ï¼Œæ•°é‡)
+		MIS_PRIZE_MONEY		= 1,		// å¥–åŠ±é‡‘é’± (å‚æ•°1ï¼Œæ•°é‡)
+		MIS_PRIZE_FAME		= 2,		// å¥–åŠ±å£°æœ› (å‚æ•°1ï¼Œå£°æœ›å€¼)
+		MIS_PRIZE_CESS		= 3,		// å¥–åŠ±è´¸æ˜“ç¨ŽçŽ‡ (å‚æ•°1ï¼Œç¨ŽçŽ‡å€¼)
 	};
 
-	// ÈÎÎñ½±Àø·ÖÅäÀàÐÍ
+	// ä»»åŠ¡å¥–åŠ±åˆ†é…ç±»åž‹
 	enum MIS_PRIZE_SELTYPE
 	{
-		PRIZE_SELONE        = 0,		// ¶àÑ¡Ò»
-		PRZIE_SELALL        = 1,		// È«Ñ¡
+		PRIZE_SELONE        = 0,		// å¤šé€‰ä¸€
+		PRZIE_SELALL        = 1,		// å…¨é€‰
 	};
 
-	// Ëæ»úÈÎÎñÀàÐÍ
+	// éšæœºä»»åŠ¡ç±»åž‹
 	enum MIS_RAND_TYPE
 	{
-		MIS_RAND_KILL		  = 0,   	// ´Ý»ÙÎï¼þ (²ÎÊý1£¬Îï¼þÀàÐÍID£¬²ÎÊý2£¬ÊýÁ¿)
-		MIS_RAND_GET		  = 1,		// »ñÈ¡ÎïÆ· (²ÎÊý1£¬ÎïÆ·ID£¬²ÎÊý2£¬ÊýÁ¿)
-		MIS_RAND_SEND		  = 2,		// ËÍÎïÆ·   (²ÎÊý1£¬ÎïÆ·ID£¬²ÎÊý2£¬ÊýÁ¿)
-		MIS_RAND_CONVOY		  = 3,		// »¤ËÍNPC  (²ÎÊý1£¬½ÇÉ«ÀàÐÍID£¬²ÎÊý2£¬ÊýÁ¿)
-		MIS_RAND_EXPLORE	  = 4,		// Ì½Ë÷µØÍ¼ (²ÎÊý1£¬µØÍ¼ID£¬²ÎÊý2£¬x×ø±ê£¬²ÎÊý3£¬y×ø±ê)
+		MIS_RAND_KILL		  = 0,   	// æ‘§æ¯ç‰©ä»¶ (å‚æ•°1ï¼Œç‰©ä»¶ç±»åž‹IDï¼Œå‚æ•°2ï¼Œæ•°é‡)
+		MIS_RAND_GET		  = 1,		// èŽ·å–ç‰©å“ (å‚æ•°1ï¼Œç‰©å“IDï¼Œå‚æ•°2ï¼Œæ•°é‡)
+		MIS_RAND_SEND		  = 2,		// é€ç‰©å“   (å‚æ•°1ï¼Œç‰©å“IDï¼Œå‚æ•°2ï¼Œæ•°é‡)
+		MIS_RAND_CONVOY		  = 3,		// æŠ¤é€NPC  (å‚æ•°1ï¼Œè§’è‰²ç±»åž‹IDï¼Œå‚æ•°2ï¼Œæ•°é‡)
+		MIS_RAND_EXPLORE	  = 4,		// æŽ¢ç´¢åœ°å›¾ (å‚æ•°1ï¼Œåœ°å›¾IDï¼Œå‚æ•°2ï¼Œxåæ ‡ï¼Œå‚æ•°3ï¼Œyåæ ‡)
 	};
 
-	// ¾­ÑéÀàÐÍ
+	// ç»éªŒç±»åž‹
 	enum MIS_EXP_TYPE
 	{
-		MIS_EXP_NOMAL 			= 0,	// ½±ÀøÆÕÍ¨¾­Ñé
-		MIS_EXP_SAIL			= 1,	// ½±Àøº½º£¾­Ñé
-		MIS_EXP_LIFE			= 2,	// ½±ÀøÉú»î¾­Ñé
+		MIS_EXP_NOMAL 			= 0,	// å¥–åŠ±æ™®é€šç»éªŒ
+		MIS_EXP_SAIL			= 1,	// å¥–åŠ±èˆªæµ·ç»éªŒ
+		MIS_EXP_LIFE			= 2,	// å¥–åŠ±ç”Ÿæ´»ç»éªŒ
 	};
 
-	// ÐÂÊÖ°ïÖúÐÅÏ¢ÀàÐÍ
+	// æ–°æ‰‹å¸®åŠ©ä¿¡æ¯ç±»åž‹
 	enum MIS_HELP_TYPE
 	{
-		MIS_HELP_DESP			= 0,	// ÎÄ×Ö°ïÖúÐÅÏ¢
-		MIS_HELP_IMAGE			= 1,	// Í¼ÐÎ°ïÖúÐÅÏ¢
-		MIS_HELP_SOUND			= 2,	// ÉùÒô°ïÖúÐÅÏ¢
-		MIS_HELP_BICKER			= 3,	// ÉÁ¶¯×ÖÌåÐÅÏ¢
+		MIS_HELP_DESP			= 0,	// æ–‡å­—å¸®åŠ©ä¿¡æ¯
+		MIS_HELP_IMAGE			= 1,	// å›¾å½¢å¸®åŠ©ä¿¡æ¯
+		MIS_HELP_SOUND			= 2,	// å£°éŸ³å¸®åŠ©ä¿¡æ¯
+		MIS_HELP_BICKER			= 3,	// é—ªåŠ¨å­—ä½“ä¿¡æ¯
 	};
 
-	// ÈÎÎñ½çÃæÏÔÊ¾ÀàÐÍ¶¨Òå
+	// ä»»åŠ¡ç•Œé¢æ˜¾ç¤ºç±»åž‹å®šä¹‰
 	enum MIS_TREENODE_TYPE
 	{
-		MIS_TREENODE_INVALID		= 0,	// ÎÞÐ§ÀàÐÍ
-		MIS_TREENODE_NORMAL			= 1,	// ÆÕÍ¨ÈÎÎñ
-		MIS_TREENODE_HISTORY		= 2,	// ÀúÊ·ÈÎÎñ
-		MIS_TREENODE_GUILD			= 3,	// ¹«»áÈÎÎñ
+		MIS_TREENODE_INVALID		= 0,	// æ— æ•ˆç±»åž‹
+		MIS_TREENODE_NORMAL			= 1,	// æ™®é€šä»»åŠ¡
+		MIS_TREENODE_HISTORY		= 2,	// åŽ†å²ä»»åŠ¡
+		MIS_TREENODE_GUILD			= 3,	// å…¬ä¼šä»»åŠ¡
 	};
 
 	enum ENTITY_TYPE
 	{
-		BASE_ENTITY					= 0,	// »ù±¾ÊµÌå
-		RESOURCE_ENTITY				= 1,	// ×ÊÔ´ÊµÌå
-		TRANSIT_ENTITY				= 2,	// ´«ËÍÊµÌå
-		BERTH_ENTITY				= 3,	// Í£²´ÊµÌå
+		BASE_ENTITY					= 0,	// åŸºæœ¬å®žä½“
+		RESOURCE_ENTITY				= 1,	// èµ„æºå®žä½“
+		TRANSIT_ENTITY				= 2,	// ä¼ é€å®žä½“
+		BERTH_ENTITY				= 3,	// åœæ³Šå®žä½“
 	};
 
 	enum ENTITY_STATE
 	{
-		ENTITY_DISABLE				= 0,	// ÊµÌåÎ´¼¤»î×´Ì¬
-		ENTITY_ENABLE				= 1,	// ÊµÌå¼¤»î×´Ì¬
+		ENTITY_DISABLE				= 0,	// å®žä½“æœªæ¿€æ´»çŠ¶æ€
+		ENTITY_ENABLE				= 1,	// å®žä½“æ¿€æ´»çŠ¶æ€
 	};
 
 	enum ENTITY_ACTION
 	{
-		ENTITY_START_ACTION			= 0,	// ÊµÌå¿ªÊ¼¶¯×÷
-		ENTITY_END_ACTION			= 1,	// ÊµÌå½áÊø¶¯×÷
-		ENTITY_INTERMIT_ACTION		= 2,	// ÊµÌåÖÐ¶Ï¶¯×÷
+		ENTITY_START_ACTION			= 0,	// å®žä½“å¼€å§‹åŠ¨ä½œ
+		ENTITY_END_ACTION			= 1,	// å®žä½“ç»“æŸåŠ¨ä½œ
+		ENTITY_INTERMIT_ACTION		= 2,	// å®žä½“ä¸­æ–­åŠ¨ä½œ
 	};
 
 	enum GOODS_TYPE
 	{
-		RES_WOOD					= 0,	// Ä¾²Ä×ÊÔ´
-		RES_MINE					= 1,	// ¿óÊ¯×ÊÔ´
+		RES_WOOD					= 0,	// æœ¨æèµ„æº
+		RES_MINE					= 1,	// çŸ¿çŸ³èµ„æº
 	};
 
 	enum  BOAT_LIST_TYPE
 	{
-		BERTH_TRADE_LIST			= 0,	// ½»Ò×´¬Ö»ÁÐ±í
-		BERTH_LUANCH_LIST			= 1,	// ³öº£´¬Ö»ÁÐ±í
-		BERTH_BAG_LIST				= 2,	// ´ò°ü´¬Ö»ÁÐ±í
-		BERTH_REPAIR_LIST			= 3,	// ´¬Ö»ÐÞÀíÁÐ±í
-		BERTH_SALVAGE_LIST			= 4,	// ´¬Ö»´òÀÌÁÐ±í
-		BERTH_SUPPLY_LIST			= 5,	// ´¬Ö»²¹¸øÁÐ±í
-		BERTH_BOATLEVEL_LIST		= 6		// ´¬Ö»Éý¼¶ÁÐ±í
+		BERTH_TRADE_LIST			= 0,	// äº¤æ˜“èˆ¹åªåˆ—è¡¨
+		BERTH_LUANCH_LIST			= 1,	// å‡ºæµ·èˆ¹åªåˆ—è¡¨
+		BERTH_BAG_LIST				= 2,	// æ‰“åŒ…èˆ¹åªåˆ—è¡¨
+		BERTH_REPAIR_LIST			= 3,	// èˆ¹åªä¿®ç†åˆ—è¡¨
+		BERTH_SALVAGE_LIST			= 4,	// èˆ¹åªæ‰“æžåˆ—è¡¨
+		BERTH_SUPPLY_LIST			= 5,	// èˆ¹åªè¡¥ç»™åˆ—è¡¨
+		BERTH_BOATLEVEL_LIST		= 6		// èˆ¹åªå‡çº§åˆ—è¡¨
 	};
 
 	enum VIEW_ITEM_TYPE
 	{
-		VIEW_CHAR_BAG				= 0,	// ²é¿´×ÔÉíµÀ¾ßÀ¸ÎïÆ·ÐÅÏ¢
-		VIEW_CHARTRADE_SELF			= 1,	// ²é¿´×ÔÉí½»Ò×µÀ¾ßÀ¸ÎïÆ·ÐÅÏ¢
-		VIEW_CHARTRADE_OTHER		= 2,	// ²é¿´¶Ô·½½»Ò×µÀ¾ßÀ¸ÎïÆ·ÐÅÏ¢
+		VIEW_CHAR_BAG				= 0,	// æŸ¥çœ‹è‡ªèº«é“å…·æ ç‰©å“ä¿¡æ¯
+		VIEW_CHARTRADE_SELF			= 1,	// æŸ¥çœ‹è‡ªèº«äº¤æ˜“é“å…·æ ç‰©å“ä¿¡æ¯
+		VIEW_CHARTRADE_OTHER		= 2,	// æŸ¥çœ‹å¯¹æ–¹äº¤æ˜“é“å…·æ ç‰©å“ä¿¡æ¯
 	};
 
-	// °ÚÌ¯»õÎï½»Ò×ÎïÆ·ÐÅÏ¢½á¹¹
+	// æ‘†æ‘Šè´§ç‰©äº¤æ˜“ç‰©å“ä¿¡æ¯ç»“æž„
 	typedef struct _NET_STALL_GOODS
 	{
 		DWORD dwMoney;

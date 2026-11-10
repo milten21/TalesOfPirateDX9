@@ -174,17 +174,14 @@ public:
 	GroupServerAgent m_groupServerAgent;
 	// End
 
-	struct
-	{
-		std::recursive_mutex			m_mtxlogin;
-		std::recursive_mutex			m_mtxSyn;
-		short			m_gatenum;
-		DataSocket	*	m_acctsock;
-		std::string			m_name;
-		// Add by lark.li 20081119 begin
-		std::recursive_mutex			m_mtxAgent;
-		// End
-	};
+	std::recursive_mutex			m_mtxlogin;
+	std::recursive_mutex			m_mtxSyn;
+	short			m_gatenum;
+	DataSocket	*	m_acctsock;
+	std::string			m_name;
+	// Add by lark.li 20081119 begin
+	std::recursive_mutex			m_mtxAgent;
+	// End
 
 	//�ڲ����ݽṹ��
 	PreAllocHeap<Player>		m_plyheap;
@@ -200,21 +197,18 @@ public:
 	void  DelSession(Chat_Session * sess);
 
 	//���ݿ����ӣ�
-	struct
-	{
-		std::recursive_mutex			m_mtxDB;
-		cfl_db			m_cfg_db;
-		TBLAccounts	*	m_tblaccounts;
-		TBLCharacters*	m_tblcharaters;
-		TBLFriends	*	m_tblfriends;
-		TBLMaster	*	m_tblmaster;
-		TBLGuilds	*	m_tblguilds;
-		TBLParam	*	m_tbLparam;
-		friend_tbl	*	m_tblX1;
-		IniFile			m_cfg;
-		InterLockedLong	m_curChaNum;
-		InterLockedLong	m_curWGChaNum;
-	};
+	std::recursive_mutex			m_mtxDB;
+	cfl_db			m_cfg_db;
+	TBLAccounts	*	m_tblaccounts;
+	TBLCharacters*	m_tblcharaters;
+	TBLFriends	*	m_tblfriends;
+	TBLMaster	*	m_tblmaster;
+	TBLGuilds	*	m_tblguilds;
+	TBLParam	*	m_tbLparam;
+	friend_tbl	*	m_tblX1;
+	IniFile			m_cfg;
+	InterLockedLong	m_curChaNum;
+	InterLockedLong	m_curWGChaNum;
 	struct
 	{
 		char			MaxChaNum;
@@ -304,6 +298,8 @@ extern LogStream			g_LogConnect;
 extern LogStream			g_LogDB;
 extern LogStream			g_LogGarner2;
 extern GMBBS		*		g_gmbbs;
+
+#ifdef _WIN32
 extern HANDLE				hConsole;
 
 #define C_PRINT(s, ...) \
@@ -320,5 +316,9 @@ extern HANDLE				hConsole;
 	strConsoleT += "]"; \
 	strConsoleT += s; \
 	SetConsoleTitle(strConsoleT.c_str());
+#else
+#define C_PRINT(s, ...) printf(s, ##__VA_ARGS__);
+#define C_TITLE(s)
+#endif
 
 #endif //GRPNAMESVR_H

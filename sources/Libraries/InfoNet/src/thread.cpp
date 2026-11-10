@@ -1,77 +1,78 @@
 
 
-
 #include "thread.h"
-#include <process.h>
+#include <chrono>
 
-
-
-unsigned __stdcall ThreadFunc(void* param)
-{
-    try
-    {
-        Thread* __thread = (Thread*)param;
-        unsigned __ret = __thread->Run();
-        _endthreadex(__ret);
-        return __ret;
-    }
-    catch(...)
-    {
-    }
-    return -1;
-}
 
 
 Thread::Thread()
+    :   m_stop(false)
 {
 }
 
 
 Thread::~Thread()
 {
+    Terminate();
 }
 
 
-bool Thread::Begin(int flag)
+bool Thread::Begin()
 {
-    m_thread = (HANDLE)_beginthreadex(NULL, 0, ThreadFunc, this, flag, &m_threadid);
-    return NULL != m_thread;
-}
-
-
-bool Thread::Resume()
-{
-    return -1 != ResumeThread((HANDLE)m_thread);
-}
-
-
-bool Thread::Suspend()
-{
-    return -1 != SuspendThread((HANDLE)m_thread);
+    if(m_thread.joinable())
+    {
+        return false;
+    }
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        m_stop = false;
+    }
+    m_thread = std::thread([this]
+    {
+        try
+        {
+            Run();
+        }
+        catch(...)
+        {
+        }
+    });
+    return true;
 }
 
 
 bool Thread::Terminate()
 {
-    return TRUE == TerminateThread((HANDLE)m_thread, 0);
+    if(!m_thread.joinable())
+    {
+        return false;
+    }
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        m_stop = true;
+    }
+    m_wake.notify_all();
+    if(m_thread.get_id() == std::this_thread::get_id())
+    {
+        m_thread.detach();
+    }
+    else
+    {
+        m_thread.join();
+    }
+    return true;
 }
 
 
-int Thread::Wait(int time)
+bool Thread::Stopping()
 {
-    return (int)WaitForSingleObject((HANDLE)m_thread, time);
+    std::lock_guard<std::mutex> guard(m_mutex);
+    return m_stop;
 }
 
 
-bool Thread::SetPriority(int priority)
+bool Thread::Pause(unsigned milliseconds)
 {
-    return TRUE == SetThreadPriority((HANDLE)m_thread, priority);
+    std::unique_lock<std::mutex> guard(m_mutex);
+    return !m_wake.wait_for(guard, std::chrono::milliseconds(milliseconds), [this] { return m_stop; });
 }
-
-
-int Thread::GetPriority()
-{
-    return GetThreadPriority((HANDLE)m_thread);
-}
-
-

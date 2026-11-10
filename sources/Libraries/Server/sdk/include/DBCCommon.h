@@ -9,21 +9,14 @@
 //include file;
 #pragma once
 
-#ifndef	_WIN32_WINNT
-#define _WIN32_WINNT 0x0501
-#endif
-#ifndef	_WIN32_WINDOWS
-#define _WIN32_WINDOWS _WIN32_WINNT_WIN7 
-#endif
+#include "SocketTypes.h"
+#include "Portability.h"
 
-#ifndef USING_TAO							//Ê¹ÓÃWin32»ù±¾Platform SDK
-#include <winsock2.h>						//È·±£µ÷ÓÃĞÂµÄWinSock2.2°æ±¾
-#include <windows.h>
-#else
-#include "TAOSpecial.h"
-#endif
-
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
 #include <cstdint>
+#include <mutex>
 
 
 //----------------------------------------------------------------
@@ -38,26 +31,26 @@ _DBC_BEGIN
 //=================================================================
 #define	nil 0
 //typedef type define
-typedef char Char;							//´ø·ûºÅ8¸ö¶ş½øÖÆÎ»(=1¸ö×Ö½Ú)ÕûĞÍ/×Ö·ûÊı¾İ
+typedef char Char;							//å¸¦ç¬¦å·8ä¸ªäºŒè¿›åˆ¶ä½(=1ä¸ªå­—èŠ‚)æ•´å‹/å­—ç¬¦æ•°æ®
 typedef wchar_t wChar;
-typedef short Short;						//´ø·ûºÅ2×Ö½ÚÕûĞÍÊı¾İ
-typedef long Long;							//´ø·ûºÅ4×Ö½ÚÕûĞÍÊı¾İ
-typedef int Int;							//´ø·ûºÅÏµÍ³ÒÀÀµÕûÊıÊı¾İ(32Î»»úÊµÏÖÎªuLong)
+typedef short Short;						//å¸¦ç¬¦å·2å­—èŠ‚æ•´å‹æ•°æ®
+typedef long Long;							//å¸¦ç¬¦å·4å­—èŠ‚æ•´å‹æ•°æ®
+typedef int Int;							//å¸¦ç¬¦å·ç³»ç»Ÿä¾èµ–æ•´æ•°æ•°æ®(32ä½æœºå®ç°ä¸ºuLong)
 typedef const char cChar;
 typedef const wchar_t cwChar;
 typedef const short cShort;
 typedef const long cLong;
 typedef const int cInt;
-typedef unsigned char uChar;				//ÎŞ·ûºÅ8¸ö¶ş½øÖÆÎ»(=1¸ö×Ö½Ú)ÕûĞÍ/×Ö·ûÊı¾İ
-typedef unsigned short uShort;				//ÎŞ·ûºÅ2×Ö½ÚÕûĞÍÊı¾İ
-typedef unsigned long uLong;				//ÎŞ·ûºÅ4×Ö½ÚÕûĞÍÊı¾İ
-typedef unsigned int uInt;					//ÎŞ·ûºÅÏµÍ³ÒÀÀµÕûÊıÊı¾İ(32Î»»úÊµÏÖÎªuLong)
+typedef unsigned char uChar;				//æ— ç¬¦å·8ä¸ªäºŒè¿›åˆ¶ä½(=1ä¸ªå­—èŠ‚)æ•´å‹/å­—ç¬¦æ•°æ®
+typedef unsigned short uShort;				//æ— ç¬¦å·2å­—èŠ‚æ•´å‹æ•°æ®
+typedef unsigned long uLong;				//æ— ç¬¦å·4å­—èŠ‚æ•´å‹æ•°æ®
+typedef unsigned int uInt;					//æ— ç¬¦å·ç³»ç»Ÿä¾èµ–æ•´æ•°æ•°æ®(32ä½æœºå®ç°ä¸ºuLong)
 typedef const unsigned char cuChar;
 typedef const unsigned short cuShort;
 typedef const unsigned long cuLong;
 typedef const unsigned int cuInt;
-typedef wchar_t	WChar;						//2×Ö½Ú×Ö·ûÊı¾İ
-typedef __int64	LLong;						//´ø·ûºÅ8×Ö½ÚÕûĞÍÊı¾İ
+typedef wchar_t	WChar;						//2å­—èŠ‚å­—ç¬¦æ•°æ®
+typedef std::int64_t	LLong;						//å¸¦ç¬¦å·8å­—èŠ‚æ•´å‹æ•°æ®
 #define SIGN32	uLong(0x80000000)
 #define SIGN16	uShort(0x8000)
 #define SIGN8	uChar(0x80)
@@ -67,27 +60,32 @@ typedef __int64	LLong;						//´ø·ûºÅ8×Ö½ÚÕûĞÍÊı¾İ
 class InterLockedLong
 {
 public:
-	InterLockedLong(LONG lInitVal=0);
-	InterLockedLong(const InterLockedLong &val);
-	operator LONG()const				{return m_plVal/*Add(0)*/;}
+	InterLockedLong(LONG lInitVal=0):m_plVal(lInitVal){}
+	InterLockedLong(const InterLockedLong &val):m_plVal(LONG(val)){}
+	operator LONG()const				{return m_plVal.load();}
 	LONG operator=(LONG val)			{Assign(val);return val;}
-	LONG operator=(InterLockedLong &val){Assign(val);return val;}
+	LONG operator=(const InterLockedLong &val){LONG l_val =val;Assign(l_val);return l_val;}
 	LONG operator++()					{return Increment();}
 	LONG operator++(int)				{LONG lret =Increment();return lret -1;}
 	LONG operator--()					{return Decrement();}
 	LONG operator--(int)				{LONG lret =Decrement();return lret +1;}
 	LONG operator+=(LONG val)			{LONG lret =Add(val);return lret +val;}
 	LONG operator-=(LONG val)			{LONG lret =Add(-val);return lret -val;}
-	LONG operator+=(InterLockedLong	&val){LONG lret =Add(LONG(val));return lret +val;}
-	LONG operator-=(InterLockedLong	&val){LONG lret =Add(-LONG(val));return lret -val;}
-	LONG SetZero()						{return Assign(0);}//·µ»ØÔ­Ê¼Öµ
-	LONG Increment();								//The return value is the resulting incremented value
-	LONG Decrement();								//The return value is the resulting decremented value
-	LONG Add(LONG Value);							//The return value is the initial value
-	LONG Assign(LONG newval);						//The return value is the initial value
-	LONG CompareAssign(LONG Comperand,LONG newval);	//ÏàµÈÊ±ºò²Å¸³Öµ,The return value is the initial value
+	LONG operator+=(InterLockedLong	&val){LONG l_val =val;LONG lret =Add(l_val);return lret +l_val;}
+	LONG operator-=(InterLockedLong	&val){LONG l_val =val;LONG lret =Add(-l_val);return lret -l_val;}
+	LONG SetZero()						{return Assign(0);}//è¿”å›åŸå§‹å€¼
+	LONG Increment()					{return ++m_plVal;}				//The return value is the resulting incremented value
+	LONG Decrement()					{return --m_plVal;}				//The return value is the resulting decremented value
+	LONG Add(LONG Value)				{return m_plVal.fetch_add(Value);}	//The return value is the initial value
+	LONG Assign(LONG newval)			{return m_plVal.exchange(newval);}	//The return value is the initial value
+	LONG CompareAssign(LONG Comperand,LONG newval)	//ç›¸ç­‰æ—¶å€™æ‰èµ‹å€¼,The return value is the initial value
+	{
+		LONG l_val =Comperand;
+		m_plVal.compare_exchange_strong(l_val,newval);
+		return l_val;
+	}
 private:
-	LONG volatile	m_plVal;
+	std::atomic<LONG>	m_plVal;
 };
 #pragma pack(pop)
 struct RefArmor
@@ -134,45 +132,81 @@ inline char* MemSet(char *dest,int val,uLong size)
 	return (char*)memset(dest,val,size);
 }
 //=================================================================
-inline int wctmbcpy(char *dst,cwChar *src)
-{
-	return WideCharToMultiByte(936,
-#if(WINVER >= 0x0500)/* WINVER >= 0x0500 */
-		WC_NO_BEST_FIT_CHARS|
-#endif
-		WC_COMPOSITECHECK,
-		src,-1,dst,dst?0x7FFFFFFF:0,0,0);
-}
-inline int wctmbcpy(uChar *dst,cwChar *src){return wctmbcpy(reinterpret_cast<char*>(dst),src);}
-//=================================================================
 class Sema
 {
 public:
-	Sema():m_handle(0),m_lMaximumCount(0){}
-	Sema(LONG lInitialCount,LONG lMaximumCount,LPCTSTR lpName	=0):m_handle(0),m_lMaximumCount(0){Create(lInitialCount,lMaximumCount,lpName);}
+	Sema() = default;
+	Sema(LONG lInitialCount,LONG lMaximumCount,cChar *lpName =0){Create(lInitialCount,lMaximumCount,lpName);}
+	Sema(const Sema &) = delete;
+	Sema &operator=(const Sema &) = delete;
 	~Sema(){Destroy();}
-	void Destroy() {if(m_handle){CloseHandle(m_handle);m_handle=0;}}
-	operator bool(){return m_handle!=0;};
-	BOOL Create(LONG lInitialCount,LONG lMaximumCount,LPCTSTR lpName	=0)
+	void Destroy()
 	{
-		if(!m_handle)
 		{
-			m_handle		=CreateSemaphore(0,lInitialCount,lMaximumCount,lpName);
-			return TRUE;
-		}else
+			auto const l_lock = std::lock_guard{m_mtx};
+			m_created =false;
+		}
+		m_cond.notify_all();
+	}
+	operator bool(){auto const l_lock = std::lock_guard{m_mtx};return m_created;}
+	BOOL Create(LONG lInitialCount,LONG lMaximumCount,cChar *lpName =0)
+	{
+		auto const l_lock = std::lock_guard{m_mtx};
+		if(m_created ||lMaximumCount <=0 ||lInitialCount <0 ||lInitialCount >lMaximumCount)
 		{
 			return FALSE;
 		}
+		m_count		=lInitialCount;
+		m_max		=lMaximumCount;
+		m_created	=true;
+		return TRUE;
 	}
 
-	DWORD lock()		{return WaitForSingleObject(m_handle,INFINITE);}
-	DWORD trylock()		{return WaitForSingleObject(m_handle,0);}
-	DWORD timelock(DWORD dwMilliseconds){return WaitForSingleObject(m_handle,dwMilliseconds);}
-	BOOL  unlock(Long relcount =1)		{return ReleaseSemaphore(m_handle,relcount,0);}
+	DWORD lock()		{return timelock(INFINITE);}
+	DWORD trylock()		{return timelock(0);}
+	DWORD timelock(DWORD dwMilliseconds)
+	{
+		auto l_lock = std::unique_lock{m_mtx};
+		auto const l_ready = [this]{return !m_created ||m_count >0;};
+		if(dwMilliseconds ==INFINITE)
+		{
+			m_cond.wait(l_lock,l_ready);
+		}else if(!m_cond.wait_for(l_lock,std::chrono::milliseconds(dwMilliseconds),l_ready))
+		{
+			return WAIT_TIMEOUT;
+		}
+		if(!m_created)
+		{
+			return WAIT_FAILED;
+		}
+		--m_count;
+		return WAIT_OBJECT_0;
+	}
+	BOOL  unlock(Long relcount =1)
+	{
+		{
+			auto const l_lock = std::lock_guard{m_mtx};
+			if(!m_created ||relcount <=0 ||relcount >m_max -m_count)
+			{
+				return FALSE;
+			}
+			m_count	+=relcount;
+		}
+		if(relcount ==1)
+		{
+			m_cond.notify_one();
+		}else
+		{
+			m_cond.notify_all();
+		}
+		return TRUE;
+	}
 private:
-	HANDLE				m_handle;			//LockSemaphore
-	InterLockedLong		m_ilCount;
-	LONG				m_lMaximumCount;	//Ö»ÊÇÒ»¸ö±êÖ¾£¬Ã»ÓĞ¿ØÖÆ×î´ó¼ÆÊıµÄ¹¦ÄÜ
+	std::mutex				m_mtx;
+	std::condition_variable	m_cond;
+	LONG					m_count{};
+	LONG					m_max{};
+	bool					m_created{false};
 };
 
 class ScopedSema

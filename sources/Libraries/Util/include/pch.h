@@ -6,58 +6,31 @@
 #if !defined(LOGUTIL_PRECOMPILED_HEADER_FILE)
 #define LOGUTIL_PRECOMPILED_HEADER_FILE
 
-// Æ½Ì¨ÎŞ¹Øºê¶¨Òå
+// å¹³å°æ— å…³å®å®šä¹‰
 #define LINE_COMMENT /##/
 #define LC LINE_COMMENT
 #define $ LINE_COMMENT
 
-// C±ê×¼¿â
+// Cæ ‡å‡†åº“
 #include <stdio.h>
 #include <time.h>
 
-// C++±ê×¼¿â
+// C++æ ‡å‡†åº“
 #include <list>
 #include <map>
 #include <list>
 #include <string>
 
-// Æ½Ì¨Ïà¹Ø¶¨Òå
+// å¹³å°ç›¸å…³å®šä¹‰
+#include "Portability.h"
+
 #if defined(WIN32)
-	// Win32Æ½Ì¨ËùĞè¶¨ÒåºÍ°üº¬
+	// Win32å¹³å°æ‰€éœ€å®šä¹‰å’ŒåŒ…å«
     #pragma warning(disable : 4251)
     #pragma warning(disable : 4786)
 
-	#include <windows.h>
 	#include <io.h>
 	#include <direct.h>
-
-#elif defined(LINUX)
-	// LinuxÆ½Ì¨ËùĞè¶¨ÒåºÍ°üº¬
-    #include <unistd.h>
-    #include <string.h>
-    
-    #include <sys/io.h>
-    #include <sys/stat.h>
-    #include <sys/types.h>
-    #include <sys/time.h>
-    #include <sys/stat.h>
-    #include <sys/dir.h>
-    
-    #define VOID    void
-    #define BYTE    unsigned char
-    #define LPBYTE  unsigned char*
-    #define BOOL    bool
-    #define DWORD   unsigned long
-    #define LPCSTR const char*
-    #define TRUE true
-    #define FALSE false
-    #define HANDLE void*
-
-	#define _LOG
-	#define _LOG_CONSOLE
-#elif defined(FREEBSD)
-	// FreeBSDÆ½Ì¨ËùĞè¶¨ÒåºÍ°üº¬
-
 #endif
 
 

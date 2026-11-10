@@ -10,9 +10,9 @@
 
 #include "PreAlloc.h"
 
-#define defSKILL_RANGE_BASEP_NUM	3	// ÇøÓò»ù±¾²ÎÊý¸öÊý£¨·¶Î§ÖÐÐÄ×ø±ê£¬·½Ïò£©
-#define defSKILL_RANGE_EXTEP_NUM	4	// ÇøÓòÀ©Õ¹²ÎÊý¸öÊý£¨·¶Î§ÀàÐÍ£¬ÀàÐÍ²ÎÊý£©
-#define defSKILL_STATE_PARAM_NUM	3	// ÇøÓò×´Ì¬²ÎÊý¸öÊý£¨±àºÅ£¬µÈ¼¶£¬³ÖÐøÊ±¼ä£©
+#define defSKILL_RANGE_BASEP_NUM	3	// åŒºåŸŸåŸºæœ¬å‚æ•°ä¸ªæ•°ï¼ˆèŒƒå›´ä¸­å¿ƒåæ ‡ï¼Œæ–¹å‘ï¼‰
+#define defSKILL_RANGE_EXTEP_NUM	4	// åŒºåŸŸæ‰©å±•å‚æ•°ä¸ªæ•°ï¼ˆèŒƒå›´ç±»åž‹ï¼Œç±»åž‹å‚æ•°ï¼‰
+#define defSKILL_STATE_PARAM_NUM	3	// åŒºåŸŸçŠ¶æ€å‚æ•°ä¸ªæ•°ï¼ˆç¼–å·ï¼Œç­‰çº§ï¼ŒæŒç»­æ—¶é—´ï¼‰
 
 class CSkillTempData : public dbc::PreAllocStru
 {
@@ -23,13 +23,13 @@ public:
 		sStateParam[0] = SSTATE_NONE;
 	}
 
-	short	sUseEndure{};	// ¶Ô¡°ÄÍ¾Ã¶È¡°µÄÏûºÄ
-	short	sUseEnergy{};	// ¶Ô¡°ÄÜÁ¿¡°µÄÏûºÄ
-	short	sUseSP{};		// ¶Ô¡°SP¡°µÄÏûºÄ
+	short	sUseEndure{};	// å¯¹â€œè€ä¹…åº¦â€œçš„æ¶ˆè€—
+	short	sUseEnergy{};	// å¯¹â€œèƒ½é‡â€œçš„æ¶ˆè€—
+	short	sUseSP{};		// å¯¹â€œSPâ€œçš„æ¶ˆè€—
 
-	long	lResumeTime{};// ÔÙÊÍ·ÅÐèÒªµÄÊ±¼ä£¨ºÁÃë£©
-	short	sRange[defSKILL_RANGE_EXTEP_NUM];	// ÇøÓòÃèÊö£¨ÀàÐÍ+²ÎÊý£©
-	short	sStateParam[defSKILL_STATE_PARAM_NUM];	// ×´Ì¬±àºÅ£¬µÈ¼¶£¬³ÖÐøÊ±¼ä
+	long	lResumeTime{};// å†é‡Šæ”¾éœ€è¦çš„æ—¶é—´ï¼ˆæ¯«ç§’ï¼‰
+	short	sRange[defSKILL_RANGE_EXTEP_NUM];	// åŒºåŸŸæè¿°ï¼ˆç±»åž‹+å‚æ•°ï¼‰
+	short	sStateParam[defSKILL_STATE_PARAM_NUM];	// çŠ¶æ€ç¼–å·ï¼Œç­‰çº§ï¼ŒæŒç»­æ—¶é—´
 
 protected:
 

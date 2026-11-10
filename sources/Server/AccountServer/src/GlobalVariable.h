@@ -4,11 +4,10 @@
 #define _GLOBALVARIABLE_H_
 
 
-//#include "BillThread.h"
 
-#include "tlsindex.h"
-#include "BillService.h"
-#include "databasectrl.h"
+#include "TLSIndex.h"
+#include "DataBaseCtrl.h"
+#include "MainQueue.h"
 
 #include "i18n.h"							//Add by lark.li 20080307
 
@@ -17,31 +16,16 @@
 #include "pi_Memory.h"
 // End
 
-//#define _RELOGIN_MODE_					//�µĵ���ʱ�ظ���½ģʽ
+//#define _RELOGIN_MODE_					//新的倒计时重复登陆模式
 
 extern std::string g_strCfgFile;
 
-extern CBillService		g_BillService;
 extern dbc::TLSIndex	g_TlsIndex;
 extern CDataBaseCtrl	g_MainDBHandle;
-extern HWND				g_hMainWnd;
-extern DWORD			g_MainThreadID;
-//extern BillThread g_BillThread;
-
-#define WM_USER_LOG		WM_USER+100
-#define WM_USER_LOG_MAP	WM_USER+101
+extern MainQueue		g_MainQueue;
 
 
-struct sUserLog
-{
-	bool bLogin;		//true:login  false:logout
-	int nUserID;
-	std::string strUserName;
-	std::string strPassport;
-	std::string strLoginIP;
-};
-
-
+#ifdef _WIN32
 extern HANDLE hConsole;
 
 #define C_PRINT(s, ...) \
@@ -58,6 +42,10 @@ extern HANDLE hConsole;
 	strConsoleT += "]"; \
 	strConsoleT += s; \
 	SetConsoleTitle(strConsoleT.c_str());
+#else
+#define C_PRINT(s, ...) printf(s, ##__VA_ARGS__);
+#define C_TITLE(s)
+#endif
 
 
 #endif

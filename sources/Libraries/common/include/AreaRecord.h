@@ -3,7 +3,7 @@
 #include "TableData.h"
 
 
-// Êı¾İÏî ID µØÃû ±êÊ¶ÑÕÉ« 
+// æ•°æ®é¡¹ ID åœ°å æ ‡è¯†é¢œè‰² 
 class CAreaInfo : public CRawDataInfo
 {
 public:
@@ -18,7 +18,7 @@ public:
     DWORD dwEnvColor;
     DWORD dwLightColor;
     float fLightDir[3];
-	char  chType;			// 0-Ò°Íâ,1-³ÇÄÚ,ÓÃÓÚ¸ü»»ÏÔÊ¾ÎÄ×ÖµÄ±³¾°
+	char  chType;			// 0-é‡å¤–,1-åŸå†…,ç”¨äºæ›´æ¢æ˜¾ç¤ºæ–‡å­—çš„èƒŒæ™¯
 };
 
 
@@ -36,7 +36,7 @@ public:
 
 protected:
 
-	static CAreaSet* _Instance; // Ïàµ±ÓÚµ¥¼ü, °Ñ×Ô¼º¼Ç×¡
+	static CAreaSet* _Instance; // ç›¸å½“äºå•é”®, æŠŠè‡ªå·±è®°ä½
    
 	virtual CRawDataInfo* _CreateRawDataArray(int nCnt)
 	{

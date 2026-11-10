@@ -1,407 +1,120 @@
-// æ≠∑÷Œˆ,¥ÀœÓƒøΩ·ππ¥Ê‘⁄—œ÷ÿŒ Ã‚,”–∂‡¥¶µÿ∑Ω«∑»±œﬂ≥ÃÕ¨≤Ωøº¬«,Ω®“È÷ÿ–¥ - by Arcol
+// ÁªèÂàÜÊûê,Ê≠§È°πÁõÆÁªìÊûÑÂ≠òÂú®‰∏•ÈáçÈóÆÈ¢ò,ÊúâÂ§öÂ§ÑÂú∞ÊñπÊ¨†Áº∫Á∫øÁ®ãÂêåÊ≠•ËÄÉËôë,Âª∫ËÆÆÈáçÂÜô - by Arcol
 
 // main.cpp : Defines the entry point for the console application.
 //
 
-#define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
+#ifdef _WIN32
+#define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
+#endif
 
 #include "stdafx.h"
-#include "resource.h"
 #include "AccountServer2.h"
 #include <signal.h>
-#include <CommCtrl.h>
-//#include "BillThread.h"
-#include "BTIService.h"
+#include <chrono>
+#include <cstdio>
+#include <string>
 #include "GlobalVariable.h"
 
-#include "inifile.h"
-
-#define AUTHUPDATE_TIMER 1
-#define GROUPUPDATE_TIMER 2
+#include "IniFile.h"
 
 ThreadPool* comm = NULL;
 ThreadPool* proc = NULL;
 AuthThreadPool atp;
-bool bExit = false;
 
 //#pragma init_seg( lib )
 pi_LeakReporter pi_leakReporter("accountmemleak.log");
 CResourceBundleManage  g_ResourceBundleManage("AccountServer.loc");	//Add by lark.li 20080330
 
-//BillThread bt;
-
-
-//std::string g_BTSAddr[2] = {"61.152.115.79:7243", "61.152.115.79:7243"}; æ…µƒBTSµÿ÷∑
-//std::string g_BTSAddr[2] = {"61.152.115.172:7243", "61.152.115.173:7243"};
-
-void __cdecl Ctrlc_Dispatch(int sig)
+namespace
 {
-    if (!bExit) {
-		C_PRINT(RES_STRING(AS_MAIN_CPP_00007));
-	    PostMessage(g_hMainWnd, WM_CLOSE, 0, 0);
-        bExit = TRUE;
+constexpr auto QueueWait = std::chrono::milliseconds(200);
+constexpr auto StatusInterval = std::chrono::seconds(60);
+}
+
+void Ctrlc_Dispatch(int sig)
+{
+	g_MainQueue.RequestClose();
+	signal(sig, Ctrlc_Dispatch);
+}
+
+void DispatchMainMessage(const MainMessage& message)
+{
+	const sUserLog& userLog = message.log;
+	switch (message.type)
+	{
+	case MainMessageType::UserLog:
+		if (userLog.bLogin)
+		{
+			g_MainDBHandle.UserLogin(userLog.nUserID, userLog.strUserName, userLog.strLoginIP);
+		}
+		else
+		{
+			g_MainDBHandle.UserLogout(userLog.nUserID);
+		}
+		break;
+
+	case MainMessageType::UserLogMap:
+		if (userLog.bLogin)
+		{
+			g_MainDBHandle.UserLoginMap(userLog.strUserName, "Enter_Map");
+		}
+		else
+		{
+			g_MainDBHandle.UserLogoutMap(userLog.strUserName);
+		}
+		break;
 	}
 }
-LRESULT OnInitDialog(HWND hwnd)
+
+void LogStatus()
 {
-    //SetWindowText(hwnd, "AccountServer");
-    SetWindowText(hwnd, RES_STRING(AS_MAIN_CPP_00008));
-
-	//»œ÷§
-	SetDlgItemText(hwnd,IDC_TOP,RES_STRING(AS_MAIN_CPP_00018));
-	//∂”¡–∞¸£∫ 0
-	SetDlgItemText(hwnd,IDC_QUEUECAP,RES_STRING(AS_MAIN_CPP_00019));
-	//≤¢∑¢ ˝£∫ 0
-	SetDlgItemText(hwnd,IDC_TASKCNT,RES_STRING(AS_MAIN_CPP_00020));
-	//GroupServer
-	SetDlgItemText(hwnd,IDC_MID,RES_STRING(AS_MAIN_CPP_00021));
-	//º∆∑—
-	SetDlgItemText(hwnd,IDC_BOTTOM,RES_STRING(AS_MAIN_CPP_00022));
-	//ÕÀ≥ˆ
-	SetDlgItemText(hwnd,IDOK,RES_STRING(AS_MAIN_CPP_00023));
-    // Auth thread report list
-    {
-        HWND hAuthList = GetDlgItem(hwnd, IDC_AUTHLIST);
-
-        DWORD dwStyle = ListView_GetExtendedListViewStyle(hAuthList);
-        ListView_SetExtendedListViewStyle(hAuthList,
-            dwStyle | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-
-        LVCOLUMN lv;
-        lv.mask = LVCF_WIDTH | LVCF_TEXT | LVCF_FMT;
-
-        lv.cx = 50;
-        //lv.pszText = "Thread";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00009);
-        ListView_InsertColumn(hAuthList, 0, &lv);
-
-        lv.cx = 100;
-        //lv.pszText = "Run Label";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00010);
-        lv.fmt = LVCFMT_CENTER;
-        ListView_InsertColumn(hAuthList, 1, &lv);
-
-        lv.cx = 150;
-       // lv.pszText = "Last/Max Consume (ms)";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00011);
-        lv.fmt = LVCFMT_CENTER;
-        ListView_InsertColumn(hAuthList, 2, &lv);
-
-        LVITEM item;
-        item.mask = LVIF_TEXT;
-        item.iSubItem = 0;
-        char buf[80] = {0};
-        for (char i = 0; i < AuthThreadPool::AT_MAXNUM; ++ i) {
-            item.iItem = i;
-            sprintf(buf, "#%02d", i + 1);
-            item.pszText = (LPSTR)buf;
-            ListView_InsertItem(hAuthList, &item);
-        }
-    }
-
-    // Group report list
-    {
-        HWND hGroupList = GetDlgItem(hwnd, IDC_GROUPLIST);
-
-        DWORD dwStyle = ListView_GetExtendedListViewStyle(hGroupList);
-        ListView_SetExtendedListViewStyle(hGroupList,
-            dwStyle | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-
-        LVCOLUMN lv;
-        lv.mask = LVCF_WIDTH | LVCF_TEXT | LVCF_FMT;
-
-        lv.cx = 100;
-        //lv.pszText = "Name";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00012);
-        ListView_InsertColumn(hGroupList, 0, &lv);
-
-        lv.cx = 100;
-        //lv.pszText = "Group IP";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00013);
-        lv.fmt = LVCFMT_CENTER;
-        ListView_InsertColumn(hGroupList, 1, &lv);
-
-        lv.cx = 100;
-        //lv.pszText = "Status";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00014);
-        lv.fmt = LVCFMT_CENTER;
-        ListView_InsertColumn(hGroupList, 2, &lv);
-    }
-
-    // Bill report list
-    {
-        HWND hBillList = GetDlgItem(hwnd, IDC_BILLLIST);
-
-        DWORD dwStyle = ListView_GetExtendedListViewStyle(hBillList);
-        ListView_SetExtendedListViewStyle(hBillList,
-            dwStyle | LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES);
-
-        LVCOLUMN lv;
-        lv.mask = LVCF_WIDTH | LVCF_TEXT | LVCF_FMT;
-
-        lv.cx = 50;
-        //lv.pszText = "BTS";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00015);
-        ListView_InsertColumn(hBillList, 0, &lv);
-
-        lv.cx = 150;
-        //lv.pszText = "Server IP";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00016);
-        lv.fmt = LVCFMT_CENTER;
-        ListView_InsertColumn(hBillList, 1, &lv);
-
-        lv.cx = 100;
-        //lv.pszText = "Bill/Disconn Count";
-        lv.pszText = (LPSTR)RES_STRING(AS_MAIN_CPP_00017);
-        lv.fmt = LVCFMT_CENTER;
-        ListView_InsertColumn(hBillList, 2, &lv);
-
-        LVITEM item;
-        item.mask = LVIF_TEXT;
-        item.iSubItem = 0;
-        char buf[80] = {0};
-        for (char i = 0; i < 2; ++ i) {
-            item.iItem = i;
-            sprintf(buf, "#%02d", i + 1);
-            item.pszText = (LPSTR)buf;
-            ListView_InsertItem(hBillList, &item);
-            //ListView_SetItemText(hBillList, i, 1, (LPSTR)g_BillThread.GetServerIP(i));
-			ListView_SetItemText(hBillList, i, 1, (LPSTR)g_BillService.GetServerIP(i));
-        }
-    }
-
-    // Update Timer
-    SetTimer(hwnd, AUTHUPDATE_TIMER, 1000, NULL);
-    SetTimer(hwnd, GROUPUPDATE_TIMER, 3000, NULL);
-
-    return 0;
-}
-void ClearGroupList()
-{
-    HWND hGroupList = GetDlgItem(g_hMainWnd, IDC_GROUPLIST);
-    ListView_DeleteAllItems(hGroupList);
-}
-BOOL AddGroupToList(char const* strName, char const* strAddr, char const* strStatus)
-{
-    HWND hGroupList = GetDlgItem(g_hMainWnd, IDC_GROUPLIST);
-
-    LVITEM item;
-    item.mask = LVIF_TEXT;
-    item.iItem = 0;
-	item.iSubItem = 0;
-    item.pszText = (LPSTR)strName;
-    int index = ListView_InsertItem(hGroupList, &item);
-    ListView_SetItemText(hGroupList, index, 1, (LPSTR)strAddr);
-    ListView_SetItemText(hGroupList, index, 2, (LPSTR)strStatus);
-
-    return TRUE;
-}
-BOOL UpdateBTS(int index, char const* strStat)
-{
-    HWND hBTSList = GetDlgItem(g_hMainWnd, IDC_BILLLIST);
-    ListView_SetItemText(hBTSList, index, 2, (LPSTR)strStat);
-    return TRUE;
-}
-LRESULT OnTimer(HWND hwnd, UINT idEvent)
-{
-    if (idEvent == AUTHUPDATE_TIMER) {
-        LVITEM item;
-        item.mask = LVIF_TEXT;
-        char buf[80] = {0};
-        HWND hAuthList = GetDlgItem(hwnd, IDC_AUTHLIST);
-        for (char i = 0; i < AuthThreadPool::AT_MAXNUM; ++ i) {
-            item.iItem = i;
-
-            item.iSubItem = 1;
-            sprintf(buf, "%02d", AuthThreadPool::RunLabel[i]);
-            item.pszText = (LPSTR)buf;
-            ListView_SetItem(hAuthList, &item);
-
-            item.iSubItem = 2;
-            sprintf(buf, "%04d/%04d", AuthThreadPool::RunLast[i], AuthThreadPool::RunConsume[i]);
-            item.pszText = (LPSTR)buf;
-            ListView_SetItem(hAuthList, &item);
-        }
-
-        HWND hQueueCap = GetDlgItem(hwnd, IDC_QUEUECAP);
-        //sprintf(buf, "∂”¡–∞¸£∫ %d", g_Auth.GetPkTotal());
-        sprintf(buf, RES_STRING(AS_MAIN_CPP_00024), g_Auth.GetPkTotal());
-        SetWindowText(hQueueCap, (LPCTSTR)buf);
-
-        HWND hTaskCnt = GetDlgItem(hwnd, IDC_TASKCNT);
-        //sprintf(buf, "≤¢∑¢ ˝£∫ %d", proc->GetTaskCount());
-        sprintf(buf, RES_STRING(AS_MAIN_CPP_00025), proc->GetTaskCount());
-        SetWindowText(hTaskCnt, (LPCTSTR)buf);
-    }
-	else if (idEvent == GROUPUPDATE_TIMER)
+	std::string threads;
+	char buf[64];
+	for (int i = 0; i < AuthThreadPool::AT_MAXNUM; ++i)
 	{
-        g_As2->DisplayGroup();
-    }
-
-    return 0;
+		snprintf(buf, sizeof(buf), " #%02d %02d %04lu/%04lu", i + 1, AuthThreadPool::RunLabel[i],
+			static_cast<unsigned long>(AuthThreadPool::RunLast[i]), static_cast<unsigned long>(AuthThreadPool::RunConsume[i]));
+		threads += buf;
+	}
+	LG("AccountStatus", "queued packets %lu, concurrent tasks %ld, auth thread label last/max ms:%s\n",
+		static_cast<unsigned long>(g_Auth.GetPkTotal()), static_cast<long>(proc->GetTaskCount()), threads.c_str());
+	g_As2->LogGroups("AccountStatus");
 }
-BOOL CALLBACK MainDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+
+void RunMainQueue()
 {
-    WORD wNotify = HIWORD(wParam);
-    WORD wID = LOWORD(wParam);
-
-    switch(uMsg) {
-    case WM_INITDIALOG:
-        OnInitDialog(hwndDlg);
-        break;
-
-    case WM_KEYDOWN:
-        break;
-
-    case WM_TIMER:
-        OnTimer(hwndDlg, (UINT)wParam);
-        break;
-
-    case WM_COMMAND:
-        if (wNotify == BN_CLICKED) {
-            if (wID == IDOK) {
-                PostMessage(hwndDlg, WM_CLOSE, 0, 0);
-            }
-            /*
-            if (wID == IDC_CLOSEBTI) {
-                g_bti.Close();
-            } else if (wID == IDC_STARTBTI) {
-                g_bti.Start("LckveRy", g_passport.c_str());
-            } else if (wID == IDC_STOPBTI) {
-                g_bti.Stop("LckveRy");
-            } else if (wID == IDC_GETCREDIT) {
-                DWORD tid = 0;
-                CreateThread(NULL, 0, GetCredit, (LPVOID)5000, 0, &tid);
-            } else if (wID == IDC_TEST) {
-                DWORD tid = 0;
-                for (int i = 0; i < 10; ++ i) {
-                    CreateThread(NULL, 0, TestPerf, (LPVOID)i, 0, &tid);
-                }
-            } else if (wID == IDC_BUYS) {
-                printf("TaskID = %d\n", g_bti.Buys(USERNAME, 50, "normal-gun"));
-            } else if (wID == IDC_SALE) {
-                printf("TaskID = %d\n", g_bti.Sale(USERNAME, 100, "gun"));
-            } else if (wID == IDC_GIVE) {
-                printf("TaskID = %d\n", g_bti.Give(USERNAME, 100, "green-gun"));
-            } else if (wID == IDC_BILL) {
-                printf("TaskID = %d\n", g_bti.Bill(USERNAME, 100, "blue-gun"));
-            } else if (wID == IDC_DEAL) {
-                printf("TaskID = %d\n", g_bti.Deal(USERNAME, "sam", 100, "orange-gun"));
-            } else if (wID == IDC_OPENBTI) {
-            }*/
-        }
-        break;
-
-    case WM_CLOSE:
-        KillTimer(hwndDlg, GROUPUPDATE_TIMER);
-        KillTimer(hwndDlg, AUTHUPDATE_TIMER);
-        PostQuitMessage(0);
-        break;
-
-    case cBTI_Opened:
-        printf("cBTI_Opened [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_Connected:
-        printf("cBTI_Connected [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_GAME:
-        //printf("cBTI_GAME [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-		g_BillService.VerifyBillingCode((long)wParam, lParam);
-        break;
-
-    case cBTI_STOP:
-        //printf("cBTI_STOP [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_DATA:
-        printf("cBTI_DATA [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_BUYS:
-        printf("cBTI_BUYS [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_SALE:
-        printf("cBTI_SALE [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_DEAL:
-        printf("cBTI_DEAL [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_GIVE:
-        printf("cBTI_GIVE [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_BILL:
-        printf("cBTI_BILL [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-
-    case cBTI_Disconnected:
-		printf("cBTI_Disconnected [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        /*
-        printf("cBTI_Disconnected [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        ++ g_nDisconn;
-        char buf[20]; sprintf(buf, "∂œø™¥Œ ˝£∫%d", g_nDisconn);
-        SetWindowText(GetDlgItem(hwndDlg, IDC_DISCONNCNT), buf);*/
-        break;
-
-    case cBTI_Closed:
-        printf("cBTI_Closed [WPARAM=%d, LPARAM=%d]\n", wParam, lParam);
-        break;
-    case cBTI_TIME:     //  ∑¿≥¡√‘
-        g_BillService.AdjustExpScale((long)wParam, (long)lParam);
-        break;
-	case WM_USER_LOG:
+	auto nextStatus = std::chrono::steady_clock::now() + StatusInterval;
+	while (!g_MainQueue.IsCloseRequested())
+	{
+		if (auto message = g_MainQueue.Wait(QueueWait))
 		{
-			sUserLog *pUserLog=(sUserLog*)lParam;
-			if (pUserLog->bLogin)
-			{
-				g_MainDBHandle.UserLogin(pUserLog->nUserID, pUserLog->strUserName, pUserLog->strLoginIP);
-			}
-			else
-			{
-				g_MainDBHandle.UserLogout(pUserLog->nUserID);
-			}
-			delete pUserLog;
-			break;
+			DispatchMainMessage(*message);
 		}
-	case WM_USER_LOG_MAP:
+
+		const auto now = std::chrono::steady_clock::now();
+		if (now >= nextStatus)
 		{
-			sUserLog *pUserLog=(sUserLog*)lParam;
-			if (pUserLog->bLogin)
-			{
-                g_MainDBHandle.UserLoginMap(pUserLog->strUserName, "Enter_Map");
-			}
-			else
-			{
-				g_MainDBHandle.UserLogoutMap(pUserLog->strUserName);
-			}
-			delete pUserLog;
-			break;
+			LogStatus();
+			nextStatus = now + StatusInterval;
 		}
-    }
-    return FALSE;
-}
-HWND CreateMainDialog()
-{
-    HINSTANCE hInst = GetModuleHandle(NULL);
-    HWND hwnd = ::CreateDialog(hInst, MAKEINTRESOURCE(IDD_MAINDIALOG), NULL, MainDlgProc);
-    ::ShowWindow(hwnd, SW_SHOW);
-    return hwnd;
+	}
+	while (auto message = g_MainQueue.Wait(std::chrono::milliseconds(0)))
+	{
+		DispatchMainMessage(*message);
+	}
 }
 
-//#include <string.h>
-
+#ifdef _WIN32
 HANDLE hConsole = NULL;
+#endif
 
 int main(int argc, char* argv[])
 {
+#ifdef _WIN32
 	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+#endif
 
 	C_TITLE("AccountServer.exe")
 	C_PRINT("Loading AccountServer.cfg...\n");
@@ -410,38 +123,25 @@ int main(int argc, char* argv[])
 
 	T_B
 
-    // ¥¥Ω®÷˜¥∞ø⁄
-	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );		//Add by Arcol (2005-12-2)
+#ifdef _WIN32
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+#endif
 
-    g_hMainWnd = CreateMainDialog();
-    signal(SIGINT, Ctrlc_Dispatch);
-	g_MainThreadID=GetCurrentThreadId();
+	signal(SIGINT, Ctrlc_Dispatch);
+	signal(SIGTERM, Ctrlc_Dispatch);
 
 	if (!g_MainDBHandle.CreateObject())
 	{
 		C_PRINT("failed\n");
-		//printf("Main database handler create failed, AccountServer hang!\n");
 		printf(RES_STRING(AS_MAIN_CPP_00003));
-		system("pause");
+		LG("AccountServer", "%s", RES_STRING(AS_MAIN_CPP_00003));
 		return -1;
 	}
 
-    // ≥ı ºªØBTI
-	//if (!g_BillThread.CreateBillingSystem(g_hMainWnd))
-	if (!g_BillService.CreateBillingSystem(g_hMainWnd))
-	{
-		//printf("Cannot Create Billing System, AccountServer hang!\n");
-		printf(RES_STRING(AS_MAIN_CPP_00004));
-		system("pause");
-		return -1;
-	}
-
-    // ∆Ù∂Ø»œ÷§º∆∑—œﬂ≥Ã
-	//bt.Launch();
-	//g_BillThread.Launch();
+    // ÂêØÂä®ËÆ§ËØÅËÆ°Ë¥πÁ∫øÁ®ã
     atp.Launch();
 
-    // ≥ı ºªØÕ¯¬Á
+    // ÂàùÂßãÂåñÁΩëÁªú
     TcpCommApp::WSAStartup();
     comm = ThreadPool::CreatePool(10, 10, 256);
 
@@ -451,41 +151,34 @@ int main(int argc, char* argv[])
         g_As2 = new AccountServer2(proc, comm);
     } catch (excp& e) {
         printf("%s\n", e.what());
+        LG("AccountServer", "%s\n", e.what());
         comm->DestroyPool();
         TcpCommApp::WSACleanup();
-        Sleep(10 * 1000);
         return -1;
     } catch (...) {
-        //printf("AccountServer≥ı ºªØ∆⁄º‰∑¢…˙Œ¥÷™¥ÌŒÛ£¨«ÎÕ®÷™ø™∑¢’ﬂ\n");
+        //printf("AccountServerÂàùÂßãÂåñÊúüÈó¥ÂèëÁîüÊú™Áü•ÈîôËØØÔºåËØ∑ÈÄöÁü•ÂºÄÂèëËÄÖ\n");
    		printf(RES_STRING(AS_MAIN_CPP_00006));
+		LG("AccountServer", "%s", RES_STRING(AS_MAIN_CPP_00006));
 		comm->DestroyPool();
         TcpCommApp::WSACleanup();
-        Sleep(10 * 1000);
         return -2;
     }
 
-    // œ˚œ¢—≠ª∑
-    MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
+    RunMainQueue();
+	C_PRINT(RES_STRING(AS_MAIN_CPP_00007));
 
-    // –∂‘ÿÕ¯¬Á
+    // Âç∏ËΩΩÁΩëÁªú
     delete g_As2;
     if (comm != NULL) comm->DestroyPool();
     if (proc != NULL) proc->DestroyPool();
     TcpCommApp::WSACleanup();
 
-    // »œ÷§°¢º∆∑—œﬂ≥ÃÕÀ≥ˆ
-    //bt.NotifyToExit();
-	//g_BillThread.NotifyToExit();
+    // ËÆ§ËØÅ„ÄÅËÆ°Ë¥πÁ∫øÁ®ãÈÄÄÂá∫
     atp.NotifyToExit();
 
     atp.WaitForExit();
-	//g_BillThread.WaitForExit(-1);
 
-    // º«¬º◊Ó∫Û◊¥Ã¨
+    // ËÆ∞ÂΩïÊúÄÂêéÁä∂ÊÄÅ
     LG("RunLabel", "\n");
     for (char i = 0; i < AuthThreadPool::AT_MAXNUM; ++ i) {
         LG("RunLabel", "%02d %04d\n", AuthThreadPool::RunLabel[i],
@@ -499,5 +192,3 @@ int main(int argc, char* argv[])
 
     return 0;
 }
-
-

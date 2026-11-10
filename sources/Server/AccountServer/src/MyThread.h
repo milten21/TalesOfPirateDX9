@@ -1,4 +1,4 @@
-//  [10/14/2005]	´ÓAccountServer2ÎÄ¼şÀï½øĞĞÄ£¿é²ğ·Ö,·ÖÀë³ö´ËÄ£¿é - by Arcol
+//  [10/14/2005]	ä»AccountServer2æ–‡ä»¶é‡Œè¿›è¡Œæ¨¡å—æ‹†åˆ†,åˆ†ç¦»å‡ºæ­¤æ¨¡å— - by Arcol
 #pragma once
 
 #ifndef _MYTHREAD_H_
@@ -6,7 +6,10 @@
 
 #include "Comm.h"
 
-// Ïß³Ì»ùÀà
+#include <atomic>
+#include <thread>
+
+// çº¿ç¨‹åŸºç±»
 class MyThread
 {
 public:
@@ -18,16 +21,15 @@ public:
 	int WaitForExit(int ms); // block calling thread
 
 protected:
-	static DWORD WINAPI ThreadProc(LPVOID);
 	virtual int Run();
 	bool GetExitFlag() const {return m_bExitFlag;}
 	void ExitThread() {m_bExitThrd = true;}
 
 private:
-	bool volatile m_bExitFlag;
-	bool volatile m_bExitThrd;
-	DWORD m_dwThreadId;
-	HANDLE m_hThread;
+	std::atomic<bool> m_bExitFlag;
+	std::atomic<bool> m_bExitThrd;
+	int m_nExitCode;
+	std::thread m_Thread;
 };
 
 #endif

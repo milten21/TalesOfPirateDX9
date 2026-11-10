@@ -2,9 +2,7 @@
 // AccountServer.pch will be the pre-compiled header
 // stdafx.obj will contain the pre-compiled type information
 
-#define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
-#include <crtdbg.h>
 
 #include "stdafx.h"
 

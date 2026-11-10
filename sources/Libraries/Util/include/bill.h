@@ -9,7 +9,7 @@ public:
     CPAI();
     ~CPAI() {}
 
-    int Login(char const* name, char const* pwd);       //  ĞŞ¸Ä·µ»ØÖµ£¬10000³É¹¦£¬10001Ê§°Ü£¬10004Á¬½ÓÊ§°Ü
+    int Login(char const* name, char const* pwd);       //  ä¿®æ”¹è¿”å›å€¼ï¼Œ10000æˆåŠŸï¼Œ10001å¤±è´¥ï¼Œ10004è¿æ¥å¤±è´¥
     std::string GetPassport();
 
     std::string LastError();    //  add by jampe

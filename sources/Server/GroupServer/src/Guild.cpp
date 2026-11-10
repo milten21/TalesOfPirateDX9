@@ -4,7 +4,7 @@
 #include "GroupServerApp.h"
 #include "Player.h"
 #include "Guild.h"
-#include "netcommand.h"
+#include "NetCommand.h"
 _DBC_USING
 
 Guild::Guild(uLong size):PreAllocStru(size),m_id(0),m_leader(0)

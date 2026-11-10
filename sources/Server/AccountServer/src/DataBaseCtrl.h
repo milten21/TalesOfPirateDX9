@@ -1,10 +1,12 @@
 #pragma once
 
-#include "atltime.h"
+#include <ctime>
+#include <map>
+#include <string>
 
 class CSQLDatabase;
 
-//此类只允许主线程调用
+//姝ょ被鍙厑璁镐富绾跨▼璋冪敤
 class CDataBaseCtrl
 {
 public:
@@ -12,9 +14,6 @@ public:
 	~CDataBaseCtrl(void);
 	bool CreateObject();
 	void ReleaseObject();
-	bool KickUser(std::string strUserName);
-
-    void SetExpScale(std::string strUserName, long time);
 
 	bool InsertUser(std::string username, std::string password, std::string email);
 	bool UpdatePassword(std::string username, std::string password);
@@ -28,7 +27,7 @@ public:
 private:
 	struct sPlayerData
 	{
-		CTime ctLoginTime;
+		std::time_t ctLoginTime;
 	};
 	typedef std::map<std::string, CDataBaseCtrl::sPlayerData> StringMap;
 

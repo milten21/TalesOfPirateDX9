@@ -1,6 +1,8 @@
-#include "udpsocket.h"
+#include "SocketApi.h"
+#include "UdpSocket.h"
 
-#pragma comment( lib, "Ws2_32.lib" )
+#include <cstring>
+
 //---------------------------------------------------------------------------
 // class CUdpSocket
 //---------------------------------------------------------------------------
@@ -23,23 +25,24 @@ void CUdpSocket::Close()
 {
 	if( !IsCreate() ) return;
 
-	closesocket(m_Socket);
+	dbc::net::CloseSocket(m_Socket);
 	m_Socket = INVALID_SOCKET;
-	WSACleanup();
+	dbc::net::Cleanup();
 }
 
+#ifdef _WIN32
 bool CUdpSocket::RegeditReadEvent( HWND hWnd, DWORD dwMessage )
 {
-	//FD_READ£º ÍøÂçÊı¾İ°üµ½´ï 
-	//FD_WRITE£º ·¢ËÍÍøÂçÊı¾İ 
-	//FD_OOB£º OOBÊı¾İµ½´ï 
-	//FD_ACCEPT£º ÊÕµ½Á¬½ÓÇëÇó 
-	//FD_CONNECT£º ÒÑ½¨Á¢Á¬½Ó 
-	//FD_CLOSE£º ¶Ï¿ªÁ¬½Ó 
-	//FD_QOS£º ·şÎñÖÊÁ¿(QoS)·¢Éú±ä»¯ 
-	//FD_GROUP_QOS£º ±£ÁôÊÂ¼ş 
-	//FD_ROUTING_INTERFACE_CHANGE£º Ö¸¶¨µØÖ·µÄÂ·ÓÉ½Ó¿Ú·¢Éú±ä»¯ 
-	//FD_ADDRESS_LIST_CHANGE£º ±¾µØµØÖ·±ä»¯ 
+	//FD_READï¼š ç½‘ç»œæ•°æ®åŒ…åˆ°è¾¾
+	//FD_WRITEï¼š å‘é€ç½‘ç»œæ•°æ®
+	//FD_OOBï¼š OOBæ•°æ®åˆ°è¾¾
+	//FD_ACCEPTï¼š æ”¶åˆ°è¿æ¥è¯·æ±‚
+	//FD_CONNECTï¼š å·²å»ºç«‹è¿æ¥
+	//FD_CLOSEï¼š æ–­å¼€è¿æ¥
+	//FD_QOSï¼š æœåŠ¡è´¨é‡(QoS)å‘ç”Ÿå˜åŒ–
+	//FD_GROUP_QOSï¼š ä¿ç•™äº‹ä»¶
+	//FD_ROUTING_INTERFACE_CHANGEï¼š æŒ‡å®šåœ°å€çš„è·¯ç”±æ¥å£å‘ç”Ÿå˜åŒ–
+	//FD_ADDRESS_LIST_CHANGEï¼š æœ¬åœ°åœ°å€å˜åŒ–
 
 	if (WSAAsyncSelect(m_Socket, hWnd, dwMessage, FD_READ) == SOCKET_ERROR)
 	{
@@ -54,7 +57,7 @@ bool CUdpSocket::OnNetworkEvent( WPARAM wParam, LPARAM lParam )
     switch (WSAGETSELECTEVENT(lParam))
     {
     case FD_READ:
-        // ½ÓÊÕÊı¾İ
+        // æ¥æ”¶æ•°æ®
         break;
     case FD_WRITE:
         break;
@@ -69,6 +72,7 @@ bool CUdpSocket::OnNetworkEvent( WPARAM wParam, LPARAM lParam )
     }
     return true;
 }
+#endif
 
 //---------------------------------------------------------------------------
 // class CUdpServer
@@ -81,26 +85,24 @@ bool CUdpServer::Init( int nPort )
 {
 	Close();
 
-	WSADATA wsaData;
-	if (WSAStartup(MAKEWORD(1,1), &wsaData) != 0)
+	if (dbc::net::Startup() != 0)
 	{
-		WSACleanup();
 		return false;
 	}
 
 	m_Socket = INVALID_SOCKET;
 	if ((m_Socket = socket(AF_INET, SOCK_DGRAM, 0)) == INVALID_SOCKET)
-	{ 
+	{
+		dbc::net::Cleanup();
 		return false;
 	}
 
-	SOCKADDR_IN m_saAddr;
-	m_nPort = nPort;							// ¶Ë¿ÚºÅ
-	ZeroMemory(&m_saAddr, sizeof(m_saAddr));
+	sockaddr_in m_saAddr{};
+	m_nPort = nPort;							// ç«¯å£å·
 	m_saAddr.sin_family      = AF_INET;
-	m_saAddr.sin_port        = htons(m_nPort);  // Èç¹û´ËÖµÎª0£¬ÏµÍ³½«Ëæ»úÑ¡ÔñÒ»¸öÎ´±»Ê¹ÓÃµÄ¶Ë¿ÚºÅ
-	m_saAddr.sin_addr.s_addr = INADDR_ANY;      // ÌîÈë±¾»úIPµØÖ·
-	if (bind(m_Socket, (LPSOCKADDR) &m_saAddr, sizeof(m_saAddr)) == SOCKET_ERROR)
+	m_saAddr.sin_port        = htons(m_nPort);  // å¦‚æœæ­¤å€¼ä¸º0ï¼Œç³»ç»Ÿå°†éšæœºé€‰æ‹©ä¸€ä¸ªæœªè¢«ä½¿ç”¨çš„ç«¯å£å·
+	m_saAddr.sin_addr.s_addr = INADDR_ANY;      // å¡«å…¥æœ¬æœºIPåœ°å€
+	if (bind(m_Socket, reinterpret_cast<sockaddr*>(&m_saAddr), sizeof(m_saAddr)) == SOCKET_ERROR)
 	{
 		return false;
 	}
@@ -109,61 +111,52 @@ bool CUdpServer::Init( int nPort )
 
 bool CUdpServer::Read( ReceiveEvent pEvent, void* pParam )
 {
-    int nBytesRead;
-    int nBufferLength;
-    int nEnd;
-    int nSpaceRemaining;
 	char chIncomingDataBuffer[4096];
-    SOCKADDR_IN m_saFromAddr;
-    int nLenght = sizeof(m_saFromAddr);
-    ZeroMemory(&m_saFromAddr, sizeof(SOCKADDR_IN));
-    nEnd = 0;
-    nBufferLength = sizeof(chIncomingDataBuffer);
-    nSpaceRemaining = sizeof(chIncomingDataBuffer);
-    nSpaceRemaining -= nEnd;
+	sockaddr_in m_saFromAddr{};
+	socklen_t nLenght = sizeof(m_saFromAddr);
 
-    nBytesRead = recvfrom(m_Socket, (LPSTR) (chIncomingDataBuffer + nEnd), nSpaceRemaining, 0, (LPSOCKADDR) &m_saFromAddr, &nLenght);
-    nEnd += nBytesRead;
-    if (nBytesRead == SOCKET_ERROR)
-    {
-        return false;
-    }
+	const int nBytesRead = static_cast<int>(recvfrom(m_Socket, chIncomingDataBuffer, sizeof(chIncomingDataBuffer) - 1, 0, reinterpret_cast<sockaddr*>(&m_saFromAddr), &nLenght));
+	if (nBytesRead == SOCKET_ERROR)
+	{
+		return false;
+	}
 
-    // IPµØÖ·£ºinet_ntoa(m_saFromAddr.sin_addr);
-    // ¶Ë¿ÚºÅ£ºntohs(m_saFromAddr.sin_port);
-    chIncomingDataBuffer[nEnd] = '\0';
-    if (lstrlen(chIncomingDataBuffer) != 0) 
-    {
+	// IPåœ°å€ï¼šinet_ntoa(m_saFromAddr.sin_addr);
+	// ç«¯å£å·ï¼šntohs(m_saFromAddr.sin_port);
+	chIncomingDataBuffer[nBytesRead] = '\0';
+	if (chIncomingDataBuffer[0] != '\0')
+	{
 		if( pEvent )
 		{
-			pEvent( this, inet_ntoa(m_saFromAddr.sin_addr), ntohs(m_saFromAddr.sin_port), chIncomingDataBuffer, nEnd, pParam );
+			pEvent( this, inet_ntoa(m_saFromAddr.sin_addr), ntohs(m_saFromAddr.sin_port), chIncomingDataBuffer, nBytesRead, pParam );
 		}
-    }
-    return true;
+	}
+	return true;
 }
 
 bool CUdpServer::Send(const char* szIP, unsigned int nPort, const char* pSendData, unsigned int nLength)
 {
-    DWORD        dwIP;
-    SOCKADDR_IN  saAddr;
-    if (m_Socket == INVALID_SOCKET)
-    {
-        return false;
-    }
-    if ((dwIP = inet_addr(szIP)) == INADDR_NONE)
-    {
-        return false;
-    }
-    saAddr.sin_family      = AF_INET;
-    saAddr.sin_port        = htons(nPort);
-    saAddr.sin_addr.s_addr = dwIP;
-    if (sendto(m_Socket, pSendData, nLength, 0, (LPSOCKADDR) &saAddr, sizeof(saAddr)) == SOCKET_ERROR)
-    {
-        return false;
-    }
-    return true;
+	sockaddr_in saAddr{};
+	if (m_Socket == INVALID_SOCKET)
+	{
+		return false;
+	}
+	const auto dwIP = inet_addr(szIP);
+	if (dwIP == INADDR_NONE)
+	{
+		return false;
+	}
+	saAddr.sin_family      = AF_INET;
+	saAddr.sin_port        = htons(nPort);
+	saAddr.sin_addr.s_addr = dwIP;
+	if (sendto(m_Socket, pSendData, nLength, 0, reinterpret_cast<sockaddr*>(&saAddr), sizeof(saAddr)) == SOCKET_ERROR)
+	{
+		return false;
+	}
+	return true;
 }
 
+#ifdef _WIN32
 //---------------------------------------------------------------------------
 // class CUdpClient
 //---------------------------------------------------------------------------
@@ -178,17 +171,15 @@ bool CUdpClient::Init(const char* szIP, unsigned int nPort, int nReadTimeOut)
 {
 	Close();
 
-	WSADATA wsaData;
-	if (WSAStartup(MAKEWORD(1,1), &wsaData) != 0)
+	if (dbc::net::Startup() != 0)
 	{
-		WSACleanup();
 		return false;
 	}
 
-	m_ServerAddr.sin_family=AF_INET; 
-	m_ServerAddr.sin_port=htons(nPort);				// serverµÄ¼àÌı¶Ë¿Ú 
-	m_ServerAddr.sin_addr.s_addr=inet_addr(szIP);	// serverµÄµØÖ· ¡¡¡¡ 
-	m_Socket = socket(AF_INET,SOCK_DGRAM,0); 
+	m_ServerAddr.sin_family=AF_INET;
+	m_ServerAddr.sin_port=htons(nPort);				// serverçš„ç›‘å¬ç«¯å£
+	m_ServerAddr.sin_addr.s_addr=inet_addr(szIP);	// serverçš„åœ°å€
+	m_Socket = socket(AF_INET,SOCK_DGRAM,0);
 	if( m_Socket == INVALID_SOCKET )
 		return false;
 
@@ -202,8 +193,8 @@ bool CUdpClient::Init(const char* szIP, unsigned int nPort, int nReadTimeOut)
 
 bool CUdpClient::Send(const char* pSendData, unsigned int nLength )
 {
-	if (sendto(m_Socket,pSendData,nLength,0,(struct sockaddr*)&m_ServerAddr,m_nAddrLen)!=SOCKET_ERROR) 
-	{ 
+	if (sendto(m_Socket,pSendData,nLength,0,(struct sockaddr*)&m_ServerAddr,m_nAddrLen)!=SOCKET_ERROR)
+	{
 		return true;
 	}
 	return false;
@@ -211,11 +202,10 @@ bool CUdpClient::Send(const char* pSendData, unsigned int nLength )
 
 bool CUdpClient::Read(char* pReadBuf, unsigned int nReadLen)
 {
-	if (recvfrom(m_Socket,pReadBuf,nReadLen,0,(struct sockaddr*)&m_ServerAddr,&m_nAddrLen) != SOCKET_ERROR) 
+	if (recvfrom(m_Socket,pReadBuf,nReadLen,0,(struct sockaddr*)&m_ServerAddr,&m_nAddrLen) != SOCKET_ERROR)
 	{
 		return true;
 	}
 	return false;
 }
-
-
+#endif

@@ -7,6 +7,8 @@
 
 
 #include <iostream>
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 
 // TODO: reference additional headers your program requires here

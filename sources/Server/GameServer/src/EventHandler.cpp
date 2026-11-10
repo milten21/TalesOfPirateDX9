@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "EventHandler.h"
 #include "GameAppNet.h"
 #include "Character.h"
@@ -7,7 +7,7 @@
 
 
 //-------------------------------------
-// ÊÂ¼ş : ½ÇÉ«×ö±íÇé
+// äº‹ä»¶ : è§’è‰²åšè¡¨æƒ…
 //-------------------------------------
 void CEventHandler::Event_ChaEmotion(CCharacter *pCha, short sEmotionNo)
 {

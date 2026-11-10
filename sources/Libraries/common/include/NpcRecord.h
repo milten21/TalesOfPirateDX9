@@ -5,29 +5,31 @@
 #ifndef _NPCRECORD_H_
 #define _NPCRECORD_H_
 
+#ifdef _WIN32
 #include <tchar.h>
+#endif
 #include "util.h"
 #include "TableData.h"
 
 //---------------------------------------------------------
 
-#define NPC_MAXSIZE_NAME			128 // npcÃû³Æ³¤¶È
-#define NPC_MAXSIZE_MSGPROC			16	// npcÏûÏ¢´¦Àíº¯ÊıÃû³Æ³¤¶È
+#define NPC_MAXSIZE_NAME			128 // npcåç§°é•¿åº¦
+#define NPC_MAXSIZE_MSGPROC			16	// npcæ¶ˆæ¯å¤„ç†å‡½æ•°åç§°é•¿åº¦
 
 class CNpcRecord : public CRawDataInfo
 {
 public:	
-	char szName[NPC_MAXSIZE_NAME];		// µØÍ¼ÖĞÏÔÊ¾npcÃû³Æ
-	USHORT sNpcType;					// npcÀàĞÍ
-	USHORT sCharID;						// ½ÇÉ«ÁĞ±í±àºÅË÷Òı
-	BYTE byShowType;					// ¿Í»§¶ËÏÔÊ¾ÑÕÉ«ÀàĞÍ
-	DWORD dwxPos0, dwyPos0;				// npcÎ»ÖÃĞÅÏ¢
+	char szName[NPC_MAXSIZE_NAME];		// åœ°å›¾ä¸­æ˜¾ç¤ºnpcåç§°
+	USHORT sNpcType;					// npcç±»å‹
+	USHORT sCharID;						// è§’è‰²åˆ—è¡¨ç¼–å·ç´¢å¼•
+	BYTE byShowType;					// å®¢æˆ·ç«¯æ˜¾ç¤ºé¢œè‰²ç±»å‹
+	DWORD dwxPos0, dwyPos0;				// npcä½ç½®ä¿¡æ¯
 	DWORD dwxPos1, dwyPos1;
 	USHORT sDir;
 	USHORT sParam1, sParam2;
-	char szNpc[NPC_MAXSIZE_NAME];		// npcÎÄ¼şÃû
-	char szMsgProc[NPC_MAXSIZE_MSGPROC];// npcÏûÏ¢´¦Àíº¯Êı
-	char szMisProc[NPC_MAXSIZE_MSGPROC];// npcÈÎÎñ×´Ì¬´¦Àíº¯Êı
+	char szNpc[NPC_MAXSIZE_NAME];		// npcæ–‡ä»¶å
+	char szMsgProc[NPC_MAXSIZE_MSGPROC];// npcæ¶ˆæ¯å¤„ç†å‡½æ•°
+	char szMisProc[NPC_MAXSIZE_MSGPROC];// npcä»»åŠ¡çŠ¶æ€å¤„ç†å‡½æ•°
 };
 
 class CNpcRecordSet : public CRawDataSet

@@ -1,8 +1,3 @@
-// -*- Coding: UTF-8; -*-
-//
-// This file was dumped by derb(8) from .\.
-// derb(8) by Vladimir Weinstein and Yves Arrouye
-
 en_US{
     CO_COMMFUNC_CPP_00001 { "Newbie" }
     CO_COMMFUNC_CPP_00002 { "Swordsman" }
@@ -214,7 +209,7 @@ en_US{
     GM_CHARACTERCMD_CPP_00060 { "Operation failed!" }
     GM_CHARACTERCMD_CPP_00061 { "Sorry, You do not have the Medal of Valor, please go to the Chaos Administrator to get one." }
     GM_CHARACTERPRL_CPP_00001 { "Don't chat too often" }
-    GM_CHARACTERPRL_CPP_00002 { "No permisison\" }
+    GM_CHARACTERPRL_CPP_00002 { "No permisison\n" }
     GM_CHARACTERPRL_CPP_00003 { "Your boat not in the ocean!" }
     GM_CHARACTERPRL_CPP_00004 { "Can not studying on the boat!" }
     GM_CHARACTERPRL_CPP_00005 { "Can not end studying on the boat!" }
@@ -247,12 +242,12 @@ en_US{
     GM_CHARACTERPRL_CPP_00032 { "Channel can be used only in holy war map" }
     GM_CHARACTERPRL_CPP_00033 { "illegal length of mail" }
     GM_CHARACTERPRL_CPP_00034 { "invalid NPCID: %d " }
-    GM_CHARACTERPRL_CPP_00035 { "illegal movement request (previous movement has not ended) \" }
-    GM_CHARACTERPRL_CPP_00036 { "Move route error, no move sequence point \" }
-    GM_CHARACTERPRL_CPP_00037 { "Move route error ( detour: %d, max detour: %d )\" }
-    GM_CHARACTERPRL_CPP_00038 { "Inventory locked, use skill failed ! \" }
-    GM_CHARACTERPRL_CPP_00039 { "Close bank first ! \" }
-    GM_CHARACTERPRL_CPP_00040 { "The skill is not exist(nomer skill: %d)\" }
+    GM_CHARACTERPRL_CPP_00035 { "illegal movement request (previous movement has not ended) \n" }
+    GM_CHARACTERPRL_CPP_00036 { "Move route error, no move sequence point \n" }
+    GM_CHARACTERPRL_CPP_00037 { "Move route error ( detour: %d, max detour: %d )\n" }
+    GM_CHARACTERPRL_CPP_00038 { "Inventory locked, use skill failed ! \n" }
+    GM_CHARACTERPRL_CPP_00039 { "Close bank first ! \n" }
+    GM_CHARACTERPRL_CPP_00040 { "The skill is not exist(nomer skill: %d)\n" }
     GM_CHARACTERPRL_CPP_00041 { "Abandant type of action ( direct use skill )" }
     GM_CHARACTERPRL_CPP_00042 { "Request Hair style change failed, inventory locked" }
     GM_CHARACTERPRL_CPP_00043 { "Request Hair style change failed, invalid hair ID = %d" }
@@ -303,7 +298,7 @@ en_US{
     GM_CHARACTERSUPERCMD_CPP_00039 { "Upgrade Bag pack failed!" }
     GM_CHARACTERSUPERCMD_CPP_00040 { "What would you like to inquire about?" }
     GM_CHARACTERSUPERCMD_CPP_00041 { "Anyone around can answer this question?" }
-    GM_CHARACTERSUPERCMD_CPP_00042 { "Inquires related '%s':\" }
+    GM_CHARACTERSUPERCMD_CPP_00042 { "Inquires related '%s':\n" }
     GM_CHARACTERSUPERCMD_CPP_00043 { "New age explosion head expert" }
     GM_CHARACTERSUPERCMD_CPP_00044 { "Oh no, looked like I'm getting old, you stumped me!" }
     GM_CHARACTERSUPERCMD_CPP_00045 { "Know-it-all" }
@@ -359,7 +354,7 @@ en_US{
     GM_CHARACTER_CPP_00048 { "skill point not enough: you have %d, needed %d." }
     GM_CHARACTER_CPP_00049 { "Skill package added failed" }
     GM_CHARACTER_CPP_00050 { "Class error, or learning level exceed requirement" }
-    GM_CHARACTER_CPP_00051 { "Level not enough: your level %d, needed %d. \" }
+    GM_CHARACTER_CPP_00051 { "Level not enough: your level %d, needed %d. \n" }
     GM_CHARACTER_CPP_00052 { "Prerequisite skill mismatch" }
     GM_CHARACTER_CPP_00053 { "Restore %d HP, current: %d HP." }
     GM_CHARACTER_CPP_00054 { "Restore %d SP, current: %d SP." }
@@ -500,7 +495,7 @@ en_US{
     GM_CHARSCRIPT_CPP_00008 { "%s You have obtained %d Gold!" }
     GM_CHARSCRIPT_CPP_00009 { "%s Taken from you %d Gold!" }
     GM_CHARSCRIPT_CPP_00010 { "%s Revive point《%s》saved successful!" }
-    GM_CHARSCRIPT_CPP_00011 { "Character[%s]is trading in progress, unable to process trade!\" }
+    GM_CHARSCRIPT_CPP_00011 { "Character[%s]is trading in progress, unable to process trade!\n" }
     GM_CHARSCRIPT_CPP_00012 { "Sorry,you do not have medal of valor. Please proceed to chaos administrator to obtain one." }
     GM_CHARSCRIPT_CPP_00013 { "Inventory locked, unable to access." }
     GM_CHARSCRIPT_CPP_00014 { "Operation in progress, unable to process." }
@@ -517,7 +512,7 @@ en_US{
     GM_CHARSTALL_CPP_00010 { "Stall map info error!" }
     GM_CHARSTALL_CPP_00011 { "Unable to vend in this map!" }
     GM_CHARSTALL_CPP_00012 { "Stay away or get shot by the NPC!" }
-    GM_CHARSTALL_CPP_00013 { "Start vending message：name\"%s" }
+    GM_CHARSTALL_CPP_00013 { "Start vending message：name\"%s\"" }
     GM_CHARSTALL_CPP_00014 { "Start vending：character《%s》Input item data amount out of range! [%d]" }
     GM_CHARSTALL_CPP_00015 { ", item amount（%d）, item message：" }
     GM_CHARSTALL_CPP_00016 { "Stall setting：character《%s》Input item data index amount out of rage! GRID[%d]" }
@@ -551,7 +546,7 @@ en_US{
     GM_CHARSTALL_CPP_00044 { "From character《%s》inventory to stall vending failed! ID[%d]" }
     GM_CHARSTALL_CPP_00045 { "Internal Error：Item input failed!" }
     GM_CHARSTALL_CPP_00046 { "Stall setting：Captain's verification message not found in trade! ID[0x%X]" }
-    GM_CHARSTALL_CPP_00047 { "Stall item message：Unknown boat character\"%s\", ID[0x%X]" }
+    GM_CHARSTALL_CPP_00047 { "Stall item message：Unknown boat character\"%s\", ID[0x%X], " }
     GM_CHARSTALL_CPP_00048 { "Stall item message：boat《%s》, ID[0x%X], " }
     GM_CHARSTALL_CPP_00049 { "BuyGoods: Boat data storing failed! Boat《%s》ID[0x%X]。" }
     GM_CHARSTALL_CPP_00050 { "Set stall：remove character“%s”possessed boat failed! ID[0x%X]" }
@@ -593,7 +588,7 @@ en_US{
     GM_CHARTRADE_CPP_00029 { "Target in sailing mode, you are not allowed to request trade!" }
     GM_CHARTRADE_CPP_00030 { "You are unable to request another trade at the moment." }
     GM_CHARTRADE_CPP_00031 { "Distribution of trade data failed!" }
-    GM_CHARTRADE_CPP_00032 { "Cancel: Character %s not in trading mode!\" }
+    GM_CHARTRADE_CPP_00032 { "Cancel: Character %s not in trading mode!\n" }
     GM_CHARTRADE_CPP_00033 { "Verification error, unable to cancel similar trade ID!" }
     GM_CHARTRADE_CPP_00034 { "Client request trade target error! ID = 0x%x" }
     GM_CHARTRADE_CPP_00035 { "AddMoney: Character %s not in trading mode!" }
@@ -646,7 +641,7 @@ en_US{
     GM_CHARTRADE_CPP_00082 { "Your temporarily inventory bag insufficient space!" }
     GM_CHARTRADE_CPP_00083 { "Item mall activation failed, order number repeated!" }
     GM_CHARTRADE_CPP_00084 { "Item mall transaction failed!" }
-    GM_CHARTRADE_CPP_00085 { "Character [%s][ID:%ld] purchased item [ID:%ld], Increase item status successful!\" }
+    GM_CHARTRADE_CPP_00085 { "Character [%s][ID:%ld] purchased item [ID:%ld], Increase item status successful!\n" }
     GM_CHARTRADE_CPP_00086 { "Purchase platinum membership successful!" }
     GM_CHARTRADE_CPP_00087 { "Purchase platinum membership failed!" }
     GM_CHARTRADE_CPP_00088 { "Unable to find your account,Open item mall failed!" }
@@ -666,28 +661,28 @@ en_US{
     GM_ENTITYSPAWN_CPP_00006 { "Map changing record memory error" }
     GM_ENTITYSPAWN_CPP_00007 { "Load NPC info (%s) quantity (%d) error !" }
     GM_ENTITYSPAWN_CPP_00008 { "NPC record structure memory error" }
-    GM_ENTITYSPAWN_CPP_00009 { "Load map npc file[%s]...\" }
-    GM_ENTITYSPAWN_CPP_00010 { "Map initialize error: can not find specific ID attribute! ID=%d \" }
-    GM_ENTITYSPAWN_CPP_00011 { "Load map npc file [%s] success !\" }
+    GM_ENTITYSPAWN_CPP_00009 { "Load map npc file[%s]...\n" }
+    GM_ENTITYSPAWN_CPP_00010 { "Map initialize error: can not find specific ID attribute! ID=%d \n" }
+    GM_ENTITYSPAWN_CPP_00011 { "Load map npc file [%s] success !\n" }
     GM_EVENTENTITY_CPP_00001 { "Unknown item" }
     GM_EVENTENTITY_CPP_00002 { "Gathering resources: wrong item type! ID = %d" }
     GM_EVENTENTITY_CPP_00003 { "You gather %d of <<%s>>!" }
     GM_EVENTENTITY_CPP_00004 { "You gather %d of <<%s>>, oeration failed!" }
     GM_EVENTENTITY_CPP_00005 { "Error: You do not meet the condition to trigger this event entity" }
-    GM_EXPAND_H_00005 { "Delete Character%s, %d ID attirbute point! value：%d\" }
+    GM_EXPAND_H_00005 { "Delete Character%s, %d ID attirbute point! value：%d\n" }
     GM_EXPAND_H_00008 { "Success! But request value is greater thean the max value。Set value：%d, Value：%d。" }
     GM_EXPAND_H_00009 { "Success! Set value：%d, Current value：%d。" }
-    GM_EXPAND_H_00010 { "Create Character %s ,no. %d attribute %s\" }
-    GM_EXPAND_H_00012 { "Character %s type successful. Point：%d\" }
+    GM_EXPAND_H_00010 { "Create Character %s ,no. %d attribute %s\n" }
+    GM_EXPAND_H_00012 { "Character %s type successful. Point：%d\n" }
     GM_EXPAND_H_00102 { "Pirate Boardcast" }
     GM_EXPAND_H_00111 { "Target map, format error!" }
-    GM_EXPAND_H_00144 { "Remove character %s, Select Character %u Success! Point：%d\" }
-    GM_EXPAND_H_00145 { "Accept character %s, Select Character %u Success! \" }
-    GM_EXPAND_H_00147 { "Remove Character %s, from Guild %u Success! Point：%d\" }
-    GM_EXPAND_H_00149 { "Remove character %s, from Party %u Success! Point：%d\" }
-    GM_EXPAND_H_00151 { "Check character PK mode, success! \" }
-    GM_EXPAND_H_00152 { "Set character %s, motto %s Success! \" }
-    GM_EXPAND_H_00155 { "Set Party challenge map name %s Success! \" }
+    GM_EXPAND_H_00144 { "Remove character %s, Select Character %u Success! Point：%d\n" }
+    GM_EXPAND_H_00145 { "Accept character %s, Select Character %u Success! \n" }
+    GM_EXPAND_H_00147 { "Remove Character %s, from Guild %u Success! Point：%d\n" }
+    GM_EXPAND_H_00149 { "Remove character %s, from Party %u Success! Point：%d\n" }
+    GM_EXPAND_H_00151 { "Check character PK mode, success! \n" }
+    GM_EXPAND_H_00152 { "Set character %s, motto %s Success! \n" }
+    GM_EXPAND_H_00155 { "Set Party challenge map name %s Success! \n" }
     GM_EXPAND_H_00160 { "lua error record file error!" }
     GM_FIGHTABLE_CPP_00001 { "Inconsistance attribute statistics" }
     GM_FIGHTABLE_CPP_00002 { "Error!" }
@@ -715,22 +710,22 @@ en_US{
     GM_GAMEAPPNET_H_00003 { "GameServer map configuration language error" }
     GM_GAMEAPPNET_H_00004 { "Unknow error" }
     GM_GAMEAPP_CPP_00001 { "Reload NPC[%s]Initialization information script function [%s] failed!" }
-    GM_GAMEAPP_CPP_00002 { "Game server%s\"will restart in %u, Players in \"%s\" please prepare to logo" }
-    GM_GAMEAPP_CPP_00003 { "msg Read form [%s]failed\" }
-    GM_GAMEAPP_CPP_00004 { "msg Initialization loading writing filtration information file failed!\" }
-    GM_GAMEAPP_CPP_00005 { "msg assign player space error!, exit!\" }
+    GM_GAMEAPP_CPP_00002 { "Game server%s\"will restart in %u, Players in \"%s\" please prepare to logout\"" }
+    GM_GAMEAPP_CPP_00003 { "msg Read form [%s]failed\n" }
+    GM_GAMEAPP_CPP_00004 { "msg Initialization loading writing filtration information file failed!\n" }
+    GM_GAMEAPP_CPP_00005 { "msg assign player space error!, exit!\n" }
     GM_GAMEAPP_CPP_00006 { "msg Read forging data message failed!" }
     GM_GAMEAPP_CPP_00007 { "msg Read boat data message failed!" }
-    GM_GAMEAPP_CPP_00008 { "msg set transcription number %d Surpass maximum value %d!\" }
-    GM_GAMEAPP_CPP_00009 { "msg Entrance script %s/entry.lua）line length surpasses the preinstall length （%u）, This possibly causes the failure of crafting, cancel creation window. script：%s\" }
+    GM_GAMEAPP_CPP_00008 { "msg set transcription number %d Surpass maximum value %d!\n" }
+    GM_GAMEAPP_CPP_00009 { "msg Entrance script %s/entry.lua）line length surpasses the preinstall length （%u）, This possibly causes the failure of crafting, cancel creation window. script：%s\n" }
     GM_GAMEAPP_CPP_00010 { "msg Request character internal memory, please increase character internal memory!!!" }
     GM_GAMEAPP_CPP_00011 { "msg Request item internal memory, please increase item internal memory!!!" }
     GM_GAMEAPP_CPP_00012 { "msg request NPC dialogue error, pls increse NPC dialogue memory!!!" }
     GM_GAMEAPP_CPP_00013 { "msg request unknow event creation type! Type[%d]" }
     GM_GAMEAPP_CPP_00014 { "msg request event memory error!!! Type[%d]" }
     GM_GAMEAPP_CPP_00015 { "msg request player memory error,pls increase player memory!!!" }
-    GM_GAMEAPP_CPP_00016 { "msg create monster amount greater than set amount, ended.\" }
-    GM_GAMEAPP_CPP_00017 { "msg distribution of character space error!, log out! \" }
+    GM_GAMEAPP_CPP_00016 { "msg create monster amount greater than set amount, ended.\n" }
+    GM_GAMEAPP_CPP_00017 { "msg distribution of character space error!, log out! \n" }
     GM_GAMEAPP_CPP_00018 { "System" }
     GM_GAMEDB_CPP_00001 { "database (%s) initialization error, please check" }
     GM_GAMEDB_CPP_00002 { "Error!" }
@@ -739,7 +734,7 @@ en_US{
     GM_GAMEDB_CPP_00011 { "quest trigger data initialization error" }
     GM_GAMEDB_CPP_00012 { "Random quest counter data initialization error" }
     GM_GAMEDB_CPP_00013 { "SavingCharacterTimeConsumption" }
-    GM_GAMEDB_CPP_00014 { "log\savingcharactertimeconsumption.log" }
+    GM_GAMEDB_CPP_00014 { "log\\savingcharactertimeconsumption.log" }
     GM_GAMEDB_CPP_00015 { "character quest saving message data read error! ID =%d" }
     GM_GAMEDB_CPP_00016 { "target character save quest info trigger data read error!ID =%d" }
     GM_GAMEDB_CPP_00017 { "Target random quest count info data reading error! ID = %d" }
@@ -844,7 +839,7 @@ en_US{
     GM_LUA_GAMECTRL_H_00001 { "lua function does not specify file output or specification error!" }
     GM_LUA_GAMECTRL_H_00002 { "Stealth has been broken!" }
     GM_LUA_GAMECTRL_H_00003 { "[Invalid move(" }
-    GM_LUA_GAMECTRL_H_00004 { "msg discover registered lua same name function [%s]\" }
+    GM_LUA_GAMECTRL_H_00004 { "msg discover registered lua same name function [%s]\n" }
     GM_MAPRES_CPP_00001 { "SubMap::LoadNpc: Obtain Map [%s] ID fail!" }
     GM_MAPRES_CPP_00002 { "Error!" }
     GM_MAPRES_CPP_00003 { "Load map monster info error!" }
@@ -891,13 +886,13 @@ en_US{
     GM_MISSION_CPP_00036 { "Character online" }
     GM_MISSION_CPP_00037 { "Unknown" }
     GM_MISSION_CPP_00038 { "Enter map [%s] Coordinate：x = %d, y = %d." }
-    GM_MISSION_CPP_00039 { "Summon your Mission to escort quest NPC failed, please inform the developer, thank you! 	MID(%d),NID(%d)" }
+    GM_MISSION_CPP_00039 { "Summon your Mission to escort quest NPC failed, please inform the developer, thank you! \tMID(%d),NID(%d)" }
     GM_MISSION_CPP_00040 { "Exit map [%s] Coordinate：x = %d, y = %d." }
     GM_NPCSCRIPT_CPP_00001 { "Unknown" }
     GM_NPCSCRIPT_CPP_00002 { "Unknown area" }
-    GM_NPC_CPP_00001 { "npc script [%s] initialization processing function [ResetNpcInfo] failed! \" }
-    GM_NPC_CPP_00002 { "npc script [%s] message handling function [%s] failed! \" }
-    GM_NPC_CPP_00003 { "npc script [%s] initialization processing function [GetNpcInfo] failed! \" }
+    GM_NPC_CPP_00001 { "npc script [%s] initialization processing function [ResetNpcInfo] failed! \n" }
+    GM_NPC_CPP_00002 { "npc script [%s] message handling function [%s] failed! \n" }
+    GM_NPC_CPP_00003 { "npc script [%s] initialization processing function [GetNpcInfo] failed! \n" }
     GM_NPC_CPP_00004 { "You are trading, unable to talk to NPC now!" }
     GM_NPC_CPP_00005 { "You are in a boat, unable to talk to NPC now!" }
     GM_NPC_CPP_00006 { "You have set a stall, unable to talk to NPC now!" }
@@ -950,8 +945,8 @@ en_US{
     GM_SYSTEMDIALOG_CPP_00020 { "Execute" }
     GM_SYSTEMDIALOG_CPP_00021 { "Clear" }
     GM_WEATHER_CPP_00001 { "Weather: Current sea ({0},{1}) nearby will occur {2}" }
-    GM_WORLDEUDEMON_CPP_00001 { "npc script [%s] initialization processing function [ResetNpcInfo] failed! \" }
-    GM_WORLDEUDEMON_CPP_00002 { "npc script [%s] message handling function [%s] failed! \" }
-    GM_WORLDEUDEMON_CPP_00003 { "npc script [%s] initialization processing function [GetNpcInfo] failed! \" }
+    GM_WORLDEUDEMON_CPP_00001 { "npc script [%s] initialization processing function [ResetNpcInfo] failed! \n" }
+    GM_WORLDEUDEMON_CPP_00002 { "npc script [%s] message handling function [%s] failed! \n" }
+    GM_WORLDEUDEMON_CPP_00003 { "npc script [%s] initialization processing function [GetNpcInfo] failed! \n" }
     GM_WORLDEUDEMON_CPP_00004 { "npc script [%s] message handling function [NpcPorc] failed!" }
 }

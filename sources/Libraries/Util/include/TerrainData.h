@@ -34,15 +34,15 @@ protected:
 };
 
 //-------------------------
-// ÎÄ¼şÍ·µÄ¶ÁÈ¡
-// ×ÓÀà¿ÉÒÔ×öÒ»Ğ©ºÏ·¨ĞÔÅĞ¶Ï
+// æ–‡ä»¶å¤´çš„è¯»å–
+// å­ç±»å¯ä»¥åšä¸€äº›åˆæ³•æ€§åˆ¤æ–­
 //-------------------------
 inline BOOL MPTerrainData::_ReadFileHeader()
 {
     fread(&_header, sizeof(_header), 1, _fp);
     if(_header.nMapFlag<780624 || _header.nMapFlag>780630) 
 	{
-		LG(GetDataName(), "msg²»ÊÇºÏ·¨µÄmapÎÄ¼ş!\n");
+		LG(GetDataName(), "msgä¸æ˜¯åˆæ³•çš„mapæ–‡ä»¶!\n");
         return FALSE;
 	}
 
@@ -60,7 +60,7 @@ inline BOOL MPTerrainData::_ReadFileHeader()
 }
 
 //-----------------------------------
-// ÎÄ¼şÍ·µÄĞ´Èë, ÓÃÓÚĞÂ´´½¨ÎÄ¼şµÈ³¡ºÏ
+// æ–‡ä»¶å¤´çš„å†™å…¥, ç”¨äºæ–°åˆ›å»ºæ–‡ä»¶ç­‰åœºåˆ
 //-----------------------------------
 inline void MPTerrainData::_WriteFileHeader()
 {
@@ -80,7 +80,7 @@ inline DWORD MPTerrainData::_ReadSectionIdx(DWORD dwSectionNo)
     DWORD dwOffset = 0; fread(&dwOffset, sizeof(DWORD), 1, _fp);
     if(_bDebug)
     {
-        LG(GetDataName(), "¶ÁÈ¡Ë÷ÒıÇøÊı¾İ[%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
+        LG(GetDataName(), "è¯»å–ç´¢å¼•åŒºæ•°æ®[%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
     }
     return dwOffset;
 }
@@ -91,7 +91,7 @@ inline void MPTerrainData::_WriteSectionIdx(DWORD dwSectionNo, DWORD dwOffset)
     fwrite(&dwOffset, sizeof(DWORD), 1, _fp);
     if(_bDebug)
     {
-        LG(GetDataName(), "Ğ´ÈëË÷ÒıÇøÊı¾İ[%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
+        LG(GetDataName(), "å†™å…¥ç´¢å¼•åŒºæ•°æ®[%d %d], Offset = %d\n", dwSectionNo % _nSectionCntX, dwSectionNo / _nSectionCntY, dwOffset);
     }
 }
 
@@ -126,7 +126,7 @@ inline float MPTerrainData::GetHeight(int nX, int nY)
 }
 
 
-// µÃµ½Ö¸¶¨¾«È·×ø±êµÄHeight
+// å¾—åˆ°æŒ‡å®šç²¾ç¡®åæ ‡çš„Height
 inline float MPTerrainData::GetHeight(float fX, float fY)
 {
 	int nX = (int)fX;
@@ -174,14 +174,14 @@ inline float MPTerrainData::GetHeight(float fX, float fY)
 	return 0.0f;
 }*/
  
-// ËõĞ¡µØÍ¼ÎÄ¼ş
+// ç¼©å°åœ°å›¾æ–‡ä»¶
 inline void MPTerrainData::TrimFile(const char *pszTarget)
 {
 	FILE *fp = fopen(pszTarget, "wb");
 	
 	fwrite(&_header, sizeof(_header), 1, fp);
 	
-	// Ğ´ÈëÄÚÈİ
+	// å†™å…¥å†…å®¹
 	DWORD *pdwOffset = new DWORD[_nSectionCntX * _nSectionCntY];
 	DWORD *pdwCur = pdwOffset;
 	memset(pdwOffset, 0, sizeof(DWORD) * _nSectionCntX * _nSectionCntY);
@@ -200,7 +200,7 @@ inline void MPTerrainData::TrimFile(const char *pszTarget)
         }
     }
 	
-	// Ğ´ÈëË÷ÒıÇø
+	// å†™å…¥ç´¢å¼•åŒº
 	fseek(fp, sizeof(_header), SEEK_SET);
 	fwrite(pdwOffset, sizeof(DWORD) * _nSectionCntX * _nSectionCntY, 1, fp);
 
@@ -212,11 +212,11 @@ inline void MPTerrainData::TrimFile(const char *pszTarget)
 
 struct SPackFileHeader
 {
-	DWORD	dwFlag;				// ÎÄ¼ş±êÊ¶
-	DWORD	dwMaxFileCnt;		// ÄÜÈİÄÉµÄ×î´óÎÄ¼şÊıÁ¿
-	DWORD   dwSectionSize;		// Ã¿¸öÊı¾İÇøµÄ³ß´ç, Ò»°ãÎª32k
-	DWORD	dwMaxFileSection;	// Ã¿¸öÎÄ¼ş×î¶àSectionÊıÁ¿, ±ÈÈç20¸ö
-	DWORD   dwFileIdxSize;		// ÎÄ¼şË÷ÒıµÄ³ß´ç
+	DWORD	dwFlag;				// æ–‡ä»¶æ ‡è¯†
+	DWORD	dwMaxFileCnt;		// èƒ½å®¹çº³çš„æœ€å¤§æ–‡ä»¶æ•°é‡
+	DWORD   dwSectionSize;		// æ¯ä¸ªæ•°æ®åŒºçš„å°ºå¯¸, ä¸€èˆ¬ä¸º32k
+	DWORD	dwMaxFileSection;	// æ¯ä¸ªæ–‡ä»¶æœ€å¤šSectionæ•°é‡, æ¯”å¦‚20ä¸ª
+	DWORD   dwFileIdxSize;		// æ–‡ä»¶ç´¢å¼•çš„å°ºå¯¸
 };
 
 
@@ -252,7 +252,7 @@ inline void PackDirection(const char *pszDir, const char *pszPackFile)
 		FILE *fpTmp = fopen(pszFile, "rb");
 		if(fpTmp==NULL)
 		{
-			LG("pack", "±»´ò°üµÄÎÄ¼ş[%s]ÎŞ·¨´ò¿ª!\n", pszFile);
+			LG("pack", "è¢«æ‰“åŒ…çš„æ–‡ä»¶[%s]æ— æ³•æ‰“å¼€!\n", pszFile);
 			continue;
 		}
 		fseek(fpTmp, 0, SEEK_END);
@@ -260,7 +260,7 @@ inline void PackDirection(const char *pszDir, const char *pszPackFile)
 
 		if(dwSize>=dwMaxFileSize)
 		{
-			LG("pack", "±»´ò°üµÄÎÄ¼ş[%s]ÎÄ¼ş³ß´ç³¬±ê, ÂÔ¹ı!\n", pszFile);
+			LG("pack", "è¢«æ‰“åŒ…çš„æ–‡ä»¶[%s]æ–‡ä»¶å°ºå¯¸è¶…æ ‡, ç•¥è¿‡!\n", pszFile);
 			fclose(fpTmp);
 			continue;
 		}
@@ -291,7 +291,7 @@ inline void PackDirection(const char *pszDir, const char *pszPackFile)
 	delete pbtIdx;
 	fclose(fp);
 
-	LG("pack", "msgÖ¸¶¨Ä¿Â¼ÎÄ¼şÒÑ¾­±»´ò°ü³É[%s]\n", pszPackFile);
+	LG("pack", "msgæŒ‡å®šç›®å½•æ–‡ä»¶å·²ç»è¢«æ‰“åŒ…æˆ[%s]\n", pszPackFile);
 }
 
 

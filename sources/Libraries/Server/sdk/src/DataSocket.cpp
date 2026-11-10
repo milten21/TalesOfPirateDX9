@@ -4,6 +4,8 @@
 #include "Receiver.h"
 #include "Comm.h"
 #include "RPCInfo.h"
+#include "SocketApi.h"
+#include <algorithm>
 #include <string>
 #include <memory>
 
@@ -51,7 +53,7 @@ void DataSocket::Finally()
 
 	if (m_socket != INVALID_SOCKET)
 	{
-		closesocket(m_socket);
+		net::CloseSocket(m_socket);
 		*const_cast<SOCKET*>(&m_socket) = INVALID_SOCKET;
 	}
 
@@ -79,15 +81,14 @@ void DataSocket::Init(SOCKET socket, cChar* peerip, uShort peerport, TcpCommApp*
 	m_peerport = peerport;
 	strcpy(m_peerip, peerip);
 
-	int	l_len = sizeof(int);
 	int	l_buflen = 0;
-	getsockopt(m_socket, SOL_SOCKET, SO_SNDBUF, (char*)&l_buflen, &l_len);
+	net::GetOption(m_socket, SOL_SOCKET, SO_SNDBUF, l_buflen);
 	m_sendbuf = uLong(l_buflen);
-	getsockopt(m_socket, SOL_SOCKET, SO_RCVBUF, (char*)&l_buflen, &l_len);
+	net::GetOption(m_socket, SOL_SOCKET, SO_RCVBUF, l_buflen);
 	m_recvbuf = uLong(l_buflen);
 
 	sockaddr_in	l_sa{};
-	l_len = sizeof(l_sa);
+	socklen_t	l_len = sizeof(l_sa);
 	MemSet((char*)&l_sa, 0, l_len);
 	getsockname(m_socket, (sockaddr*)&l_sa, &l_len);
 	strcpy(m_localip, inet_ntoa(l_sa.sin_addr));
@@ -129,14 +130,12 @@ extern PreAllocHeap<rbuf>	__bufheap;
 int	DataSocket::SetSendBuf(uLong bytes)
 {
 	bytes = ((bytes + __bufheap.GetUnitSize() - 1) / __bufheap.GetUnitSize()) * __bufheap.GetUnitSize();
-	m_sendbuf = max(bytes, 4 * 1024);//>=4K
-	int	l_sendbuf = m_sendbuf;
-	return setsockopt(m_socket, SOL_SOCKET, SO_SNDBUF, (char*)&l_sendbuf, sizeof(int));
+	m_sendbuf = std::max<uLong>(bytes, 4 * 1024);//>=4K
+	return net::SetOption(m_socket, SOL_SOCKET, SO_SNDBUF, int(m_sendbuf));
 }
 int	DataSocket::SetRecvBuf(uLong bytes)
 {
 	bytes = ((bytes + __bufheap.GetUnitSize() - 1) / __bufheap.GetUnitSize()) * __bufheap.GetUnitSize();
-	m_recvbuf = max(bytes, 4 * 1024);//>=4K
-	int	l_recvbuf = m_recvbuf;
-	return setsockopt(m_socket, SOL_SOCKET, SO_RCVBUF, (char*)&l_recvbuf, sizeof(int));
+	m_recvbuf = std::max<uLong>(bytes, 4 * 1024);//>=4K
+	return net::SetOption(m_socket, SOL_SOCKET, SO_RCVBUF, int(m_recvbuf));
 }

@@ -1,11 +1,13 @@
 #pragma once
-#include "unicode/resbund.h"		//资源管理信息
-#include "unicode/ucnv.h"			//字符编码转换
-#include "unicode/uclean.h"			//字符编码转换
-#include "unicode/msgfmt.h"			//格式化字符串
+#include "unicode/resbund.h"		//璧勬簮绠＄悊淇℃伅
+#include "unicode/ucnv.h"			//瀛楃缂栫爜杞崲
+#include "unicode/uclean.h"			//瀛楃缂栫爜杞崲
+#include "unicode/msgfmt.h"			//鏍煎紡鍖栧瓧绗︿覆
 	
 //#include "pi_Alloc.h"
 
+#include <cstdio>
+#include <cstring>
 #include <map>
 #include <memory>
 // Use to compare the contents of two pointers
@@ -34,7 +36,7 @@ typedef std::map <const char*, std::unique_ptr<char[]>, charValueLess> StringMap
 class CFormatParameter
 {
 private:
-	Formattable* m_MsgArgs;
+	icu::Formattable* m_MsgArgs;
 	int paraNum;
 private:
 	CFormatParameter(){}
@@ -42,13 +44,14 @@ public:
 	CFormatParameter(int paraNum);
 	~CFormatParameter();
 
-	Formattable* GetMsgArgs(){ return m_MsgArgs;} 
+	icu::Formattable* GetMsgArgs(){ return m_MsgArgs;} 
 	int GetParaNum() { return paraNum; }
 	void setDouble(int index, double d);
 	void  setLong(int index, int32_t l);
 	void  setInt64(int index, int64_t ll) ;
 	void  setDate(int index, UDate d) ;
-	void  setString(int index, const UnicodeString &stringToCopy);
+	void  setString(int index, const icu::UnicodeString &stringToCopy);
+	void  setString(int index, const char* codepageData);
 };
 
 class CResourceBundleManage
@@ -63,7 +66,7 @@ private:
 	std::unique_ptr<char[]> m_ResLocale{};
 
 	StringMap mapRes;
-	ResourceBundle* m_pResourceBundle;
+	icu::ResourceBundle* m_pResourceBundle;
 	UConverter *m_pConverter;
 	int m_MaxSize;
 
@@ -76,12 +79,13 @@ private:
 	bool Init();
 
 public:
-	int GetSize(void);			// 取得资源个数
+	const StringMap& GetResStrings() const { return mapRes; }
+	int GetSize(void);			// 鍙栧緱璧勬簮涓暟
 	
 	void Release(void);
 
 	const char* LoadResString(const char* key);
-	UnicodeString LoadUResString(const char* key);
+	icu::UnicodeString LoadUResString(const char* key);
 
 	int Format(const char* key, CFormatParameter& parameter, char buffer[]);
 };

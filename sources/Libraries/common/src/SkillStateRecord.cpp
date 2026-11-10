@@ -41,56 +41,56 @@ BOOL CSkillStateRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<s
     string strList[80];
 	string strLine;
 
-	// ±àºÅ
+	// ç¼–å·
 	pInfo->chID = (char)pInfo->nID;
-	// Ãû³Æ
+	// åç§°
 	strncpy(pInfo->szName, pInfo->szDataName, defSKILLSTATE_NAME_LEN);
 	pInfo->szName[defSKILLSTATE_NAME_LEN - 1] = '\0';
-	// ´¥·¢µÄÊ±¼ä¼ä¸ô£¨µ¥Î»£ºÃë£©
+	// è§¦å‘çš„æ—¶é—´é—´éš”ï¼ˆå•ä½ï¼šç§’ï¼‰
 	pInfo->sFrequency = Str2Int(ParamList[m++]);
-	// ×´Ì¬µ½´«µÝÄ¿±êÉÏµÄ×÷ÓÃÊ±¼ä½Å±¾
+	// çŠ¶æ€åˆ°ä¼ é€’ç›®æ ‡ä¸Šçš„ä½œç”¨æ—¶é—´è„šæœ¬
 	strncpy(pInfo->szOnTransfer, ParamList[m++].c_str(), defSKILLSTATE_SCRIPT_NAME);
 	pInfo->szOnTransfer[defSKILLSTATE_SCRIPT_NAME - 1] = '\0';
-	// Ê¹ÓÃÐ§¹û½Å±¾
+	// ä½¿ç”¨æ•ˆæžœè„šæœ¬
 	strncpy(pInfo->szAddState, ParamList[m++].c_str(), defSKILLSTATE_SCRIPT_NAME);
 	pInfo->szAddState[defSKILLSTATE_SCRIPT_NAME - 1] = '\0';
-	// ÒÆ³ýÐ§¹û½Å±¾
+	// ç§»é™¤æ•ˆæžœè„šæœ¬
 	strncpy(pInfo->szSubState, ParamList[m++].c_str(), defSKILLSTATE_SCRIPT_NAME);
 	pInfo->szSubState[defSKILLSTATE_SCRIPT_NAME - 1] = '\0';
-	// Ìæ»»²ßÂÔ
+	// æ›¿æ¢ç­–ç•¥
 	pInfo->chAddType = Str2Int(ParamList[m++]);
-	// ÊÇ·ñ¿ÉÓÉÖÕ¶ËÈ¡Ïû
+	// æ˜¯å¦å¯ç”±ç»ˆç«¯å–æ¶ˆ
 	pInfo->bCanCancel = Str2Int(ParamList[m++]) != 0 ? true : false;
-	// ÊÇ·ñÄÜ¹»ÒÆ¶¯
+	// æ˜¯å¦èƒ½å¤Ÿç§»åŠ¨
 	pInfo->bCanMove = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñÄÜ¹»Ê¹ÓÃÄ§·¨¼¼ÄÜ
+	// æ˜¯å¦èƒ½å¤Ÿä½¿ç”¨é­”æ³•æŠ€èƒ½
 	pInfo->bCanMSkill = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñÄÜ¹»Ê¹ÓÃÆÕÍ¨¼¼ÄÜ
+	// æ˜¯å¦èƒ½å¤Ÿä½¿ç”¨æ™®é€šæŠ€èƒ½
 	pInfo->bCanGSkill = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñÄÜ¹»½»Ò×
+	// æ˜¯å¦èƒ½å¤Ÿäº¤æ˜“
 	pInfo->bCanTrade = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñÄÜ¹»Ê¹ÓÃÎïÆ·
+	// æ˜¯å¦èƒ½å¤Ÿä½¿ç”¨ç‰©å“
 	pInfo->bCanItem = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñÎÞµÐ
+	// æ˜¯å¦æ— æ•Œ
 	pInfo->bCanUnbeatable = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñÄÜ¹»±»Ê¹ÓÃÎïÆ·
+	// æ˜¯å¦èƒ½å¤Ÿè¢«ä½¿ç”¨ç‰©å“
 	pInfo->bCanItemmed = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñÄÜ¹»±»Ê¹ÓÃ¼¼ÄÜ
+	// æ˜¯å¦èƒ½å¤Ÿè¢«ä½¿ç”¨æŠ€èƒ½
 	pInfo->bCanSkilled = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñÒþÉí
+	// æ˜¯å¦éšèº«
 	pInfo->bNoHide = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñ±»Ç¿ÖÆÏÔÐÎ
+	// æ˜¯å¦è¢«å¼ºåˆ¶æ˜¾å½¢
 	pInfo->bNoShow = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñ¿É²Ù×÷µÀ¾ß
+	// æ˜¯å¦å¯æ“ä½œé“å…·
 	pInfo->bOptItem = Str2Int(ParamList[m++]) ? true : false;
-	// ÊÇ·ñ¿É²Ù×÷µÀ¾ß
+	// æ˜¯å¦å¯æ“ä½œé“å…·
 	pInfo->bTalkToNPC = Str2Int(ParamList[m++]) ? true : false;
-	// ½â³ýµÄÐ§¹û±àºÅ
+	// è§£é™¤çš„æ•ˆæžœç¼–å·
 	pInfo->bFreeStateID = Str2Int(ParamList[m++]);
 
-	// ÆÁÄ»Ð§¹û
+	// å±å¹•æ•ˆæžœ
 	pInfo->chScreen = Str2Int(ParamList[m++]);
-	// ³öÉú±íÏÖ
+	// å‡ºç”Ÿè¡¨çŽ°
 	memset( pInfo->nActBehave, 0, sizeof(pInfo->nActBehave) );
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');
@@ -100,24 +100,24 @@ BOOL CSkillStateRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<s
 		pInfo->nActBehave[i] = Str2Int(strList[i]);
 	}
 
-	//¿Í»§¶Ë±íÏÖ±êÊ¶
+	//å®¢æˆ·ç«¯è¡¨çŽ°æ ‡è¯†
     pInfo->sChargeLink = Str2Int(ParamList[m++]);
 
-    // µØÃæ³ÖÐøÌØÐ§
+    // åœ°é¢æŒç»­ç‰¹æ•ˆ
     pInfo->sAreaEffect = Str2Int(ParamList[m++]);
-	// µØÃæ×´Ì¬ÌØÐ§,ÊÇ·ñ½öÏÔÊ¾ÖÐÐÄµã
+	// åœ°é¢çŠ¶æ€ç‰¹æ•ˆ,æ˜¯å¦ä»…æ˜¾ç¤ºä¸­å¿ƒç‚¹
     pInfo->IsShowCenter = Str2Int(ParamList[m++]) ? true : false;
-	// ¹ÒÐ§¹û·½POSE
+	// æŒ‚æ•ˆæžœæ–¹POSE
 	pInfo->IsDizzy = Str2Int(ParamList[m++]) ? true : false;
-	// ¹ÒÐ§¹û·½ÌØÐ§±íÏÖ
+	// æŒ‚æ•ˆæžœæ–¹ç‰¹æ•ˆè¡¨çŽ°
 	pInfo->sEffect = Str2Int(ParamList[m++]);
-	// ¹ÒÌØÐ§Íæ¼ÒµÄ²¥·Ådummyµã
+	// æŒ‚ç‰¹æ•ˆçŽ©å®¶çš„æ’­æ”¾dummyç‚¹
 	pInfo->sDummy1 = Str2Int(ParamList[m++]);
-	// ¸Ã×´Ì¬ÏÂÊÜ»÷ÌØÐ§±íÏÖ
+	// è¯¥çŠ¶æ€ä¸‹å—å‡»ç‰¹æ•ˆè¡¨çŽ°
 	pInfo->sBitEffect = Str2Int(ParamList[m++]);
-	// ÌØÐ§²¥·Ådummyµã
+	// ç‰¹æ•ˆæ’­æ”¾dummyç‚¹
 	pInfo->sDummy2 = Str2Int(ParamList[m++]);
-	// ÖÐ¸ÃÐ§¹û¹ÒÔÚÉíÉÏµÄICON±íÏÖ
+	// ä¸­è¯¥æ•ˆæžœæŒ‚åœ¨èº«ä¸Šçš„ICONè¡¨çŽ°
 	pInfo->sIcon = Str2Int(ParamList[m++]);
 
 	memset(pInfo->szIcon, 0, sizeof(pInfo->szIcon));
@@ -142,6 +142,6 @@ void CSkillStateRecordSet::_ProcessRawDataInfo(CRawDataInfo *pInfo)
 {
 	CSkillStateRecord *pState = (CSkillStateRecord*)pInfo;
 
-    // ¸üÐÂ¶¯Ì¬ÊôÐÔ
+    // æ›´æ–°åŠ¨æ€å±žæ€§
 	pState->RefreshPrivateData();	
 }

@@ -1,5 +1,8 @@
 #include "util.h"
 #include "db.h"
+
+#include <algorithm>
+
 using namespace std;
 
 #define SQLERR_FORMAT "SQL Error State:%s, Native Error Code: %lX, ODBC Error: %s\n"
@@ -710,7 +713,7 @@ RECONNECT:
         try {
             sqlret = SQLNumResultCols(hstmt, &col_num);
 
-            col_num = min(col_num, 1);
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, 1));
 
             if (col_num <= 0)
             {
@@ -845,9 +848,9 @@ RECONNECT:
         try {
             sqlret = SQLNumResultCols(hstmt, &col_num);
 
-            col_num = min(col_num, field_max_cnt);
-            col_num = min(col_num, MAX_COL);
-            col_num = min(col_num, _max_col);
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, field_max_cnt));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, MAX_COL));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, _max_col));
 
             if (col_num <= 0)
             {
@@ -983,9 +986,9 @@ RECONNECT:
         try {
             sqlret = SQLNumResultCols(hstmt, &col_num);
 
-            col_num = min(col_num, field_max_cnt);
-            col_num = min(col_num, MAX_COL);
-            col_num = min(col_num, _max_col);
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, field_max_cnt));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, MAX_COL));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, _max_col));
 
             if (col_num <= 0)
             {
@@ -1128,9 +1131,9 @@ RECONNECT:
         try {
             sqlret = SQLNumResultCols(hstmt, &col_num);
 
-            col_num = min(col_num, field_max_cnt);
-            col_num = min(col_num, MAX_COL);
-            col_num = min(col_num, _max_col);
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, field_max_cnt));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, MAX_COL));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, _max_col));
 
             if (col_num <= 0)
             {
@@ -1475,8 +1478,8 @@ bool cfl_rs::getalldata(const char* sql, vector< vector< string > >& data, unsig
             }
 
             sqlret = SQLNumResultCols(hstmt, &col_num);
-            col_num = min(col_num, MAX_COL);
-            col_num = min(col_num, _max_col);
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, MAX_COL));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, _max_col));
 
             // Bind Column
             for (int i = 0; i < col_num; ++ i)
@@ -1583,8 +1586,8 @@ bool cfl_rs::get_page_data(char* tablename, char* param, int pagesize, int pagei
             }
 
             sqlret = SQLNumResultCols(hstmt, &col_num);
-            col_num = min(col_num, MAX_COL);
-            col_num = min(col_num, _max_col);
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, MAX_COL));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, _max_col));
 
 			// Clear
 			memset(_buf, 0, MAX_COL * MAX_DATALEN * sizeof(UCHAR));
@@ -1613,8 +1616,8 @@ bool cfl_rs::get_page_data(char* tablename, char* param, int pagesize, int pagei
 			if(SQLMoreResults(hstmt) == SQL_SUCCESS)
 			{
 				sqlret = SQLNumResultCols(hstmt, &col_num);
-				col_num = min(col_num, MAX_COL);
-				col_num = min(col_num, _max_col);
+				col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, MAX_COL));
+				col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, _max_col));
 
 				// Bind Column
 				for (int i = 0; i < col_num; ++ i)
@@ -1909,8 +1912,8 @@ bool friend_tbl::get_friend_dat(friend_dat* farray, int& array_num, unsigned int
             }
 
             sqlret = SQLNumResultCols(hstmt, &col_num);
-            col_num = min(col_num, MAX_COL);
-            col_num = min(col_num, _max_col);
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, MAX_COL));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, _max_col));
 
             // Bind Column
             for (int i = 0; i < col_num; ++ i)
@@ -2072,8 +2075,8 @@ bool friend_tbl::get_gm_dat(friend_dat* farray, int& array_num, bool* drop)
             }
 
             sqlret = SQLNumResultCols(hstmt, &col_num);
-            col_num = min(col_num, MAX_COL);
-            col_num = min(col_num, _max_col);
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, MAX_COL));
+            col_num = static_cast<SQLSMALLINT>(std::min<int>(col_num, _max_col));
 
             // Bind Column
             for (int i = 0; i < col_num; ++i)

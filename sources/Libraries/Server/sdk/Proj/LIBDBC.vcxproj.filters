@@ -53,9 +53,6 @@
     <ClCompile Include="..\src\Sender.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\TaskQueue.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\src\ThreadPool.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -138,9 +135,6 @@
     </ClInclude>
     <ClInclude Include="..\include\EventMsgRC.h" />
     <ClInclude Include="..\src\Receiver.h">
-      <Filter>Include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\Thread.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Sender.h">

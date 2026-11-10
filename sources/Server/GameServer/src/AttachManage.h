@@ -31,7 +31,7 @@ public:
 protected:
 
 private:
-	CAttachable* m_pCLstHead{}; // 链首对象也是主控对象
+	CAttachable* m_pCLstHead{}; // 閾鹃瀵硅薄涔熸槸涓绘帶瀵硅薄
 	CAttachable* m_pCLstTail{};
 
 	CAttachable* m_pCur{};
@@ -61,11 +61,11 @@ private:
 	void	Initially();
 	void	Finally();
 
-	CAttachable* m_pCLstHead{}; // 链首对象也是主控对象
+	CAttachable* m_pCLstHead{}; // 閾鹃瀵硅薄涔熸槸涓绘帶瀵硅薄
 	CAttachable* m_pCLstTail{};
 
 	long		m_lNum{};
-	CAttachable* m_pCCurPess{}; // 用于遍历链表
+	CAttachable* m_pCCurPess{}; // 鐢ㄤ簬閬嶅巻閾捐〃
 };
 
 inline void CPassengerMgr::BeginGet(void)

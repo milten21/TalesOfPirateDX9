@@ -20,11 +20,11 @@ BOOL CSailLvRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<strin
     string strList[80];
 	string strLine;
 
-	// ±àºÅ
+	// ç¼–å·
 	pInfo->lID = pInfo->nID;
-	// µÈ¼¶
+	// ç­‰çº§
 	pInfo->sLevel = Str2Int(pInfo->szDataName);
-	// ¾­ÑéÖµ
+	// ç»éªŒå€¼
 	pInfo->ulExp = Str2Int(ParamList[m++]);
 
 	return TRUE;

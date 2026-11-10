@@ -9,7 +9,7 @@ _DBC_USING
 class	Player;
 
 /**
- * @alias ĞĞ»á 
+ * @alias è¡Œä¼š 
  */
 class Guild :public PreAllocStru , public RunBiDirectItem<Guild>, public RunBiDirectChain<GuildMember>
 {
@@ -22,17 +22,17 @@ public:
 	Player *FindGuildMemByChaID(uLong id);
 
 	uLong			m_id;
-	char			m_name[17];				//ĞĞ»áÃû³Æ
-	char			m_motto[51];			//¹«»á×ùÓÒÃú
-	BitMaskStatus	m_stat;					//0x0-Õı³£;0x1-»á·Ñ²»×ã;0x2-³ÉÔ±Êı²»×ã;0x4-»á³¤ÉùÍû²»×ã
-	uLong			m_remain_minute;		//¹«»á½âÉ¢Ê£Óà·ÖÖÓÊı
+	char			m_name[17];				//è¡Œä¼šåç§°
+	char			m_motto[51];			//å…¬ä¼šåº§å³é“­
+	BitMaskStatus	m_stat;					//0x0-æ­£å¸¸;0x1-ä¼šè´¹ä¸è¶³;0x2-æˆå‘˜æ•°ä¸è¶³;0x4-ä¼šé•¿å£°æœ›ä¸è¶³
+	uLong			m_remain_minute;		//å…¬ä¼šè§£æ•£å‰©ä½™åˆ†é’Ÿæ•°
 	uLong			m_tick;
 	uLong			m_leaderID;
 
 	/**
-	 * @label »á³¤ 
+	 * @label ä¼šé•¿ 
 	 */
-	Player	*	m_leader;					//»á³¤£¬²»ÔÊĞí±ä»¯
+	Player	*	m_leader;					//ä¼šé•¿ï¼Œä¸å…è®¸å˜åŒ–
 private:
 	~Guild();
 

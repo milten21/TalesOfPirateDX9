@@ -3,7 +3,11 @@
 #include "Friend.h"
 #include "GroupServerApp.h"
 
-const cChar*	gc_standard_group=(const cChar*)RES_STRING(GP_FRIEND_H_00001);
+const cChar* StandardFriendGroup()
+{
+	static const cChar* const name = (const cChar*)RES_STRING(GP_FRIEND_H_00001);
+	return name;
+}
 
 long Friend::GetInvitedMax()
 {

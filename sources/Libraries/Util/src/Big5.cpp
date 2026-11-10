@@ -1,5 +1,5 @@
 #include "windows.h"
-#include "big5.h"
+#include "Big5.h"
 
 
 CBig5::CBig5()

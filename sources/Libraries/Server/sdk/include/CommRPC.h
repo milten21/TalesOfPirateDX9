@@ -18,7 +18,7 @@ class RPCInfo;
 class TFNCall;
 
 //==============================================================================
-//RPC½á¹¹
+//RPCç»“æž„
 class	RPCMGR
 {
 	friend class TcpCommApp;
@@ -29,13 +29,13 @@ class	RPCMGR
 public:
 	enum{__ses_size	=sizeof(uLong)};
 
-	long			AsynCall(DataSocket *datasock,WPacket in_parameter,void *pointer);//Èç¹ûpointerÎª0£¬Ö´ÐÐone-wayµ÷ÓÃ¡£
+	long			AsynCall(DataSocket *datasock,WPacket in_parameter,void *pointer);//å¦‚æžœpointerä¸º0ï¼Œæ‰§è¡Œone-wayè°ƒç”¨ã€‚
 	RPacket			SyncCall(DataSocket *datasock,WPacket in_parameter,uLong ulMilliseconds=30*1000);
 protected:
 	RPCMGR(TcpCommApp *tca);
 private:
 	virtual	WPacket	OnServeCall(DataSocket *datasock,RPacket &in_parameter){return 0;}
-	virtual	void	OnAsynReturn(DataSocket *datasock,RPacket &in_parameter,void *pointer){};//pointerÎªµ÷ÓÃÊ±ºò´«ÈëµÄpointer
+	virtual	void	OnAsynReturn(DataSocket *datasock,RPacket &in_parameter,void *pointer){};//pointerä¸ºè°ƒç”¨æ—¶å€™ä¼ å…¥çš„pointer
 	bool			ProcessSESS(DataSocket *datasock,RPacket &recvbuf);
 	long			SendSESS(DataSocket *datasock,WPacket &sendbuf);
 

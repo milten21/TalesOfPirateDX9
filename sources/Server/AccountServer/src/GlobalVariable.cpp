@@ -1,7 +1,5 @@
-#define _CRTDBG_MAP_ALLOC
 #include "stdafx.h"
 #include <stdlib.h>
-#include <crtdbg.h>
 
 //#include "AccountServer2.h"
 #include <string>
@@ -10,15 +8,12 @@
 
 
 
-//±ØĞëÓÅÏÈ¶¨ÒåÅäÖÃÎÄ¼ş×Ö·û´®
+//å¿…é¡»ä¼˜å…ˆå®šä¹‰é…ç½®æ–‡ä»¶å­—ç¬¦ä¸²
 std::string g_strCfgFile="AccountServer.cfg";
 
-CBillService	g_BillService;
 dbc::TLSIndex	g_TlsIndex;
 CDataBaseCtrl	g_MainDBHandle;
-DWORD			g_MainThreadID;
-HWND			g_hMainWnd = NULL;
+MainQueue		g_MainQueue;
 
-//BillThread g_BillThread;
 
 

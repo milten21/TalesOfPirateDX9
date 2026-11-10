@@ -139,7 +139,7 @@ void GroupServerApp::CP_FRND_ACCEPT(Player *ply,DataSocket *datasock,RPacket &pk
 			WPacket	l_wpk =GetWPacket();
 			l_wpk.WriteCmd(CMD_PC_FRND_REFRESH);
 			l_wpk.WriteChar(MSG_FRND_REFRESH_ADD);
-			l_wpk.WriteString(gc_standard_group);
+			l_wpk.WriteString(StandardFriendGroup());
 			WPacket l_wpk2=l_wpk;
 			l_wpk.WriteLong(ply->m_chaid[ply->m_currcha]);
 			l_wpk.WriteString(ply->m_chaname[ply->m_currcha].c_str());
@@ -203,9 +203,10 @@ void GroupServerApp::CP_FRND_DELETE(Player *ply,DataSocket *datasock,RPacket &pk
 void GroupServerApp::CP_FRND_CHANGE_GROUP(Player *ply,DataSocket *datasock,RPacket &pk)
 {
 	uLong l_id = (uLong)pk.ReadLong();
-	cChar* l_grp = pk.ReadString((uShort *)&pk);
+	uShort l_len = 0;
+	cChar* l_grp = pk.ReadString(&l_len);
 
-	if (!l_grp || (uShort)&pk > 16 || !IsValidName(l_grp, (uShort)&pk))
+	if (!l_grp || l_len > 16 || !IsValidName(l_grp, l_len))
 	{
 		return;
 	}

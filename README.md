@@ -1,4 +1,3 @@
-
 # TalesOfPirateDX9
 
 **About This Repository**
@@ -18,65 +17,54 @@ While the core DX9 upgrade is functional, it originated from a separate developm
 
 **Core Engine & Networking**
 
--   Upgraded from DirectX 8 to DirectX 9
-    
--   Client and Server built with VS 2026 (C++14)
-    
--   TopNet source integration
-    
--   RSA/AES connection encryption (Client/Server)
-    
--   Encrypted .clu files
-    
--   Core packets updated to use Smart Pointers
-    
--   Anti-WPE and Anti-DDoS protection
-    
--   Anti-Dupe system
-    
+- Upgraded from DirectX 8 to DirectX 9
+- Client and Server built with VS 2026 (C++14)
+- TopNet source integration
+- RSA/AES connection encryption (Client/Server)
+- Encrypted .clu files
+- Core packets updated to use Smart Pointers
+- Anti-WPE and Anti-DDoS protection
+- Anti-Dupe system
 
 **Gameplay Systems**
 
--   Offline Stalls and Offline Mode
-    
--   Full Mount System
-    
--   Guild Bank with transaction logs
-    
--   AuthorizedGM system
-    
--   Reworked Jackpot system
-    
--   In-game Shop remade (Classic style, 9 items per page)
-    
+- Offline Stalls and Offline Mode
+- Full Mount System
+- Guild Bank with transaction logs
+- AuthorizedGM system
+- Reworked Jackpot system
+- In-game Shop remade (Classic style, 9 items per page)
 
 **User Interface & Features**
 
--   Multi-resolution support
-    
--   60 FPS toggle option
-    
--   HP and SP bars displayable as values or percentages
-    
--   World Map with Zoom In/Out
-    
--   Drop Info with integrated Drop Filter
-    
--   Right-click inventory menu options
-    
--   Friend/Enemy combat modes
-    
--   Visibility toggles for Effects, Apps, and Mounts
-    
+- Multi-resolution support
+- 60 FPS toggle option
+- HP and SP bars displayable as values or percentages
+- World Map with Zoom In/Out
+- Drop Info with integrated Drop Filter
+- Right-click inventory menu options
+- Friend/Enemy combat modes
+- Visibility toggles for Effects, Apps, and Mounts
 
 **Scripting & Structure**
 
--   Restructured LUA folders for better organization
-    
--   Balanced Vanilla LUA setup
-    
--   Simplified file structure with intuitive variable and function names
-    
--   Modular design for easy code migration (copy/paste friendly)
-vs config file 
-**[Here](https://drive.google.com/file/d/1GR8GdSNe-UocUNpkvChoHBaqZJaTcuuS/view)**
+- Restructured LUA folders for better organization
+- Balanced Vanilla LUA setup
+- Simplified file structure with intuitive variable and function names
+- Modular design for easy code migration (copy/paste friendly)
+  vs config file
+  **[Here](https://drive.google.com/file/d/1GR8GdSNe-UocUNpkvChoHBaqZJaTcuuS/view)**
+
+### Building the servers
+
+The four servers (AccountServer, GroupServer, GateServer, GameServer), their shared libraries, Crypto++ and LuaJIT build from one CMake project. The client keeps its own solution, `sources/talesofpirates.sln`.
+
+Requirements: Visual Studio 2026 with the C++ workload and ATL/MFC, CMake 4.2 or newer (the copy bundled with Visual Studio is fine), and a [vcpkg](https://github.com/microsoft/vcpkg) checkout whose path contains no spaces, pointed to by the `VCPKG_ROOT` environment variable. vcpkg builds ICU from `vcpkg.json` on the first configure; the preset installs it under `%VCPKG_ROOT%/installed-tales-servers`.
+
+```
+cmake --preset windows-x86
+cmake --build --preset windows-x86-debug
+cmake --build --preset windows-x86-release
+```
+
+The preset generates `build/windows-x86/TalesOfPirateServers.slnx` for Visual Studio, with GameServer as the startup project and `server/<Name>` as its debugging working directory. Executables land in `sources/Server/<Name>/Bin` (`<Name>.exe` for Release, `<Name>_D.exe` for Debug) (ICU is linked statically, so there are no runtime DLLs to copy), so `sources/symlinks.bat` keeps working.

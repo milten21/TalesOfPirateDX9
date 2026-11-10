@@ -1,0 +1,37 @@
+en_US{
+    GS_GATESERVER_CPP_00001 { "Please enter a command (exit or ctrl+c to exit):\n" }
+    GS_GATESERVER_CPP_00002 { "start log out..." }
+    GS_GATESERVER_CPP_00003 { "client number: " }
+    GS_GATESERVER_CPP_00004 { "[Send]{pkt/s:" }
+    GS_GATESERVER_CPP_00005 { "[Receive]{pkt/s:" }
+    GS_GATESERVER_CPP_00006 { "[Max send]{pkt/s:" }
+    GS_GATESERVER_CPP_00007 { "[Max receive]{pkt/s:" }
+    GS_GATESERVER_CPP_00008 { "Maximum number of allowed connections currently:" }
+    GS_GATESERVER_CPP_00009 { "Maximum number of connection cannot exceed 1500, current number of connections has been set to 1500." }
+    GS_GATESERVER_CPP_00010 { "setup successful, max connections:" }
+    GS_GATESERVER_CPP_00011 { "setshowrange parameter 1, parameter 2" }
+    GS_GATESERVER_CPP_00012 { "Unsupported Command!" }
+    GS_GATESERVER_CPP_00013 { "InitReference warning: %s repeat enter connection message!" }
+    GS_GATESERVER_CPP_00014 { "InitReference warning: %s repeat enter connection message!Exception" }
+    GS_GATESERVER_CPP_00015 { "create monitor quantity function failed" }
+    GS_GATESERVER_CPP_00016 { "GateSerever had an unknown error during initialization, please notify the developer!" }
+    GS_GATESERVER_CPP_00017 { "Launched GateServer successfully!" }
+    GS_GATESERVER_CPP_00018 { "GateServer disconnect succesfully!" }
+    GS_TOCLIENT_CPP_00001 { "The initial permission maximum is %d client connect, please use setmaxcon [number] command to change, but maximum is until 1500" }
+    GS_TOCLIENT_CPP_00002 { "client:%d [Send]{pkt/s:%d}{pkt:%d}{KB/s:%d}{KB:%d}[Receive]{pkt/s:%d}{pkt:%d}{KB/s:%d}{KB:%d}" }
+    GS_TOCLIENT_CPP_00011 { "GroupServer has requested to kick this person." }
+    GS_TOCLIENT_CPP_00012 { "GameServer request to kick this player." }
+    GS_TOCLIENT_CPP_00013 { "Player kicked due to target map not available." }
+    GS_TOCLIENT_CPP_00014 { "Player at GroupServer information confirm have problem and GroupServer requests to kick that player." }
+    GS_TOCLIENT_CPP_00015 { "user has logged out." }
+    GS_TOCLIENT_CPP_00016 { "GameServer malfunction, all logged on players have been kicked." }
+    GS_TOCLIENT_CPP_00017 { "user login error." }
+    GS_TOCLIENT_CPP_00018 { "You've been muted by the system!" }
+    GS_TOCLIENT_CPP_00019 { "Corrupted header" }
+    GS_TOCLIENT_CPP_00020 { "Offline mode was established, player has been disconnected." }
+    GS_TOCLIENT_CPP_00031 { "Map server malfunction, please try again later..." }
+    GS_TOGROUPSERVER_CPP_00001 { "Conencting to GroupServer..." }
+    GS_TOGROUPSERVER_CPP_00002 { "Connecting to GroupServer failed, reconnecting in 5 secs..." }
+    GS_TOGROUPSERVER_CPP_00003 { "Login to GroupServer failed, maybe is GateServer handle amount too large, wait for 5 seconds and it'll auto connect..." }
+    GS_TOGROUPSERVER_CPP_00004 { "Successfully logged into GroupServer!" }
+}

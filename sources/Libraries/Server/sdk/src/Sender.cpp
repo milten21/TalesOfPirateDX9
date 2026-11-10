@@ -4,6 +4,7 @@
 #include "Packet.h"
 #include "Comm.h"
 #include "LogStream.h"
+#include "SocketApi.h"
 #include <fstream>
 _DBC_USING
 
@@ -327,7 +328,7 @@ long Sender::Process()
 
 			// (1) send returns actual number of sent bytes - could be less than requested in len parameter.
 			// (2) m_p combined with m_send->GetBufAddr() points to the beginning of the data to-be sent.
-			l_sendlen = send(m_datasock->m_socket, m_send->GetBufAddr() + m_p, m_send->m_cpos - m_p, 0);
+			l_sendlen = net::Send(m_datasock->m_socket, m_send->GetBufAddr() + m_p, int(m_send->m_cpos - m_p));
 			if (l_sendlen >= 0)
 			{
 				// Great, we sent atleast one byte.
@@ -339,14 +340,14 @@ long Sender::Process()
 			else if (l_sendlen == SOCKET_ERROR)
 			{
 				// Generic Error
-				l_retval = WSAGetLastError();
+				l_retval = net::LastError();
 			}
 			else
 			{
 				// Unknown error.
 				l_retval = -2;
 			}
-			if (l_retval && (l_retval != WSAEWOULDBLOCK))
+			if (l_retval && !net::WouldBlock(l_retval))
 			{
 				// Error handling.
 				m_datasock->GetTcpApp()->Disconnect(m_datasock, 0, l_retval);

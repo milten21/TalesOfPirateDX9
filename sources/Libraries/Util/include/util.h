@@ -13,14 +13,12 @@
 #include "./TryUtil.h"
 #include "./log.h"
 #include "./log2.h"
-#include "./playsound.h"
 #include "./singleton.h"
 #include "./matrix_stuff.h"
 #include "./db.h"
 #include "./db3.h"
 #include "./algo.h"
 #include "./fifo.h"
-#include "./bill.h"
 
 #ifdef LG_PRINTF
 #define printf myprintf

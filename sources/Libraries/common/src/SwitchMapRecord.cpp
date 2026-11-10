@@ -21,24 +21,24 @@ BOOL CSwitchMapRecordSet::_ReadRawDataInfo(CRawDataInfo *pRawDataInfo, vector<st
     string strList[80];
 	string strLine;
 
-	// ±àºÅ
+	// ç¼–å·
 	pInfo->lID = pInfo->nID;
-	// ±»°ó¶¨µÄÊµÌåID
+	// è¢«ç»‘å®šçš„å®žä½“ID
 	pInfo->lEntityID = Str2Int(pInfo->szDataName);
-	// ÊÂ¼þ±àºÅ
+	// äº‹ä»¶ç¼–å·
 	pInfo->lEventID = Str2Int(ParamList[m++]);
-	// ÊµÌåµÄÎ»ÖÃ
+	// å®žä½“çš„ä½ç½®
 	memset(&pInfo->SEntityPos, 0, sizeof(Point));
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');
 	pInfo->SEntityPos.x = Str2Int(strList[0]);
 	pInfo->SEntityPos.y = Str2Int(strList[1]);
-	// ÊµÌåµÄ·½Ïò
+	// å®žä½“çš„æ–¹å‘
 	pInfo->sAngle = Str2Int(ParamList[m++]);
-	// Ä¿±êµØÍ¼Ãû
+	// ç›®æ ‡åœ°å›¾å
 	_tcsncpy(pInfo->szTarMapName, ParamList[m++].c_str(), defMAP_NAME_LEN);
 	pInfo->szTarMapName[defMAP_NAME_LEN - 1] = _TEXT('\0');
-	// Ä¿±êµØÍ¼µÄÎ»ÖÃ
+	// ç›®æ ‡åœ°å›¾çš„ä½ç½®
 	memset(&pInfo->STarPos, 0, sizeof(Point));
 	strLine = ParamList[m++];
 	n = Util_ResolveTextLine(strLine.c_str(), strList, 80, ',');

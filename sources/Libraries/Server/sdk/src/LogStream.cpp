@@ -1,6 +1,10 @@
 
-#include <direct.h>
 #include "LogStream.h"
+
+#include <algorithm>
+#include <cstdio>
+#include <filesystem>
+#include <system_error>
 
 _DBC_USING
 extern	bool	g_logautobak;
@@ -66,8 +70,8 @@ void LogStream::Open(bool bakmode)
 		int		l_dircount	=0;
 		cChar	*l_dir =l_path;
 		char	*l_dim1,*l_dim2,*l_dim;
-		while( (l_dim1 =(char*)strchr(l_dir,'/')),(l_dim2 =(char*)strchr(l_dir,'\\')),(l_dim =min(l_dim1,l_dim2)),
-				(l_dim =(l_dim?l_dim:max(l_dim1,l_dim2)))
+		while( (l_dim1 =(char*)strchr(l_dir,'/')),(l_dim2 =(char*)strchr(l_dir,'\\')),(l_dim =std::min<char*>(l_dim1,l_dim2)),
+				(l_dim =(l_dim?l_dim:std::max<char*>(l_dim1,l_dim2)))
 				)
 		{
 			*l_dim	=0;
@@ -85,11 +89,12 @@ void LogStream::Open(bool bakmode)
 
 					if(bakmode)
 					{
-						MoveFile(l_path,l_olddir);
+						std::rename(l_path,l_olddir);
 					}
 					m_DirRoot	=l_path;
 				}
-				mkdir(l_path);
+				std::error_code l_error;
+				std::filesystem::create_directory(l_path,l_error);
 				l_dircount++;
 			}
 			*l_dim	=(l_dim ==l_dim1)?'/':'\\';
@@ -109,11 +114,12 @@ void LogStream::Open(bool bakmode)
 
 				if(bakmode)
 				{
-					MoveFile(l_path,l_olddir);
+					std::rename(l_path,l_olddir);
 				}
 				m_DirRoot	=l_path;
 			}
-			mkdir(l_path);
+			std::error_code l_error;
+			std::filesystem::create_directory(l_path,l_error);
 			l_dircount++;
 		}
 		strcat(l_path,"/");
@@ -156,7 +162,7 @@ void LogStream::Backup()
 		RunChainGetArmor<LogStream> l_lockMgr(*s_logmgr);
 		while(l_logs	=s_logmgr->GetNextItem())
 		{
-			MoveFile(l_logs->m_DirRoot,l_logs->m_DirRoot + l_bakdir);
+			std::rename(l_logs->m_DirRoot,l_logs->m_DirRoot + l_bakdir);
 		}
 		l_lockMgr.unlock();
 	}catch(...){}
