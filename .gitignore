@@ -102,3 +102,5 @@ DatabasePath/*.ldf
 /Celestial Test
 
 CMakeUserPresets.json
+
+.env

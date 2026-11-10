@@ -1,0 +1,39 @@
+[Main]
+Name = GateServer
+Version = 32125
+
+[GroupServer]
+IP = ${GROUP_HOST}
+Port = ${GROUP_PORT}
+EnablePing = 180
+
+[ToClient]
+IP = ${GATE_CLIENT_LISTEN_IP}
+Port = ${GATE_CLIENT_PORT}
+CommEncrypt = 1
+RSAAES = 1
+EnablePing = 60
+MaxConnection = 1500
+WpeProtection = 1
+WpeVersion = 0xE44CF
+DDoSProtection = 1
+CheckSpan = 2
+CheckWaring = 20
+CheckError = 40
+FloodControl = 0
+MaxIpLogin = 5
+LoadBlackListIPS=0
+
+[ToGameServer]
+IP = ${GATE_GAME_LISTEN_IP}
+Port = ${GATE_GAME_PORT}
+EnablePing = 180
+
+[ShowRange]
+ShowMin = 500
+ShowMax = 800
+IsUse = ${GATE_SHOWRANGE}
+
+[Chaos]
+Map = PKmap
+IsActive = 1

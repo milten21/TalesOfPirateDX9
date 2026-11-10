@@ -23,7 +23,7 @@ else()
 endif()
 
 if(NOT CMAKE_SIZEOF_VOID_P EQUAL 4)
-    message(FATAL_ERROR "The servers are 32-bit only; on Windows configure with -A Win32 or use the windows-x86 preset, on Linux build with a 32-bit GCC toolchain")
+    message(FATAL_ERROR "The servers are 32-bit only; on Windows configure with -A Win32 or use the windows-x86 preset, on Linux build in the i386 image (see Dockerfile)")
 endif()
 
 set(TALES_SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/sources)
