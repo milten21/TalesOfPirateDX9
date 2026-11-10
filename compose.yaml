@@ -145,8 +145,8 @@ services:
     command: ["GameServer", "GameServer00.cfg"]
     volumes:
       - game00-log:/var/log/tales/GameServer
-      - ./server/GameServer/resource:/opt/tales/GameServer/resource
-      - ./server/GameServer/addons:/opt/tales/GameServer/addons
+      - ./server/GameServer/resource:/opt/tales/GameServer/resource:ro
+      - ./server/GameServer/addons:/opt/tales/GameServer/addons:ro
       - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
 
   game01:
@@ -155,8 +155,8 @@ services:
     command: ["GameServer", "GameServer01.cfg"]
     volumes:
       - game01-log:/var/log/tales/GameServer
-      - ./server/GameServer/resource:/opt/tales/GameServer/resource
-      - ./server/GameServer/addons:/opt/tales/GameServer/addons
+      - ./server/GameServer/resource:/opt/tales/GameServer/resource:ro
+      - ./server/GameServer/addons:/opt/tales/GameServer/addons:ro
       - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
 
   game02:
@@ -165,8 +165,8 @@ services:
     command: ["GameServer", "GameServer02.cfg"]
     volumes:
       - game02-log:/var/log/tales/GameServer
-      - ./server/GameServer/resource:/opt/tales/GameServer/resource
-      - ./server/GameServer/addons:/opt/tales/GameServer/addons
+      - ./server/GameServer/resource:/opt/tales/GameServer/resource:ro
+      - ./server/GameServer/addons:/opt/tales/GameServer/addons:ro
       - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
 
   game03:
@@ -175,8 +175,8 @@ services:
     command: ["GameServer", "GameServer03.cfg"]
     volumes:
       - game03-log:/var/log/tales/GameServer
-      - ./server/GameServer/resource:/opt/tales/GameServer/resource
-      - ./server/GameServer/addons:/opt/tales/GameServer/addons
+      - ./server/GameServer/resource:/opt/tales/GameServer/resource:ro
+      - ./server/GameServer/addons:/opt/tales/GameServer/addons:ro
       - ./server/GameServer/cmd.cfg:/opt/tales/GameServer/cmd.cfg:ro
 
   dev:

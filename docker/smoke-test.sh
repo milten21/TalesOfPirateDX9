@@ -53,6 +53,10 @@ full_games=$("${compose[@]}" config --services | grep '^game' | sort | paste -sd
 [ "$full_games" = "${game_servers[*]}" ] || fail "the full profile runs ${game_servers[*]} (got: $full_games)"
 pass "without a profile only game00 runs; the full profile runs ${game_servers[*]}"
 
+committed_bins=$(git ls-files -- 'server/*.bin' | paste -sd ' ' -)
+[ -z "$committed_bins" ] || fail "no generated server .bin tables are committed (found: $committed_bins)"
+pass "no generated server .bin tables are committed"
+
 maps_of() {
     sed -n 's/^map *= *\([^ ]*\).*/\1;/p' "docker/templates/GameServer/GameServer${1#game}.cfg.template" | tr -d '\r\n'
 }
@@ -99,6 +103,17 @@ for game in "${game_servers[@]}"; do
         gate_has_map "GameServer${game#game}" "$map" || fail "GateServer adds map $map of $game"
     done
     pass "$game is registered with GateServer with maps [$maps]"
+done
+
+for game in "${game_servers[@]}"; do
+    writable=$(docker inspect --format '{{range .Mounts}}{{if .RW}}{{.Destination}} {{end}}{{end}}' "$("${compose[@]}" ps --quiet "$game")" | tr ' ' '\n' | grep '^/opt/tales/GameServer/' | paste -sd ' ' -) || true
+    [ -z "$writable" ] || fail "$game mounts its content read-only (writable: $writable)"
+    bins=$("${compose[@]}" exec -T "$game" find /opt/tales/GameServer/resource -iname '*.bin' | paste -sd ' ' -)
+    [ -z "$bins" ] || fail "$game runs with no server .bin tables present (found: $bins)"
+    errors=$("${compose[@]}" exec -T "$game" sh -c 'cat "$1" 2>/dev/null || true' _ "$game_log/GameServer${game#game}/error.log")
+    [ -z "$errors" ] || fail "$game logs no errors during startup, got:
+$errors"
+    pass "$game runs with read-only content, no server .bin tables, and logged no errors during startup"
 done
 
 received=$(timeout 30 bash -c 'exec 3<>/dev/tcp/127.0.0.1/"$1"; head -c 2 <&3 | wc -c | tr -d " "' _ "$gate_port") || received=0

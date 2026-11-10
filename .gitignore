@@ -90,8 +90,8 @@ server/*/logfile/
 server/GameServer/tmp.txt
 server/GameServer/PlayerData/*/*.txt
 
-# Per-map resource blobs are generated from the map data
-server/GameServer/resource/*/*.bin
+# GameServer generates .bin copies of its .txt tables and never reads them back
+server/**/*.bin
 
 # Database files
 DatabasePath/*.mdf
