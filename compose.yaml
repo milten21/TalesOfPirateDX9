@@ -1,7 +1,7 @@
 name: tales
 
 x-server: &server
-  image: ${TALES_IMAGE:-tales-servers:dev}
+  image: ${TALES_IMAGE:-top-server:dev}
   platform: linux/386
   restart: unless-stopped
   stdin_open: true
@@ -54,7 +54,7 @@ services:
       start_period: 60s
 
   db-init:
-    image: ${TALES_IMAGE:-tales-servers:dev}
+    image: ${TALES_IMAGE:-top-server:dev}
     platform: linux/386
     entrypoint: ["/opt/tales/db-init.sh"]
     depends_on:
