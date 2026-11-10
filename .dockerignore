@@ -2,6 +2,8 @@
 !CMakeLists.txt
 !cmake/
 !docker/
+!postgresql/account/*.sql
+!postgresql/game/*.sql
 !sources/Libraries/Server/
 !sources/Libraries/Util/
 !sources/Libraries/ICUHelper/

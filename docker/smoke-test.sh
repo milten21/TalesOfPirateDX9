@@ -64,6 +64,13 @@ maps_of() {
 "${compose[@]}" up --detach --build --wait --wait-timeout 600 || fail "postgres, account, group, gate and ${game_servers[*]} become healthy"
 pass "postgres, account, group, gate and ${game_servers[*]} are healthy"
 
+first_init=$("${compose[@]}" logs --no-color db-init)
+grep -qF 'db-init: created database AccountServer with role pko_account' <<<"$first_init" \
+    && grep -qF 'db-init: created database GameDB with role pko_game' <<<"$first_init" \
+    || fail "db-init creates AccountServer and GameDB on an empty server, got:
+$first_init"
+pass "db-init created AccountServer and GameDB on an empty server"
+
 account_logs=$("${compose[@]}" logs --no-color account)
 grep -Eq 'Connecting database \[postgres:5432 : AccountServer\]\.\.\. success!' <<<"$account_logs" \
     || fail "AccountServer reports a database connection"
@@ -137,5 +144,37 @@ for game in "${game_servers[@]}"; do
         || fail "$game saves all players when stopped"
     pass "$game saved all players when stopped"
 done
+
+dump_databases() {
+    "${compose[@]}" exec -T postgres sh -c 'pg_dump -U postgres AccountServer && pg_dump -U postgres GameDB' | grep -Ev '^\\(un)?restrict '
+}
+
+"${compose[@]}" up --detach --wait postgres || fail "postgres restarts"
+"${compose[@]}" exec -T postgres psql -U postgres -d GameDB -v ON_ERROR_STOP=1 -qc "insert into account (ato_id, ato_nome) values (1, 'smoketest'); insert into character (atornome, ato_id) values ('SmokeTest', 1)" \
+    || fail "a character can be added to GameDB"
+before=$(dump_databases) || fail "pg_dump reads AccountServer and GameDB"
+new_game_password=changed-game-password
+second_init=$(GAME_DB_PASSWORD="$new_game_password" "${compose[@]}" run --rm --no-deps db-init 2>&1) \
+    || fail "db-init runs again on the initialized database, got:
+$second_init"
+grep -qF 'db-init: database AccountServer exists, set the password of role pko_account' <<<"$second_init" \
+    && grep -qF 'db-init: database GameDB exists, set the password of role pko_game' <<<"$second_init" \
+    || fail "db-init only sets passwords when the databases exist, got:
+$second_init"
+after=$(dump_databases) || fail "pg_dump reads AccountServer and GameDB"
+[ "$before" = "$after" ] || fail "db-init leaves existing accounts and characters unchanged:
+$(diff <(echo "$before") <(echo "$after"))"
+pass "a second db-init run succeeded and left accounts and characters unchanged"
+
+GAME_DB_PASSWORD="$new_game_password" "${compose[@]}" up --detach --wait --wait-timeout 600 \
+    || fail "the stack becomes healthy with a changed game database password"
+group_sql=$("${compose[@]}" exec -T group cat /var/log/tales/GroupServer/log/group_sql.log)
+[ "$(grep -cF 'connect database ok' <<<"$group_sql")" = 2 ] && ! grep -qF 'connect database failed' <<<"$group_sql" \
+    || fail "group connects to GameDB with the changed password"
+for game in "${game_servers[@]}"; do
+    "${compose[@]}" logs --no-color "$game" | grep -qF 'Connecting database [postgres:5432 : GameDB]... sucess!' \
+        || fail "$game connects to GameDB with the changed password"
+done
+pass "group and ${game_servers[*]} connected to GameDB with the changed password"
 
 echo "smoke test passed"
