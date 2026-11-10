@@ -8,6 +8,11 @@ project="${SMOKE_PROJECT:-tales-smoke}"
 env_file="${SMOKE_ENV_FILE:-.env.example}"
 compose_default=(docker compose --project-name "$project" --env-file "$env_file")
 compose=("${compose_default[@]}" --profile full)
+build=--build
+if [ -n "${1:-}" ]; then
+    export TALES_IMAGE="$1"
+    build=--no-build
+fi
 
 cleanup() {
     "${compose[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
@@ -15,7 +20,6 @@ cleanup() {
 
 fail() {
     echo "not ok - $*" >&2
-    "${compose[@]}" logs --no-color --tail 200 >&2 || true
     exit 1
 }
 
@@ -23,7 +27,7 @@ pass() {
     echo "ok - $*"
 }
 
-trap cleanup EXIT
+trap 'status=$?; [ "$status" = 0 ] || "${compose[@]}" logs --no-color --tail 200 >&2 || true; cleanup' EXIT
 cleanup
 
 wait_for() {
@@ -61,7 +65,7 @@ maps_of() {
     sed -n 's/^map *= *\([^ ]*\).*/\1;/p' "docker/templates/GameServer/GameServer${1#game}.cfg.template" | tr -d '\r\n'
 }
 
-"${compose[@]}" up --detach --build --wait --wait-timeout 600 || fail "postgres, account, group, gate and ${game_servers[*]} become healthy"
+"${compose[@]}" up --detach "$build" --wait --wait-timeout 600 || fail "postgres, account, group, gate and ${game_servers[*]} become healthy"
 pass "postgres, account, group, gate and ${game_servers[*]} are healthy"
 
 first_init=$("${compose[@]}" logs --no-color db-init)
