@@ -451,8 +451,38 @@ void CGameCommand::SetDefault()
 	strcpy(m_cLua, "lua");
 	strcpy(m_cAddImp, "addimp");
 	strcpy(m_cScrollNotice, "scroll");
-	strcpy(m_cgenCharBag, "gencharbag");
+	strcpy(m_cgenCharBag, "generatecharbag");
 	strcpy(m_cDistance, "distance");
+	strcpy(m_cReloadcfg, "reloadcfg");
+	strcpy(m_cHarmlog, "harmlog");
+	strcpy(m_cReloadAi, "reload_ai");
+	strcpy(m_cSetrecord, "setrecord");
+	strcpy(m_cClearrecord, "clearrecord");
+	strcpy(m_cSetflag, "setflag");
+	strcpy(m_cClearflag, "clearflag");
+	strcpy(m_cAddmission, "addmission");
+	strcpy(m_cClearmission, "clearmission");
+	strcpy(m_cDelmission, "delmission");
+	strcpy(m_cMissdk, "missdk");
+	strcpy(m_cMisclear, "misclear");
+	strcpy(m_cIsblock, "isblock");
+	strcpy(m_cPet, "pet");
+	strcpy(m_cAddlifeexp, "addlifeexp");
+	strcpy(m_cAddsailexp, "addsailexp");
+	strcpy(m_cAddcess, "addcess");
+	strcpy(m_cSetcesslevel, "setcesslevel");
+	strcpy(m_cSetexpiration, "setexpiration");
+	strcpy(m_cLight, "light");
+	strcpy(m_cSeeattr, "seeattr");
+	strcpy(m_cForge, "forge");
+	strcpy(m_cSetping, "setping");
+	strcpy(m_cGetping, "getping");
+	strcpy(m_cSenddata, "senddata");
+	strcpy(m_cSetpinginfo, "setpinginfo");
+	strcpy(m_cItemvalid, "itemvalid");
+	strcpy(m_cEditcharbag, "editcharbag");
+	strcpy(m_cGameStatus, "game_status");
+	strcpy(m_cPingGame, "ping_game");
 }
 
 bool CGameCommand::Load(const char *pszFileName)
@@ -558,6 +588,151 @@ bool CGameCommand::Load(const char *pszFileName)
 			strcpy(m_cLua, strValue.c_str());
 		else if (strKey == "cmd_addimp")
 			strcpy(m_cAddImp, strValue.c_str());
+		else if (strKey == "cmd_mute")
+			strcpy(m_cMute, strValue.c_str());
+		else if (strKey == "cmd_scroll")
+			strcpy(m_cScrollNotice, strValue.c_str());
+		else if (strKey == "cmd_generatecharbag")
+			strcpy(m_cgenCharBag, strValue.c_str());
+		else if (strKey == "cmd_reloadcfg")
+			strcpy(m_cReloadcfg, strValue.c_str());
+		else if (strKey == "cmd_harmlog")
+			strcpy(m_cHarmlog, strValue.c_str());
+		else if (strKey == "cmd_reload_ai")
+			strcpy(m_cReloadAi, strValue.c_str());
+		else if (strKey == "cmd_setrecord")
+			strcpy(m_cSetrecord, strValue.c_str());
+		else if (strKey == "cmd_clearrecord")
+			strcpy(m_cClearrecord, strValue.c_str());
+		else if (strKey == "cmd_setflag")
+			strcpy(m_cSetflag, strValue.c_str());
+		else if (strKey == "cmd_clearflag")
+			strcpy(m_cClearflag, strValue.c_str());
+		else if (strKey == "cmd_addmission")
+			strcpy(m_cAddmission, strValue.c_str());
+		else if (strKey == "cmd_clearmission")
+			strcpy(m_cClearmission, strValue.c_str());
+		else if (strKey == "cmd_delmission")
+			strcpy(m_cDelmission, strValue.c_str());
+		else if (strKey == "cmd_missdk")
+			strcpy(m_cMissdk, strValue.c_str());
+		else if (strKey == "cmd_misclear")
+			strcpy(m_cMisclear, strValue.c_str());
+		else if (strKey == "cmd_isblock")
+			strcpy(m_cIsblock, strValue.c_str());
+		else if (strKey == "cmd_pet")
+			strcpy(m_cPet, strValue.c_str());
+		else if (strKey == "cmd_addlifeexp")
+			strcpy(m_cAddlifeexp, strValue.c_str());
+		else if (strKey == "cmd_addsailexp")
+			strcpy(m_cAddsailexp, strValue.c_str());
+		else if (strKey == "cmd_addcess")
+			strcpy(m_cAddcess, strValue.c_str());
+		else if (strKey == "cmd_setcesslevel")
+			strcpy(m_cSetcesslevel, strValue.c_str());
+		else if (strKey == "cmd_setexpiration")
+			strcpy(m_cSetexpiration, strValue.c_str());
+		else if (strKey == "cmd_light")
+			strcpy(m_cLight, strValue.c_str());
+		else if (strKey == "cmd_seeattr")
+			strcpy(m_cSeeattr, strValue.c_str());
+		else if (strKey == "cmd_forge")
+			strcpy(m_cForge, strValue.c_str());
+		else if (strKey == "cmd_setping")
+			strcpy(m_cSetping, strValue.c_str());
+		else if (strKey == "cmd_getping")
+			strcpy(m_cGetping, strValue.c_str());
+		else if (strKey == "cmd_senddata")
+			strcpy(m_cSenddata, strValue.c_str());
+		else if (strKey == "cmd_setpinginfo")
+			strcpy(m_cSetpinginfo, strValue.c_str());
+		else if (strKey == "cmd_itemvalid")
+			strcpy(m_cItemvalid, strValue.c_str());
+		else if (strKey == "cmd_editcharbag")
+			strcpy(m_cEditcharbag, strValue.c_str());
+		else if (strKey == "cmd_game_status")
+			strcpy(m_cGameStatus, strValue.c_str());
+		else if (strKey == "cmd_ping_game")
+			strcpy(m_cPingGame, strValue.c_str());
+		else if (strKey.rfind("lvl_", 0) == 0)
+			m_Levels[strKey.substr(4)] = Str2Int(strValue);
 	}
 	return true;
+}
+
+int CGameCommand::LevelOf(const char *pszKey, int nDefault) const
+{
+	auto it = m_Levels.find(pszKey);
+	return it == m_Levels.end() ? nDefault : it->second;
+}
+
+int CGameCommand::Level(const std::string &strCmd) const
+{
+	const struct { const char *pszName; const char *pszKey; int nLevel; } cmds[] = {
+		{ m_cMove, "move", 1 },
+		{ m_cNotice, "notice", 1 },
+		{ m_cHide, "hide", 1 },
+		{ m_cUnhide, "unhide", 1 },
+		{ m_cGoto, "goto", 1 },
+		{ m_cMute, "mute", 2 },
+		{ m_cKick, "kick", 2 },
+		{ m_cReload, "reload", 99 },
+		{ m_cRelive, "relive", 99 },
+		{ m_cQcha, "qcha", 99 },
+		{ m_cQitem, "qitem", 99 },
+		{ m_cCall, "call", 99 },
+		{ m_cGamesvrstop, "gamesvrstop", 99 },
+		{ m_cUpdateall, "updateall", 99 },
+		{ m_cReloadcfg, "reloadcfg", 99 },
+		{ m_cHarmlog, "harmlog", 99 },
+		{ m_cMisreload, "misreload", 99 },
+		{ m_cReloadAi, "reload_ai", 99 },
+		{ m_cSetrecord, "setrecord", 99 },
+		{ m_cClearrecord, "clearrecord", 99 },
+		{ m_cSetflag, "setflag", 99 },
+		{ m_cClearflag, "clearflag", 99 },
+		{ m_cAddmission, "addmission", 99 },
+		{ m_cClearmission, "clearmission", 99 },
+		{ m_cDelmission, "delmission", 99 },
+		{ m_cMissdk, "missdk", 99 },
+		{ m_cMisclear, "misclear", 99 },
+		{ m_cIsblock, "isblock", 99 },
+		{ m_cPet, "pet", 99 },
+		{ m_cSummon, "summon", 99 },
+		{ m_cSummonex, "summonex", 99 },
+		{ m_cKill, "kill", 99 },
+		{ m_cAddmoney, "addmoney", 99 },
+		{ m_cAddImp, "addimp", 99 },
+		{ m_cAddexp, "addexp", 99 },
+		{ m_cAddlifeexp, "addlifeexp", 99 },
+		{ m_cAddsailexp, "addsailexp", 99 },
+		{ m_cAddcess, "addcess", 99 },
+		{ m_cSetcesslevel, "setcesslevel", 99 },
+		{ m_cMake, "make", 99 },
+		{ m_cAttr, "attr", 99 },
+		{ m_cItemattr, "itemattr", 99 },
+		{ m_cSetexpiration, "setexpiration", 99 },
+		{ m_cLight, "light", 99 },
+		{ m_cSeeattr, "seeattr", 99 },
+		{ m_cForge, "forge", 99 },
+		{ m_cSkill, "skill", 99 },
+		{ m_cDelitem, "delitem", 99 },
+		{ m_cLua, "lua", 99 },
+		{ m_cLuaall, "lua_all", 99 },
+		{ m_cSetping, "setping", 99 },
+		{ m_cGetping, "getping", 99 },
+		{ m_cSenddata, "senddata", 99 },
+		{ m_cSetpinginfo, "setpinginfo", 99 },
+		{ m_cAddkb, "addkb", 99 },
+		{ m_cItemvalid, "itemvalid", 99 },
+		{ m_cScrollNotice, "scroll", 99 },
+		{ m_cgenCharBag, "generatecharbag", 99 },
+		{ m_cEditcharbag, "editcharbag", 99 },
+		{ m_cGameStatus, "game_status", 0 },
+		{ m_cPingGame, "ping_game", 0 },
+	};
+	for (const auto &c : cmds)
+		if (strCmd == c.pszName)
+			return LevelOf(c.pszKey, c.nLevel);
+	return 99;
 }

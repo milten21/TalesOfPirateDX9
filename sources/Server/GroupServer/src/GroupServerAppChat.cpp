@@ -15,7 +15,7 @@ void	GroupServerApp::CP_GM1SAY(Player *ply,DataSocket *datasock,RPacket &pk)
 	//Modify by sunny.sun 20080821
 	if( ply != NULL )
 	{
-		if(!ply->m_gm)
+		if((uChar)ply->m_gm < const_chat.GmLv)
 		{
 			//ply->SendSysInfo("????��D??����?T.");
 			ply->SendSysInfo(RES_STRING(GP_GROUPSERVERAPPCHAT_CPP_00001));
@@ -61,7 +61,7 @@ void	GroupServerApp::CP_GM1SAY1(Player *ply,DataSocket *datasock,RPacket &pk)
 	if(!l_content ||l_len >500)return;
 	if(ply != NULL)
 	{
-		if(!ply->m_gm)
+		if((uChar)ply->m_gm < const_chat.GmLv)
 		{
 			ply->SendSysInfo("????��D??����?T.");
 			return;
@@ -104,7 +104,7 @@ void	GroupServerApp::CP_SAY2TRADE(Player *ply,DataSocket *datasock,RPacket &pk)
 	}
 
 	uLong	l_curtick	=this->GetCurrentTick();
-	if(!ply->m_gm && l_curtick - ply->m_tradetick <const_interval.Trade)
+	if((uChar)ply->m_gm < const_chat.GmLv && l_curtick - ply->m_tradetick <const_interval.Trade)
 	{
 		//ply->SendSysInfo("???e?�̡�������??");
 		ply->SendSysInfo(RES_STRING(GP_GROUPSERVERAPPCHAT_CPP_00003));
@@ -171,7 +171,7 @@ void GroupServerApp::CP_SAY2ALL(Player *ply,DataSocket *datasock,RPacket &pk)
 	}
 
 	uLong	l_curtick	=this->GetCurrentTick();
-	if(!ply->m_gm && l_curtick - ply->m_worldtick <const_interval.World)
+	if((uChar)ply->m_gm < const_chat.GmLv && l_curtick - ply->m_worldtick <const_interval.World)
 	{
 		//ply->SendSysInfo("???e?�̡�������??");
 		ply->SendSysInfo(RES_STRING(GP_GROUPSERVERAPPCHAT_CPP_00003));
@@ -194,7 +194,7 @@ void GroupServerApp::CP_SAY2ALL(Player *ply,DataSocket *datasock,RPacket &pk)
 	uShort		l_len;
 	cChar	*	l_content	=pk.ReadString(&l_len);
 	if(!l_content ||l_len >200)return;
-	if(ply->m_gm)
+	if((uChar)ply->m_gm >= const_chat.GmLv)
 	{
 		WPacket	l_wpk	=GetWPacket();
 		l_wpk.WriteCmd(CMD_PC_SAY2ALL);
@@ -365,7 +365,7 @@ void GroupServerApp::CP_SAY2YOU(Player *ply, DataSocket *datasock, RPacket &pk)
 	}
 
 	uLong	l_curtick = this->GetCurrentTick();
-	if (!ply->m_gm && l_curtick - ply->m_toyoutick <const_interval.ToYou)
+	if ((uChar)ply->m_gm < const_chat.GmLv && l_curtick - ply->m_toyoutick <const_interval.ToYou)
 	{
 		ply->SendSysInfo(RES_STRING(GP_GROUPSERVERAPPCHAT_CPP_00003));
 		return;

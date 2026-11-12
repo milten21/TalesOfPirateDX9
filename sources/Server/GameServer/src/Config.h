@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <string>
 
 #define MAX_GATE 5
@@ -46,6 +47,40 @@ public:
 	char	m_cScrollNotice[32];
 	char	m_cgenCharBag[32];
 	char	m_cDistance[32];
+	char	m_cReloadcfg[32];
+	char	m_cHarmlog[32];
+	char	m_cReloadAi[32];
+	char	m_cSetrecord[32];
+	char	m_cClearrecord[32];
+	char	m_cSetflag[32];
+	char	m_cClearflag[32];
+	char	m_cAddmission[32];
+	char	m_cClearmission[32];
+	char	m_cDelmission[32];
+	char	m_cMissdk[32];
+	char	m_cMisclear[32];
+	char	m_cIsblock[32];
+	char	m_cPet[32];
+	char	m_cAddlifeexp[32];
+	char	m_cAddsailexp[32];
+	char	m_cAddcess[32];
+	char	m_cSetcesslevel[32];
+	char	m_cSetexpiration[32];
+	char	m_cLight[32];
+	char	m_cSeeattr[32];
+	char	m_cForge[32];
+	char	m_cSetping[32];
+	char	m_cGetping[32];
+	char	m_cSenddata[32];
+	char	m_cSetpinginfo[32];
+	char	m_cItemvalid[32];
+	char	m_cEditcharbag[32];
+	char	m_cGameStatus[32];
+	char	m_cPingGame[32];
+
+	std::map<std::string, int> m_Levels;
+	int		LevelOf(const char *pszKey, int nDefault) const;
+	int		Level(const std::string &strCmd) const;
 };
 
 class CGameConfig

@@ -79,6 +79,11 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 	string strCmd = pszCmd;
 
 	C_PRINT("%s: %s %s\n", GetName(), strCmd.c_str(), pszParam);
+	if (uchGMLv < g_Command.Level(strCmd.substr(0, strCmd.find('='))))
+	{
+		SystemNotice(RES_STRING(GM_CHARACTERSUPERCMD_CPP_00001));
+		return FALSE;
+	}
 	//-----------------------
 	// 所有GM都可以执行的指令
 	//-----------------------
@@ -135,13 +140,6 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		return TRUE;
 	}
 
-	if(uchGMLv <= 1)
-	{
-		//SystemNotice("权限不够!");
-		SystemNotice(RES_STRING(GM_CHARACTERSUPERCMD_CPP_00001));
-		return FALSE;
-	}
-
 	//-----------------------
 	// 1级以上GM都可以执行的指令
 	//-----------------------
@@ -159,6 +157,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		WRITE_STRING(wpk, strList[0].c_str());
 		WRITE_LONG(wpk, Str2Int(strList[1]));
 		ReflectINFof(this, wpk);
+		return TRUE;
 	}
 
 	if (strCmd==g_Command.m_cKick) // 将玩家踢下线
@@ -204,13 +203,6 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		return FALSE;
 	}
 	// End
-
-	if(uchGMLv != 99)
-	{
-		//SystemNotice("权限不够!");
-		SystemNotice(RES_STRING(GM_CHARACTERSUPERCMD_CPP_00001));
-		return FALSE;
-	}
 
     LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 
@@ -307,7 +299,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "reloadcfg"))
+	else if( !strcmp(szComHead, g_Command.m_cReloadcfg))
 	{
 		if (!g_Config.Reload((char*)pszParam))
 		{
@@ -319,13 +311,13 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		}
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "harmlog=1") ) // 伤害累计计算Log开关
+	else if( strCmd == string(g_Command.m_cHarmlog) + "=1" ) // 伤害累计计算Log开关
 	{
 		g_bLogHarmRec = TRUE;
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "harmlog=0") ) // 伤害累计计算Log开关
+	else if( strCmd == string(g_Command.m_cHarmlog) + "=0" ) // 伤害累计计算Log开关
 	{
 		g_bLogHarmRec = FALSE;
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
@@ -346,13 +338,13 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "reload_ai") )
+	else if( !strcmp(szComHead, g_Command.m_cReloadAi) )
 	{
 		ReloadAISdk();
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "setrecord" ) ) // 设置角色任务历史标记
+	else if( !strcmp(szComHead, g_Command.m_cSetrecord) ) // 设置角色任务历史标记
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');		
 		USHORT sID   = Str2Int(strList[0]);
@@ -372,7 +364,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "clearrecord" ) ) // 设置角色任务历史标记
+	else if( !strcmp(szComHead, g_Command.m_cClearrecord) ) // 设置角色任务历史标记
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');		
 		USHORT sID   = Str2Int(strList[0]);
@@ -391,7 +383,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		}
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "setflag" ) ) // 设置任务标记
+	else if( !strcmp(szComHead, g_Command.m_cSetflag) ) // 设置任务标记
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');		
 		USHORT sID   = Str2Int(strList[0]);
@@ -411,7 +403,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		}
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "clearflag" ) ) // 清除任务标记
+	else if( !strcmp(szComHead, g_Command.m_cClearflag) ) // 清除任务标记
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');		
 		USHORT sID   = Str2Int(strList[0]);
@@ -431,7 +423,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		}
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "addmission" ) ) // 设置任务标记
+	else if( !strcmp(szComHead, g_Command.m_cAddmission) ) // 设置任务标记
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');		
 		USHORT sMID   = Str2Int(strList[0]);
@@ -451,7 +443,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		}
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "clearmission" ) ) // 清除任务标记
+	else if( !strcmp(szComHead, g_Command.m_cClearmission) ) // 清除任务标记
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		USHORT sID   = Str2Int(strList[0]);
@@ -470,7 +462,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		}
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "delmission" ) ) // 清除任务标记
+	else if( !strcmp(szComHead, g_Command.m_cDelmission) ) // 清除任务标记
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		USHORT sID   = Str2Int(strList[0]);
@@ -489,13 +481,13 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		}
 		return TRUE;
 	}
-	else if( !strcmp(szComHead, "missdk" ) )	 // 任务脚本更新
+	else if( !strcmp(szComHead, g_Command.m_cMissdk) )	 // 任务脚本更新
 	{
 		ReloadLuaSdk();
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp( szComHead, "misclear") ) // 清除角色任务标签信息和触发器信息
+	else if( !strcmp(szComHead, g_Command.m_cMisclear) ) // 清除角色任务标签信息和触发器信息
 	{
 		GetPlayer()->MisClear();
 		//SystemNotice( "清除角色任务标签信息和触发器信息成功!" );
@@ -503,7 +495,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "isblock")) // 是否处于障碍区
+	else if (!strcmp(szComHead, g_Command.m_cIsblock)) // 是否处于障碍区
 	{
 		if (m_submap->IsBlock(GetPos().x / m_submap->GetBlockCellWidth(), GetPos().y / m_submap->GetBlockCellHeight()))
 			//SystemNotice("障碍");
@@ -514,7 +506,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "pet")) // 召唤宠物
+	else if (!strcmp(szComHead, g_Command.m_cPet)) // 召唤宠物
 	{
 		Long	lChaInfoID = Str2Int(strList[0]);
 		Point	Pos = GetPos();
@@ -692,7 +684,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp( szComHead, "addlifeexp" ) )
+	else if( !strcmp(szComHead, g_Command.m_cAddlifeexp) )
 	{
 		AddAttr( ATTR_CLIFEEXP, atol(szComParam) );
 		//SystemNotice( "系统给了你%ld生活经验!", atol(szComParam) );
@@ -700,7 +692,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp( szComHead, "addsailexp" ) )
+	else if( !strcmp(szComHead, g_Command.m_cAddsailexp) )
 	{
 		AddAttr( ATTR_CSAILEXP, atol(szComParam) );
 		//SystemNotice( "系统给了你%ld转生经验!", atol(szComParam) );
@@ -708,7 +700,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp( szComHead, "addcess" ) )
+	else if( !strcmp(szComHead, g_Command.m_cAddcess) )
 	{
 		AdjustTradeItemCess( 60000, (USHORT)atol(szComParam) );
 		//SystemNotice( "添加%ld贸易税点!", atol(szComParam) );
@@ -716,7 +708,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if( !strcmp( szComHead, "setcesslevel" ) )
+	else if( !strcmp(szComHead, g_Command.m_cSetcesslevel) )
 	{
 		SetTradeItemLevel( (BYTE)atol(szComParam) );
 		//SystemNotice( "设置贸易等级%ld!", atol(szComParam) );
@@ -793,6 +785,11 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 			SystemNotice(RES_STRING(GM_CHARACTERSUPERCMD_CPP_00028));
 			return FALSE;
 		}
+		if (pCCha->GetPlayer() && pCCha->GetPlayer() != GetPlayer() && uchGMLv < g_Command.LevelOf("attr_other", g_Command.Level(strCmd)))
+		{
+			SystemNotice(RES_STRING(GM_CHARACTERSUPERCMD_CPP_00001));
+			return FALSE;
+		}
 		pCCha->m_CChaAttr.ResetChangeFlag();
 		pCCha->SetBoatAttrChangeFlag(false);
 		pCCha->setAttr(lAttrID, lAttrVal);
@@ -835,7 +832,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		return TRUE;
 	}
 	
-	else if (!strcmp(szComHead, "setexpiration"))
+	else if (!strcmp(szComHead, g_Command.m_cSetexpiration))
 	{
 	int n = Util_ResolveTextLine(szComParam, strList, 30, ',');
 	if (n != 3) return FALSE;
@@ -857,7 +854,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 
 	}
 
-	else if (!strcmp(szComHead, "light")) // 角色大地图灯光范围，格式：范围（米）.
+	else if (!strcmp(szComHead, g_Command.m_cLight)) // 角色大地图灯光范围，格式：范围（米）.
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		if (n != 1)
@@ -870,7 +867,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "seeattr")) // 查看角色属性，格式：WorldID，属性编号.
+	else if (!strcmp(szComHead, g_Command.m_cSeeattr)) // 查看角色属性，格式：WorldID，属性编号.
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		if (n != 2)
@@ -890,7 +887,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "forge")) // 道具精炼，格式：精炼等级增加值，道具栏位置
+	else if (!strcmp(szComHead, g_Command.m_cForge)) // 道具精炼，格式：精炼等级增加值，道具栏位置
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		char	chAddLv = Str2Int(strList[0]);
@@ -972,7 +969,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "setping"))
+	else if (!strcmp(szComHead, g_Command.m_cSetping))
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		if (n != 1)
@@ -987,14 +984,14 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "getping"))
+	else if (!strcmp(szComHead, g_Command.m_cGetping))
 	{
 		//SystemNotice("当前ping：%d", m_SMoveInit.usPing);
 		SystemNotice(RES_STRING(GM_CHARACTERSUPERCMD_CPP_00033), m_SMoveInit.usPing);
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "senddata"))
+	else if (!strcmp(szComHead, g_Command.m_cSenddata))
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		if (n != 2)
@@ -1009,7 +1006,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 		LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "setpinginfo"))
+	else if (!strcmp(szComHead, g_Command.m_cSetpinginfo))
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		if (n != 2)
@@ -1037,6 +1034,11 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 			SystemNotice(RES_STRING(GM_CHARACTERSUPERCMD_CPP_00034));
 			return FALSE;
 		}
+		if (pCCha->GetPlayer() && pCCha->GetPlayer() != GetPlayer() && uchGMLv < g_Command.LevelOf("addkb_other", g_Command.Level(strCmd)))
+		{
+			SystemNotice(RES_STRING(GM_CHARACTERSUPERCMD_CPP_00001));
+			return FALSE;
+		}
 
 		if (!pCCha->AddKitbagCapacity(sAddCap))
 		{
@@ -1055,7 +1057,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 			return TRUE;
 		}
 	}
-	else if (!strcmp(szComHead, "itemvalid")) // 设置背包道具有效性
+	else if (!strcmp(szComHead, g_Command.m_cItemvalid)) // 设置背包道具有效性
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		if (n != 2)
@@ -1077,11 +1079,11 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 			LG("ServerRunLog", "ChaID: %i, ChaName: %s, CMD: %s, Param: %s\n", GetPlayer()->GetID(), GetName(), pszCmd, pszParam);
 			return TRUE;
 	}
-	else if (!strcmp(szComHead, "scroll")) {
+	else if (!strcmp(szComHead, g_Command.m_cScrollNotice)) {
 	g_pGameApp->ScrollNotice(szComParam, 2);
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "generatecharbag")) {					
+	else if (!strcmp(szComHead, g_Command.m_cgenCharBag)) {					
 	const char *charname = szComParam;
 	CCharacter *player = g_pGameApp->FindChaByName(charname);
 	if (!player) return FALSE;
@@ -1214,7 +1216,7 @@ BOOL CCharacter::DoGMCommand(const char *pszCmd, const char *pszParam)
 	SystemNotice(".txt created!");
 		return TRUE;
 	}
-	else if (!strcmp(szComHead, "editcharbag")) {
+	else if (!strcmp(szComHead, g_Command.m_cEditcharbag)) {
 		int n = Util_ResolveTextLine(szComParam, strList, 16, ',');
 		const char* charname = strList[0].c_str();
 		int positionID = Str2Int(strList[1]);
@@ -1261,7 +1263,10 @@ void CCharacter::DoCommand_CheckStatus(cChar *pszCommand, uLong ulLen)
 	string strCmd   = szComHead;
 	string strParam = szComParam;
 
-	if(strCmd=="game_status")	 // 返回gameserver的状态
+	if ((GetPlayer() ? GetPlayer()->GetGMLev() : 0) < g_Command.Level(strCmd))
+		return;
+
+	if(strCmd==g_Command.m_cGameStatus)	 // 返回gameserver的状态
 	{
 		char szInfo[255];
 		sprintf(szInfo, "fps:%d tick:%d player:%d mgr:%d\n", g_pGameApp->m_dwFPS, 
@@ -1269,7 +1274,7 @@ void CCharacter::DoCommand_CheckStatus(cChar *pszCommand, uLong ulLen)
 								 g_pGameApp->m_dwActiveMgrUnit);
 		SystemNotice(szInfo);
 	}
-	else if (strCmd=="ping_game") // 查询角色到GameServer逻辑层的ping值
+	else if (strCmd==g_Command.m_cPingGame) // 查询角色到GameServer逻辑层的ping值
 	{
 		int n = Util_ResolveTextLine(szComParam, strList, 10, ',');
 		WPACKET WtPk  = GETWPACKET();

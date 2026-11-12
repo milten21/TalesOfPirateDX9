@@ -239,6 +239,7 @@ public:
 	{
 		uShort MaxSession;		// =3
 		uShort MaxPlayer;		// =30
+		uShort GmLv;
 	} const_chat;
 	struct
 	{
