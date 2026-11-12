@@ -107,6 +107,11 @@ void GroupServerApp::Initialize()
 	const_interval.World = std::stoi(m_cfg["chat"]["WorldInterval"]) * 1000;
 	const_interval.Trade = std::stoi(m_cfg["chat"]["TradeInterval"]) * 1000;
 	const_interval.ToYou = std::stoi(m_cfg["chat"]["ToYouInterval"]) * 1000;
+	const_chat.GmLv = 1;
+	IniSection &l_chat = m_cfg["chat"];
+	for (int i = 0; i < l_chat.ItemCount(); i++)
+		if (l_chat[i].name == "gm_chat_lv")
+			const_chat.GmLv = std::stoi(l_chat[i].value);
 
 
 	if(!InitMasterRelation())
